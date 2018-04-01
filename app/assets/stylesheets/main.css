@@ -1,0 +1,44 @@
+.my-grid {
+background: white;
+outline: 0;
+border: 0px solid gray;
+}
+
+#tabs{
+    width:50%;
+    margin:0px;
+    border: 1px solid gray;
+}
+
+.my-tab{
+    margin-top:0px;
+    margin-left:0px;
+}
+
+.main{
+    margin: 20px;
+}
+
+.ui-tabs .ui-tabs-panel {
+    padding: 0;
+}
+
+.handsontable span.colHeader{
+    font-size: 10pt;
+}
+
+.handsontable th, .handsontable td{
+    font-size: 10pt;
+}
+
+.handsontable span.data{
+    color: black;
+    font-style:bold;
+}
+
+#errorMessage{
+    width: 50%;
+    display: none;
+    color: red;
+    white-space: pre;
+}

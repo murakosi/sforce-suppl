@@ -1,0 +1,71 @@
+<style>
+.my-grid {
+background: white;
+outline: 0;
+border: 0px solid gray;
+}
+
+#tabs{
+    width:50%;
+    margin:0px;
+    border: 1px solid gray;
+}
+
+.my-tab{
+	padding-right:7px;
+}
+
+.main{
+    margin: 20px;
+}
+
+.ui-tabs .ui-tabs-panel {
+		padding: 0;
+}
+
+.handsontable span.colHeader{
+    font-size: 10pt;
+}
+
+.handsontable th, .handsontable td{
+    font-size: 10pt;
+}
+
+.handsontable span.data{
+    color: black;
+    font-style:bold;
+}
+
+#errorMessage{
+    width: 50%;
+    display: none;
+    color: red;
+    white-space: pre;
+}
+</style>
+<h1>Soqlexecuter#index</h1>
+<p>Find me in app/views/soqlexecuter/index.html.erb</p>
+<%= link_to 'Logout', logout_path, method: :delete %>
+<table width="100%" class="main">
+  <tr>
+    <td valign="top" width="50%">
+		    <div id="formArea">
+					<%= form_tag soqlexecuter_show_path(), :method => :post, :class => 'form-inline' do %>
+					<%= text_area_tag :input_soql, 'select id,name from procure__c', :size => "100x5" %>
+					<br>
+					<%= submit_tag 'Execute', :class => 'btn btn-primary execute-soql' %>
+					<% end %>
+					<p><div id="errorMessage"></div></p>
+					<%= button_tag 'Add tab', { "type" => "button", "id" => "add-tab","class" => "btn btn-primary"} %>
+				</div>
+				<div id="tabs">
+					<ul>
+						<li><a href="#tab1">Grid 1</a></li>
+					</ul>
+					<div id="tab1" class="my-tab">
+						<div id="myGrid1" class="my-grid"></div>
+					</div>
+				</div>
+		</td>
+  </tr>
+</table>
