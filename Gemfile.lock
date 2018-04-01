@@ -98,6 +98,7 @@ GEM
     nokogiri (1.8.2-x86-mingw32)
       mini_portile2 (~> 2.3.0)
     nori (2.6.0)
+    pg (1.0.0-x86-mingw32)
     public_suffix (3.0.2)
     puma (3.11.3)
     rack (2.0.4)
@@ -200,6 +201,7 @@ DEPENDENCIES
   coffee-script-source (= 1.8.0)
   jbuilder (~> 2.5)
   jquery-rails
+  pg
   puma (~> 3.7)
   rails (~> 5.1.5)
   sass-rails (~> 5.0)
