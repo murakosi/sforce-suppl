@@ -7,7 +7,6 @@ class LoginController < ApplicationController
   end
 
   def create
-    puts @user
     sign_in(@user)
     redirect_to soqlexecuter_path
   end
@@ -22,17 +21,8 @@ class LoginController < ApplicationController
     def set_user
       begin
         @user = User.find_by!(name: session_params[:name])
-        puts "ok"
-        puts "user:" + @user.name 
       rescue ActiveRecord::RecordNotFound => ex
-        puts "error"
-        puts session_params
-        begin
-          @user = User.create(session_params)
-        rescue StandardError => e
-          puts e.message
-          raise e
-        end
+        @user = User.create(session_params)
       end
     end
 
