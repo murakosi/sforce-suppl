@@ -9,12 +9,25 @@ class LoginController < ApplicationController
 
   def create
     sign_in(@user)
-    redirect_to soqlexecuter_path
+
+    @error_message = ""
+    
+    begin
+      login_to_salesforce()
+      redirect_to soqlexecuter_path
+    rescue StandardError => e
+      @error_message = e.message
+    end
   end
 
   def destroy
     sign_out()
     redirect_to login_path
+  end
+
+  def login_to_salesforce
+    @client = Soapforce::Client.new
+    @client.authenticate(username: @user.name, password: @user.password)
   end
 
   private
