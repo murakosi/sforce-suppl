@@ -1,5 +1,5 @@
 class LoginController < ApplicationController
-#test
+
   before_action :require_sign_in!, except: [:destroy]
   before_action :set_user, only: [:create]
   skip_before_action :require_sign_in!, only: [:new, :create]
