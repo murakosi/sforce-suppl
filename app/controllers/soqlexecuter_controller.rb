@@ -32,7 +32,7 @@ class SoqlexecuterController < ApplicationController
     #prepare
     #getclient
 
-    qresult = SforceClient.client.query(soql)
+    qresult = current_client().query(soql)
 
     if qresult.empty?
        raise Exceptions::NoMatchedRecordError.new("No matched records found")

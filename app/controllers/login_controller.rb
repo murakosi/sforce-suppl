@@ -10,13 +10,13 @@ class LoginController < ApplicationController
   def create
     @error_message = ""
 
-    begin
-      login_to_salesforce()
+    #begin
+      login_to_salesforce(session_params)
       register_user()
-    rescue StandardError => e
-      @error_message = e.message
-      render 'new'
-    end
+    #rescue StandardError => e
+    #  @error_message = e.message
+    #  render 'new'
+    #end
   end
 
   def destroy
@@ -24,13 +24,18 @@ class LoginController < ApplicationController
     redirect_to login_path
   end
 
-  def login_to_salesforce
-    #@client = Soapforce::Client.new
-    #@client.authenticate(username: session_params[:name], password: session_params[:password])
-    SforceClient.authenticate(session_params)
-  end
+  #def login_to_salesforce
+  #  client = Soapforce::Client.new
+  #  @result = client.authenticate(username: session_params[:name], password: session_params[:password])
+  #end
 
   private
+
+    def skip_login
+      if signed_in?
+        redirect_to soqlexecuter_path
+      end
+    end
 
     def register_user
       set_user()
@@ -48,6 +53,6 @@ class LoginController < ApplicationController
 
     # 許可するパラメータ
     def session_params
-      params.require(:session).permit(:name, :password)
+      params.require(:session).permit(:name, :password, :is_sandbox)
     end
 end

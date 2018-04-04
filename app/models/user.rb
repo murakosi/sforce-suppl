@@ -1,12 +1,6 @@
 class User < ApplicationRecord
 
-  #attr_accessor :name, :password, :login_token
-
-    #def new(attributes = {})
-    #    puts attributes
-    #    @name  = attributes[:name]
-    #    @password = attributes[:password]
-    #end
+    has_secure_password validations: false
 
     def self.new_login_token
       SecureRandom.urlsafe_base64

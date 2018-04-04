@@ -9,9 +9,11 @@
 <div align="center">
     <%= form_for :session, url: login_path do |f| %>
     <%= f.label 'User Name: ' %>
-    <%= f.text_field :name %><br>
+    <%= f.text_field :name, value: "murakoshi@cse.co.jp" %><br>
     <%= f.label 'Password:' %>
-    <%= f.password_field :password %><br>
+    <%= f.password_field :password, value: "s13926cse" %><br>
+    <%= f.label 'Sandbox:' %>
+    <%= f.check_box :is_sandbox %><br>
     <%= f.submit 'Login', :class => 'btn btn-primary' %>
     <div id="loginErrorMessage"><%= @error_message %></div>
     <% end %>
