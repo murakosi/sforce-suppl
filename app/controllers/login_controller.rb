@@ -1,22 +1,21 @@
 class LoginController < ApplicationController
 
   before_action :require_sign_in!, except: [:destroy]
-  before_action :set_user, only: [:create]
+#  before_action :set_user, only: [:create]
   skip_before_action :require_sign_in!, only: [:new, :create]
 
   def new
   end
 
   def create
-    sign_in(@user)
-
     @error_message = ""
-    
+
     begin
       login_to_salesforce()
-      redirect_to soqlexecuter_path
+      register_user()
     rescue StandardError => e
       @error_message = e.message
+      render 'new'
     end
   end
 
@@ -26,11 +25,18 @@ class LoginController < ApplicationController
   end
 
   def login_to_salesforce
-    @client = Soapforce::Client.new
-    @client.authenticate(username: @user.name, password: @user.password)
+    #@client = Soapforce::Client.new
+    #@client.authenticate(username: session_params[:name], password: session_params[:password])
+    SforceClient.authenticate(session_params)
   end
 
   private
+
+    def register_user
+      set_user()
+      sign_in(@user)
+      redirect_to soqlexecuter_path
+    end
 
     def set_user
       begin

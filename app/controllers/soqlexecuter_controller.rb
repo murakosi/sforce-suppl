@@ -9,50 +9,32 @@ class SoqlexecuterController < ApplicationController
   Exclude_key_names = ["@xsi:type", "type"]
   
   def new
-    prepare
-  end
-
-  def prepare
-    @object_name = String.new
-    
-    @header_array = Array.new
-    @records = Hash.new
-    @raw = String.new
-    @client = Soapforce::Client.new
   end
   
   def index
-    prepare    
   end
 
   def show
     puts "param:" + params[:soql]
     execute_soql()
-
   end
 
   def execute_soql()
-
     begin
-      getRecords(params[:soql])
-      #raise StandardError.new("unexpected token: procure__c\nthis is")
-      puts @records
+      get_records(params[:soql])
       render :json => @records, :status => 200
     rescue StandardError => ex
       render :json => {:error => ex.message}, :status => 400
     end
-
   end
 
-  def getRecords(soql)
+  def get_records(soql)
     #prepare
-    getclient
+    #getclient
 
-    qresult = @client.query(soql)
+    qresult = SforceClient.client.query(soql)
 
     if qresult.empty?
-       #@records = [Hash.new]
-       #return
        raise Exceptions::NoMatchedRecordError.new("No matched records found")
     end
 
@@ -63,13 +45,9 @@ class SoqlexecuterController < ApplicationController
                                   }
   end
 
-  def parse_exception(ex)
-
-  end
-
-  def getclient
-    @client = Soapforce::Client.new
-    @client.authenticate(username: "murakoshi@cse.co.jp", password: "s13926cse")
-  end
+  #def getclient
+  #  @client = Soapforce::Client.new
+  #  @client.authenticate(username: "murakoshi@cse.co.jp", password: "s13926cse")
+  #end
 
 end
