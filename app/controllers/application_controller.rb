@@ -31,11 +31,18 @@ class ApplicationController < ActionController::Base
   def current_client
     #begin
     sforce_session = session[:sforce_session].symbolize_keys
-      client = Soapforce::Client.new
+    client = Soapforce::Client.new
+    begin
       client.authenticate(sforce_session)
       return client
-    #rescue
-    #end
+    rescue Savon::SOAPFault => e
+      fault_code = e.to_hash[:fault][:faultcode]
+      if fault_code == "sf:INVALID_SESSION_ID"
+        return client
+      else
+        raise e
+      end
+    end
   end
 
   private
@@ -43,7 +50,7 @@ class ApplicationController < ActionController::Base
       login_token = User.encrypt(session[:user_login_token])
       @current_user ||= User.find_by(login_token: login_token)
     end
-    
+
     def require_sign_in!
       redirect_to login_path unless signed_in?
     end

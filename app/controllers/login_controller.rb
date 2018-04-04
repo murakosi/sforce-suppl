@@ -8,13 +8,13 @@ class LoginController < ApplicationController
   def create
     @error_message = ""
 
-    #begin
+    begin
       login_to_salesforce(login_params)
       register_user()
-    #rescue StandardError => e
-    #  @error_message = e.message
-    #  render 'new'
-    #end
+    rescue StandardError=> e
+      @error_message = e.message
+      render 'new'
+    end
   end
 
   def destroy
