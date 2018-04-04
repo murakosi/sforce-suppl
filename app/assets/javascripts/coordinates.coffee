@@ -1,11 +1,11 @@
 coordinates = ->
 
   selectedTabId = 0
-  $("div#tabs").tabs()
+  $("div#tabArea").tabs()
 
   $('.execute-soql').on 'click', (e) ->
     e.preventDefault()
-    selectedTabId =  $("div#tabs").tabs('option', 'active') + 1
+    selectedTabId =  $("div#tabArea").tabs('option', 'active') + 1
     $("#errorMessage").empty()
     $("#errorMessage").hide()
     getCoordinatesInRange()
@@ -15,8 +15,8 @@ coordinates = ->
 
     jqXHR = $.ajax({
       async: true
-      url: $('.form-inline').attr('action')
-      type: $('.form-inline').attr('method')
+      url: $('.execute-form').attr('action')
+      type: $('.execute-form').attr('method')
       data: post_data
       dataType: 'json'
       cache: false
@@ -88,14 +88,14 @@ coordinates = ->
   $('#add-tab').on 'click', (e) ->
     e.preventDefault()
     
-    new_tab_index = $("div#tabs ul li").length
+    new_tab_index = $("div#tabArea ul li").length
     new_tab_id = new_tab_index + 1
     
-    $("div#tabs ul").append(
+    $("div#tabArea ul").append(
       "<li><a href='#tab" + new_tab_id + "'>Grid " + new_tab_id + "</a></li>"
     )
 
-    $("div#tabs").append(
+    $("div#tabArea").append(
       "<div id='tab" + new_tab_id + "' class='my-tab'>" +
       "<div id='myGrid" + new_tab_id + "' class='my-grid'></div>" +
       "</div>"
@@ -105,11 +105,9 @@ coordinates = ->
     
     createGrid()
     
-    $("div#tabs").tabs("refresh")
+    $("div#tabArea").tabs("refresh")
 
-    $("div#tabs").tabs({ active: new_tab_index });
+    $("div#tabArea").tabs({ active: new_tab_index });
 
 $(document).ready(coordinates)
-#$(document).ready(tabutil)
 $(document).on('page:load', coordinates)
-#$(document).on('page:load', tabutil)

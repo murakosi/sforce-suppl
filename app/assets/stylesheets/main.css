@@ -1,44 +1,51 @@
-.my-grid {
-background: white;
-outline: 0;
-border: 0px solid gray;
+/* ------------------------------
+   #menuList
+------------------------------ */
+#menuList {
+    margin-top: 15px;
+    width: 100%;
+    height: 45px;
+    border-top: #aaa 1px solid;
+    border-bottom: #aaa 1px solid;
+    position: relative;
+    z-index: 10;
+    background: #d3cbdb;
+    display: flex;
+    font-size:10pt;
 }
-
-#tabs{
-    width:50%;
-    margin:0px;
-    border: 1px solid gray;
+ 
+#menuList ul {
+    margin: 0 auto;
+    /*width: 800px;*/
+    width: 60%;
+    height: 45px;
+    text-align: left;
+    list-style: none;
 }
-
-.my-tab{
-    margin-top:0px;
-    margin-left:0px;
+ 
+#menuList ul li {
+    width: 120px;
+    height: 45px;
+    float: right;
+    border-left: #aaa 1px solid;
+    box-sizing: border-box;
 }
-
-.main{
-    margin: 20px;
+ 
+#menuList ul li:last-child {
+    border-right: #aaa 1px solid;
 }
-
-.ui-tabs .ui-tabs-panel {
-    padding: 0;
+ 
+#menuList ul li a {
+    height: 45px;
+    
+    line-height: 45px;
+    display: block;
+    text-align: center;
+    transition: all 0.2s linear;
+    text-decoration: none;
 }
-
-.handsontable span.colHeader{
-    font-size: 10pt;
-}
-
-.handsontable th, .handsontable td{
-    font-size: 10pt;
-}
-
-.handsontable span.data{
-    color: black;
-    font-style:bold;
-}
-
-#errorMessage{
-    width: 50%;
-    display: none;
-    color: red;
-    white-space: pre;
+ 
+#menuList ul li:hover > a {
+    background: #fff;
+    /*font-weight: bold;*/
 }

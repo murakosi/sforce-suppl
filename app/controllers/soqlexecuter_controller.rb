@@ -1,4 +1,3 @@
-require 'soapforce'
 require 'exceptions'
 
 class SoqlexecuterController < ApplicationController
@@ -29,25 +28,17 @@ class SoqlexecuterController < ApplicationController
   end
 
   def get_records(soql)
-    #prepare
-    #getclient
 
-    qresult = current_client().query(soql)
+    query_result = current_client().query(soql)
 
-    if qresult.empty?
+    if query_result.empty?
        raise Exceptions::NoMatchedRecordError.new("No matched records found")
     end
 
-    @records = qresult.records.map{ |record| record.to_h }
-                              .map{ |hash| 
-                                    hash.select{ |k,v| !Exclude_key_names.include?(k.to_s)}
-                                        .reject{ |k,v| k.to_s == "id" && v.nil?}
+    @records = query_result.records.map{ |record| record.to_h }
+                                   .map{ |hash| 
+                                          hash.select{ |k,v| !Exclude_key_names.include?(k.to_s)}
+                                              .reject{ |k,v| k.to_s == "id" && v.nil?}
                                   }
   end
-
-  #def getclient
-  #  @client = Soapforce::Client.new
-  #  @client.authenticate(username: "murakoshi@cse.co.jp", password: "s13926cse")
-  #end
-
 end

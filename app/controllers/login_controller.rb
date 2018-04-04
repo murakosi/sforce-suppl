@@ -1,7 +1,5 @@
 class LoginController < ApplicationController
-
   before_action :require_sign_in!, except: [:destroy]
-#  before_action :set_user, only: [:create]
   skip_before_action :require_sign_in!, only: [:new, :create]
 
   def new
@@ -11,7 +9,7 @@ class LoginController < ApplicationController
     @error_message = ""
 
     #begin
-      login_to_salesforce(session_params)
+      login_to_salesforce(login_params)
       register_user()
     #rescue StandardError => e
     #  @error_message = e.message
@@ -23,11 +21,6 @@ class LoginController < ApplicationController
     sign_out()
     redirect_to login_path
   end
-
-  #def login_to_salesforce
-  #  client = Soapforce::Client.new
-  #  @result = client.authenticate(username: session_params[:name], password: session_params[:password])
-  #end
 
   private
 
@@ -45,14 +38,14 @@ class LoginController < ApplicationController
 
     def set_user
       begin
-        @user = User.find_by!(name: session_params[:name])
+        @user = User.find_by!(name: login_params[:name])
       rescue ActiveRecord::RecordNotFound => ex
         @user = User.create(session_params)
       end
     end
 
     # 許可するパラメータ
-    def session_params
-      params.require(:session).permit(:name, :password, :is_sandbox)
+    def login_params
+      params.require(:login_param).permit(:name, :password, :is_sandbox)
     end
 end

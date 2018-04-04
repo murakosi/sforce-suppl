@@ -1,7 +1,5 @@
 Rails.application.routes.draw do
 
-  #root :to => 'soqlexecuter#index'
-  # ログイン / ログアウト
   root :to => 'login#new'
 
   get     'login',   to: 'login#new'

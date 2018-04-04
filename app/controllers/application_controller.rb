@@ -5,11 +5,6 @@ class ApplicationController < ActionController::Base
   
   protect_from_forgery with: :exception
   
-  def current_user
-    login_token = User.encrypt(session[:user_login_token])
-    @current_user ||= User.find_by(login_token: login_token)
-  end
-
   def login_to_salesforce(login_params)
     client = Soapforce::Client.new
     result = client.authenticate(username: login_params[:name], password: login_params[:password])
@@ -44,7 +39,11 @@ class ApplicationController < ActionController::Base
   end
 
   private
-
+    def current_user
+      login_token = User.encrypt(session[:user_login_token])
+      @current_user ||= User.find_by(login_token: login_token)
+    end
+    
     def require_sign_in!
       redirect_to login_path unless signed_in?
     end
