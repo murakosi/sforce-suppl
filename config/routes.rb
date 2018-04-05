@@ -8,9 +8,9 @@ Rails.application.routes.draw do
 
   get 'soqlexecuter' => 'soqlexecuter#index'
 
-  get 'soqlexecuter/index'
+  get 'soqlexecuter/index' => 'soqlexecuter#index'
 
-  get 'soqlexecuter/show'
+  get 'soqlexecuter/show' => 'soqlexecuter#index'
 
   post 'soqlexecuter/show'
 

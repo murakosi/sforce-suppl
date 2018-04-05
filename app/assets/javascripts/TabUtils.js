@@ -1,4 +1,4 @@
-
+/*
 var gridArray;
 
 function CreateGrid(elementId) {
@@ -25,7 +25,7 @@ function CreateGrid(elementId) {
 $(document).ready(function () {
     // take care of jqueryui tabs and adding tab
     //$("div#tabs").tabs();
-    /*
+    
         $(document).on('click', '#add-tab', function () {
             var num_tabs = $("div#tabs ul li").length + 1;
             $("div#tabs ul").append(
@@ -39,7 +39,7 @@ $(document).ready(function () {
             CreateGrid("myGrid" + num_tabs);
             $("div#tabs").tabs("refresh");
         });
-    */
+    
     CreateGrid("myGrid1");
 })
 
@@ -311,3 +311,4 @@ function getDataObject() {
         }
     ];
 };
+*/

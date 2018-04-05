@@ -1,16 +1,67 @@
 <style>
-.my-grid {
-background: white;
-outline: 0;
-border: 0px solid gray;
+.resultTab{
+	padding-right: 7px;
 }
 
-.my-tab{
-	padding-right:7px;
+.resultSoql{
+	border: 1px solid lightgray;
+	font-size: 9pt;
+	padding: 4px;
+	margin-bottom: 2px;
+	margin-top: 2px;
+}
+
+.resultGrid {
+	background: white;
+	outline: 0;
+	border: 0px solid gray;
 }
 
 .ui-tabs .ui-tabs-panel {
-		padding: 0;
+	padding: 0;
+	margin: 0;
+}
+
+.ui-tabs .ui-tabs-nav li a {
+	font-size:10pt !important;
+}
+.ui-tabs .ui-tabs-nav .ui-tabs-anchor {
+	float: left;
+	padding: .5em .5em .5em 1em;
+	text-decoration: none;
+}
+.ui-tabs .ui-tabs-nav:focus {
+	/*
+    padding-left: 0px; 
+    background: transparent; 
+    border-width: 0px 0px 1px 0px; 
+    -moz-border-radius: 0px; 
+    -webkit-border-radius: 0px; 
+	border-radius: 0px;
+	*/
+}
+
+#tabArea ul li a { outline:none; /* outline-color:red */; }
+#tabArea ul li { outline:none; /* outline-color:red */; }
+
+.ui-tabs .ui-tabs-nav li.ui-tabs-active .ui-tabs-anchor,
+.ui-tabs .ui-tabs-nav li.ui-state-disabled .ui-tabs-anchor,
+.ui-tabs .ui-tabs-nav li.ui-tabs-loading .ui-tabs-anchor {
+	/* cursor: pointer; */
+}
+
+.ui-tabs-nav .ui-icon { 
+	/*
+	float: right;
+	margin: 0em 0em 0 1em;
+	cursor: pointer;
+	*/
+}
+
+#tabArea li .ui-icon-close {
+	float: left;
+	margin: 0.4em 0.2em 0 0;
+	cursor: pointer; 
 }
 
 .handsontable span.colHeader{
@@ -26,7 +77,7 @@ border: 0px solid gray;
     font-style:bold;
 }
 
-#errorMessage{
+#messageArea{
     width: 50%;
     display: none;
     color: red;
@@ -40,14 +91,15 @@ border: 0px solid gray;
 }
 
 #formArea{
-	width:70%;
+	width: 70%;
 	margin: 0 auto;
 }
 
 #tabArea{
-	width:70%;
-    margin:0px;
-	border: 1px solid gray;
+	width: 70%;
+    margin: 0px;
+	padding: 0px;
+	border: 0px solid lightgray;
 	margin: 0 auto;
 }
 
@@ -55,7 +107,7 @@ border: 0px solid gray;
 
 <div id="menuList">
     <ul>
-		<li><%= link_to 'Logout', logout_path, method: :delete %></li>
+		<li><%= link_to "Logout", logout_path, method: :delete %></li>
     </ul>
 </div>
 
@@ -66,20 +118,26 @@ border: 0px solid gray;
 
 <div id="mainArea">
 	<div id="formArea">
-		<%= form_tag soqlexecuter_show_path(), :method => :post, :class => 'execute-form' do %>
-		<%= text_area_tag :input_soql, 'select id,name from procure__c', :size => "120x5" %>
+		<%= form_tag soqlexecuter_show_path(), :method => :post, :class => "execute-form" do %>
+		<%= text_area_tag :input_soql, "select id,name from procure__c", :size => "120x5" %>
 		<br>
-		<%= submit_tag 'Execute', :class => 'btn btn-primary execute-soql' %>
+		<%= submit_tag "Execute", :class => "btn btn-primary execute-soql" %>
 		<% end %>
-		<p><div id="errorMessage"></div></p>
-		<%= button_tag 'Add tab', { "type" => "button", "id" => "add-tab","class" => "btn btn-primary"} %>
-	</div>
+		<p><div id="messageArea"></div></p>
+		<!--<%= button_tag 'Add tab', {"type" => "button", "id" => "add-tab","class" => "btn btn-primary"} %>-->
+	</div>	
 	<div id="tabArea">
+		<%= button_tag "Add tab", :type => "button", :id => "add-tab", :class => "btn btn-secondary" %>
 		<ul>
-			<li><a href="#tab1">Grid 1</a></li>
+			<li><a href="#tab1">Grid1</a>
+			<span id="closeBtn1" class="ui-icon ui-icon-close ui-closable-tab"></span>
+			</li>
 		</ul>
-		<div id="tab1" class="my-tab">
-			<div id="myGrid1" class="my-grid"></div>
+		<div id="tab1" class="resultTab">
+			<div id="soql1" class="resultSoql">
+			alala alala
+			</div>
+			<div id="grid1" class="resultGrid"></div>
 		</div>
 	</div>
 </div>

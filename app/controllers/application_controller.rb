@@ -5,9 +5,19 @@ class ApplicationController < ActionController::Base
   
   protect_from_forgery with: :exception
   
+  Production_url = "login.salesforce.com"
+  Sandbox_url = "test.salesforce.com"
+
   def login_to_salesforce(login_params)
+    if is_sandbox?(login_params)
+      host = Sandbox_url
+    else
+      host = Production_url
+    end
+
     client = Soapforce::Client.new
-    result = client.authenticate(username: login_params[:name], password: login_params[:password])
+    result = client.authenticate(:username => login_params[:name], :password => login_params[:password], :host => host)
+    
     save_sforce_session(result)
   end
 
@@ -29,9 +39,9 @@ class ApplicationController < ActionController::Base
   end
 
   def current_client
-    #begin
     sforce_session = session[:sforce_session].symbolize_keys
     client = Soapforce::Client.new
+
     begin
       client.authenticate(sforce_session)
       return client
@@ -43,6 +53,7 @@ class ApplicationController < ActionController::Base
         raise e
       end
     end
+
   end
 
   private
@@ -58,5 +69,9 @@ class ApplicationController < ActionController::Base
     def save_sforce_session(result)
       session_info = {:session_id => result[:session_id], :server_url => result[:server_url]}
       session[:sforce_session] = session_info
+    end
+
+    def is_sandbox?(login_params)
+      ActiveRecord::Type::Boolean.new.cast(login_params[:is_sandbox])
     end
 end
