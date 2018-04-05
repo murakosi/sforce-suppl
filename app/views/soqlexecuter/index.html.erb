@@ -17,6 +17,12 @@
 	border: 0px solid gray;
 }
 
+#add-tab{
+	margin-bottom: 5px;
+	font-size: 14px;
+	font-family:Arial;
+}
+
 .ui-tabs .ui-tabs-panel {
 	padding: 0;
 	margin: 0;
@@ -25,6 +31,15 @@
 .ui-tabs .ui-tabs-nav li a {
 	font-size:10pt !important;
 }
+
+.noselect {
+    -webkit-user-select: none; /* Safari */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+}
+
 .ui-tabs .ui-tabs-nav .ui-tabs-anchor {
 	float: left;
 	padding: .5em .5em .5em 1em;
@@ -124,13 +139,12 @@
 		<%= submit_tag "Execute", :class => "btn btn-primary execute-soql" %>
 		<% end %>
 		<p><div id="messageArea"></div></p>
-		<!--<%= button_tag 'Add tab', {"type" => "button", "id" => "add-tab","class" => "btn btn-primary"} %>-->
 	</div>	
 	<div id="tabArea">
-		<%= button_tag "Add tab", :type => "button", :id => "add-tab", :class => "btn btn-secondary" %>
+		<%= button_tag "Add tab", :type => "button", :id => "add-tab", :class => "btn btn-default" %>		
 		<ul>
-			<li><a href="#tab1">Grid1</a>
-			<span id="closeBtn1" class="ui-icon ui-icon-close ui-closable-tab"></span>
+			<li class="noselect"><a href="#tab1">Grid1</a>
+			<span class="ui-icon ui-icon-close ui-closable-tab"></span>
 			</li>
 		</ul>
 		<div id="tab1" class="resultTab">

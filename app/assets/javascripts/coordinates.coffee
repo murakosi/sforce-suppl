@@ -2,6 +2,9 @@ coordinates = ->
   
   selectedTabId = 1
 
+  #$("div#tabArea").on 'dblclick', 'ul', (e) ->
+  #  alert("ok")
+
   $('.execute-soql').on 'click', (e) ->
     e.preventDefault()
     selectedTabId =  $("div#tabArea").tabs('option', 'active') + 1
@@ -11,7 +14,7 @@ coordinates = ->
     e.preventDefault()
     tabContainerDiv=$(this).closest(".ui-tabs").attr("id")
     tabCount = $("#" + tabContainerDiv).find(".ui-closable-tab").length
-    alert(tabCount)
+
     if tabCount <= 1
       return
 
@@ -20,7 +23,6 @@ coordinates = ->
       $( "#" + panelId ).remove();
       $("#" + tabContainerDiv).tabs("refresh")
 
-
   $('#add-tab').on 'click', (e) ->
     e.preventDefault()
 
@@ -28,7 +30,7 @@ coordinates = ->
     new_tab_id = new_tab_index + 1
 
     $("div#tabArea ul").append(
-      "<li><a href=\"#tab" + new_tab_id + "\">Grid" + new_tab_id + "</a>" +
+      "<li class=\"noselect\"><a href=\"#tab" + new_tab_id + "\">Grid" + new_tab_id + "</a>" +
       "<span class=\"ui-icon ui-icon-close ui-closable-tab\"></span>" +
       "</li>"
     )
@@ -108,7 +110,8 @@ coordinates = ->
 
   get_columns = (result) ->
     if !result?
-      [[]]
+      #[[]]
+      null
     else
       result.columns
 
