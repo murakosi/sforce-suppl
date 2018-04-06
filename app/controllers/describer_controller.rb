@@ -17,9 +17,10 @@ class DescriberController < ApplicationController
       render "show"
       return
     end
-
+    method = "describe_global"
     begin
-      tmp = current_client.call_soap_api(method, {:sObjectType => "procure__c"})
+      #tmp = current_client.call_soap_api(method, {:sObjectType => "procure__c"})
+      tmp = current_client.list_sobjects
       puts "ok"
       if tmp.kind_of?(Array)
         @result = {:method => method, :columns => "Name", :rows => tmp}

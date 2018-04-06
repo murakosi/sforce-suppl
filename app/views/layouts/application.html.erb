@@ -9,6 +9,8 @@
   </head>
 
   <body>
+    <!-- add to load specific js -->
+    <%= yield(:head) %>
     <%= yield %>
   </body>
 </html>
