@@ -10,13 +10,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180404012320) do
+ActiveRecord::Schema.define(version: 20180406014111) do
 
   create_table "users", force: :cascade do |t|
     t.string "name"
     t.string "password_digest"
-    t.boolean "is_sandbox"
-    t.string "login_token"
+    t.integer "is_sandbox"
+    t.string "sforce_session_id"
+    t.string "sforce_server_url"
+    t.string "sforce_query_locator"
+    t.string "user_token"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

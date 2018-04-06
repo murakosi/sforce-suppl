@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
 
+  get 'describer/show'
+
   root :to => 'login#new'
 
   get     'login',   to: 'login#new'

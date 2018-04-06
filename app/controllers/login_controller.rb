@@ -11,7 +11,7 @@ class LoginController < ApplicationController
     begin
       login_to_salesforce(login_params)
       register_user()
-    rescue StandardError=> e
+    rescue Savon::SOAPFault => e
       @error_message = e.message
       render 'new'
     end
@@ -40,11 +40,10 @@ class LoginController < ApplicationController
       begin
         @user = User.find_by!(name: login_params[:name])
       rescue ActiveRecord::RecordNotFound => ex
-        @user = User.create(session_params)
+        @user = User.create(login_params)
       end
     end
 
-    # 許可するパラメータ
     def login_params
       params.require(:login_param).permit(:name, :password, :is_sandbox)
     end

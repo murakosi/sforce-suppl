@@ -3,11 +3,17 @@
 one:
   name: MyString
   password_digest: MyString
-  is_sandbox: false
-  login_token: MyString
+  is_sandbox: 1
+  sforce_session_id: MyString
+  sforce_server_url: MyString
+  sforce_query_locator: MyString
+  user_token: MyString
 
 two:
   name: MyString
   password_digest: MyString
-  is_sandbox: false
-  login_token: MyString
+  is_sandbox: 1
+  sforce_session_id: MyString
+  sforce_server_url: MyString
+  sforce_query_locator: MyString
+  user_token: MyString

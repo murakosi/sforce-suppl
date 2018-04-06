@@ -16,22 +16,19 @@ class ApplicationController < ActionController::Base
     end
 
     client = Soapforce::Client.new
-    result = client.authenticate(:username => login_params[:name], :password => login_params[:password], :host => host)
-    
-    save_sforce_session(result)
+    @result = client.authenticate(:username => login_params[:name], :password => login_params[:password], :host => host)
   end
 
   def sign_in(user)
     login_token = User.new_login_token
-    session[:user_login_token] = login_token
-    user.update!(login_token: User.encrypt(login_token))
+    session[:user_token] = login_token
+    user.update_attributes(get_attributes(login_token))
     @current_user = user
   end
 
   def sign_out
-    session.delete(:sforce_session)
     @current_user = nil
-    session.delete(:user_login_token)
+    session.delete(:user_token)
   end
 
   def signed_in?
@@ -39,36 +36,31 @@ class ApplicationController < ActionController::Base
   end
 
   def current_client
-    sforce_session = session[:sforce_session].symbolize_keys
     client = Soapforce::Client.new
-
-    begin
-      client.authenticate(sforce_session)
-      return client
-    rescue Savon::SOAPFault => e
-      fault_code = e.to_hash[:fault][:faultcode]
-      if fault_code == "sf:INVALID_SESSION_ID"
-        return client
-      else
-        raise e
-      end
-    end
-
+    client.authenticate(sforce_session)
   end
 
   private
     def current_user
-      login_token = User.encrypt(session[:user_login_token])
-      @current_user ||= User.find_by(login_token: login_token)
+      login_token = User.encrypt(session[:user_token])
+      @current_user ||= User.find_by(user_token: login_token)
     end
 
     def require_sign_in!
       redirect_to login_path unless signed_in?
     end
 
-    def save_sforce_session(result)
-      session_info = {:session_id => result[:session_id], :server_url => result[:server_url]}
-      session[:sforce_session] = session_info
+    def get_attributes(token)
+      {
+        :user_token => User.encrypt(token),
+        :sforce_session_id => @result[:session_id],
+        :sforce_server_url => @result[:server_url], 
+        :sforce_query_locator => @result[:query_locator]
+      }
+    end
+
+    def sforce_session
+      {:session_id => @current_user.sforce_session_id, :server_url => @current_user.sforce_server_url}
     end
 
     def is_sandbox?(login_params)
