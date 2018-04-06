@@ -23,7 +23,7 @@ class DescriberController < ApplicationController
       tmp = current_client.list_sobjects
       puts "ok"
       if tmp.kind_of?(Array)
-        @result = {:method => method, :columns => "Name", :rows => tmp}
+          @result = {:method => method, :columns => ["Name"], :rows => tmp.map{|v| {"name" => v}}} 
       elsif tmp.kind_of?(Soapforce::Result)
         t2 = tmp[:fields]
         @result = {:method => method, :columns => t2.first.keys, :rows => t2.each{ |hash| hash.values}}
