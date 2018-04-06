@@ -15,18 +15,19 @@
 }
  
 #menuList ul {
-    margin: 0 auto;
+    /*margin: 0 auto;*/
     /*width: 800px;*/
-    width: 60%;
+    /*width: 60%;*/
     height: 45px;
-    text-align: left;
+    /*text-align: left;*/
+    margin-left:70%;
     list-style: none;
 }
  
 #menuList ul li {
     width: 120px;
     height: 45px;
-    float: right;
+    float: left;
     border-left: #aaa 1px solid;
     box-sizing: border-box;
 }
@@ -36,8 +37,7 @@
 }
  
 #menuList ul li a {
-    height: 45px;
-    
+    height: 45px;    
     line-height: 45px;
     display: block;
     text-align: center;

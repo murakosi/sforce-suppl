@@ -1,12 +1,13 @@
 Rails.application.routes.draw do
 
-  get 'describer/show'
-
   root :to => 'login#new'
 
   get     'login',   to: 'login#new'
   post    'login',   to: 'login#create'
   delete  'logout',  to: 'login#destroy'
+
+  get  'describe',  to: 'describer#show'
+  post 'describe',  to: 'describer#execute'
 
   get 'soqlexecuter' => 'soqlexecuter#index'
 

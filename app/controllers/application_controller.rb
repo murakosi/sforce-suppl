@@ -38,6 +38,7 @@ class ApplicationController < ActionController::Base
   def current_client
     client = Soapforce::Client.new
     client.authenticate(sforce_session)
+    return client
   end
 
   private
