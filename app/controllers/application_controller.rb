@@ -16,13 +16,19 @@ class ApplicationController < ActionController::Base
     end
 
     client = Soapforce::Client.new
-    @result = client.authenticate(:username => login_params[:name], :password => login_params[:password], :host => host)
+    client.authenticate(:username => login_params[:name], :password => login_params[:password], :host => host)
   end
 
-  def sign_in(user)
+  #def sign_in(user)
+  def sign_in(login_params)
+    sforce_result = login_to_salesforce(login_params)
+
+    user = get_user(login_params)
     login_token = User.new_login_token
     session[:user_token] = login_token
-    user.update_attributes(get_attributes(login_token))
+
+    user.update_attributes(get_attributes(login_token, sforce_result))
+    
     @current_user = user
   end
 
@@ -47,16 +53,24 @@ class ApplicationController < ActionController::Base
       @current_user ||= User.find_by(user_token: login_token)
     end
 
+    def get_user(login_params)
+      begin
+        User.find_by!(name: login_params[:name])
+      rescue ActiveRecord::RecordNotFound => ex
+        User.create(login_params)
+      end
+    end
+
     def require_sign_in!
       redirect_to login_path unless signed_in?
     end
 
-    def get_attributes(token)
+    def get_attributes(token, result)
       {
         :user_token => User.encrypt(token),
-        :sforce_session_id => @result[:session_id],
-        :sforce_server_url => @result[:server_url], 
-        :sforce_query_locator => @result[:query_locator]
+        :sforce_session_id => result[:session_id],
+        :sforce_server_url => result[:server_url], 
+        :sforce_query_locator => result[:query_locator]
       }
     end
 
