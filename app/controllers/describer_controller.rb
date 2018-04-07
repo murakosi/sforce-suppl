@@ -1,4 +1,5 @@
-require 'fileutils'
+require "fileutils"
+require "rubyxl"
 
 class DescriberController < ApplicationController
   before_action :require_sign_in!
@@ -9,7 +10,6 @@ class DescriberController < ApplicationController
   end
 
   def execute
-    doit()
 
     @input_error = String.new
 
@@ -42,12 +42,32 @@ class DescriberController < ApplicationController
     end
   end
 
-  def doit
+  def download
     src_path = "./lib/assets/book1.xlsx"
 
     dest = "./Output/book1_copy.xlsx"
 
     FileUtils.cp(src_path, dest)
-    #@workbook = RubyXL::Parser.parse("file.xlsx")
+
+    workbook = RubyXL::Parser.parse(dest)
+    sheet = workbook.first
+
+    for row in 2..5
+      for col in 0..6
+        sheet.add_cell(row, col , "row" + row.to_s + "," + "col" + col.to_s)
+      end
+    end
+
+    workbook.write(dest)
+
+    #ファイルの出力
+    send_data(workbook.stream.read,
+      :disposition => 'attachment',
+      :type => 'application/excel',
+      :filename => 'abc.xlsx',
+      :status => 200
+    )
+    
+    FileUtils.rm(dest)
   end
 end
