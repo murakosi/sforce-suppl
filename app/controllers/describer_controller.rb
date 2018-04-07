@@ -1,3 +1,5 @@
+require 'fileutils'
+
 class DescriberController < ApplicationController
   before_action :require_sign_in!
 
@@ -7,6 +9,8 @@ class DescriberController < ApplicationController
   end
 
   def execute
+    doit()
+
     @input_error = String.new
 
     method = params[:method].to_sym
@@ -19,7 +23,7 @@ class DescriberController < ApplicationController
     end
     method = "describe_global"
     begin
-      #tmp = current_client.call_soap_api(method, {:sObjectType => "procure__c"})
+
       tmp = current_client.list_sobjects
       puts "ok"
       if tmp.kind_of?(Array)
@@ -39,20 +43,11 @@ class DescriberController < ApplicationController
   end
 
   def doit
-        val = params[:input_soql].to_i
+    src_path = "./lib/assets/book1.xlsx"
 
-    if val == 1
-      lt = current_client.describe('procure__c')
-      @result = lt.map{|h| h.to_s}
-    elsif val == 2
-      @result = current_client.list_sobjects
-    elsif val == 3
-      @result = current_client.field_list('procure__c')
-    else
-      lt = current_client.call_soap_api(params[:method], params[:args])
-      @result = lt.map{|h| h.to_s}
-    end
+    dest = "./Output/book1_copy.xlsx"
 
-    render "show"
+    FileUtils.cp(src_path, dest)
+    #@workbook = RubyXL::Parser.parse("file.xlsx")
   end
 end
