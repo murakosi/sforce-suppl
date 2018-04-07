@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   get  'describe',  to: 'describer#show'
   post 'describe',  to: 'describer#execute'
 
+  get 'download', to: 'describer#download'
   get 'soqlexecuter' => 'soqlexecuter#index'
 
   get 'soqlexecuter/index' => 'soqlexecuter#index'

@@ -1,3 +1,6 @@
+require "fileutils"
+require "rubyxl"
+
 class DescriberController < ApplicationController
   before_action :require_sign_in!
 
@@ -7,6 +10,7 @@ class DescriberController < ApplicationController
   end
 
   def execute
+
     @input_error = String.new
 
     method = params[:method].to_sym
@@ -19,7 +23,7 @@ class DescriberController < ApplicationController
     end
     method = "describe_global"
     begin
-      #tmp = current_client.call_soap_api(method, {:sObjectType => "procure__c"})
+
       tmp = current_client.list_sobjects
       puts "ok"
       if tmp.kind_of?(Array)
@@ -38,21 +42,32 @@ class DescriberController < ApplicationController
     end
   end
 
-  def doit
-        val = params[:input_soql].to_i
+  def download
+    src_path = "./lib/assets/book1.xlsx"
 
-    if val == 1
-      lt = current_client.describe('procure__c')
-      @result = lt.map{|h| h.to_s}
-    elsif val == 2
-      @result = current_client.list_sobjects
-    elsif val == 3
-      @result = current_client.field_list('procure__c')
-    else
-      lt = current_client.call_soap_api(params[:method], params[:args])
-      @result = lt.map{|h| h.to_s}
+    dest = "./Output/book1_copy.xlsx"
+
+    FileUtils.cp(src_path, dest)
+
+    workbook = RubyXL::Parser.parse(dest)
+    sheet = workbook.first
+
+    for row in 2..5
+      for col in 0..6
+        sheet.add_cell(row, col , "row" + row.to_s + "," + "col" + col.to_s)
+      end
     end
 
-    render "show"
+    workbook.write(dest)
+
+    #ファイルの出力
+    send_data(workbook.stream.read,
+      :disposition => 'attachment',
+      :type => 'application/excel',
+      :filename => 'abc.xlsx',
+      :status => 200
+    )
+    
+    FileUtils.rm(dest)
   end
 end

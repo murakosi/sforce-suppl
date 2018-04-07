@@ -58,3 +58,5 @@ gem 'soapforce', '~> 0.5.0'
 gem 'coffee-script-source', '1.8.0'
 
 gem 'jquery-rails'
+
+gem 'rubyXL'
