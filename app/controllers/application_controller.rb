@@ -19,7 +19,6 @@ class ApplicationController < ActionController::Base
     client.authenticate(:username => login_params[:name], :password => login_params[:password], :host => host)
   end
 
-  #def sign_in(user)
   def sign_in(login_params)
     sforce_result = login_to_salesforce(login_params)
 
