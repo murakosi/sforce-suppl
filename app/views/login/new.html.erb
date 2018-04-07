@@ -1,0 +1,53 @@
+<style>
+td{
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+#login-form{
+    padding-top: 20px;
+}
+
+.form-label{
+    padding-right: 5px;
+}
+
+.login-button{
+    text-align: center;
+}
+
+#loginErrorMessage{
+    color: red;
+    white-space: pre;
+}
+</style>
+
+<div id="menuList">
+    <ul>
+    </ul>
+</div>
+<div>
+<h1>Login#new</h1>
+<p>Find me in app/views/login/new.html.erb</p>
+</div>
+<div id="login-form" align="center">
+    <%= form_for :login_param, url: login_path do |f| %>
+    <table>
+        <tr>
+            <td><%= f.label 'User Name:', :class => 'form-label' %></td>
+            <td><%= f.text_field :name, value: "murakoshi@cse.co.jp" %><td>
+        </tr>
+        <tr>
+            <td><%= f.label 'Password:', :class => 'form-label' %></td>
+            <td><%= f.password_field :password, value: "s13926cse" %></td>
+        </tr>
+        <tr>
+            <td><%= f.label 'Sandbox:', :class => 'form-label' %></td>
+            <td><%= f.check_box :is_sandbox %></td>
+        <tr>
+            <td colspan="2" class="login-button"><%= f.submit 'Login', :class => 'btn btn-primary' %></td>
+        </tr>
+    </table>
+    <div id="loginErrorMessage"><%= @error_message %></div>
+    <% end %>
+</div>

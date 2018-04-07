@@ -1,0 +1,165 @@
+<style>
+.resultTab{
+	padding-right: 7px;
+}
+
+.resultSoql{
+	border: 1px solid lightgray;
+	font-size: 9pt;
+	padding: 4px;
+	margin-bottom: 2px;
+	margin-top: 2px;
+}
+
+.resultGrid {
+	background: white;
+	outline: 0;
+	border: 0px solid gray;
+}
+
+#add-tab{
+	margin-bottom: 5px;
+	font-size: 14px;
+	font-family:Arial;
+}
+
+.ui-tabs .ui-tabs-panel {
+	padding: 0;
+	margin: 0;
+}
+
+.ui-tabs .ui-tabs-nav li a {
+	font-size:10pt !important;
+}
+
+.noselect {
+    -webkit-user-select: none; /* Safari */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+}
+
+.ui-tabs .ui-tabs-nav .ui-tabs-anchor {
+	float: left;
+	padding: .5em .5em .5em 1em;
+	text-decoration: none;
+}
+.ui-tabs .ui-tabs-nav:focus {
+	/*
+    padding-left: 0px; 
+    background: transparent; 
+    border-width: 0px 0px 1px 0px; 
+    -moz-border-radius: 0px; 
+    -webkit-border-radius: 0px; 
+	border-radius: 0px;
+	*/
+}
+
+#tabArea ul li a { outline:none; /* outline-color:red */; }
+#tabArea ul li { outline:none; /* outline-color:red */; }
+
+.ui-tabs .ui-tabs-nav li.ui-tabs-active .ui-tabs-anchor,
+.ui-tabs .ui-tabs-nav li.ui-state-disabled .ui-tabs-anchor,
+.ui-tabs .ui-tabs-nav li.ui-tabs-loading .ui-tabs-anchor {
+	/* cursor: pointer; */
+}
+
+.ui-tabs-nav .ui-icon { 
+	/*
+	float: right;
+	margin: 0em 0em 0 1em;
+	cursor: pointer;
+	*/
+}
+
+#tabArea li .ui-icon-close {
+	float: left;
+	margin: 0.4em 0.2em 0 0;
+	cursor: pointer; 
+}
+
+.handsontable span.colHeader{
+    font-size: 10pt;
+}
+
+.handsontable th, .handsontable td{
+    font-size: 10pt;
+}
+
+.handsontable span.data{
+    color: black;
+    font-style:bold;
+}
+
+#messageArea{
+    width: 50%;
+    display: none;
+    color: red;
+    white-space: pre;
+}
+
+#mainArea{
+	padding-top: 20px;
+	width:100%;
+	margin: 0 auto;
+}
+
+#formArea{
+	width: 70%;
+	margin: 0 auto;
+}
+
+#tabArea{
+	width: 60%;
+	border: 0px solid lightgray;
+	//margin: 0 auto;
+	float:left;
+}
+#dummyArea{
+	width: 15%;
+	height: 10px;
+	/*border: 1px solid lightgray;*/
+	float: left;
+}
+</style>
+<% javascript 'handsontable.full.min','jquery-1.11.2.min','jquery-ui-1.11.3.min','soqlexecuter' %>
+<div id="menuList">
+    <ul>
+		<li><%= link_to "Logout", logout_path, method: :delete %></li>
+		<li><%= link_to "Describe", describe_path, method: :get %></li>
+    </ul>
+</div>
+
+<div>
+<h1>Soqlexecuter#index</h1>
+<p>Find me in app/views/soqlexecuter/index.html.erb</p>
+</div>
+
+<div id="mainArea">
+	<div id="formArea">
+		<%= form_tag soqlexecuter_show_path(), :method => :post, :class => "execute-form" do %>
+		<%= text_area_tag :input_soql, "select id,name from procure__c", :size => "120x5" %>
+		<br>
+		<%= submit_tag "Execute", :class => "btn btn-primary execute-soql" %>
+		<% end %>
+		<p><div id="messageArea"></div></p>
+	</div>
+
+	<div id="dummyArea"></div>
+	
+	<div id="tabArea">
+		<%= button_tag "Add tab", :type => "button", :id => "add-tab", :class => "btn btn-default" %>		
+		<ul>
+			<li class="noselect"><a href="#tab1">Grid1</a>
+			<span class="ui-icon ui-icon-close ui-closable-tab"></span>
+			</li>
+		</ul>
+		<div id="tab1" class="resultTab">
+			<div id="soql1" class="resultSoql">
+			alala alala
+			</div>
+			<div id="grid1" class="resultGrid"></div>
+		</div>
+	</div>
+</div>
