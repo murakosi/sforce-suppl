@@ -31,20 +31,6 @@ class LoginController < ApplicationController
       end
     end
 
-    #def register_user
-    #  set_user()
-    #  sign_in(@user)
-    #  redirect_to soqlexecuter_path
-    #end
-
-    #def set_user
-    #  begin
-    #    @user = User.find_by!(name: login_params[:name])
-    #  rescue ActiveRecord::RecordNotFound => ex
-    #    @user = User.create(login_params)
-    #  end
-    #end
-
     def login_params
       params.require(:login_param).permit(:name, :password, :is_sandbox)
     end
