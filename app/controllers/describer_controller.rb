@@ -6,43 +6,61 @@ class DescriberController < ApplicationController
 
   protect_from_forgery :except => [:execute]
 
+  @result = nil
+  attr_reader :keep
+  
   def show
+    puts params
+    res = current_client.describe_global()
+    #puts res.each{|v| v.to_s}
+    @keep = Array.new
+    @keep = res[:sobjects].map { |sobject| {:name => sobject[:name], :cus => sobject[:custom]} }
+
+    @sobjects = @keep.map{|hash| hash[:name]}
+    #@sobjects = [{"Railsの基礎" => "rails_base", "Rubyの基礎" => "ruby_base"}]
+  end
+
+  def change
+    puts @keep.class
+    #@sobjects = @keep.reject{|h| !h[:custom] }.map{|h| h[:name]}
+    res = current_client.describe_global()
+    @keep = res[:sobjects].map { |sobject| {:name => sobject[:name], :cus => sobject[:custom]} }
+
+    @sobjects = @keep.reject{|h| !h[:custom] }.map{|h| h[:name]}
+
+    render :json => @sobjects, :status => 200
   end
 
   def execute
 
-    @input_error = String.new
+    @result = nil
 
-    method = params[:method].to_sym
-    args = params[:args]
+    sobject = params[:selected_sobject]
 
-    if method.empty? || args.empty?
-      @input_error = "input error"  
-      render "show"
-      return
-    end
-    method = "describe_global"
     begin
+      describe_result = current_client.describe(sobject)
+      field_result = describe_result[:fields]
+      @result = {:method => "method", :columns => field_result.first.keys, :rows => field_result.each{ |hash| hash.values}}
 
-      tmp = current_client.list_sobjects
-      puts "ok"
-      if tmp.kind_of?(Array)
-          @result = {:method => method, :columns => ["Name"], :rows => tmp.map{|v| {"name" => v}}} 
-      elsif tmp.kind_of?(Soapforce::Result)
-        t2 = tmp[:fields]
-        @result = {:method => method, :columns => t2.first.keys, :rows => t2.each{ |hash| hash.values}}
-      else
-        raise StandardError.new("error:" + tmp.to_s)
-      end
       render :json => @result, :status => 200
     rescue StandardError => ex
-      puts "error"
-      puts ex.message
+
       render :json => {:error => ex.message}, :status => 400
     end
   end
 
+  def get_values(field_result)
+    #key_order = %i[b a]
+    #field_result.each{ |hash| hash.values}}.slice(*key_order)
+  end
+
   def download
+
+    if @result.nil?
+      render 'back'
+      return
+    end
+
     src_path = "./lib/assets/book1.xlsx"
 
     dest = "./Output/book1_copy.xlsx"

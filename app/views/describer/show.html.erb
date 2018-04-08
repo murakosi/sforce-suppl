@@ -138,25 +138,37 @@
 
 <div id="mainArea">
 	<div id="formArea">
-		<%= form_tag describe_path(), :method => :post, :class => "describe-form" do %>
-		<%= text_field_tag :method, "describe_s_object" %><br>
-        <%= text_field_tag :args, "sObjectType: procure__c" %>
-		<br>
-		<%= submit_tag "Describe", :class => "btn btn-primary execute-describe" %>
+		<%= form_tag change_path(), :method => :get, :class => "chk" do %>
+		<%= radio_button_tag 'SOType', :both, true, :class => "chk" %>All&nbsp;&nbsp;
+		<%= radio_button_tag 'SOType', :st, false, :class => "chk" %>Standard&nbsp;&nbsp;
+		<%= radio_button_tag 'SOType', :cus, false, :class => "chk" %>Custom&nbsp;&nbsp;
 		<% end %>
-		<p><div id="messageArea"><%= @input_error %></div></p>
+
+	    <%= form_tag describe_path(), :method => :post, :class => "describe-form" do %>
+		<table>
+			<tr>
+				<td><%= label_tag 'sObjects' %></td>
+				<!--<td><%= select_tag :selected_sobject, options_for_select(@sobjects), multiple: false, :class => "searchable" %></td>-->
+				<!--<td><%= render :partial => "sotype", :locals => { title: @sobjects } %></td>-->
+				<td><div  id="here"><%= select_tag :selected_sobject, options_for_select(@sobjects), multiple: false, :class => "searchable" %></div></td>
+			</tr>
+			<tr>
+				<td colspan="3" class="login-button">
+				<%= submit_tag 'Describe', :class => 'btn btn-primary execute-describe' %>
+				</td>
+			</tr>
+		</table>
+		<% end %>
+		<div id="messageArea"><%= @input_error %></div>
 	</div>
 
 	<div id="dummyArea"></div>
 	
 	<div id="tabArea">
 	<%= link_to 'Download PDF', download_path(), :method => :get %>
-		<%= button_tag "Add tab", :type => "button", :id => "add-tab", :class => "btn btn-default" %>		
-		<ul>
-			<li class="noselect"><a href="#tab1">Grid1</a>
-			<span class="ui-icon ui-icon-close ui-closable-tab"></span>
-			</li>
-		</ul>
+		<%= form_tag download_path(), :method => :get, :class => "describe-form" do %>
+		<%= button_tag "Export", :id => "exp-btn", :class => "btn btn-default exp-btn" %>
+		<% end %>	
 		<div id="tab1" class="resultTab">
 			<div id="method1" class="resultSoql">
 			alala alala
