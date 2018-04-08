@@ -43,7 +43,7 @@ class ApplicationController < ActionController::Base
   def current_client
     client = Soapforce::Client.new
     client.authenticate(sforce_session)
-    return client
+    return client  
   end
 
   private
@@ -80,4 +80,5 @@ class ApplicationController < ActionController::Base
     def is_sandbox?(login_params)
       ActiveRecord::Type::Boolean.new.cast(login_params[:is_sandbox])
     end
+
 end

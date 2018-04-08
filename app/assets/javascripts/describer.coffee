@@ -8,10 +8,25 @@ coordinates = ->
   #$("div#tabArea").on 'dblclick', 'ul', (e) ->
   #  alert("ok")
 
+  $('.chk').on 'change', (e) ->
+    e.stopPropagation()
+    e.preventDefault()
+    alert("cli")
+    val = {type: 1}
+    action = "change"
+    method = "get"
+    getCoordinatesInRange(val, action, method, donothing)
+
+  donothing = (result) ->
+    $("#here").html('<%= escape_javascript options_for_select(@sobjects) %>')
+
   $('.execute-describe').on 'click', (e) ->
     e.preventDefault()
     selectedTabId =  $("div#tabArea").tabs('option', 'active') + 1
-    getCoordinatesInRange()
+    val = {selected_sobject: $('#selected_sobject').val()}
+    action = $('.describe-form').attr('action')
+    method = $('.describe-form').attr('method')
+    getCoordinatesInRange(val, action, method, createGrid)
 
   $(document).on 'click', 'span', (e) ->
     e.preventDefault()
@@ -53,13 +68,14 @@ coordinates = ->
 
     $("div#tabArea").tabs({ active: new_tab_index });
 
-  getCoordinatesInRange = ->
-    post_data = {method: $('#method').val(), args: $('#args').val()}
+  getCoordinatesInRange = (data, action, method, callback) ->
+    #post_data = {selected_sobject: $('#selected_sobject').val()}
+    post_data = data
 
     jqXHR = $.ajax({
       async: true
-      url: $('.describe-form').attr('action')
-      type: $('.describe-form').attr('method')
+      url: action #$('.describe-form').attr('action')
+      type: method #$('.describe-form').attr('method')
       data: post_data
       dataType: 'json'
       cache: false
@@ -69,7 +85,8 @@ coordinates = ->
       console.log { done: stat, data: data, xhr: xhr }
       $("#messageArea").empty()
       $("#messageArea").hide()
-      createGrid(xhr.responseText)
+      #createGrid(xhr.responseText)
+      callback(xhr.responseText)
 
     jqXHR.fail (xhr, stat, err) ->
       console.log { fail: stat, error: err, xhr: xhr }
@@ -82,6 +99,7 @@ coordinates = ->
   displayError = (error) ->
     $("#messageArea").html($.parseJSON(error).error)
     $("#messageArea").show()
+    $("#exp-btn").prop("disabled", true);
 
   createGrid = (result = null) ->   
     hotElement = document.querySelector("#grid" + selectedTabId)
@@ -97,7 +115,7 @@ coordinates = ->
 
     hotSettings = {
         data: records,
-        width:document.getElementById('tabArea').offsetWidth,
+        width: get_grid_width(parsedResult),
         height: 500;
         stretchH: 'all',
         autoWrapRow: true,
@@ -106,12 +124,14 @@ coordinates = ->
         rowHeaders: true,
         colHeaders: header,
         columns: columns_option,
-        contextMenu: true,
+        contextMenu: false,
         readOnly: true,
         startRows: 0
     }
 
     table = new Handsontable(hotElement, hotSettings)
+
+    $("#exp-btn").prop("disabled", false);
 
   get_columns = (result) ->
     if !result?
@@ -137,10 +157,17 @@ coordinates = ->
       [[]]
     else
       null
-  
+  get_grid_width = (result) ->
+    if !result?
+      0
+    else
+      document.getElementById('tabArea').offsetWidth
+
   $("div#tabArea").tabs()
 
   createGrid()
+
+  $("#exp-btn").prop("disabled", true)
 
 $(document).ready(coordinates)
 $(document).on('page:load', coordinates)

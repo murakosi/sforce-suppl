@@ -7,6 +7,8 @@ Rails.application.routes.draw do
   delete  'logout',  to: 'login#destroy'
 
   get  'describe',  to: 'describer#show'
+  get  'change', to: 'describer#change'
+  post  'change', to: 'describer#change'
   post 'describe',  to: 'describer#execute'
 
   get 'download', to: 'describer#download'
