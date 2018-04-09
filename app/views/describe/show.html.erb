@@ -148,8 +148,7 @@
 		<table>
 			<tr>
 				<td><%= label_tag 'sObjects: ' %></td>
-				<td><div  id="object_list"><%= render partial: 'objectlist', locals: {data_source: @sobjects} %></div></td>				
-  </div>
+				<td><div id="object_list"><%= render partial: 'objectlist', locals: {data_source: @sobjects} %></div></td>
 			</tr>
 			<tr>
 				<td colspan="3" class="login-button">
@@ -164,7 +163,7 @@
 	<div id="dummyArea"></div>
 	
 	<div id="tabArea">
-	<%= link_to 'Download PDF', download_path(), :method => :get %>
+		<br>
 		<%= form_tag download_path(), :method => :get, :class => "describe-form" do %>
 		<%= button_tag "Export", :id => "exp-btn", :class => "btn btn-default exp-btn" %>
 		<% end %>	
