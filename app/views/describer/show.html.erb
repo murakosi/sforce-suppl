@@ -132,25 +132,24 @@
 </div>
 
 <div>
-<h1>Describer#show</h1>
+<h1>Describe#show</h1>
 <p>Find me in app/views/describer/show.html.erb</p>
 </div>
 
 <div id="mainArea">
 	<div id="formArea">
 		<%= form_tag change_path(), :method => :get, :class => "chk" do %>
-		<%= radio_button_tag 'SOType', :both, true, :class => "chk" %>All&nbsp;&nbsp;
-		<%= radio_button_tag 'SOType', :st, false, :class => "chk" %>Standard&nbsp;&nbsp;
-		<%= radio_button_tag 'SOType', :cus, false, :class => "chk" %>Custom&nbsp;&nbsp;
+		<%= radio_button_tag 'SOType', :all, true, :class => "chk" %>All&nbsp;&nbsp;
+		<%= radio_button_tag 'SOType', :standard, false, :class => "chk" %>Standard&nbsp;&nbsp;
+		<%= radio_button_tag 'SOType', :custom, false, :class => "chk" %>Custom&nbsp;&nbsp;
 		<% end %>
 
 	    <%= form_tag describe_path(), :method => :post, :class => "describe-form" do %>
 		<table>
 			<tr>
-				<td><%= label_tag 'sObjects' %></td>
-				<!--<td><%= select_tag :selected_sobject, options_for_select(@sobjects), multiple: false, :class => "searchable" %></td>-->
-				<!--<td><%= render :partial => "sotype", :locals => { title: @sobjects } %></td>-->
-				<td><div  id="here"><%= select_tag :selected_sobject, options_for_select(@sobjects), multiple: false, :class => "searchable" %></div></td>
+				<td><%= label_tag 'sObjects: ' %></td>
+				<td><div  id="object_list"><%= render partial: 'objectlist', locals: {data_source: @sobjects} %></div></td>				
+  </div>
 			</tr>
 			<tr>
 				<td colspan="3" class="login-button">

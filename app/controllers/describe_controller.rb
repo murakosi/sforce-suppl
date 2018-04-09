@@ -1,34 +1,31 @@
 require "fileutils"
 require "rubyxl"
+#require "DescriberHelper"
 
-class DescriberController < ApplicationController
+class DescribeController < ApplicationController
   before_action :require_sign_in!
 
   protect_from_forgery :except => [:execute]
 
-  @result = nil
+  #@@global_result = Array.new
+
   attr_reader :keep
   
+  def describe_global
+    if !DescriberHelper.is_global_fetched?
+      DescriberHelper.describe_global(current_client)
+    end
+  end
+  
   def show
-    puts params
-    res = current_client.describe_global()
-    #puts res.each{|v| v.to_s}
-    @keep = Array.new
-    @keep = res[:sobjects].map { |sobject| {:name => sobject[:name], :cus => sobject[:custom]} }
-
-    @sobjects = @keep.map{|hash| hash[:name]}
-    #@sobjects = [{"Railsの基礎" => "rails_base", "Rubyの基礎" => "ruby_base"}]
+    describe_global
+    @sobjects = DescriberHelper.global_result.map{|hash| hash[:name]}
   end
 
   def change
-    puts @keep.class
-    #@sobjects = @keep.reject{|h| !h[:custom] }.map{|h| h[:name]}
-    res = current_client.describe_global()
-    @keep = res[:sobjects].map { |sobject| {:name => sobject[:name], :cus => sobject[:custom]} }
+    @sobjects = DescriberHelper.global_result.select{|h| h[:name] == 'Account' }.map{|h| h[:name]}
 
-    @sobjects = @keep.reject{|h| !h[:custom] }.map{|h| h[:name]}
-
-    render :json => @sobjects, :status => 200
+    render partial: 'objectlist', locals: {data_source: @sobjects}
   end
 
   def execute
