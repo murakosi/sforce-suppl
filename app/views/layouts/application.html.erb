@@ -6,11 +6,12 @@
 
     <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+    <!-- add to load specific js files -->
+    <%= yield(:head) %>
+    
   </head>
 
   <body>
-    <!-- add to load specific js -->
-    <%= yield(:head) %>
     <%= yield %>
   </body>
 </html>

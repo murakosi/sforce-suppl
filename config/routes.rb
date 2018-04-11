@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
 
+  get 'main', to: 'main#index'
+
   root :to => 'login#new'
 
   get     'login',   to: 'login#new'

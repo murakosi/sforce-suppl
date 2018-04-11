@@ -13,6 +13,7 @@ module Sforcesuppl
     config.assets.precompile += %w(handsontable.full.min.js)
     config.assets.precompile += %w(jquery-1.11.2.min.js)
     config.assets.precompile += %w(jquery-ui-1.11.3.min.js)
+    config.assets.precompile += %w(main.coffee)
     config.assets.precompile += %w(describer.coffee)
     config.assets.precompile += %w(soqlexecuter.coffee)
     # Settings in config/environments/* take precedence over those specified here.

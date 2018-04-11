@@ -135,7 +135,7 @@ coordinates = ->
       [[]]
     else
       null
-  
+
   $("div#tabArea").tabs()
 
   createGrid()

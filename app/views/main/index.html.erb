@@ -9,7 +9,6 @@
 	padding: 4px;
 	margin-bottom: 2px;
 	margin-top: 2px;
-	white-space: pre;
 }
 
 .resultGrid {
@@ -123,56 +122,28 @@
 	/*border: 1px solid lightgray;*/
 	float: left;
 }
+#executerContent, #describeContent {
+ display:none;   
+}
+.togglediv2 #executerContent, .togglediv3 #describeContent{
+ display:block;   
+}
 </style>
-<% javascript 'handsontable.full.min','jquery-1.11.2.min','jquery-ui-1.11.3.min','describer' %>
+<% javascript 'handsontable.full.min','jquery-1.11.2.min','jquery-ui-1.11.3.min','main' %>
 <div id="menuList">
     <ul>
 		<li><%= link_to "Logout", logout_path, method: :delete %></li>
-		<li><%= link_to "SOQL", soqlexecuter_path, method: :get %></li>
+        <li><a id="togglediv2" href="#">SOQL</a></li>
+		<li><a id="togglediv3" href="#">Describe</a></li>
     </ul>
 </div>
 
 <div>
-<h1>Describe#show</h1>
-<p>Find me in app/views/describer/show.html.erb</p>
+<h1>Soqlexecuter#index</h1>
+<p>Find me in app/views/soqlexecuter/index.html.erb</p>
 </div>
 
 <div id="mainArea">
-	<div id="formArea">
-		<%= form_tag change_path(), :method => :get, :class => "chk" do %>
-		<%= radio_button_tag 'SOType', :all, false, :class => "chk" %>All&nbsp;&nbsp;
-		<%= radio_button_tag 'SOType', :standard, false, :class => "chk" %>Standard&nbsp;&nbsp;
-		<%= radio_button_tag 'SOType', :custom, true, :class => "chk" %>Custom&nbsp;&nbsp;
-		<% end %>
-
-	    <%= form_tag describe_path(), :method => :post, :class => "describe-form" do %>
-		<table>
-			<tr>
-				<td><%= label_tag 'sObjects: ' %></td>
-				<td><div id="object_list"><%= render partial: 'objectlist', locals: {data_source: @sobjects} %></div></td>
-			</tr>
-			<tr>
-				<td colspan="3" class="login-button">
-				<%= submit_tag 'Describe', :class => 'btn btn-primary execute-describe' %>
-				</td>
-			</tr>
-		</table>
-		<% end %>
-		<div id="messageArea"><%= @input_error %></div>
-	</div>
-
-	<div id="dummyArea"></div>
-	
-	<div id="tabArea">
-		<br>
-		<%= form_tag download_path(), :method => :get, :class => "describe-form" do %>
-		<%= button_tag "Export", :id => "exp-btn", :class => "btn btn-default exp-btn" %>
-		<% end %>	
-		<div id="tab1" class="resultTab">
-			<div id="method1" class="resultSoql">
-			alala alala
-			</div>
-			<div id="grid1" class="resultGrid"></div>
-		</div>
-	</div>
+    <div id="executerContent"></div>
+    <div id="describeContent"></div>
 </div>
