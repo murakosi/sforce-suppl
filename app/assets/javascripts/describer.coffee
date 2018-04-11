@@ -4,6 +4,7 @@
 coordinates = ->
   
   selectedTabId = 1
+  jqXHR = null
 
   get_options = (action, method, data, datatype) ->
     {
@@ -16,7 +17,7 @@ coordinates = ->
   $('.chk').on 'change', (e) ->
     e.stopPropagation()
     e.preventDefault()
-
+ 
     val = {object_type: e.target.value}
     action = "change"
     method = "get"
@@ -37,6 +38,9 @@ coordinates = ->
     executeAjax(options, createGrid, displayError)
 
   executeAjax = (options, doneCallback, errorCallback) ->
+
+    if jqXHR
+      return
 
     jqXHR = $.ajax({
       async: true
@@ -61,11 +65,12 @@ coordinates = ->
     jqXHR.always (res1, stat, res2) ->
       console.log { always: stat, res1: res1, res2: res2 }
       #alert 'Ajax Finished!' if stat is 'success'
+      jqXHR = null
 
   displayError = (error) ->
     $("#messageArea").html($.parseJSON(error).error)
     $("#messageArea").show()
-    $("#exp-btn").prop("disabled", true);
+    $(".exp-btn").prop("disabled", true);
 
   createGrid = (result = null) ->   
     hotElement = document.querySelector("#grid" + selectedTabId)
@@ -97,7 +102,7 @@ coordinates = ->
 
     table = new Handsontable(hotElement, hotSettings)
 
-    $("#exp-btn").prop("disabled", false);
+    $(".exp-btn").prop("disabled", false);
 
   get_columns = (result) ->
     if !result?
@@ -133,7 +138,7 @@ coordinates = ->
 
   createGrid()
 
-  $("#exp-btn").prop("disabled", true)
+  $(".exp-btn").prop("disabled", true)
 
 $(document).ready(coordinates)
 $(document).on('page:load', coordinates)

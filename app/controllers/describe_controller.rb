@@ -1,5 +1,6 @@
 require "fileutils"
 require "rubyxl"
+require "csv"
 
 class DescribeController < ApplicationController
   before_action :require_sign_in!
@@ -52,32 +53,55 @@ class DescribeController < ApplicationController
     #end
   end
 
-  def get_object_info(hash)
-    object_type = hash[:custom] ? "カスタムオブジェクト" : "標準オブジェクト"
-    info = object_type + "\n" +
-           "表示ラベル：" + hash[:label] + "\n" +
+  def get_object_info(hash)    
+    info = "表示ラベル：" + hash[:label] + "\n" +
            "API参照名：" + hash[:name] + "\n" +
            "プレフィックス：" + hash[:key_prefix]
   end
 
   def download
+    if params[:format] == "csv"
+      download_csv()
+    else
+      download_excel()
+    end
+  end
 
-    src_path = "./lib/assets/book1.xlsx"
-
-    dest = "./Output/book1_copy.xlsx"
-
-    FileUtils.cp(src_path, dest)
-
-    workbook = RubyXL::Parser.parse(dest)
-    sheet = workbook.first
-
-    for row in 2..5
-      for col in 0..6
-        sheet.add_cell(row, col , "row" + row.to_s + "," + "col" + col.to_s)
+  def download_csv
+    csv_date = CSV.generate(encoding: Encoding::SJIS, row_sep: "\r\n", force_quotes: true) do |csv|
+      csv_column_names = DescribeHelper.formatter_object_result.first.keys
+      csv << csv_column_names
+      DescribeHelper.formatter_object_result.each do | hash |
+          csv << hash.values
       end
     end
+    send_data(csv_date, filename: "abc.csv")
+  end
 
-    workbook.write(dest)
+  def download_excel
+
+    if !DescribeHelper.is_sobject_fetched?
+      return
+    end
+
+    source_excel = "./lib/assets/book1.xlsx"
+
+    output_excel = "./Output/book1_copy.xlsx"
+
+    FileUtils.cp(source_excel, output_excel)
+
+    workbook = RubyXL::Parser.parse(output_excel)
+    sheet = workbook.first
+
+    row = 2
+    DescribeHelper.formatter_object_result.each do | values |
+      values.each do | k,v |
+        sheet.add_cell(row, DescribeConstants.column_number(k), v)
+      end
+      row += 1
+    end
+
+    workbook.write(output_excel)
 
     #ファイルの出力
     send_data(workbook.stream.read,

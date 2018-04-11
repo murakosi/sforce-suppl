@@ -25,6 +25,10 @@ module DescribeHelper
     def self.formatter_object_result
         @formatter_object_result
     end
+    
+    def self.is_sobject_fetched?
+        @formatter_object_result.present?
+    end
 
     def self.format_field_result(field_result)
         @formatter_object_result = DescribeFormatter.format_field_result(field_result)
