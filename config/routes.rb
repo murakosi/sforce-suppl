@@ -11,15 +11,14 @@ Rails.application.routes.draw do
   get   'describe',  to: 'describe#show'
   post  'describe',  to: 'describe#execute'
   get   'change',    to: 'describe#change'
-  get   'download',  to: 'describe#download'
+  get   'desc_download',  to: 'describe#download'
 
-  get 'soqlexecuter' => 'soqlexecuter#index'
+  get   'metadata',  to: 'metadata#show'
+  post  'metadata',  to: 'metadata#execute'
+  get   'meta_download',  to: 'metadata#download'
 
-  get 'soqlexecuter/index' => 'soqlexecuter#index'
-
-  get 'soqlexecuter/show' => 'soqlexecuter#index'
-
-  post 'soqlexecuter/show'
+  get   'soql',      to: 'soqlexecuter#show'
+  post  'soql',      to: 'soqlexecuter#execute'
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end

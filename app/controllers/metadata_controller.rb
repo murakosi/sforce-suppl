@@ -2,7 +2,7 @@ require "fileutils"
 require "rubyxl"
 require "csv"
 
-class DescribeController < ApplicationController
+class MetadataController < ApplicationController
   before_action :require_sign_in!
 
   protect_from_forgery :except => [:execute]
@@ -14,37 +14,20 @@ class DescribeController < ApplicationController
   end
   
   def show
-    describe_global
-    @sobjects = DescribeHelper.global_result.select{|hash| hash[:is_custom] }.map{|hash| hash[:name]}
-  end
-
-  def change
-    describe_global
-
-    object_type = params[:object_type]
-
-    if object_type == "all"
-      @sobjects = DescribeHelper.global_result.map{|hash| hash[:name]}
-    elsif object_type == "standard"
-      @sobjects = DescribeHelper.global_result.reject{|hash| hash[:is_custom] }.map{|hash| hash[:name]}
-    elsif object_type == "custom"
-      @sobjects = DescribeHelper.global_result.select{|hash| hash[:is_custom] }.map{|hash| hash[:name]}
-    else
-      raise StandardError.new("Invalid object type parameter")
-    end  
-
-    render partial: 'objectlist', locals: {data_source: @sobjects}
+    #describe_global
+    puts metadata_client.list("ApexClass").class
+    @metadata = metadata_client.metadata_objects
   end
 
   def execute
 
-    sobject = params[:selected_sobject]
+    metadata = params[:selected_metadata]
 
     #begin
-      describe_result = DescribeHelper.describe(current_client, sobject)
-      object_info = get_object_info(describe_result)
-      field_result = DescribeHelper.format_field_result(describe_result[:fields])#get_values(describe_result[:fields])
-      @result = {:method => object_info, :columns => field_result.first.keys, :rows => field_result.each{ |hash| hash.values}}
+      describe_result = metadata_client.list(metadata)
+      #object_info = get_object_info(describe_result)
+      #field_result = DescribeHelper.format_field_result(describe_result[:fields])#get_values(describe_result[:fields])
+      @result = {:method => "meta", :columns => describe_result.first.keys, :rows => describe_result.each{ |hash| hash.values}}
       render :json => @result, :status => 200
     #rescue StandardError => ex
     #  render :json => {:error => ex.message}, :status => 400
@@ -109,6 +92,6 @@ class DescribeController < ApplicationController
       :status => 200
     )
     
-    FileUtils.rm(output_excel)
+    FileUtils.rm(dest)
   end
 end

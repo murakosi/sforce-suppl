@@ -1,6 +1,9 @@
 # Place all the behaviors and hooks related to the matching controller here.
 # All this logic will automatically be available in application.js.
 # You can use CoffeeScript in this file: http://coffeescript.org/
+# Place all the behaviors and hooks related to the matching controller here.
+# All this logic will automatically be available in application.js.
+# You can use CoffeeScript in this file: http://coffeescript.org/
 coordinates = ->
   
   selectedTabId = 1
@@ -14,24 +17,11 @@ coordinates = ->
       "datatype": datatype
     }
 
-  $('.chk').on 'change', (e) ->
-    e.stopPropagation()
-    e.preventDefault()
- 
-    val = {object_type: e.target.value}
-    action = "change"
-    method = "get"
-    options = get_options("change", "get", val, "text")
-    executeAjax(options, refreshSelectOptions, displayError)
-
-  refreshSelectOptions = (result) ->
-    $('#object_list').html(result)
-
   $('.execute-describe').on 'click', (e) ->
     e.preventDefault()
     selectedTabId =  $("div#tabArea").tabs('option', 'active') + 1
 
-    val = {selected_sobject: $('#selected_sobject').val()}
+    val = {selected_metadata: $('#selected_metadata').val()}
     action = $('.describe-form').attr('action')
     method = $('.describe-form').attr('method')
     options = get_options(action, method, val)
@@ -52,20 +42,22 @@ coordinates = ->
     })
 
     jqXHR.done (data, stat, xhr) ->
+      jqXHR = null
       console.log { done: stat, data: data, xhr: xhr }
       $("#messageArea").empty()
       $("#messageArea").hide()
-      doneCallback(xhr.responseText)
+      doneCallback(xhr.responseText)      
 
     jqXHR.fail (xhr, stat, err) ->
+      jqXHR = null
       console.log { fail: stat, error: err, xhr: xhr }
       alert(err)
       errorCallback(xhr.responseText)
 
     jqXHR.always (res1, stat, res2) ->
+      jqXHR = null
       console.log { always: stat, res1: res1, res2: res2 }
       #alert 'Ajax Finished!' if stat is 'success'
-      jqXHR = null
 
   displayError = (error) ->
     $("#messageArea").html($.parseJSON(error).error)

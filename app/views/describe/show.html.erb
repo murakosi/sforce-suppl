@@ -124,11 +124,12 @@
   	display: inline;
 }
 </style>
-<% javascript 'handsontable.full.min','jquery-1.11.2.min','jquery-ui-1.11.3.min','describer' %>
+<% javascript 'handsontable.full.min','jquery-1.11.2.min','jquery-ui-1.11.3.min','describe' %>
 <div id="menuList">
     <ul>
 		<li><%= link_to "Logout", logout_path, method: :delete %></li>
-		<li><%= link_to "SOQL", soqlexecuter_path, method: :get %></li>
+		<li><%= link_to "SOQL", soql_path, method: :get %></li>
+		<li><%= link_to "Metadata", metadata_path, method: :get %></li>
     </ul>
 </div>
 
@@ -165,8 +166,8 @@
 	
 	<div id="tabArea">
 		<br>
-		<%= button_to "CSV Export", download_path(:format => "csv"), :method => :get, :id => "exp-btn", :class => "btn btn-default exp-btn" %>
-		<%= button_to "Excel Export", download_path(:format => "excel"), :method => :get, :id => "exp-btn", :class => "btn btn-default exp-btn" %>
+		<%= button_to "CSV Export", desc_download_path(:format => "csv"), :method => :get, :id => "exp-btn", :class => "btn btn-default exp-btn" %>
+		<%= button_to "Excel Export", desc_download_path(:format => "excel"), :method => :get, :id => "exp-btn", :class => "btn btn-default exp-btn" %>
 
 		<div id="tab1" class="resultTab">
 			<div id="method1" class="resultSoql"></div>

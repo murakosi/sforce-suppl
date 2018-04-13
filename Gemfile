@@ -53,10 +53,12 @@ end
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 # custom
-gem 'soapforce', '~> 0.5.0'
+gem 'soapforce', '~> 0.7.0'
 
 gem 'coffee-script-source', '1.8.0'
 
 gem 'jquery-rails'
 
 gem 'rubyXL'
+
+gem 'hashie'

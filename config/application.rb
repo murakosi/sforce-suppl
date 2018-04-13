@@ -14,8 +14,9 @@ module Sforcesuppl
     config.assets.precompile += %w(jquery-1.11.2.min.js)
     config.assets.precompile += %w(jquery-ui-1.11.3.min.js)
     config.assets.precompile += %w(main.coffee)
-    config.assets.precompile += %w(describer.coffee)
+    config.assets.precompile += %w(describe.coffee)
     config.assets.precompile += %w(soqlexecuter.coffee)
+    config.assets.precompile += %w(metadata.coffee)
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
