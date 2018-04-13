@@ -145,7 +145,8 @@
 		<table>
 			<tr>
 				<td><%= label_tag 'Metadata: ' %></td>
-				<td><%= select_tag :selected_metadata, options_for_select(@metadata), multiple: false %></td>
+				<td><%= select_tag :selected_directory, options_for_select(@metadata_directory), multiple: false %></td>
+                <td><div id="metadata_child"><%= render partial: 'metadata_child', locals: {data_source: @metadata_child} %></div></td>
 			</tr>
 			<tr>
 				<td colspan="3" class="login-button">

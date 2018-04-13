@@ -15,19 +15,27 @@ class MetadataController < ApplicationController
   
   def show
     #describe_global
-    puts metadata_client.list("ApexClass").class
-    @metadata = metadata_client.metadata_objects
+    @metadata_directory = metadata_client.metadata_objects
+    @metadata_child = []
+  end
+
+  def change
+    #directory_name = params[:directory_name]
+
+    #@metadata_child = metadata_client.metadata_objects.select{|k,v| k == directory_name}.values.to_a
+    @metadata_child = []
+    render partial: 'metadata_child', locals: {data_source: @metadata_child}
   end
 
   def execute
 
-    metadata = params[:selected_metadata]
+    metadata = params[:selected_directory]
 
     #begin
-      describe_result = metadata_client.list(metadata)
+      describe_result = metadata_client.read("","")[:records]#.list(metadata)
       #object_info = get_object_info(describe_result)
       #field_result = DescribeHelper.format_field_result(describe_result[:fields])#get_values(describe_result[:fields])
-      @result = {:method => "meta", :columns => describe_result.first.keys, :rows => describe_result.each{ |hash| hash.values}}
+      @result = {:method => "meta", :columns => describe_result.keys, :rows => describe_result.values}
       render :json => @result, :status => 200
     #rescue StandardError => ex
     #  render :json => {:error => ex.message}, :status => 400

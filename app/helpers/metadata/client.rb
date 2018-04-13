@@ -3,6 +3,8 @@ require "savon"
 module Metadata
     class Client
 
+    Metadata_namespace = "{http://soap.sforce.com/2006/04/metadata}"
+
     def initialize(options={})
       @describe_cache = {}
       @describe_layout_cache = {}
@@ -74,6 +76,8 @@ module Metadata
         endpoint: @server_url,
         ssl_version: @ssl_version # Sets ssl_version for HTTPI adapter
       )
+
+      @client
     end
     alias_method :authenticate, :login
 
@@ -88,12 +92,29 @@ module Metadata
         call_metadata_api(:list_metadata, {:query => queries})
     end
 
-    def describe()
+    def describe
       call_metadata_api(:describe_metadata, {:api_version => @version})
     end
 
     def metadata_objects
-      describe[:metadata_objects].collect { |type| type[:xml_name] }.sort
+      if @describe_metadata_result.present?
+        return @describe_metadata_result        
+      end
+
+      @describe_metadata_result = describe[:metadata_objects].collect{|type| type[:xml_name]}.sort
+      #metadata_objects = @describe_metadata_result.map{ |type|
+      #   {
+      #     type[:xml_name] => type[:child_xml_names] 
+      #    }
+      #  }.sort_by{|k|k.keys}.reduce({}, :update)
+    end
+
+    def describe_value_type(type_name)
+      call_metadata_api(:describe_value_type, {:type => Metadata_namespace + type_name.to_s})[:value_type_fields]
+    end
+
+    def read(type_name, full_name)
+      call_metadata_api(:read_metadata, {:type_name => "ApprovalProcess", :full_name => "Order__c.Qty_under_10"})
     end
 
     def call_metadata_api(method, message_hash={})
@@ -103,9 +124,10 @@ module Metadata
       end
 
       # Convert SOAP XML to Hash
+      #puts response
       response = response.to_hash
 
-      puts response
+      #puts response
       # Get Response Body
       key = key_name("#{method}Response")
       response_body = response[key]

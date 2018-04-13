@@ -17,11 +17,24 @@ coordinates = ->
       "datatype": datatype
     }
 
+  $('#selected_directory').on 'change', (e) ->
+    e.stopPropagation()
+    e.preventDefault()
+ 
+    val = {directory_name: e.target.value}
+    action = "change"
+    method = "get"
+    options = get_options("meta_change", "get", val, "text")
+    executeAjax(options, refreshSelectOptions, displayError)
+
+  refreshSelectOptions = (result) ->
+    $('#metadata_child').html(result)
+
   $('.execute-describe').on 'click', (e) ->
     e.preventDefault()
     selectedTabId =  $("div#tabArea").tabs('option', 'active') + 1
 
-    val = {selected_metadata: $('#selected_metadata').val()}
+    val = {selected_directory: $('#selected_directory').val()}
     action = $('.describe-form').attr('action')
     method = $('.describe-form').attr('method')
     options = get_options(action, method, val)

@@ -21,7 +21,7 @@ coordinates = ->
     val = {object_type: e.target.value}
     action = "change"
     method = "get"
-    options = get_options("change", "get", val, "text")
+    options = get_options("desc_change", "get", val, "text")
     executeAjax(options, refreshSelectOptions, displayError)
 
   refreshSelectOptions = (result) ->

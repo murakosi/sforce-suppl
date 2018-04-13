@@ -10,11 +10,12 @@ Rails.application.routes.draw do
 
   get   'describe',  to: 'describe#show'
   post  'describe',  to: 'describe#execute'
-  get   'change',    to: 'describe#change'
+  get   'desc_change',    to: 'describe#change'
   get   'desc_download',  to: 'describe#download'
 
   get   'metadata',  to: 'metadata#show'
   post  'metadata',  to: 'metadata#execute'
+  get   'meta_change',  to: 'metadata#change'
   get   'meta_download',  to: 'metadata#download'
 
   get   'soql',      to: 'soqlexecuter#show'
