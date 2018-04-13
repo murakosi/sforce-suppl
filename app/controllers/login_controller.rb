@@ -11,7 +11,7 @@ class LoginController < ApplicationController
     begin
       #sforcelogin_to_salesforce(login_params)
       sign_in(login_params)
-      redirect_to soqlexecuter_path
+      redirect_to soql_path
     rescue Savon::SOAPFault => e
       @error_message = e.message
       render 'new'
@@ -27,7 +27,7 @@ class LoginController < ApplicationController
 
     def skip_login
       if signed_in?
-        redirect_to soqlexecuter_path
+        redirect_to soql_path
       end
     end
 

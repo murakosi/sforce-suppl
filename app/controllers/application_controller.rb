@@ -34,6 +34,7 @@ class ApplicationController < ActionController::Base
   def sign_out
     @current_user = nil
     session.delete(:user_token)
+    current_client.logout()
   end
 
   def signed_in?
@@ -43,7 +44,13 @@ class ApplicationController < ActionController::Base
   def current_client
     client = Soapforce::Client.new
     client.authenticate(sforce_session)
-    return client  
+    client  
+  end
+
+  def metadata_client
+    client = Metadata::Client.new
+    client.authenticate(sforce_metadata_session)
+    client
   end
 
   private
@@ -69,12 +76,17 @@ class ApplicationController < ActionController::Base
         :user_token => User.encrypt(token),
         :sforce_session_id => result[:session_id],
         :sforce_server_url => result[:server_url], 
-        :sforce_query_locator => result[:query_locator]
+        :sforce_query_locator => result[:query_locator],
+        :sforce_metadata_server_url => result[:metadata_server_url]
       }
     end
 
     def sforce_session
       {:session_id => @current_user.sforce_session_id, :server_url => @current_user.sforce_server_url}
+    end
+
+    def sforce_metadata_session
+      {:session_id => @current_user.sforce_session_id, :metadata_server_url => @current_user.sforce_metadata_server_url}
     end
 
     def is_sandbox?(login_params)

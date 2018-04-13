@@ -9,18 +9,13 @@
 	padding: 4px;
 	margin-bottom: 2px;
 	margin-top: 2px;
+	white-space: pre;
 }
 
 .resultGrid {
 	background: white;
 	outline: 0;
 	border: 0px solid gray;
-}
-
-#add-tab{
-	margin-bottom: 5px;
-	font-size: 14px;
-	font-family:Arial;
 }
 
 .ui-tabs .ui-tabs-panel {
@@ -122,43 +117,60 @@
 	/*border: 1px solid lightgray;*/
 	float: left;
 }
+.button_to,
+.button_to div {
+	font-size: 14px;
+	font-family:Arial;
+  	display: inline;
+}
 </style>
-<% javascript 'handsontable.full.min','jquery-1.11.2.min','jquery-ui-1.11.3.min','soqlexecuter' %>
+<% javascript 'handsontable.full.min','jquery-1.11.2.min','jquery-ui-1.11.3.min','describe' %>
 <div id="menuList">
     <ul>
 		<li><%= link_to "Logout", logout_path, method: :delete %></li>
-		<li><%= link_to "Describe", describe_path, method: :get %></li>
+		<li><%= link_to "SOQL", soql_path, method: :get %></li>
+		<li><%= link_to "Metadata", metadata_path, method: :get %></li>
     </ul>
 </div>
 
 <div>
-<h1>Soqlexecuter#index</h1>
-<p>Find me in app/views/soqlexecuter/index.html.erb</p>
+<h1>Describe#show</h1>
+<p>Find me in app/views/describer/show.html.erb</p>
 </div>
 
 <div id="mainArea">
 	<div id="formArea">
-		<%= form_tag soqlexecuter_show_path(), :method => :post, :class => "execute-form" do %>
-		<%= text_area_tag :input_soql, "select id,name from procure__c", :size => "120x5" %>
-		<br>
-		<%= submit_tag "Execute", :class => "btn btn-primary execute-soql" %>
+		<%= form_tag change_path(), :method => :get, :class => "chk" do %>
+		<%= radio_button_tag 'SOType', :all, false, :class => "chk" %>All&nbsp;&nbsp;
+		<%= radio_button_tag 'SOType', :standard, false, :class => "chk" %>Standard&nbsp;&nbsp;
+		<%= radio_button_tag 'SOType', :custom, true, :class => "chk" %>Custom&nbsp;&nbsp;
 		<% end %>
-		<p><div id="messageArea"></div></p>
+
+	    <%= form_tag describe_path(), :method => :post, :class => "describe-form" do %>
+		<table>
+			<tr>
+				<td><%= label_tag 'sObjects: ' %></td>
+				<td><div id="object_list"><%= render partial: 'objectlist', locals: {data_source: @sobjects} %></div></td>
+			</tr>
+			<tr>
+				<td colspan="3" class="login-button">
+				<%= submit_tag 'Describe', :class => 'btn btn-primary execute-describe' %>
+				</td>
+			</tr>
+		</table>
+		<% end %>
+		<div id="messageArea"><%= @input_error %></div>
 	</div>
 
 	<div id="dummyArea"></div>
 	
 	<div id="tabArea">
-		<%= button_tag "Add tab", :type => "button", :id => "add-tab", :class => "btn btn-default" %>		
-		<ul>
-			<li class="noselect"><a href="#tab1">Grid1</a>
-			<span class="ui-icon ui-icon-close ui-closable-tab"></span>
-			</li>
-		</ul>
+		<br>
+		<%= button_to "CSV Export", desc_download_path(:format => "csv"), :method => :get, :id => "exp-btn", :class => "btn btn-default exp-btn" %>
+		<%= button_to "Excel Export", desc_download_path(:format => "excel"), :method => :get, :id => "exp-btn", :class => "btn btn-default exp-btn" %>
+
 		<div id="tab1" class="resultTab">
-			<div id="soql1" class="resultSoql">
-			alala alala
-			</div>
+			<div id="method1" class="resultSoql"></div>
 			<div id="grid1" class="resultGrid"></div>
 		</div>
 	</div>

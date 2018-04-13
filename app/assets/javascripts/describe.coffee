@@ -4,84 +4,75 @@
 coordinates = ->
   
   selectedTabId = 1
+  jqXHR = null
 
-  #$("div#tabArea").on 'dblclick', 'ul', (e) ->
-  #  alert("ok")
+  get_options = (action, method, data, datatype) ->
+    {
+      "action": action,
+      "method": method,
+      "data": data,
+      "datatype": datatype
+    }
 
-  $('.execute-soql').on 'click', (e) ->
+  $('.chk').on 'change', (e) ->
+    e.stopPropagation()
+    e.preventDefault()
+ 
+    val = {object_type: e.target.value}
+    action = "change"
+    method = "get"
+    options = get_options("desc_change", "get", val, "text")
+    executeAjax(options, refreshSelectOptions, displayError)
+
+  refreshSelectOptions = (result) ->
+    $('#object_list').html(result)
+
+  $('.execute-describe').on 'click', (e) ->
     e.preventDefault()
     selectedTabId =  $("div#tabArea").tabs('option', 'active') + 1
-    getCoordinatesInRange()
 
-  $(document).on 'click', 'span', (e) ->
-    e.preventDefault()
-    tabContainerDiv=$(this).closest(".ui-tabs").attr("id")
-    tabCount = $("#" + tabContainerDiv).find(".ui-closable-tab").length
+    val = {selected_sobject: $('#selected_sobject').val()}
+    action = $('.describe-form').attr('action')
+    method = $('.describe-form').attr('method')
+    options = get_options(action, method, val)
+    executeAjax(options, createGrid, displayError)
 
-    if tabCount <= 1
+  executeAjax = (options, doneCallback, errorCallback) ->
+
+    if jqXHR
       return
-
-    if window.confirm("Close this tab?")
-      panelId = $( this ).closest( "li" ).remove().attr( "aria-controls" )
-      $( "#" + panelId ).remove();
-      $("#" + tabContainerDiv).tabs("refresh")
-
-  $('#add-tab').on 'click', (e) ->
-    e.preventDefault()
-
-    new_tab_index = $("div#tabArea ul li").length
-    new_tab_id = new_tab_index + 1
-
-    $("div#tabArea ul").append(
-      "<li class=\"noselect\"><a href=\"#tab" + new_tab_id + "\">Grid" + new_tab_id + "</a>" +
-      "<span class=\"ui-icon ui-icon-close ui-closable-tab\"></span>" +
-      "</li>"
-    )
-
-    $("div#tabArea").append(
-      "<div id=\"tab" + new_tab_id + "\" class=\"resultTab\">" +
-      "<div id=\"soql" + new_tab_id + "\" class=\"resultSoql\"></div>" +
-      "<div id=\"grid" + new_tab_id + "\" class=\"resultGrid\"></div>" +
-      "</div>"
-    )
-    
-    selectedTabId =  new_tab_id
-
-    createGrid()
-    
-    $("div#tabArea").tabs("refresh")
-
-    $("div#tabArea").tabs({ active: new_tab_index });
-
-  getCoordinatesInRange = ->
-    post_data = {soql: $('#input_soql').val()}
 
     jqXHR = $.ajax({
       async: true
-      url: $('.execute-form').attr('action')
-      type: $('.execute-form').attr('method')
-      data: post_data
-      dataType: 'json'
+      url: options.action
+      type: options.method
+      data: options.data
+      dataType: options.datatype
       cache: false
     })
 
     jqXHR.done (data, stat, xhr) ->
+      jqXHR = null
       console.log { done: stat, data: data, xhr: xhr }
       $("#messageArea").empty()
       $("#messageArea").hide()
-      createGrid(xhr.responseText)
+      doneCallback(xhr.responseText)      
 
     jqXHR.fail (xhr, stat, err) ->
+      jqXHR = null
       console.log { fail: stat, error: err, xhr: xhr }
-      displayError(xhr.responseText)
+      alert(err)
+      errorCallback(xhr.responseText)
 
     jqXHR.always (res1, stat, res2) ->
+      jqXHR = null
       console.log { always: stat, res1: res1, res2: res2 }
       #alert 'Ajax Finished!' if stat is 'success'
 
   displayError = (error) ->
     $("#messageArea").html($.parseJSON(error).error)
     $("#messageArea").show()
+    $(".exp-btn").prop("disabled", true);
 
   createGrid = (result = null) ->   
     hotElement = document.querySelector("#grid" + selectedTabId)
@@ -90,13 +81,15 @@ coordinates = ->
     table.destroy()
 
     parsedResult = $.parseJSON(result)
-    $("#soql" + selectedTabId).html(get_executed_soql(parsedResult))
+    $("#method" + selectedTabId).html(get_executed_method(parsedResult))
     header = get_columns(parsedResult)
     records = get_rows(parsedResult)
     columns_option = get_columns_option(parsedResult)
 
     hotSettings = {
         data: records,
+        width: get_grid_width(parsedResult),
+        height: 500;
         stretchH: 'all',
         autoWrapRow: true,
         manualRowResize: false,
@@ -104,12 +97,14 @@ coordinates = ->
         rowHeaders: true,
         colHeaders: header,
         columns: columns_option,
-        contextMenu: true,
+        contextMenu: false,
         readOnly: true,
         startRows: 0
     }
 
     table = new Handsontable(hotElement, hotSettings)
+
+    $(".exp-btn").prop("disabled", false);
 
   get_columns = (result) ->
     if !result?
@@ -124,21 +119,28 @@ coordinates = ->
     else
       result.rows
 
-  get_executed_soql = (result) ->
+  get_executed_method = (result) ->
     if !result?
       null
     else
-      result.soql
+      result.method
 
   get_columns_option = (result) ->
     if !result?
       [[]]
     else
       null
+  get_grid_width = (result) ->
+    if !result?
+      0
+    else
+      document.getElementById('tabArea').offsetWidth
 
   $("div#tabArea").tabs()
 
   createGrid()
+
+  $(".exp-btn").prop("disabled", true)
 
 $(document).ready(coordinates)
 $(document).on('page:load', coordinates)

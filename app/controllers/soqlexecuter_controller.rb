@@ -10,10 +10,10 @@ class SoqlexecuterController < ApplicationController
   def new
   end
   
-  def index
+  def show
   end
 
-  def show
+  def execute
     execute_soql(params[:soql]) if params[:soql].present?
   end
 

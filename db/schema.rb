@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180406014111) do
+ActiveRecord::Schema.define(version: 20180412055450) do
 
   create_table "users", force: :cascade do |t|
     t.string "name"
@@ -22,6 +22,7 @@ ActiveRecord::Schema.define(version: 20180406014111) do
     t.string "user_token"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "sforce_metadata_server_url"
   end
 
 end
