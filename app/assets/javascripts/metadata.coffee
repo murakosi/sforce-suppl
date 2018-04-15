@@ -17,28 +17,30 @@ coordinates = ->
       "datatype": datatype
     }
 
-  $('#selected_directory').on 'change', (e) ->
-    e.stopPropagation()
-    e.preventDefault()
+  #$('#selected_directory').on 'change', (e) ->
+    #e.stopPropagation()
+    #e.preventDefault()
  
-    val = {directory_name: e.target.value}
-    action = "change"
-    method = "get"
-    options = get_options("meta_change", "get", val, "text")
-    executeAjax(options, refreshSelectOptions, displayError)
+    #val = {directory_name: e.target.value}
+    #action = "change"
+    #method = "get"
+    #options = get_options("meta_change", "get", val, "text")
+    #executeAjax(options, refreshSelectOptions, displayError)
 
-  refreshSelectOptions = (result) ->
-    $('#metadata_child').html(result)
 
-  $('.execute-describe').on 'click', (e) ->
+
+  refreshTree = (result) ->
+    $('#tree').jstree(true).settings.core.data = $.parseJSON(result)
+    $('#tree').jstree(true).refresh()
+    $(".exp-btn").prop("disabled", false)
+
+  $(".execute-metadata").on "click", (e) ->
     e.preventDefault()
-    selectedTabId =  $("div#tabArea").tabs('option', 'active') + 1
-
     val = {selected_directory: $('#selected_directory').val()}
-    action = $('.describe-form').attr('action')
-    method = $('.describe-form').attr('method')
+    action = $('.metadata-form').attr('action')
+    method = $('.metadata-form').attr('method')
     options = get_options(action, method, val)
-    executeAjax(options, createGrid, displayError)
+    executeAjax(options, refreshTree, displayError)
 
   executeAjax = (options, doneCallback, errorCallback) ->
 
@@ -77,71 +79,18 @@ coordinates = ->
     $("#messageArea").show()
     $(".exp-btn").prop("disabled", true);
 
-  createGrid = (result = null) ->   
-    hotElement = document.querySelector("#grid" + selectedTabId)
-
-    table = new Handsontable(hotElement)
-    table.destroy()
-
-    parsedResult = $.parseJSON(result)
-    $("#method" + selectedTabId).html(get_executed_method(parsedResult))
-    header = get_columns(parsedResult)
-    records = get_rows(parsedResult)
-    columns_option = get_columns_option(parsedResult)
-
-    hotSettings = {
-        data: records,
-        width: get_grid_width(parsedResult),
-        height: 500;
-        stretchH: 'all',
-        autoWrapRow: true,
-        manualRowResize: false,
-        manualColumnResize: true,
-        rowHeaders: true,
-        colHeaders: header,
-        columns: columns_option,
-        contextMenu: false,
-        readOnly: true,
-        startRows: 0
+  $('#tree').jstree({
+    'core' : {
+      'check_callback' : true,
+      'data' : [ # 画面に表示する仮の初期データ
+        { 'id' : '1', 'parent' : '#', 'text' : 'Root node 1', 'state' : { 'opened' : true } },
+        { 'id' : '2', 'parent' : '1', 'text' : 'Child node 1' },
+        { 'id' : '3', 'parent' : '1', 'text' : 'Child node 2' },
+        { 'id' : '4', 'parent' : '#', 'text' : 'Root node 2' }
+      ]
+      "themes": {"icons":false}
     }
-
-    table = new Handsontable(hotElement, hotSettings)
-
-    $(".exp-btn").prop("disabled", false);
-
-  get_columns = (result) ->
-    if !result?
-      #[[]]
-      null
-    else
-      result.columns
-
-  get_rows = (result) ->
-    if !result?
-      null
-    else
-      result.rows
-
-  get_executed_method = (result) ->
-    if !result?
-      null
-    else
-      result.method
-
-  get_columns_option = (result) ->
-    if !result?
-      [[]]
-    else
-      null
-  get_grid_width = (result) ->
-    if !result?
-      0
-    else
-      document.getElementById('tabArea').offsetWidth
-
-  $("div#tabArea").tabs()
-
-  createGrid()
+  })
 
   $(".exp-btn").prop("disabled", true)
 

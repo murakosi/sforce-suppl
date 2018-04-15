@@ -10,14 +10,14 @@ module Metadata
       @describe_layout_cache = {}
       @headers = {}
 
-      @wsdl = "C:/VSCode/RubyProject/mrdk-sforce-suppl/resources/metadata.xml"
+      @wsdl = File.expand_path("./resources/metadata.xml")
 
       # If a client_id is provided then it needs to be included
       # in the header for every request.  This allows ISV Partners
       # to make SOAP calls in Professional/Group Edition organizations.
 
       client_id = options[:client_id] || Soapforce.configuration.client_id
-      @headers = { 'tns:CallOptions' => { 'tns:client' => client_id } } if client_id
+      @headers = { 'tns:LocaleOptions' => { 'tns:language' => 'ja' } }
 
       @version = options[:version] || Soapforce.configuration.version || 28.0
       #@host = options[:host] || 'login.salesforce.com'
@@ -114,7 +114,8 @@ module Metadata
     end
 
     def read(type_name, full_name)
-      call_metadata_api(:read_metadata, {:type_name => "ApprovalProcess", :full_name => "Order__c.Qty_under_10"})
+      #call_metadata_api(:read_metadata, {:type_name => "ApprovalProcess", :full_name => "Order__c.Qty_under_10"})
+      call_metadata_api(:read_metadata, {:type_name => type_name, :full_name => full_name})
     end
 
     def call_metadata_api(method, message_hash={})

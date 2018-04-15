@@ -16,6 +16,7 @@ Rails.application.routes.draw do
   get   'metadata',  to: 'metadata#show'
   post  'metadata',  to: 'metadata#execute'
   get   'meta_change',  to: 'metadata#change'
+  get   'meta_refresh',   to: 'metadata#refresh'
   get   'meta_download',  to: 'metadata#download'
 
   get   'soql',      to: 'soqlexecuter#show'

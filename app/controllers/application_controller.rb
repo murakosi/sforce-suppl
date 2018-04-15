@@ -32,9 +32,9 @@ class ApplicationController < ActionController::Base
   end
 
   def sign_out
+    current_client.logout()
     @current_user = nil
     session.delete(:user_token)
-    current_client.logout()
   end
 
   def signed_in?

@@ -140,7 +140,7 @@
 
 <div id="mainArea">
 	<div id="formArea">
-		<%= form_tag change_path(), :method => :get, :class => "chk" do %>
+		<%= form_tag desc_change_path(), :method => :get, :class => "chk" do %>
 		<%= radio_button_tag 'SOType', :all, false, :class => "chk" %>All&nbsp;&nbsp;
 		<%= radio_button_tag 'SOType', :standard, false, :class => "chk" %>Standard&nbsp;&nbsp;
 		<%= radio_button_tag 'SOType', :custom, true, :class => "chk" %>Custom&nbsp;&nbsp;
