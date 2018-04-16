@@ -6,39 +6,72 @@ class MetadataController < ApplicationController
   before_action :require_sign_in!
 
   protect_from_forgery :except => [:execute]
-
-  def describe_global
-    if !DescribeHelper.is_global_fetched?
-      DescribeHelper.describe_global(current_client)
-    end
-  end
   
   def show
-    #describe_global
-    @metadata_directory = metadata_client.metadata_objects
-    @metadata_child = []
+    @metadata_directory = metadata_client.describe_metadata_objects()
   end
 
-  def change
-    #directory_name = params[:directory_name]
+  def response_json(list_result, read_result)
+    {:info => @selected_metadata,
+     :grid => {:columns => list_result.first.keys, 
+               :rows => list_result.each{|hash| hash.values}
+              },
+     :tree => read_result
+    }
+  end
+  
+  Key_order = %i[type id full_name file_name created_date created_by_id created_by_name last_modified_date last_modified_by_id last_modified_by_name monegeable_state]
+  
+  def execute
+    @selected_metadata = params[:selected_directory]
 
-    #@metadata_child = metadata_client.metadata_objects.select{|k,v| k == directory_name}.values.to_a
-    @metadata_child = []
-    render partial: 'metadata_child', locals: {data_source: @metadata_child}
+    begin
+      puts "metalist start"
+      puts Time.now
+      metadata_list = metadata_client.list(@selected_metadata)
+      puts "metalist end"
+      puts Time.now
+      if metadata_list.present?
+        puts "sort start"
+        puts Time.now
+        list_result = metadata_list.map{ |hash| hash.slice(*Key_order)}.sort_by{|k,v| k[:full_name]}
+        puts "sort end"
+        puts Time.now
+        read_result = refresh(list_result)
+        result = response_json(list_result, read_result)
+      else
+        raise StandardError.new("No results to display")
+      end
+      
+      render :json => result, :status => 200
+    rescue StandardError => ex
+      render :json => {:error => ex.message}, :status => 400
+    end
   end
 
-  def refresh
-    metadata = params[:selected_directory]
-
-    metadata_list = metadata_client.list(metadata).map{ |k,v| k[Full_name_sym]}
+  def refresh(list_result)
 
     describe_result = []
-      
-    metadata_list.each do |hash|
-      describe_result << metadata_client.read(metadata,hash)[:records]
+
+    begin
+      puts "read start"
+      puts Time.now
+      list_result.each do |hash|
+        describe_result << metadata_client.read(@selected_metadata, hash[:full_name])[:records]
+      end
+      puts "read end"
+      puts Time.now
+    rescue StandardError => ex
+      return {:id => :result, :parent => "#", :text => ex.message}
     end
 
-    render :json => parse(metadata, describe_result), :status => 200
+    puts "parse start"
+    puts Time.now
+    a = parse(describe_result)
+    puts "parse end"
+    puts Time.now
+    a
+    #render :json => parse(metadata, describe_result), :status => 200
   end
 
   Full_name_sym = :full_name
@@ -54,7 +87,7 @@ class MetadataController < ApplicationController
     end
   end
 
-  def parse(type, arr = [])
+  def parse(arr = [])
     newa = []
     arr.each_with_index do |hash, i|
       newa |= parseHash(hash, "full_name" + i.to_s)
@@ -105,25 +138,6 @@ class MetadataController < ApplicationController
       end
     end
 
-  end
-
-  def execute
-
-    metadata = params[:selected_directory]
-
-    begin
-      describe_result = metadata_client.list(metadata)
-      @result = {:method => "meta", :columns => describe_result.keys, :rows => describe_result.values}
-      render :json => @result, :status => 200
-    rescue StandardError => ex
-      render :json => {:error => ex.message}, :status => 400
-    end
-  end
-
-  def get_object_info(hash)    
-    info = "表示ラベル：" + hash[:label] + "\n" +
-           "API参照名：" + hash[:name] + "\n" +
-           "プレフィックス：" + hash[:key_prefix]
   end
 
   def download

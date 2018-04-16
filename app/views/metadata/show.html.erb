@@ -9,13 +9,56 @@
 	padding: 4px;
 	margin-bottom: 2px;
 	margin-top: 2px;
-	white-space: pre;
 }
 
 .resultGrid {
 	background: white;
 	outline: 0;
 	border: 0px solid gray;
+}
+
+.ui-tabs .ui-tabs-panel {
+	padding: 0;
+	margin: 0;
+}
+
+.ui-tabs .ui-tabs-nav li a {
+	font-size:10pt !important;
+}
+
+.noselect {
+    -webkit-user-select: none; /* Safari */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+}
+
+.ui-tabs .ui-tabs-nav .ui-tabs-anchor {
+	float: left;
+	text-decoration: none;
+}
+
+#tabArea ul li a { outline:none; /* outline-color:red */; }
+#tabArea ul li { outline:none; /* outline-color:red */; }
+
+.ui-tabs .ui-tabs-nav li.ui-tabs-active .ui-tabs-anchor,
+.ui-tabs .ui-tabs-nav li.ui-state-disabled .ui-tabs-anchor,
+.ui-tabs .ui-tabs-nav li.ui-tabs-loading .ui-tabs-anchor {
+	/* cursor: pointer; */
+}
+
+.handsontable span.colHeader{
+    font-size: 10pt;
+}
+
+.handsontable th, .handsontable td{
+    font-size: 10pt;
+}
+
+.handsontable span.data{
+    color: black;
+    font-style:bold;
 }
 
 #messageArea{
@@ -36,25 +79,22 @@
 	margin: 0 auto;
 }
 
+#tabArea{
+	width: 60%;
+	border: 0px solid lightgray;
+	float:left;
+}
 #dummyArea{
 	width: 15%;
 	height: 10px;
 	/*border: 1px solid lightgray;*/
 	float: left;
 }
-#treeArea{
-	width: 60%;
-	border: 0px solid lightgray;
-	//margin: 0 auto;
-	float:left;
-}
 #tree{
-	margin-top:5px;
-	border: 1px solid lightgray;
-	overflow:scroll;
+	font-size:14px;
 	height:500px;
+	overflow:auto;
 }
-
 .button_to,
 .button_to div {
 	font-size: 14px;
@@ -78,12 +118,11 @@
 <div id="mainArea">
 	<div id="formArea">
 
-	    <%= form_tag meta_refresh_path(), :method => :get, :class => "metadata-form" do %>
+	    <%= form_tag metadata_path(), :method => :post, :class => "metadata-form" do %>
 		<table>
 			<tr>
 				<td><%= label_tag 'Metadata: ' %></td>
-				<td><%= select_tag :selected_directory, options_for_select(@metadata_directory), multiple: false %></td>
-                <td><div id="metadata_child"><%= render partial: 'metadata_child', locals: {data_source: @metadata_child} %></div></td>
+				<td><%= select_tag :selected_directory, options_for_select(@metadata_directory), multiple: false %></td>                
 			</tr>
 			<tr>
 				<td colspan="3" class="login-button">
@@ -92,17 +131,37 @@
 			</tr>
 		</table>
 		<% end %>
-		<div id="messageArea"><%= @input_error %></div>
+		<div id="messageArea">></div>
 	</div>
 
 	<div id="dummyArea"></div>
 	
-	<div id="treeArea">
+	<div id="tabArea">
 		<br>
 		<%= button_to "CSV Export", meta_download_path(:format => "csv"), :method => :get, :id => "exp-btn", :class => "btn btn-default exp-btn" %>
 		<%= button_to "Excel Export", meta_download_path(:format => "excel"), :method => :get, :id => "exp-btn", :class => "btn btn-default exp-btn" %>
-		<input type="submit" name="Tree" action="refresh" value="Tree" id="tree-btn" class="btn btn-default" />
-		<div id="tree"></div>
-					
+		<ul>
+			<li class="noselect"><a href="#list-result-tab">List</a></li>
+			<li class="noselect"><a href="#read-result-tab">Read</a></li>
+		</ul>
+		<div id="list-result-tab" class="resultTab">
+			<div id="list-overview" class="resultSoql">list result</div>
+			<div id="grid" class="resultGrid"></div>
+		</div>
+		<div id="read-result-tab" class="resultTab">
+			<div id="read-overview" class="resultSoql">list result</div>			
+			<div id="loading" class="jstree jstree-1 jstree-default jstree-loading" role="tree" tabindex="0" aria-activedescendant="j1_loading" aria-busy="true">
+				<ul class="jstree-container-ul jstree-children jstree-no-icons" role="group">
+					<li class="jstree-initial-node jstree-loading jstree-leaf jstree-last" role="treeitem" id="j1_loading">
+						<i class="jstree-icon jstree-ocl"></i>
+						<a class="jstree-anchor" href="#">
+						<i class="jstree-icon jstree-themeicon-hidden"></i>
+						Loading ...
+						</a>
+					</li>
+				</ul>
+			</div>
+			<div id="tree"></div>
+		</div>
 	</div>
 </div>
