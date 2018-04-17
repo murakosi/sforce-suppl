@@ -8,7 +8,7 @@ coordinates = ->
   
   selectedTabId = 1
   jqXHR = null
-
+  
   get_options = (action, method, data, datatype) ->
     {
       "action": action,
@@ -135,20 +135,41 @@ coordinates = ->
       0
     else
       document.getElementById('tabArea').offsetWidth
+  $("#tree").on "before_open.jstree", (e, data) ->
+  #$("#tree").on "select_node.jstree", (e, data) ->
+    console.log(data.node)
+#    if data.node.parent = "#"
+#      alert(data.node.id)
+  $("#tree").on "open_node.jstree", (e, data) ->
+    alert("open")
 
   $("div#tabArea").tabs()
 
   createGrid()
 
+  afunct = (json) ->
+    alert("func called")
+    if json.id == '#'
+      [{ 'id' : '1', 'parent' : '#', 'text' : 'Root node 1', 'children':true},
+      #{ 'id' : '2', 'parent' : '1', 'text' : 'Child node 1' },
+      #{ 'id' : '3', 'parent' : '1', 'text' : 'Child node 2' },
+      { 'id' : '4', 'parent' : '#', 'text' : 'Root node 2', 'children':true}]
+    else
+      alert(json.children)
+      [{ 'id' : json.id + '2', 'parent' : json.id, 'text' : 'Child node 1' },
+      { 'id' : json.id + '3', 'parent' : json.id, 'text' : 'Child node 2' }]
+
   $('#tree').jstree({
     'core' : {
-      'check_callback' : true,
-      'data' : [ # 画面に表示する仮の初期データ
-        { 'id' : '1', 'parent' : '#', 'text' : 'Root node 1', 'state' : { 'opened' : true } },
-        { 'id' : '2', 'parent' : '1', 'text' : 'Child node 1' },
-        { 'id' : '3', 'parent' : '1', 'text' : 'Child node 2' },
-        { 'id' : '4', 'parent' : '#', 'text' : 'Root node 2' }
-      ]
+      #'check_callback' : true,
+      #'data' : [ # 画面に表示する仮の初期データ
+      #  { 'id' : '1', 'parent' : '#', 'text' : 'Root node 1', 'children':true},
+      #  { 'id' : '2', 'parent' : '1', 'text' : 'Child node 1' },
+      #  { 'id' : '3', 'parent' : '1', 'text' : 'Child node 2' },
+      #  { 'id' : '4', 'parent' : '#', 'text' : 'Root node 2', 'children':true }
+      #],
+      #'ajax': { 'data': (obj) -> afunct(obj) },
+      'data' : a = (node, cb) -> cb(afunct(node)),
       "multiple": false,
       "animation":false,
       "themes": {"icons":false}

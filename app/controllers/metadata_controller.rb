@@ -7,8 +7,12 @@ class MetadataController < ApplicationController
 
   protect_from_forgery :except => [:execute]
   
+  Full_name_sym = :full_name
+  Key_order = %i[type id full_name file_name created_date created_by_id created_by_name last_modified_date last_modified_by_id last_modified_by_name monegeable_state]
+
   def show
-    @metadata_directory = metadata_client.describe_metadata_objects()
+    #@metadata_directory = metadata_client.describe_metadata_objects()
+    @metadata_directory = ["a","b"]
   end
 
   def response_json(list_result, read_result)
@@ -20,23 +24,14 @@ class MetadataController < ApplicationController
     }
   end
   
-  Key_order = %i[type id full_name file_name created_date created_by_id created_by_name last_modified_date last_modified_by_id last_modified_by_name monegeable_state]
-  
   def execute
     @selected_metadata = params[:selected_directory]
 
     begin
-      puts "metalist start"
-      puts Time.now
       metadata_list = metadata_client.list(@selected_metadata)
-      puts "metalist end"
-      puts Time.now
+
       if metadata_list.present?
-        puts "sort start"
-        puts Time.now
         list_result = metadata_list.map{ |hash| hash.slice(*Key_order)}.sort_by{|k,v| k[:full_name]}
-        puts "sort end"
-        puts Time.now
         read_result = refresh(list_result)
         result = response_json(list_result, read_result)
       else
@@ -54,27 +49,16 @@ class MetadataController < ApplicationController
     describe_result = []
 
     begin
-      puts "read start"
-      puts Time.now
       list_result.each do |hash|
         describe_result << metadata_client.read(@selected_metadata, hash[:full_name])[:records]
       end
-      puts "read end"
-      puts Time.now
     rescue StandardError => ex
       return {:id => :result, :parent => "#", :text => ex.message}
     end
 
-    puts "parse start"
-    puts Time.now
-    a = parse(describe_result)
-    puts "parse end"
-    puts Time.now
-    a
-    #render :json => parse(metadata, describe_result), :status => 200
+    parse(describe_result)
   end
 
-  Full_name_sym = :full_name
   def get_id(parent, current)
     parent.to_s + "-" + current.to_s
   end
@@ -139,7 +123,7 @@ class MetadataController < ApplicationController
     end
 
   end
-
+=begin
   def download
     if params[:format] == "csv"
       download_csv()
@@ -194,5 +178,5 @@ class MetadataController < ApplicationController
     
     FileUtils.rm(dest)
   end
-
+=end
 end
