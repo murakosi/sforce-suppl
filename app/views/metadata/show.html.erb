@@ -95,6 +95,23 @@
 	height:500px;
 	overflow:auto;
 }
+
+.jstree-default a { 
+    white-space:normal !important; height: auto; 
+}
+.jstree-anchor {
+    height: auto !important;
+}
+.jstree-default li > ins { 
+    vertical-align:top; 
+}
+.jstree-leaf {
+    height: auto;
+}
+.jstree-leaf a{
+    height: auto !important;
+}
+
 .button_to,
 .button_to div {
 	font-size: 14px;
@@ -150,7 +167,7 @@
 		</div>
 		<div id="read-result-tab" class="resultTab">
 			<div id="read-overview" class="resultSoql">list result</div>			
-			<div id="loading" class="jstree jstree-1 jstree-default jstree-loading" role="tree" tabindex="0" aria-activedescendant="j1_loading" aria-busy="true">
+			<!--<div id="loading" class="jstree jstree-1 jstree-default jstree-loading" role="tree" tabindex="0" aria-activedescendant="j1_loading" aria-busy="true">
 				<ul class="jstree-container-ul jstree-children jstree-no-icons" role="group">
 					<li class="jstree-initial-node jstree-loading jstree-leaf jstree-last" role="treeitem" id="j1_loading">
 						<i class="jstree-icon jstree-ocl"></i>
@@ -160,7 +177,7 @@
 						</a>
 					</li>
 				</ul>
-			</div>
+			</div>-->
 			<div id="tree"></div>
 		</div>
 	</div>

@@ -52,7 +52,7 @@ class DescribeController < ApplicationController
     #end
   end
 
-  def get_object_info(hash)    
+  def get_object_info(hash)
     info = "表示ラベル：" + hash[:label] + "\n" +
            "API参照名：" + hash[:name] + "\n" +
            "プレフィックス：" + hash[:key_prefix]

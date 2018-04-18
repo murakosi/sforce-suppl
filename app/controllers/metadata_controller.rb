@@ -12,8 +12,8 @@ class MetadataController < ApplicationController
   Key_order = %i[type id full_name file_name created_date created_by_id created_by_name last_modified_date last_modified_by_id last_modified_by_name monegeable_state]
 
   def show
-    #@metadata_directory = metadata_client.describe_metadata_objects()
-    @metadata_directory = ["a","b"]
+    @metadata_directory = metadata_client.describe_metadata_objects()
+    #@metadata_directory = ["a","b"]
   end
 
   def response_json(list_result, read_result)
@@ -26,8 +26,8 @@ class MetadataController < ApplicationController
   end
   
   def execute
-    #@selected_metadata = params[:selected_directory]
-    @selected_metadata = "ApprovalProcess"
+    @selected_metadata = params[:selected_directory]
+    #@selected_metadata = "ApprovalProcess"
 
     begin
       metadata_list = metadata_client.list(@selected_metadata)
@@ -56,87 +56,96 @@ class MetadataController < ApplicationController
   end
 
   def refresh()
-    #selected_metadata = params[:selected_metadata]
     if params[:id] == "#"
       render :json => "[]", :status => 200
       return 
     end
-    
-    selected_metadata = "ApprovalProcess"
+
+    selected_metadata = params[:selected_metadata]
     selected_id = params[:id]
 
     describe_result = metadata_client.read(selected_metadata, selected_id)[:records]
-    parsed = parse(describe_result, selected_id)
+    parsed = parseHash(describe_result, selected_id)
     render :json => parsed, :status => 200
   end
 
-  def get_id(parent, current)
-    parent.to_s + "-" + current.to_s
+  def get_id(parent, current, index = nil)
+    if index.nil?
+      parent.to_s + "-" + current.to_s
+    else
+      parent.to_s + "-" + current.to_s + "-" + index.to_s
+    end
   end
 
   def get_text(key, value = nil)
     if value.nil?
-      "<b>" + key.to_s + "</b>"
+      return "<b>" + key.to_s + "</b>"
+    end
+
+    if key.to_s.include?("content") && value.is_a?(Nori::StringWithAttributes)
+      text_value = try_encode(value)
     else
-      "<b>" + key.to_s + "</b>: " + value.to_s
+      text_value = value
+    end
+    
+    return "<b>" + key.to_s + "</b>: " + text_value.to_s
+  end
+
+  def try_encode(value)
+    begin
+      decoded = Base64.strict_decode64(value).force_encoding('UTF-8')#.encode("UTF-8", "ASCII-8BIT")
+      ERB::Util.html_escape(decoded).gsub(/\r\n|\r|\n/, "<br />")
+    rescue StandardError => ex
+      value
     end
   end
 
-  def parse(arr = [], parent)
-    #newa = []
-    #arr.each_with_index do |hash, i|
-      #newa |= parseHash(hash, "full_name" + i.to_s)
-    #end
-    newa = parseHash(arr, parent, parent)
-    newa
-  end
-
-  def parseHash(a, full_name_sym, parent)
-    p = []
-    a.each do |k, v|
+  def parseHash(hashes, parent)
+    result = []
+    hashes.each do |k, v|
       if v.is_a?(Hash)
-        #p << {:id => get_id(full_name_sym, k), :parent => full_name_sym, :text => get_text(k) }
-        p << {:id => get_id(full_name_sym, k), :parent => parent, :text => get_text(k) }
-        parse_child(p, get_id(full_name_sym, k), v)
+        result << {:id => get_id(parent, k), :parent => parent, :text => get_text(k) }
+        parse_child(result, get_id(parent, k), v)
       elsif v.is_a?(Array)
-        #p << {:id => get_id(full_name_sym, k), :parent => full_name_sym, :text => get_text(k) }
-        p << {:id => get_id(full_name_sym, k), :parent => parent, :text => get_text(k) }
+        result << {:id => get_id(parent, k), :parent => parent, :text => get_text(k) }
         v.each_with_index do |val, idx|
-          p << {:id => get_id(full_name_sym, k.to_s + idx.to_s), :parent => get_id(full_name_sym, k), :text => get_text(k, idx)}
-          parse_child(p, get_id(full_name_sym, k.to_s + idx.to_s), val)
+          id = get_id(parent, k, idx)
+          result << {:id => id, :parent => get_id(parent, k), :text => get_text(k, idx)}        
+          parse_child(result, id, val)
         end
-      elsif k == Full_name_sym
-        #p << {:id => full_name_sym, :parent => "#", :text => get_text(v)}        
       else
-        #p << {:id => get_id(full_name_sym, k), :parent => full_name_sym, :text => get_text(k, v)}
-        p << {:id => get_id(full_name_sym, k), :parent => parent, :text => get_text(k, v)}
+        result << {:id => get_id(parent, k), :parent => parent, :text => get_text(k, v)}
       end
     end
-    p
+    result
   end
 
-  def parse_child(a = [], parent_key, value)
+  def parse_child(result = [], parent, hash)
 
-    value.each do |k, v|
+    hash.each do |k, v|
       if v.is_a?(Hash)
-        a << {:id => get_id(parent_key, k), :parent => parent_key, :text => get_text(k)}
-        #v.each do |nk, nv|
-          parse_child(a, get_id(parent_key, k), v)
-        #end
-      elsif v.is_a?(Array)        
-        v.each do |val|
-          if val.is_a?(Hash) || val.is_a?(Array)
-            a << {:id => get_id(parent_key, k), :parent => parent_key, :text => get_text(k)}
-            parse_child(a, get_id(parent_key, k), val)
-          else
-            a << {:id => get_id(parent_key, val), :parent => parent_key, :text => get_text(val)}
+        id = get_id(parent, k)
+        result << {:id => id, :parent => parent, :text => get_text(k)}
+        parse_child(result, id, v)
+      elsif v.is_a?(Array)
+        if v.all?{ |item| item.is_a?(Hash) }
+          v.each_with_index do |item, idx|
+            if item.is_a?(Hash)
+              id = get_id(parent, k, idx)
+              result << {:id => id, :parent => parent, :text => get_text(k, idx)}
+              parse_child(result, id, item)
+            else
+              result << {:id => get_id(parent, item, idx), :parent => parent, :text => get_text(item)}
+            end
           end
+        else
+          result << {:id => get_id(parent, k), :parent => parent, :text => get_text(k, v.join(","))}
         end
       else
-        a << {:id => get_id(parent_key, k), :parent => parent_key, :text => get_text(k, v)}
+        result << {:id => get_id(parent, k), :parent => parent, :text => get_text(k, v)}
       end
-      #add for single
-      a
+
+      result
     end
 
   end

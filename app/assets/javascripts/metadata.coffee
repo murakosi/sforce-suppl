@@ -65,13 +65,13 @@ coordinates = ->
     refreshTree(parsedResult.tree)
     createGrid(parsedResult.grid)
     
-  getAction = () ->
-    "meta_refresh?selected_directory=" + $('#selected_directory').val()
+  getUrl = () ->
+    "meta_refresh?selected_metadata=" + $('#selected_directory').val()
 
   refreshTree = (json) ->
     $('#tree').jstree(true).settings.core.data = json
     $('#tree').jstree(true).refresh()
-    $('#tree').jstree(true).settings.core.data = { 'url' : getAction(), 'data' : (node) -> {"id":node.id}}
+    $('#tree').jstree(true).settings.core.data = { 'url' : getUrl(), 'data' : (node) -> {"id":node.id}}
     $(".exp-btn").prop("disabled", false)
 
   createGrid = (json = null) ->   
