@@ -3,6 +3,7 @@ require "rubyxl"
 require "csv"
 
 class MetadataController < ApplicationController
+  include Metadata
   before_action :require_sign_in!
 
   protect_from_forgery :except => [:execute]
@@ -25,14 +26,16 @@ class MetadataController < ApplicationController
   end
   
   def execute
-    @selected_metadata = params[:selected_directory]
+    #@selected_metadata = params[:selected_directory]
+    @selected_metadata = "ApprovalProcess"
 
     begin
       metadata_list = metadata_client.list(@selected_metadata)
 
       if metadata_list.present?
         list_result = metadata_list.map{ |hash| hash.slice(*Key_order)}.sort_by{|k,v| k[:full_name]}
-        read_result = refresh(list_result)
+        #read_result = refresh(list_result)
+        read_result = get_read_result(list_result)
         result = response_json(list_result, read_result)
       else
         raise StandardError.new("No results to display")
@@ -44,19 +47,27 @@ class MetadataController < ApplicationController
     end
   end
 
-  def refresh(list_result)
-
-    describe_result = []
-
-    begin
-      list_result.each do |hash|
-        describe_result << metadata_client.read(@selected_metadata, hash[:full_name])[:records]
-      end
-    rescue StandardError => ex
-      return {:id => :result, :parent => "#", :text => ex.message}
+  def get_read_result(list_result)
+    arr = []
+    list_result.each do |hash|
+      arr << {:id => hash[:full_name], :parent => "#", :text => get_text(hash[:full_name]), :children => true }
     end
+    arr
+  end
 
-    parse(describe_result)
+  def refresh()
+    #selected_metadata = params[:selected_metadata]
+    if params[:id] == "#"
+      render :json => "[]", :status => 200
+      return 
+    end
+    
+    selected_metadata = "ApprovalProcess"
+    selected_id = params[:id]
+
+    describe_result = metadata_client.read(selected_metadata, selected_id)[:records]
+    parsed = parse(describe_result, selected_id)
+    render :json => parsed, :status => 200
   end
 
   def get_id(parent, current)
@@ -71,30 +82,34 @@ class MetadataController < ApplicationController
     end
   end
 
-  def parse(arr = [])
-    newa = []
-    arr.each_with_index do |hash, i|
-      newa |= parseHash(hash, "full_name" + i.to_s)
-    end
+  def parse(arr = [], parent)
+    #newa = []
+    #arr.each_with_index do |hash, i|
+      #newa |= parseHash(hash, "full_name" + i.to_s)
+    #end
+    newa = parseHash(arr, parent, parent)
     newa
   end
 
-  def parseHash(a, full_name_sym)
+  def parseHash(a, full_name_sym, parent)
     p = []
     a.each do |k, v|
       if v.is_a?(Hash)
-        p << {:id => get_id(full_name_sym, k), :parent => full_name_sym, :text => get_text(k) }
+        #p << {:id => get_id(full_name_sym, k), :parent => full_name_sym, :text => get_text(k) }
+        p << {:id => get_id(full_name_sym, k), :parent => parent, :text => get_text(k) }
         parse_child(p, get_id(full_name_sym, k), v)
       elsif v.is_a?(Array)
-        p << {:id => get_id(full_name_sym, k), :parent => full_name_sym, :text => get_text(k) }
+        #p << {:id => get_id(full_name_sym, k), :parent => full_name_sym, :text => get_text(k) }
+        p << {:id => get_id(full_name_sym, k), :parent => parent, :text => get_text(k) }
         v.each_with_index do |val, idx|
           p << {:id => get_id(full_name_sym, k.to_s + idx.to_s), :parent => get_id(full_name_sym, k), :text => get_text(k, idx)}
           parse_child(p, get_id(full_name_sym, k.to_s + idx.to_s), val)
         end
       elsif k == Full_name_sym
-        p << {:id => full_name_sym, :parent => "#", :text => get_text(v)}
+        #p << {:id => full_name_sym, :parent => "#", :text => get_text(v)}        
       else
-        p << {:id => get_id(full_name_sym, k), :parent => full_name_sym, :text => get_text(k, v)}
+        #p << {:id => get_id(full_name_sym, k), :parent => full_name_sym, :text => get_text(k, v)}
+        p << {:id => get_id(full_name_sym, k), :parent => parent, :text => get_text(k, v)}
       end
     end
     p
@@ -120,6 +135,8 @@ class MetadataController < ApplicationController
       else
         a << {:id => get_id(parent_key, k), :parent => parent_key, :text => get_text(k, v)}
       end
+      #add for single
+      a
     end
 
   end

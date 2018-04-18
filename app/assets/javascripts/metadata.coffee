@@ -1,16 +1,11 @@
-# Place all the behaviors and hooks related to the matching controller here.
-# All this logic will automatically be available in application.js.
-# You can use CoffeeScript in this file: http://coffeescript.org/
-# Place all the behaviors and hooks related to the matching controller here.
-# All this logic will automatically be available in application.js.
-# You can use CoffeeScript in this file: http://coffeescript.org/
 coordinates = ->
   
   selectedTabId = 1
   jqXHR = null
   
-  get_options = (action, method, data, datatype) ->
+  get_options = (action, method, data, datatype, doAsync = true) ->
     {
+      "async" : doAsync,
       "action": action,
       "method": method,
       "data": data,
@@ -21,7 +16,6 @@ coordinates = ->
     e.preventDefault()
     $('#tree').jstree(true).settings.core.data = null
     $('#tree').jstree(true).refresh()
-    $('#loading').show()
 
     val = {selected_directory: $('#selected_directory').val()}
     action = $('.metadata-form').attr('action')
@@ -71,10 +65,13 @@ coordinates = ->
     refreshTree(parsedResult.tree)
     createGrid(parsedResult.grid)
     
+  getAction = () ->
+    "meta_refresh?selected_directory=" + $('#selected_directory').val()
+
   refreshTree = (json) ->
-    $('#loading').hide()
     $('#tree').jstree(true).settings.core.data = json
     $('#tree').jstree(true).refresh()
+    $('#tree').jstree(true).settings.core.data = { 'url' : getAction(), 'data' : (node) -> {"id":node.id}}
     $(".exp-btn").prop("disabled", false)
 
   createGrid = (json = null) ->   
@@ -135,49 +132,28 @@ coordinates = ->
       0
     else
       document.getElementById('tabArea').offsetWidth
-  $("#tree").on "before_open.jstree", (e, data) ->
-  #$("#tree").on "select_node.jstree", (e, data) ->
-    console.log(data.node)
-#    if data.node.parent = "#"
-#      alert(data.node.id)
-  $("#tree").on "open_node.jstree", (e, data) ->
-    alert("open")
 
   $("div#tabArea").tabs()
 
   createGrid()
 
-  afunct = (json) ->
-    alert("func called")
-    if json.id == '#'
-      [{ 'id' : '1', 'parent' : '#', 'text' : 'Root node 1', 'children':true},
-      #{ 'id' : '2', 'parent' : '1', 'text' : 'Child node 1' },
-      #{ 'id' : '3', 'parent' : '1', 'text' : 'Child node 2' },
-      { 'id' : '4', 'parent' : '#', 'text' : 'Root node 2', 'children':true}]
-    else
-      alert(json.children)
-      [{ 'id' : json.id + '2', 'parent' : json.id, 'text' : 'Child node 1' },
-      { 'id' : json.id + '3', 'parent' : json.id, 'text' : 'Child node 2' }]
-
   $('#tree').jstree({
     'core' : {
-      #'check_callback' : true,
-      #'data' : [ # 画面に表示する仮の初期データ
-      #  { 'id' : '1', 'parent' : '#', 'text' : 'Root node 1', 'children':true},
-      #  { 'id' : '2', 'parent' : '1', 'text' : 'Child node 1' },
-      #  { 'id' : '3', 'parent' : '1', 'text' : 'Child node 2' },
-      #  { 'id' : '4', 'parent' : '#', 'text' : 'Root node 2', 'children':true }
-      #],
-      #'ajax': { 'data': (obj) -> afunct(obj) },
-      'data' : a = (node, cb) -> cb(afunct(node)),
+      'check_callback' : true,
+      'data' : [ # 画面に表示する仮の初期データ
+        { 'id' : '1', 'parent' : '#', 'text' : 'Root node 1' },
+        { 'id' : '2', 'parent' : '1', 'text' : 'Child node 1' },
+        { 'id' : '3', 'parent' : '1', 'text' : 'Child node 2' },
+        { 'id' : '4', 'parent' : '#', 'text' : 'Root node 2' }
+      ],
       "multiple": false,
       "animation":false,
       "themes": {"icons":false}
     }
   })
 
+  $("#loading").hide()
   $(".exp-btn").prop("disabled", true)
-  $('#loading').hide()
 
 $(document).ready(coordinates)
 $(document).on('page:load', coordinates)

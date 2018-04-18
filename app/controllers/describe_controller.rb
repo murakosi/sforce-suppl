@@ -3,6 +3,7 @@ require "rubyxl"
 require "csv"
 
 class DescribeController < ApplicationController
+  include Describe
   before_action :require_sign_in!
 
   protect_from_forgery :except => [:execute]
