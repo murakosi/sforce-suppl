@@ -1,5 +1,5 @@
-require "hashie"
 require "savon"
+
 module Metadata
     class Client
 
@@ -20,8 +20,6 @@ module Metadata
       @headers = { 'tns:LocaleOptions' => { 'tns:language' => 'ja' } }
 
       @version = options[:version] || Soapforce.configuration.version || 28.0
-      #@host = options[:host] || 'login.salesforce.com'
-      #@login_url = options[:login_url] || "https://#{@host}/services/Soap/u/#{@version}"
 
       @logger = options[:logger] || false
       # Due to SSLv3 POODLE vulnerabilty and disabling of TLSv1, use TLSv1_2
@@ -50,14 +48,13 @@ module Metadata
         pretty_print_xml: true,
         logger: @logger,
         log: (@logger != false),
-        #endpoint: @login_url,
         ssl_version: @ssl_version # Sets ssl_version for HTTPI adapter
       }.update(savon_options))
     end
 
     def login(options={})
       result = nil
-        if options[:session_id] && options[:metadata_server_url]
+      if options[:session_id] && options[:metadata_server_url]
         @session_id = options[:session_id]
         @server_url = options[:metadata_server_url]
       else
@@ -77,7 +74,6 @@ module Metadata
         ssl_version: @ssl_version # Sets ssl_version for HTTPI adapter
       )
 
-      @client
     end
     alias_method :authenticate, :login
 
@@ -96,25 +92,15 @@ module Metadata
       call_metadata_api(:describe_metadata, {:api_version => @version})
     end
 
-    def metadata_objects
-      if @describe_metadata_result.present?
-        return @describe_metadata_result        
-      end
-
-      @describe_metadata_result = describe[:metadata_objects].collect{|type| type[:xml_name]}.sort
-      #metadata_objects = @describe_metadata_result.map{ |type|
-      #   {
-      #     type[:xml_name] => type[:child_xml_names] 
-      #    }
-      #  }.sort_by{|k|k.keys}.reduce({}, :update)
+    def describe_metadata_objects
+      describe[:metadata_objects].collect{|type| type[:xml_name] }.sort
     end
 
-    def describe_value_type(type_name)
-      call_metadata_api(:describe_value_type, {:type => Metadata_namespace + type_name.to_s})[:value_type_fields]
-    end
+    #def describe_value_type(type_name)
+    #  call_metadata_api(:describe_value_type, {:type => Metadata_namespace + type_name.to_s})[:value_type_fields]
+    #end
 
     def read(type_name, full_name)
-      #call_metadata_api(:read_metadata, {:type_name => "ApprovalProcess", :full_name => "Order__c.Qty_under_10"})
       call_metadata_api(:read_metadata, {:type_name => type_name, :full_name => full_name})
     end
 
@@ -125,10 +111,8 @@ module Metadata
       end
 
       # Convert SOAP XML to Hash
-      #puts response
       response = response.to_hash
 
-      #puts response
       # Get Response Body
       key = key_name("#{method}Response")
       response_body = response[key]

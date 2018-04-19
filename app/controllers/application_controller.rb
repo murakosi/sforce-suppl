@@ -38,19 +38,28 @@ class ApplicationController < ActionController::Base
   end
 
   def signed_in?
-    @current_user.present?
+    @current_user.present? && valid_sforce_session?
+  end
+
+  def valid_sforce_session?
+    begin
+      current_client()
+      return true
+    rescue StandardError => ex
+      return false
+    end
   end
 
   def current_client
     client = Soapforce::Client.new
     client.authenticate(sforce_session)
-    client  
+    client
   end
 
   def metadata_client
     client = Metadata::Client.new
     client.authenticate(sforce_metadata_session)
-    client
+    client   
   end
 
   private

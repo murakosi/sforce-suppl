@@ -3,6 +3,7 @@ require "rubyxl"
 require "csv"
 
 class DescribeController < ApplicationController
+  include Describe
   before_action :require_sign_in!
 
   protect_from_forgery :except => [:execute]
@@ -51,7 +52,7 @@ class DescribeController < ApplicationController
     #end
   end
 
-  def get_object_info(hash)    
+  def get_object_info(hash)
     info = "表示ラベル：" + hash[:label] + "\n" +
            "API参照名：" + hash[:name] + "\n" +
            "プレフィックス：" + hash[:key_prefix]
