@@ -65,7 +65,7 @@ class MetadataController < ApplicationController
     selected_id = params[:id]
 
     describe_result = metadata_client.read(selected_metadata, selected_id)[:records]
-    parsed = parseHash(describe_result, selected_id)
+    parsed = parse_hash(describe_result, selected_id)
     render :json => parsed, :status => 200
   end
 
@@ -100,23 +100,34 @@ class MetadataController < ApplicationController
     end
   end
 
-  def parseHash(hashes, parent)
+  def remodel(id, parent_id, text, key, value)
+    {
+      :id => id,
+      :parent => parent_id,
+      :text => text,
+      :org_key => key,
+      :org_value => value
+    }
+  end
+
+  def parse_hash(hashes, parent)
     result = []
     hashes.each do |k, v|
       if v.is_a?(Hash)
-        result << {:id => get_id(parent, k), :parent => parent, :text => get_text(k) }
+        result << remodel(get_id(parent, k), parent, get_text(k), k, v)
         parse_child(result, get_id(parent, k), v)
       elsif v.is_a?(Array)
-        result << {:id => get_id(parent, k), :parent => parent, :text => get_text(k) }
+        result << remodel(get_id(parent, k), parent, get_text(k), k, v)
         v.each_with_index do |val, idx|
-          id = get_id(parent, k, idx)
-          result << {:id => id, :parent => get_id(parent, k), :text => get_text(k, idx)}        
+          id = get_id(parent, k, idx)    
+          result << remodel(id, get_id(parent, k), get_text(k, idx), k, val)
           parse_child(result, id, val)
         end
       else
-        result << {:id => get_id(parent, k), :parent => parent, :text => get_text(k, v)}
+        result << remodel(get_id(parent, k), parent, get_text(k, v), k, v)
       end
     end
+    logger.error(result)
     result
   end
 
@@ -125,24 +136,25 @@ class MetadataController < ApplicationController
     hash.each do |k, v|
       if v.is_a?(Hash)
         id = get_id(parent, k)
-        result << {:id => id, :parent => parent, :text => get_text(k)}
+        result << remodel(id, parent, get_text(k), k, v)
         parse_child(result, id, v)
       elsif v.is_a?(Array)
         if v.all?{ |item| item.is_a?(Hash) }
           v.each_with_index do |item, idx|
             if item.is_a?(Hash)
               id = get_id(parent, k, idx)
-              result << {:id => id, :parent => parent, :text => get_text(k, idx)}
+              result << remodel(id, parent, get_text(k, idx), k, item)
               parse_child(result, id, item)
             else
-              result << {:id => get_id(parent, item, idx), :parent => parent, :text => get_text(item)}
+              # this may be needless
+              #result << remodel(get_id(parent, item, idx), parent, get_text(item), k,  v)
             end
           end
         else
-          result << {:id => get_id(parent, k), :parent => parent, :text => get_text(k, v.join(","))}
+          result << remodel(get_id(parent, k), parent, get_text(k, v.join(",")), k, v)
         end
       else
-        result << {:id => get_id(parent, k), :parent => parent, :text => get_text(k, v)}
+        result << remodel(get_id(parent, k), parent, get_text(k, v), k, v)
       end
 
       result
