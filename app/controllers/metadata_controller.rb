@@ -4,6 +4,7 @@ require "csv"
 
 class MetadataController < ApplicationController
   include Metadata
+
   before_action :require_sign_in!
 
   protect_from_forgery :except => [:execute]
@@ -29,7 +30,7 @@ class MetadataController < ApplicationController
     @selected_metadata = params[:selected_directory]
     #@selected_metadata = "ApprovalProcess"
 
-    begin
+    #begin
       metadata_list = metadata_client.list(@selected_metadata)
 
       if metadata_list.present?
@@ -42,15 +43,15 @@ class MetadataController < ApplicationController
       end
       
       render :json => result, :status => 200
-    rescue StandardError => ex
-      render :json => {:error => ex.message}, :status => 400
-    end
+    #rescue StandardError => ex
+      #render :json => {:error => ex.message}, :status => 400
+    #end
   end
 
   def get_read_result(list_result)
     arr = []
     list_result.each do |hash|
-      arr << {:id => hash[:full_name], :parent => "#", :text => get_text(hash[:full_name]), :children => true }
+      arr << {:id => hash[:full_name], :parent => "#", :text => "<b>" + hash[:full_name].to_s + "<b>", :children => true }
     end
     arr
   end
@@ -65,102 +66,11 @@ class MetadataController < ApplicationController
     selected_id = params[:id]
 
     describe_result = metadata_client.read(selected_metadata, selected_id)[:records]
-    parsed = parse_hash(describe_result, selected_id)
+    parsed = Metadata::Formatter.parse(describe_result, selected_id)#parse_hash(describe_result, selected_id)
     render :json => parsed, :status => 200
   end
 
-  def get_id(parent, current, index = nil)
-    if index.nil?
-      parent.to_s + "-" + current.to_s
-    else
-      parent.to_s + "-" + current.to_s + "-" + index.to_s
-    end
-  end
 
-  def get_text(key, value = nil)
-    if value.nil?
-      return "<b>" + key.to_s + "</b>"
-    end
-
-    if key.to_s.include?("content") && value.is_a?(Nori::StringWithAttributes)
-      text_value = try_encode(value)
-    else
-      text_value = value
-    end
-    
-    return "<b>" + key.to_s + "</b>: " + text_value.to_s
-  end
-
-  def try_encode(value)
-    begin
-      decoded = Base64.strict_decode64(value).force_encoding('UTF-8')#.encode("UTF-8", "ASCII-8BIT")
-      ERB::Util.html_escape(decoded).gsub(/\r\n|\r|\n/, "<br />")
-    rescue StandardError => ex
-      value
-    end
-  end
-
-  def remodel(id, parent_id, text, key, value)
-    {
-      :id => id,
-      :parent => parent_id,
-      :text => text,
-      :org_key => key,
-      :org_value => value
-    }
-  end
-
-  def parse_hash(hashes, parent)
-    result = []
-    hashes.each do |k, v|
-      if v.is_a?(Hash)
-        result << remodel(get_id(parent, k), parent, get_text(k), k, v)
-        parse_child(result, get_id(parent, k), v)
-      elsif v.is_a?(Array)
-        result << remodel(get_id(parent, k), parent, get_text(k), k, v)
-        v.each_with_index do |val, idx|
-          id = get_id(parent, k, idx)    
-          result << remodel(id, get_id(parent, k), get_text(k, idx), k, val)
-          parse_child(result, id, val)
-        end
-      else
-        result << remodel(get_id(parent, k), parent, get_text(k, v), k, v)
-      end
-    end
-    logger.error(result)
-    result
-  end
-
-  def parse_child(result = [], parent, hash)
-
-    hash.each do |k, v|
-      if v.is_a?(Hash)
-        id = get_id(parent, k)
-        result << remodel(id, parent, get_text(k), k, v)
-        parse_child(result, id, v)
-      elsif v.is_a?(Array)
-        if v.all?{ |item| item.is_a?(Hash) }
-          v.each_with_index do |item, idx|
-            if item.is_a?(Hash)
-              id = get_id(parent, k, idx)
-              result << remodel(id, parent, get_text(k, idx), k, item)
-              parse_child(result, id, item)
-            else
-              # this may be needless
-              #result << remodel(get_id(parent, item, idx), parent, get_text(item), k,  v)
-            end
-          end
-        else
-          result << remodel(get_id(parent, k), parent, get_text(k, v.join(",")), k, v)
-        end
-      else
-        result << remodel(get_id(parent, k), parent, get_text(k, v), k, v)
-      end
-
-      result
-    end
-
-  end
 =begin
   def download
     if params[:format] == "csv"
