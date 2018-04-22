@@ -35,15 +35,15 @@ module Metadata
       
       if value.nil?
         text = "<b>" + key.to_s + "</b>"
-      end
-
-      if key.to_s.include?("content") && value.is_a?(Nori::StringWithAttributes)
-        text_value = try_encode(value)
       else
-        text_value = value
+        if key.to_s.include?("content") && value.is_a?(Nori::StringWithAttributes)
+          text_value = try_encode(value)
+        else
+          text_value = value
+        end
+        
+        text = "<b>" + key.to_s + "</b>: " + text_value.to_s
       end
-      
-      text = "<b>" + key.to_s + "</b>: " + text_value.to_s
 
       if value.nil?
         @path.push("key:" + key.to_s)
@@ -53,6 +53,7 @@ module Metadata
         @path.push("path:" + @key)
         @path.push("value:" + value.to_s)
       end
+      
       text
     end
 
