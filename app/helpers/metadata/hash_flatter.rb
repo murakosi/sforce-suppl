@@ -7,6 +7,7 @@ class HashFlatter
   def flat
     @flatted = true
     @ret = {}
+    @idx = 0
     @hash.each do |key, value|
       if value.class == Hash || value.class == ActiveSupport::HashWithIndifferentAccess
         value.each do |key_s, value_s|
@@ -17,7 +18,7 @@ class HashFlatter
       else
         if value.class == Array
           value.each_with_index do |element, index|
-            key_symbol = (key.to_s + '_' + index.to_s).to_sym
+            key_symbol = (key.to_s + '[' + index.to_s + ']').to_sym
             @ret = @ret.merge ({key_symbol => element})
             @flatted = false
           end

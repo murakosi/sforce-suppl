@@ -5,31 +5,36 @@ module Metadata
     #attr_reader :raw_array
 
     def parse(hash_array, id)
-      #@raw_array = []
-      @key_store = Metadata::MetadataStore.new
-      #puts hash_array
-      #@key_store.parse(hash_array)
+      @meta_store = Metadata::MetadataStore.new
+      @meta_store.parse(hash_array)
+      @path = []
+      @key = String.new
       @display_array = parse_hash(hash_array, id)
-
+#=begin
       #puts "keys!!!!!!!!!!!!!"
-      #puts @key_store.keys.keys
+      #puts @meta_store.keys.keys
       #puts "vlus!!!!!!!!!!"
-      #puts @key_store.values.values
-      #puts @display_array
-      return @display_array
+      #puts @meta_store.keys.values
+      puts @path
+#=end     
+      @display_array
     end
 
     def get_id(parent, current, index = nil)
       if index.nil?
-        parent.to_s + "_" + current.to_s
+        id = parent.to_s + "_" + current.to_s
       else
-        parent.to_s + "_" + current.to_s + "_" + index.to_s
+        id = parent.to_s + "_" + current.to_s + "_" + index.to_s
       end
+
+      #@path.push("parent: " + parent.to_s + " current:" + current.to_s)
+      id
     end
 
     def get_text(key, value = nil)
+      
       if value.nil?
-        return "<b>" + key.to_s + "</b>"
+        text = "<b>" + key.to_s + "</b>"
       end
 
       if key.to_s.include?("content") && value.is_a?(Nori::StringWithAttributes)
@@ -38,7 +43,17 @@ module Metadata
         text_value = value
       end
       
-      return "<b>" + key.to_s + "</b>: " + text_value.to_s
+      text = "<b>" + key.to_s + "</b>: " + text_value.to_s
+
+      if value.nil?
+        @path.push("key:" + key.to_s)
+        @key = key.to_s
+      else
+        @key = @key + "/" + key.to_s
+        @path.push("path:" + @key)
+        @path.push("value:" + value.to_s)
+      end
+      text
     end
 
     def try_encode(value)
@@ -51,10 +66,6 @@ module Metadata
     end
 
     def remodel(id, parent_id, text, key, value, index)
-      #@raw_array << {key.to_sym => value, :index => index}
-      #@key_store.store(key, value, index)
-      #puts key.to_s + ": " + value.to_s
-
       return {
       :id => id,
       :parent => parent_id,
