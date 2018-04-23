@@ -1,5 +1,5 @@
 require "fileutils"
-require "rubyxl"
+require "rubyXL"
 require "csv"
 
 class MetadataController < ApplicationController
