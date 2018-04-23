@@ -65,8 +65,10 @@ class MetadataController < ApplicationController
     selected_metadata = params[:selected_metadata]
     selected_id = params[:id]
 
+    #describe_result = {:full_name=>"Order__c.Qty_under_10", :active=>true, :allow_recall=>true, :allowed_submitters=>{:type=>"creator"}, :approval_page_fields=>{:field=>["Name", "Order_Product__c", "Order_Account__c"]}, :approval_step=>[{:allow_delegate=>false, :assigned_approver=>{:approver=>{:name=>"nakagawa@cse.co.jp", :type=>"user"}, :when_multiple_approvers=>"FirstResponse"}, :entry_criteria=>{:criteria_items=>{:field=>"Order__c.Quantity__c", :operation=>"lessThan", :value=>"10"}}, :if_criteria_not_met=>"ApproveRecord", :label=>"Qty U10 Step1", :name=>"Qty_U10_Step1"}]}
     describe_result = metadata_client.read(selected_metadata, selected_id)[:records]
     parsed = Metadata::Formatter.parse(describe_result, selected_id)#parse_hash(describe_result, selected_id)
+    #puts parsed
     render :json => parsed, :status => 200
   end
 
