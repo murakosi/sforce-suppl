@@ -3,7 +3,6 @@ require "rubyXL"
 require "csv"
 
 class MetadataController < ApplicationController
-  include Metadata
 
   before_action :require_sign_in!
 
@@ -14,7 +13,6 @@ class MetadataController < ApplicationController
 
   def show
     @metadata_directory = metadata_client.describe_metadata_objects()
-    #@metadata_directory = ["a","b"]
   end
 
   def response_json(list_result, read_result)
@@ -28,14 +26,12 @@ class MetadataController < ApplicationController
   
   def execute
     @selected_metadata = params[:selected_directory]
-    #@selected_metadata = "ApprovalProcess"
 
-    #begin
+    begin
       metadata_list = metadata_client.list(@selected_metadata)
 
       if metadata_list.present?
         list_result = metadata_list.map{ |hash| hash.slice(*Key_order)}.sort_by{|k,v| k[:full_name]}
-        #read_result = refresh(list_result)
         read_result = get_read_result(list_result)
         result = response_json(list_result, read_result)
       else
@@ -43,9 +39,9 @@ class MetadataController < ApplicationController
       end
       
       render :json => result, :status => 200
-    #rescue StandardError => ex
-      #render :json => {:error => ex.message}, :status => 400
-    #end
+    rescue StandardError => ex
+      render :json => {:error => ex.message}, :status => 400
+    end
   end
 
   def get_read_result(list_result)
@@ -65,15 +61,15 @@ class MetadataController < ApplicationController
     selected_metadata = params[:selected_metadata]
     selected_id = params[:id]
 
-    #describe_result = {:full_name=>"Order__c.Qty_under_10", :active=>true, :allow_recall=>true, :allowed_submitters=>{:type=>"creator"}, :approval_page_fields=>{:field=>["Name", "Order_Product__c", "Order_Account__c"]}, :approval_step=>[{:allow_delegate=>false, :assigned_approver=>{:approver=>{:name=>"nakagawa@cse.co.jp", :type=>"user"}, :when_multiple_approvers=>"FirstResponse"}, :entry_criteria=>{:criteria_items=>{:field=>"Order__c.Quantity__c", :operation=>"lessThan", :value=>"10"}}, :if_criteria_not_met=>"ApproveRecord", :label=>"Qty U10 Step1", :name=>"Qty_U10_Step1"}]}
-    describe_result = metadata_client.read(selected_metadata, selected_id)[:records]
-    parsed = Metadata::Formatter.parse(describe_result, selected_id)#parse_hash(describe_result, selected_id)
-    #puts parsed
-    render :json => parsed, :status => 200
+    begin
+      describe_result = metadata_client.read(selected_metadata, selected_id)[:records]
+      parsed = Metadata::Formatter.parse(describe_result, selected_id)
+      render :json => parsed, :status => 200
+    rescue StandardError => ex
+      render :json => {:error => ex.message}, :status => 400
+    end
   end
 
-
-=begin
   def download
     if params[:format] == "csv"
       download_csv()
@@ -84,10 +80,13 @@ class MetadataController < ApplicationController
 
   def download_csv
     csv_date = CSV.generate(encoding: Encoding::SJIS, row_sep: "\r\n", force_quotes: true) do |csv|
-      csv_column_names = DescribeHelper.formatter_object_result.first.keys
+      csv_column_names = Metadata::Formatter.metadata_store.csv_header
       csv << csv_column_names
-      DescribeHelper.formatter_object_result.each do | hash |
-          csv << hash.values
+      Metadata::Formatter.metadata_store.key_store.keys.each do | k, v |
+          arr = []
+          arr << k
+          v.each{|item| item.each{|k, v| arr << v}}
+          csv << arr
       end
     end
     send_data(csv_date, filename: "abc.csv")
@@ -95,38 +94,65 @@ class MetadataController < ApplicationController
 
   def download_excel
 
-    if !DescribeHelper.is_sobject_fetched?
-      return
-    end
+    #if !Metadata::Formatter.metadata_store.stored?
+    #  return
+    #end
+    describe_result = metadata_client.read("ApprovalProcess", "Order__c.Qty_under_10")[:records]
+    parsed = Metadata::Formatter.parse(describe_result, "Order__c.Qty_under_10")
 
-    source_excel = "./lib/assets/book1.xlsx"
-
-    output_excel = "./Output/book1_copy.xlsx"
-
-    FileUtils.cp(source_excel, output_excel)
-
-    workbook = RubyXL::Parser.parse(output_excel)
-    sheet = workbook.first
-
-    row = 2
-    DescribeHelper.formatter_object_result.each do | values |
-      values.each do | k,v |
-        sheet.add_cell(row, DescribeConstants.column_number(k), v)
+    exporter = Metadata::HelperProxy.get_exporter("ApprovalProcess", Metadata::Formatter.metadata_store.key_store)
+    begin
+      result = exporter.export()
+      if result.nil?
+        return
       end
-      row += 1
+      send_data(result.data,
+        :disposition => 'attachment',
+        :type => 'application/excel',
+        :filename => result.file_name,
+        :status => 200
+      )
+    rescue StandardError => ex
+      raise ex
     end
+=begin 
+    begin
+      source_excel = "./resources/book2.xlsx"
 
-    workbook.write(output_excel)
+      output_excel = "./output/book2_copy.xlsx"
 
-    #ファイルの出力
-    send_data(workbook.stream.read,
-      :disposition => 'attachment',
-      :type => 'application/excel',
-      :filename => 'abc.xlsx',
-      :status => 200
-    )
-    
-    FileUtils.rm(dest)
-  end
+      FileUtils.cp(source_excel, output_excel)
+
+      workbook = RubyXL::Parser.parse(output_excel)
+      sheet = workbook.first
+
+      Metadata::Formatter.mapping.each do | map |
+        map.each do | key, value |
+          akey = Metadata::Formatter.metadata_store.key_store.keys[k]
+          bkey = akey.first
+          row = value[:r].to_i - 1
+          col = value[:c].to_i - 1
+          sheet[row][col].change_contents(bkey[:value])
+        end
+      end
+
+      workbook.write(output_excel)
+
+      #ファイルの出力
+      send_data(workbook.stream.read,
+        :disposition => 'attachment',
+        :type => 'application/excel',
+        :filename => 'approval.xlsx',
+        :status => 200
+      )
+      
+    rescue StandardError => ex
+      raise ex
+      return
+    ensure
+      FileUtils.rm(output_excel)
+    end
 =end
+  end
+
 end

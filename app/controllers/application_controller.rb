@@ -21,7 +21,7 @@ class ApplicationController < ActionController::Base
 
   def sign_in(login_params)
     sforce_result = login_to_salesforce(login_params)
-
+    
     user = get_user(login_params)
     login_token = User.new_login_token
     session[:user_token] = login_token

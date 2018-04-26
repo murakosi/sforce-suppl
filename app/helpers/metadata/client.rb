@@ -19,7 +19,7 @@ module Metadata
       client_id = options[:client_id] || Soapforce.configuration.client_id
       @headers = { 'tns:LocaleOptions' => { 'tns:language' => 'ja' } }
 
-      @version = options[:version] || Soapforce.configuration.version || 28.0
+      @version = options[:version] || Soapforce.configuration.version || 41.0#28.0
 
       @logger = options[:logger] || false
       # Due to SSLv3 POODLE vulnerabilty and disabling of TLSv1, use TLSv1_2

@@ -2,20 +2,49 @@ module Metadata
   module Formatter
   class << self
     attr_reader :display_array
-    #attr_reader :raw_array
+
+
+    def metadata_store
+      @metadata_store
+    end
+
+    Mapping = [
+        {:full_name => {:r => 7, :c=>3}},
+        {:active => {:r => 8, :c=>17}},
+        {:allow_recall => {:r => 10, :c=>26}},
+        {:allowed_submitters_type => {:r => 10, :c=>37}},
+        {:approval_step_assigned_approver_approver_name => {:r => 28, :c=>35}},
+        {:approval_step_entry_criteria_criteria_items_field => {:r => 31, :c=>21}},
+        #{:approval_step_entry_criteria_criteria_items_operation => {:r => 31, :c=>30}},
+        #{:approval_step_entry_criteria_criteria_items_value => {:r => 31, :c=>40}},
+        {:approval_step_label => {:r => 28, :c=>21}},
+        {:approval_step_reject_behavior_type => {:r => 28, :c=>49}},
+        {:email_template => {:r => 10, :c=>44}},
+        {:entry_criteria_criteria_items => {:r => 8, :c=>19}},
+        {:final_approval_record_lock => {:r => 57, :c=>20}},
+        {:final_rejection_record_lock => {:r => 60, :c=>20}},
+        {:label => {:r => 7, :c=>9}},
+        {:next_automated_approver_user_hierarchy_field => {:r => 8, :c=>44}},
+        {:record_editability => {:r => 10, :c=>19}}
+    ]
+
+    def mapping
+      Mapping
+    end
 
     def parse(hash_array, id)
-      @meta_store = Metadata::MetadataStore.new
-      @meta_store.parse(hash_array)
+      @metadata_store = Metadata::MetadataStore.new
+      @metadata_store.parse(hash_array)
       @path = []
-      @key = String.new
+      @key = nil
+      @parent_full_name = id
       @display_array = parse_hash(hash_array, id)
 #=begin
+      #puts @metadata_store.key_store.xsi_type
       #puts "keys!!!!!!!!!!!!!"
-      #puts @meta_store.keys.keys
+      #puts @metadata_store.key_store.keys
       #puts "vlus!!!!!!!!!!"
-      #puts @meta_store.keys.values
-      puts @path
+      #puts @metadata_store.key_store.values
 #=end     
       @display_array
     end
@@ -27,7 +56,7 @@ module Metadata
         id = parent.to_s + "_" + current.to_s + "_" + index.to_s
       end
 
-      #@path.push("parent: " + parent.to_s + " current:" + current.to_s)
+      #@path.push(parent.to_s + "/" + current.to_s + "[" + index.to_s + "]")
       id
     end
 
@@ -44,16 +73,19 @@ module Metadata
         
         text = "<b>" + key.to_s + "</b>: " + text_value.to_s
       end
-
-      if value.nil?
-        @path.push("key:" + key.to_s)
+=begin
+      if @key.nil?
         @key = key.to_s
+        @path.push("key:" + key.to_s)
+        @path.push("value:" + value.to_s)
+        @path.push("path:" + @key)
       else
         @key = @key + "/" + key.to_s
-        @path.push("path:" + @key)
+        @path.push("key:" + key.to_s)
         @path.push("value:" + value.to_s)
+        @path.push("path:" + @key)
       end
-      
+=end      
       text
     end
 
@@ -67,7 +99,7 @@ module Metadata
     end
 
     def remodel(id, parent_id, text, key, value, index)
-      return {
+      {
       :id => id,
       :parent => parent_id,
       :text => text
@@ -122,7 +154,6 @@ module Metadata
                 result << remodel(id, parent, get_text(k, idx), k, item, idx)
                 parse_child(result, id, item, idx)
               else
-                #puts "this may be needless"
                 result << remodel(get_id(parent, item, idx), parent, get_text(item), k,  v)
               end
             end
