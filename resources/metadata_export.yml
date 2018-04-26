@@ -1,0 +1,6 @@
+ApprovalProcess: 
+  template_name: "./resources/book2.xlsx"
+  mapping_name: "./resources/mapping/approval_process_mapping.yml"
+next_time: 
+  template_name: "axd"
+  mapping_name: "exporter"

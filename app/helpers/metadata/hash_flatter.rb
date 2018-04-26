@@ -11,19 +11,20 @@ class HashFlatter
     @hash.each do |key, value|
       if value.class == Hash || value.class == ActiveSupport::HashWithIndifferentAccess
         value.each do |key_s, value_s|
-          key_symbol = (key.to_s + '_' + key_s.to_s).to_sym
+          key_symbol = (key.to_s + '/' + key_s.to_s).to_sym
           @ret = @ret.merge({key_symbol => value_s})
           @flatted = false
         end
       else
         if value.class == Array
           value.each_with_index do |element, index|
-            key_symbol = (key.to_s + '[' + index.to_s + ']').to_sym
-            @ret = @ret.merge ({key_symbol => element})
+            key_symbol = (key.to_s + '/' + index.to_s).to_sym
+            @ret = @ret.merge({key_symbol => element})
             @flatted = false
           end
         else
-          @ret = @ret.merge ({key => value})
+          @ret = @ret.merge({key => value})
+          @ret
         end
       end
     end

@@ -1,0 +1,51 @@
+full_name:
+    row: 7
+    column: 3
+active:
+    row: 8
+    column: 17
+allow_recall:
+    row: 10
+    column: 26
+allowed_submitters_type:
+    row: 10
+    column: 37
+approval_step_assigned_approver_approver_name:
+    row: 28
+    column: 35
+approval_step_entry_criteria_criteria_items_field:
+    row: 31
+    column: 21
+#approval_step_entry_criteria_criteria_items_operation:
+#    row: 31
+#    column: 30
+#approval_step_entry_criteria_criteria_items_value:
+#    row: 31
+#    column: 40
+approval_step_label:
+    row: 28
+    column: 21
+approval_step_reject_behavior_type:
+    row: 28
+    column: 49
+email_template:
+    row: 10
+    column: 44
+entry_criteria_criteria_items:
+    row: 8
+    column: 19
+final_approval_record_lock:
+    row: 57
+    column: 20
+final_rejection_record_lock:
+    row: 60
+    column: 20
+label:
+    row: 7
+    column: 9
+next_automated_approver_user_hierarchy_field:
+    row: 8
+    column: 44
+record_editability:
+    row: 10
+    column: 19

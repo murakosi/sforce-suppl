@@ -83,9 +83,9 @@ class DescribeController < ApplicationController
       return
     end
 
-    source_excel = "./lib/assets/book1.xlsx"
+    source_excel = "./resources/book1.xlsx"
 
-    output_excel = "./Output/book1_copy.xlsx"
+    output_excel = "./output/book1_copy.xlsx"
 
     FileUtils.cp(source_excel, output_excel)
 
