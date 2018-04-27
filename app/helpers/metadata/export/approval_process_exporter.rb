@@ -9,7 +9,9 @@ module Metadata
 
             def write_excel
                 sheet = get_sheet(0)
+                row = sheet[8]
 
+                return
                 @mapping.each do | key, value  |
                     akey = @data.keys[key]
                     bkey = akey.first
