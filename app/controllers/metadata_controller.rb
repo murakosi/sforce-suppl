@@ -6,53 +6,79 @@ class MetadataController < ApplicationController
 
   before_action :require_sign_in!
 
-  protect_from_forgery :except => [:execute]
-  
-  Full_name_sym = :full_name
-  Key_order = %i[type id full_name file_name created_date created_by_id created_by_name last_modified_date last_modified_by_id last_modified_by_name monegeable_state]
+  protect_from_forgery :except => [:list, :read]
+
+  Metadata_type_column_index = 1
+  Full_name_column_index = 3
 
   def show
     @metadata_directory = metadata_client.describe_metadata_objects()
   end
 
-  def response_json(list_result, read_result)
+  def execute_response_json(list_result, read_result)
+    column_options = [{type: "checkbox", readOnly: false, className: "htCenter htMiddle"}]
+    list_result.first.keys.size.times{column_options << {type: "text", readOnly: true}}
     {:info => @selected_metadata,
-     :grid => {:columns => list_result.first.keys, 
-               :rows => list_result.each{|hash| hash.values}
+     :grid => {:column_options => column_options,
+               :columns => [""] + list_result.first.keys, 
+               :rows => list_result.map{|hash| [false] + hash.values}
               },
      :tree => read_result
     }
   end
-  
-  def execute
+
+  def read_response_json(read_result)
+    column_options = []
+    read_result.header.size.times{column_options << {type: "text", readOnly: true}}
+    {:info => "read",
+     :grid => {:column_options => column_options,
+               :columns => read_result.header, 
+               :rows => read_result.data
+              }
+    }
+  end
+
+  def list
     @selected_metadata = params[:selected_directory]
 
     begin
       metadata_list = metadata_client.list(@selected_metadata)
 
       if metadata_list.present?
-        list_result = metadata_list.map{ |hash| hash.slice(*Key_order)}.sort_by{|k,v| k[:full_name]}
-        read_result = get_read_result(list_result)
-        result = response_json(list_result, read_result)
+        list_result = Metadata::Formatter.format_metadata_list(metadata_list)
+        tree_nodes = Metadata::Formatter.format_tree_nodes(list_result)
+        result = execute_response_json(list_result, tree_nodes)
       else
         raise StandardError.new("No results to display")
-      end
-      
+      end    
       render :json => result, :status => 200
     rescue StandardError => ex
       render :json => {:error => ex.message}, :status => 400
     end
   end
 
-  def get_read_result(list_result)
-    arr = []
-    list_result.each do |hash|
-      arr << {:id => hash[:full_name], :parent => "#", :text => "<b>" + hash[:full_name].to_s + "<b>", :children => true }
+  def read
+    rows = params[:data]
+    p rows
+
+    if rows.nil?
+      render :json => {:error => "Row data is empty"}, :status => 400
+      return
     end
-    arr
+
+    row_data = rows.values.first
+    metadata_type = row_data[Metadata_type_column_index]
+    full_name = row_data[Full_name_column_index]
+
+    #begin
+      result = execute_read_metadata(metadata_type, full_name)
+      render :json => read_response_json(result.raw_data), :status => 200            
+    #rescue StandardError => ex
+    #  render :json => {:error => ex.message}, :status => 400
+    #end
   end
 
-  def refresh()
+  def refresh
     if params[:id] == "#"
       render :json => "[]", :status => 200
       return 
@@ -61,13 +87,21 @@ class MetadataController < ApplicationController
     selected_metadata = params[:selected_metadata]
     selected_id = params[:id]
 
-    begin
-      describe_result = metadata_client.read(selected_metadata, selected_id)[:records]
-      parsed = Metadata::Formatter.parse(describe_result, selected_id)
-      render :json => parsed, :status => 200
-    rescue StandardError => ex
-      render :json => {:error => ex.message}, :status => 400
-    end
+    #begin
+      result = execute_read_metadata(selected_metadata, selected_id)
+      render :json => result.display_data, :status => 200
+    #rescue StandardError => ex
+    #  render :json => {:error => ex.message}, :status => 400
+    #end
+  end
+
+  def execute_read_metadata(metadata_type, full_name)
+      if Metadata::Formatter.metadata_store.stored?(full_name)
+        Metadata::Formatter.metadata_store[full_name]
+      else
+        describe_result = metadata_client.read(metadata_type, full_name)[:records]
+        Metadata::Formatter.format(describe_result, full_name)
+      end
   end
 
   def download

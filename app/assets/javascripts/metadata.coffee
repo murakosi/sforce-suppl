@@ -1,6 +1,8 @@
 coordinates = ->
   
   selectedTabId = 1
+  selectedRowData = {}
+  grids = {}
   jqXHR = null
   
   get_options = (action, method, data, datatype, doAsync = true) ->
@@ -14,6 +16,7 @@ coordinates = ->
 
   $(".execute-metadata").on "click", (e) ->
     e.preventDefault()
+    selectedRowData = {}
     $('#tree').jstree(true).settings.core.data = null
     $('#tree').jstree(true).refresh()
 
@@ -22,6 +25,22 @@ coordinates = ->
     method = $('.metadata-form').attr('method')
     options = get_options(action, method, val)
     executeAjax(options, processSuccessResult, displayError)
+
+  $("#read-btn").on "click", (e) ->
+    #if selectedRow < 0
+    #  return
+
+    e.preventDefault()
+    table = grids["#grid"]
+    #val = {data: table.getDataAtRow(selectedRow)}
+    val = {data: selectedRowData}
+    action = "read"
+    method = "post"
+    options = get_options(action, method, val)
+    executeAjax(options, processSuccess, displayError)
+
+  processSuccess = (json) ->
+    createGrid("#sample", json.grid)
 
   executeAjax = (options, doneCallback, errorCallback) ->
 
@@ -42,28 +61,27 @@ coordinates = ->
       console.log { done: stat, data: data, xhr: xhr }
       $("#messageArea").empty()
       $("#messageArea").hide()
-      doneCallback(xhr.responseText)      
+      doneCallback($.parseJSON(xhr.responseText))
 
     jqXHR.fail (xhr, stat, err) ->
       jqXHR = null
       console.log { fail: stat, error: err, xhr: xhr }
       alert(err)
-      errorCallback(xhr.responseText)
+      errorCallback($.parseJSON(xhr.responseText))
 
     jqXHR.always (res1, stat, res2) ->
       jqXHR = null
       console.log { always: stat, res1: res1, res2: res2 }
 
-  displayError = (error) ->
+  displayError = (json) ->
     $('#loading').hide()
-    $("#messageArea").html($.parseJSON(error).error)
+    $("#messageArea").html(json.error)
     $("#messageArea").show()
     $(".exp-btn").prop("disabled", true);
   
-  processSuccessResult = (result) ->
-    parsedResult = $.parseJSON(result)
-    refreshTree(parsedResult.tree)
-    createGrid(parsedResult.grid)
+  processSuccessResult = (json) ->
+    refreshTree(json.tree)
+    createGrid("#grid", json.grid)
     
   getUrl = () ->
     "meta_refresh?selected_metadata=" + $('#selected_directory').val()
@@ -74,11 +92,13 @@ coordinates = ->
     $('#tree').jstree(true).settings.core.data = { 'url' : getUrl(), 'data' : (node) -> {"id":node.id}}
     $(".exp-btn").prop("disabled", false)
 
-  createGrid = (json = null) ->   
-    hotElement = document.querySelector("#grid")
 
-    table = new Handsontable(hotElement)
-    table.destroy()
+  createGrid = (id, json = null) ->   
+    hotElement = document.querySelector(id)
+
+    if !grids[id]?
+      table = new Handsontable(hotElement)
+      table.destroy()
 
     header = get_columns(json)
     records = get_rows(json)
@@ -96,46 +116,59 @@ coordinates = ->
         colHeaders: header,
         columns: columns_option,
         contextMenu: true,
-        readOnly: true,
-        startRows: 0
+        #readOnly: true,
+        startRows: 0,
+        afterChange: (source, changes) -> detect_check(source, changes)
     }
 
-    table = new Handsontable(hotElement, hotSettings)
+    grids[id] = new Handsontable(hotElement, hotSettings)
 
-  get_columns = (result) ->
-    if !result?
+  detect_check = (source, changes) ->
+    if changes == 'edit'
+      row_index = source[0][0]
+      checked = source[0][3]
+      if checked
+        selectedRowData[row_index] = grids["#grid"].getDataAtRow(row_index)
+      else
+        delete selectedRowData[row_index]
+
+
+  get_columns = (json) ->
+    if !json?
       #[[]]
       null
     else
-      result.columns
+      json.columns
 
-  get_rows = (result) ->
-    if !result?
+  get_rows = (json) ->
+    if !json?
       null
     else
-      result.rows
+      json.rows
 
-  get_executed_soql = (result) ->
-    if !result?
+  get_executed_soql = (json) ->
+    if !json?
       null
     else
       result.soql
 
-  get_columns_option = (result) ->
-    if !result?
+  get_columns_option = (json) ->
+    if !json?
       [[]]
     else
-      null
+      #null
+      json.column_options
 
-  get_grid_width = (result) ->
-    if !result?
+  get_grid_width = (json) ->
+    if !json?
       0
     else
       document.getElementById('tabArea').offsetWidth
 
   $("div#tabArea").tabs()
 
-  createGrid()
+  createGrid("#grid")
+  createGrid("#sample")
 
   $('#tree').jstree({
     'core' : {

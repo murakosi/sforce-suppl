@@ -159,28 +159,23 @@
 		<br>
 		<%= button_to "CSV Export", meta_download_path(:format => "csv"), :method => :get, :id => "exp-btn", :class => "btn btn-default exp-btn" %>
 		<%= button_to "Excel Export", meta_download_path(:format => "excel"), :method => :get, :id => "exp-btn", :class => "btn btn-default exp-btn" %>
+		<input type="button" value="Read" id="read-btn" class="btn btn-default exp-btn"/>
 		<ul>
 			<li class="noselect"><a href="#list-result-tab">List</a></li>
 			<li class="noselect"><a href="#read-result-tab">Read</a></li>
+			<li class="noselect"><a href="#sample-tab">Data</a></li>
 		</ul>
 		<div id="list-result-tab" class="resultTab">
 			<div id="list-overview" class="resultSoql">list result</div>
 			<div id="grid" class="resultGrid"></div>
 		</div>
 		<div id="read-result-tab" class="resultTab">
-			<div id="read-overview" class="resultSoql">list result</div>			
-			<!--<div id="loading" class="jstree jstree-1 jstree-default jstree-loading" role="tree" tabindex="0" aria-activedescendant="j1_loading" aria-busy="true">
-				<ul class="jstree-container-ul jstree-children jstree-no-icons" role="group">
-					<li class="jstree-initial-node jstree-loading jstree-leaf jstree-last" role="treeitem" id="j1_loading">
-						<i class="jstree-icon jstree-ocl"></i>
-						<a class="jstree-anchor" href="#">
-						<i class="jstree-icon jstree-themeicon-hidden"></i>
-						Loading ...
-						</a>
-					</li>
-				</ul>
-			</div>-->
+			<div id="read-overview" class="resultSoql">read result</div>			
 			<div id="tree"></div>
+		</div>
+		<div id="sample-tab" class="resultTab">
+			<div id="sample-overview" class="resultSoql">sample data</div>
+			<div id="sample" class="resultGrid"></div>
 		</div>
 	</div>
 </div>

@@ -14,9 +14,10 @@ Rails.application.routes.draw do
   get   'desc_download',  to: 'describe#download'
 
   get   'metadata',  to: 'metadata#show'
-  post  'metadata',  to: 'metadata#execute'
+  post  'metadata',  to: 'metadata#list'
   #get   'meta_change',  to: 'metadata#change'
   get   'meta_refresh',   to: 'metadata#refresh'
+  post   'read',      to: 'metadata#read'
   get   'meta_download',  to: 'metadata#download'
 
   get   'soql',      to: 'soqlexecuter#show'
