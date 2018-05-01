@@ -2,9 +2,16 @@ module Metadata
     class MetadataStore
 
         attr_reader :data
+        attr_reader :current_full_name
+        attr_reader :current_type
 
         def initialize
             clear()
+        end
+
+        def set_current(type, full_name)
+            @current_type = type
+            @current_full_name = full_name
         end
 
         def stored?(full_name)
@@ -12,6 +19,7 @@ module Metadata
         end
 
         def [](full_name)
+            @current_full_name = full_name
             @data[full_name]
         end
 
@@ -28,6 +36,8 @@ module Metadata
         end
 
         def clear
+            @current_full_name = nil
+            @current_type = nil
             @data = StockHolder.new
         end
 

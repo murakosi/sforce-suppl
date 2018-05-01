@@ -4,10 +4,6 @@ module Metadata
         include Metadata::DisplayFormatter
         include Metadata::ExportFormatter
 
-            #attr_reader :metadata_store
-            attr_reader :display_array
-            attr_reader :raw_data
-
             def metadata_store
                 if @metadata_store.present?
                     @metadata_store
@@ -17,6 +13,7 @@ module Metadata
             end
             
             def format(read_result, full_name)
+                metadata_store.set_current(read_result[:"@xsi:type"], full_name)
                 metadata_store.store_display(full_name, format_for_display(read_result, full_name))
                 metadata_store.store_export(full_name, format_for_export(read_result))
                 metadata_store.store_raw(full_name, get_raw_data(metadata_store[full_name].export_data))

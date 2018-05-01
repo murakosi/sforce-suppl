@@ -16,10 +16,7 @@ coordinates = ->
 
   $(".execute-metadata").on "click", (e) ->
     e.preventDefault()
-    selectedRowData = {}
-    $('#tree').jstree(true).settings.core.data = null
-    $('#tree').jstree(true).refresh()
-
+    clearResults()
     val = {selected_directory: $('#selected_directory').val()}
     action = $('.metadata-form').attr('action')
     method = $('.metadata-form').attr('method')
@@ -27,12 +24,8 @@ coordinates = ->
     executeAjax(options, processSuccessResult, displayError)
 
   $("#read-btn").on "click", (e) ->
-    #if selectedRow < 0
-    #  return
-
     e.preventDefault()
-    table = grids["#grid"]
-    #val = {data: table.getDataAtRow(selectedRow)}
+    
     val = {data: selectedRowData}
     action = "read"
     method = "post"
@@ -41,6 +34,14 @@ coordinates = ->
 
   processSuccess = (json) ->
     createGrid("#sample", json.grid)
+    $('#tree').jstree(true).open_node(json.node)
+
+  clearResults = () ->
+    selectedRowData = {}
+    createGrid("#grid")
+    createGrid("#sample")
+    $('#tree').jstree(true).settings.core.data = null
+    $('#tree').jstree(true).refresh()
 
   executeAjax = (options, doneCallback, errorCallback) ->
 
@@ -77,7 +78,6 @@ coordinates = ->
     $('#loading').hide()
     $("#messageArea").html(json.error)
     $("#messageArea").show()
-    $(".exp-btn").prop("disabled", true);
   
   processSuccessResult = (json) ->
     refreshTree(json.tree)
@@ -90,14 +90,12 @@ coordinates = ->
     $('#tree').jstree(true).settings.core.data = json
     $('#tree').jstree(true).refresh()
     $('#tree').jstree(true).settings.core.data = { 'url' : getUrl(), 'data' : (node) -> {"id":node.id}}
-    $(".exp-btn").prop("disabled", false)
-
 
   createGrid = (id, json = null) ->   
     hotElement = document.querySelector(id)
 
-    if !grids[id]?
-      table = new Handsontable(hotElement)
+    if grids[id]
+      table = grids[id]
       table.destroy()
 
     header = get_columns(json)
@@ -106,8 +104,8 @@ coordinates = ->
 
     hotSettings = {
         data: records,
-        width: get_grid_width(json),
         height: 500;
+        preventOverflow: 'horizontal',
         stretchH: 'all',
         autoWrapRow: true,
         manualRowResize: false,
@@ -115,8 +113,7 @@ coordinates = ->
         rowHeaders: true,
         colHeaders: header,
         columns: columns_option,
-        contextMenu: true,
-        #readOnly: true,
+        contextMenu: false,
         startRows: 0,
         afterChange: (source, changes) -> detect_check(source, changes)
     }
@@ -135,7 +132,6 @@ coordinates = ->
 
   get_columns = (json) ->
     if !json?
-      #[[]]
       null
     else
       json.columns
@@ -156,19 +152,14 @@ coordinates = ->
     if !json?
       [[]]
     else
-      #null
       json.column_options
-
-  get_grid_width = (json) ->
-    if !json?
-      0
-    else
-      document.getElementById('tabArea').offsetWidth
 
   $("div#tabArea").tabs()
 
   createGrid("#grid")
   createGrid("#sample")
+
+  #$(".sub-btn").hide()
 
   $('#tree').jstree({
     'core' : {
@@ -184,9 +175,6 @@ coordinates = ->
       "themes": {"icons":false}
     }
   })
-
-  $("#loading").hide()
-  $(".exp-btn").prop("disabled", true)
 
 $(document).ready(coordinates)
 $(document).on('page:load', coordinates)
