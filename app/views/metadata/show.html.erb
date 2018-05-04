@@ -165,8 +165,8 @@
 	<div id="tabArea">
 		<br>
 		<%= button_to "Export Excel", meta_download_path(:format => "excel"), :method => :post, :id => "exp-btn", :class => "btn btn-default sub-btn" %>
-		<input type="button" value="Read metadata" id="read-btn" class="btn btn-default sub-btn"/>
 		<%= button_to "CSV Export", meta_download_path(:format => "csv"), :method => :post, :id => "exp-btn", :class => "btn btn-default sub-btn" %>
+		<%= button_to "YAML Export", meta_download_path(:format => "yaml"), :method => :post, :id => "exp-btn", :class => "btn btn-default sub-btn" %>
 				
 		<ul>
 			<li class="noselect"><a href="#list-result-tab">List</a></li>

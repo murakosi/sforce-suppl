@@ -5,47 +5,60 @@ module Metadata
             def initialize(data, template, mapping)
                 super(data, template, mapping)
                 @export_file_name = "approval.xlsx"
+                @mapper = create_mapper(@mapping)
             end
 
             def write_excel
                 sheet = get_sheet(0)
 
-                #p @data.keys
-                @mapping.each do | key, value  |
-                    akey = @data.keys[key]                    
-                    next if akey.nil?
-                    #bkey = akey.first
-                    if value[:multi] && akey.size > 1
-                        row_increment = value[:end_row] - value[:start_row]
-                        akey.each do | hash |
-                            copy_row(sheet, value[:start_row], value[:end_row]) 
-                            set_content(value, hash, row_increment)              
+                @mapper.each do | map |
+                    contents = @data[map.access_key]
+                    next if contents.nil?
+
+                    if require_loop(map, contents)
+                        row_increment = map.copy_end_row - map.copy_start_row
+                        contents.each do | content |
+                            copy_row(sheet,  map.copy_start_row, map.copy_end_row) 
+                            change_cell(map.row + row_increment, map.column, get_value(map, content))
                         end
                     else
-                        #bkey = akey.first
-                        set_content(value, akey.first)
+                        change_cell(map.row, map.column, get_value(map, contents.first))
                     end
-                    #row = value[:row].to_i - 1
-                    #col = value[:column].to_i - 1
-                    #cell = get_cell(value[:row], value[:column])
-                    #p "key =>" + key.to_s + ", " + "value =>" + bkey[:value].to_s
-                    #cell.change_contents(bkey[:value].to_s)
                     
                 end
             end
 
-            def set_content(map, result, row_increment = 0)
-                change_cell(map[:row] + row_increment, map[:column], result[:value])
+            def require_loop(map, data_array)
+                data_array.size > 1 && map.needs_copy_row
             end
 
-            def format(key, value)
+            def get_value(map, current_content)
+                if !map.needs_join
+                    return current_content[:value].to_s
+                end
 
+                values = []
+                values << current_content[:value].to_s
+                map.join_with.each do | join_key |                      
+                    contents = @data[join_key].select{ |content| content[:index] = current_content[:index]}
+                    values << contents.first[:value]
+                end
+                value = values.join(" ")
             end
 
+            def create_mapper(mapping)
+                mapping.map{ |k, v| Mapping.new(k, v)}
+            end
+
+            def trans(key, value)
+
+            end
             Trans = {
                     :active => {true => "○", false => "×"},
                     :allow_recall => {true => "○", false => "×"}
                     }
+            
+
         end
     end
 end

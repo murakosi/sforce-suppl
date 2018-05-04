@@ -3,6 +3,8 @@ coordinates = ->
   selectedTabId = 1
   selectedRowData = {}
   grids = {}
+  nodeGrids = {}
+  currentId = null
   jqXHR = null
   
   get_options = (action, method, data, datatype, doAsync = true) ->
@@ -13,6 +15,14 @@ coordinates = ->
       "data": data,
       "datatype": datatype
     }
+ 
+  $("#tree").on "before_open.jstree", (e, node) ->
+    if currentId == node.node.id
+      return
+
+    if nodeGrids[node.node.id]
+      console.error(nodeGrids[node.node.id])
+      createGrid("#sample", nodeGrids[node.node.id])
 
   $(".execute-metadata").on "click", (e) ->
     e.preventDefault()
@@ -21,29 +31,19 @@ coordinates = ->
     action = $('.metadata-form').attr('action')
     method = $('.metadata-form').attr('method')
     options = get_options(action, method, val)
-    executeAjax(options, processSuccessResult, displayError)
-
-  $("#read-btn").on "click", (e) ->
-    e.preventDefault()
-    
-    val = {data: selectedRowData}
-    action = "read"
-    method = "post"
-    options = get_options(action, method, val)
-    executeAjax(options, processSuccess, displayError)
-
-  processSuccess = (json) ->
-    createGrid("#sample", json.grid)
-    $('#tree').jstree(true).open_node(json.node)
+    executeAjax(options, processListSuccessResult, displayError)
 
   clearResults = () ->
-    selectedRowData = {}
     createGrid("#grid")
     createGrid("#sample")
     $('#tree').jstree(true).settings.core.data = null
     $('#tree').jstree(true).refresh()
-
-  executeAjax = (options, doneCallback, errorCallback) ->
+    selectedRowData = {}
+    nodeGrids = {}
+    grids = {}
+    currentId = null
+    
+  executeAjax = (options, doneCallback, errorCallback, params = null) ->
 
     if jqXHR
       return
@@ -62,7 +62,7 @@ coordinates = ->
       console.log { done: stat, data: data, xhr: xhr }
       $("#messageArea").empty()
       $("#messageArea").hide()
-      doneCallback($.parseJSON(xhr.responseText))
+      doneCallback($.parseJSON(xhr.responseText), params)
 
     jqXHR.fail (xhr, stat, err) ->
       jqXHR = null
@@ -79,23 +79,33 @@ coordinates = ->
     $("#messageArea").html(json.error)
     $("#messageArea").show()
   
-  processSuccessResult = (json) ->
+  processListSuccessResult = (json) ->
     refreshTree(json.tree)
     createGrid("#grid", json.grid)
-    
-  getUrl = () ->
-    "meta_refresh?selected_metadata=" + $('#selected_directory').val()
 
   refreshTree = (json) ->
     $('#tree').jstree(true).settings.core.data = json
     $('#tree').jstree(true).refresh()
-    $('#tree').jstree(true).settings.core.data = { 'url' : getUrl(), 'data' : (node) -> {"id":node.id}}
+    $('#tree').jstree(true).settings.core.data = (node, cb) -> callReadMetadata(node, cb)
 
-  createGrid = (id, json = null) ->   
-    hotElement = document.querySelector(id)
+  callReadMetadata = (node, callback) ->
+    val = {type: $('#selected_directory').val(), name: node.id}
+    action = "read"
+    method = "post"
+    options = get_options(action, method, val)
+    executeAjax(options, processReadSuccess, displayError, callback)
 
-    if grids[id]
-      table = grids[id]
+  processReadSuccess = (json, callback) ->
+    currentId = json.fullName
+    nodeGrids[currentId] = json.grid
+    createGrid("#sample", json.grid)
+    callback(json.tree)
+
+  createGrid = (elementId, json = null) ->   
+    hotElement = document.querySelector(elementId)
+
+    if grids[elementId]
+      table = grids[elementId]
       table.destroy()
 
     header = get_columns(json)
@@ -118,7 +128,7 @@ coordinates = ->
         afterChange: (source, changes) -> detect_check(source, changes)
     }
 
-    grids[id] = new Handsontable(hotElement, hotSettings)
+    grids[elementId] = new Handsontable(hotElement, hotSettings)
 
   detect_check = (source, changes) ->
     if changes == 'edit'

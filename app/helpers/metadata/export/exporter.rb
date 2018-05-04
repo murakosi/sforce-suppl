@@ -3,9 +3,8 @@ require "rubyXL"
 
 module Metadata
     module Export
-        include ExcelUtils
         class Exporter
-            
+        include ExcelUtils            
 
             Output_file = File.expand_path("./output/output.xlsx", Rails.root)
 

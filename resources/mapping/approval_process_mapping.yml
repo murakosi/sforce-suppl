@@ -34,6 +34,9 @@ approval_step_entry_criteria_criteria_items_field:
     multi: false
     start_row: 0
     end_row: 0
+    join:
+        - approval_step_entry_criteria_criteria_items_operation
+        - approval_step_entry_criteria_criteria_items_value
 #approval_step_entry_criteria_criteria_items_operation:
 #    row: 31
 #    column: 30

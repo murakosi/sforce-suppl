@@ -1,5 +1,6 @@
 module Metadata
     module DisplayFormatter
+    include Formatter
 
         def format_for_display(hash_array, id)
             @display_array = parse_hash(hash_array, id)
@@ -19,53 +20,6 @@ module Metadata
                 parent_nodes << {:id => hash[:full_name], :parent => "#", :text => "<b>" + hash[:full_name].to_s + "<b>", :children => true }
             end
             parent_nodes
-        end
-
-        def get_id(parent, current, index = nil)
-            if index.nil?
-                parent.to_s + "_" + current.to_s
-            else
-                parent.to_s + "_" + current.to_s + "_" + index.to_s
-            end
-        end
-
-        def get_text(key, value = nil)     
-            if value.nil?
-                return "<b>" + key.to_s + "</b>"
-            end
-
-            if key.to_s.include?("content") && value.is_a?(Nori::StringWithAttributes)
-                text_value = try_encode(value)
-            else
-                text_value = value
-            end
-                
-            "<b>" + key.to_s + "</b>: " + text_value.to_s
-        end
-
-        def try_encode(value)
-            begin
-                decoded = Base64.strict_decode64(value).force_encoding('UTF-8')
-                ERB::Util.html_escape(decoded).gsub(/\r\n|\r|\n/, "<br />")
-            rescue StandardError => ex
-                value
-            end
-        end
-
-        def remodel(id, parent_id, text, key, value, index)
-            {
-            :id => id,
-            :parent => parent_id,
-            :text => text
-            }
-        end
-
-        def is_hash_array?(array)
-            array.all?{ |item| item.is_a?(Hash) }
-        end
-        
-        def include_hash?(array)
-            array.flatten.any?{ |item| item.is_a?(Hash) }
         end
 
         def parse_hash(hashes, parent)
@@ -115,5 +69,55 @@ module Metadata
                 result
             end
         end
+
+        def get_id(parent, current, index = nil)
+            if index.nil?
+                parent.to_s + "_" + current.to_s
+            else
+                parent.to_s + "_" + current.to_s + "_" + index.to_s
+            end
+        end
+
+        def get_text(key, value = nil)     
+            if value.nil?
+                return "<b>" + key.to_s + "</b>"
+            end
+
+            #if key.to_s.include?("content") && value.is_a?(Nori::StringWithAttributes)
+            #    text_value = try_decode(value)
+            #else
+            #    text_value = value
+            #end
+                
+            "<b>" + key.to_s + "</b>: " + try_decode(key, value, true).to_s#text_value.to_s
+        end
+
+        def remodel(id, parent_id, text, key, value, index)
+            {
+            :id => id,
+            :parent => parent_id,
+            :text => text
+            }
+        end
+=begin
+        def try_encode(value)
+            begin
+                decoded = Base64.strict_decode64(value).force_encoding('UTF-8')
+                ERB::Util.html_escape(decoded).gsub(/\r\n|\r|\n/, "<br />")
+            rescue StandardError => ex
+                value
+            end
+        end
+
+
+
+        def is_hash_array?(array)
+            array.all?{ |item| item.is_a?(Hash) }
+        end
+        
+        def include_hash?(array)
+            array.flatten.any?{ |item| item.is_a?(Hash) }
+        end
+=end
     end
 end

@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/codahale/bcrypt-ruby.git
-  revision: f2db689ba567d1a018f4dacb1ccf909adc93e887
+  revision: b293ecf81c8203ae105c04d511d8f969495b13e3
   specs:
     bcrypt (3.1.11)
 
@@ -101,14 +101,14 @@ GEM
     mini_portile2 (2.3.0)
     minitest (5.11.3)
     multi_json (1.13.1)
-    nio4r (2.3.0)
+    nio4r (2.3.1)
     nokogiri (1.8.2-x86-mingw32)
       mini_portile2 (~> 2.3.0)
     nori (2.6.0)
     pg (1.0.0-x86-mingw32)
     public_suffix (3.0.2)
     puma (3.11.4)
-    rack (2.0.4)
+    rack (2.0.5)
     rack-test (1.0.0)
       rack (>= 1.0, < 3)
     rails (5.1.6)
@@ -190,7 +190,7 @@ GEM
     wasabi (3.5.0)
       httpi (~> 2.0)
       nokogiri (>= 1.4.2)
-    web-console (3.6.1)
+    web-console (3.6.2)
       actionview (>= 5.0)
       activemodel (>= 5.0)
       bindex (>= 0.4.0)
