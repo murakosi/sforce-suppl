@@ -115,7 +115,7 @@ coordinates = ->
     hotSettings = {
         data: records,
         height: 500;
-        preventOverflow: 'horizontal',
+        #preventOverflow: 'horizontal',
         stretchH: 'all',
         autoWrapRow: true,
         manualRowResize: false,

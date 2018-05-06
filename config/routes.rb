@@ -4,6 +4,7 @@ Rails.application.routes.draw do
 
   root :to => 'login#new'
 
+  get "meta_test", to: "metadata#index"
   get     'login',   to: 'login#new'
   post    'login',   to: 'login#create'
   delete  'logout',  to: 'login#destroy'

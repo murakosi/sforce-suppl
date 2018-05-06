@@ -6,6 +6,7 @@ module Metadata
                 super(data, template, mapping)
                 @export_file_name = "approval.xlsx"
                 @mapper = create_mapper(@mapping)
+                @array_delimitter = "\n"
             end
 
             def write_excel
@@ -34,16 +35,24 @@ module Metadata
 
             def get_value(map, current_content)
                 if !map.needs_join
-                    return current_content[:value].to_s
+                    return get_string(current_content[:value])
                 end
 
                 values = []
                 values << current_content[:value].to_s
                 map.join_with.each do | join_key |                      
                     contents = @data[join_key].select{ |content| content[:index] = current_content[:index]}
-                    values << contents.first[:value]
+                    values << get_string(contents.first[:value])
                 end
                 value = values.join(" ")
+            end
+
+            def get_string(value)
+                if value.is_a?(Array)
+                    value.join(@array_delimitter)
+                else
+                    value.to_s
+                end
             end
 
             def create_mapper(mapping)

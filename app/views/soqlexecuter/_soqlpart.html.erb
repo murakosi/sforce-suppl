@@ -122,31 +122,36 @@
 	/*border: 1px solid lightgray;*/
 	float: left;
 }
-#executerContent, #describeContent, #metadataContent {
- display:none;   
-}
-.togglediv2 #executerContent, .togglediv3 #describeContent, .togglediv4 #metadataContent{
- display:block;   
-}
 </style>
-<% javascript 'handsontable.full.min','jquery-1.11.2.min','jquery-ui-1.11.3.min','main','jstree', 'jstree.min','metadata','soqlexecuter' %>
-<div id="menuList">
-    <ul>
-		<li><%= link_to "Logout", logout_path, method: :delete %></li>
-        <li><a id="togglediv2" href="#">SOQL</a></li>
-		<li><a id="togglediv3" href="#">Describe</a></li>
-		<li><a id="togglediv4" href="#">meta</a></li>
-    </ul>
-</div>
-
 <div>
 <h1>Soqlexecuter#index</h1>
-<p>Find me in app/views/soqlexecuter/index.html.erb</p>
+<p>Find me in app/views/soqlexecuter/show.html.erb</p>
 </div>
 
 <div id="mainArea">
-    <div id="executerContent"><%= render "soqlexecuter/soqlpart" %></div>
-    <div id="describeContent"></div>
+	<div id="formArea">
+		<%= form_tag soql_path(), :method => :post, :class => "execute-form" do %>
+		<%= text_area_tag :input_soql, "select id,name from procure__c", :size => "120x5" %>
+		<br>
+		<%= submit_tag "Execute", :class => "btn btn-primary execute-soql" %>
+		<% end %>
+		<p><div id="messageArea"></div></p>
+	</div>
+
+	<div id="dummyArea"></div>
 	
-	<div id="metadataContent"><%= render "metadata/metapart" %></div>
+	<div id="tabArea">
+		<%= button_tag "Add tab", :type => "button", :id => "add-tab", :class => "btn btn-default" %>		
+		<ul>
+			<li class="noselect"><a href="#tab1">Grid1</a>
+			<span class="ui-icon ui-icon-close ui-closable-tab"></span>
+			</li>
+		</ul>
+		<div id="tab1" class="resultTab">
+			<div id="soql1" class="resultSoql">
+			alala alala
+			</div>
+			<div id="grid1" class="resultGrid"></div>
+		</div>
+	</div>
 </div>

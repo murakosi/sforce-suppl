@@ -11,6 +11,9 @@ class MetadataController < ApplicationController
     Metadata_type_column_index = 1
     Full_name_column_index = 3
 
+    def index
+        @metadata_directory = metadata_client.describe_metadata_objects()
+    end
     def show
         @metadata_directory = metadata_client.describe_metadata_objects()
     end

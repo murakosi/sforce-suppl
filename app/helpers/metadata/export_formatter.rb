@@ -3,15 +3,16 @@ module Metadata
     include Formatter
 
         def format_for_export(hashes)
-            @value_store = ValueStore.new
+            #@value_store = ValueStore.new
+            @parsed_hash = {}
             hashes.each do | k, v |
                 if v.is_a?(Hash) || v.is_a?(Array)
                     parse_deep(k, v)
                 else
-                    @value_store.set_value(k, v)
+                   store_hash(k, v)
                 end
             end
-            recreate
+            rebuild_hash()
         end
 
         def parse_deep(token, item)
@@ -25,12 +26,12 @@ module Metadata
                         #p flattened_hash                   
                         flattened_hash.each do | fkey, fval |
                             access_key2 = (access_key.to_s + "_" + fkey.to_s).to_sym
-                            @value_store.set_value(access_key2, fval)
+                            store_hash(access_key2, fval)
                         end
                     elsif is_hash_array?(v)
                         parse_deep(access_key, v)
                     else
-                        @value_store.set_value(access_key, v)
+                        store_hash(access_key, v)
                     end
                 end
             elsif item.is_a?(Array)
@@ -41,18 +42,31 @@ module Metadata
                     flattened_hash = HashFlatter.flat(element)
                     flattened_hash.each do | fkey, fval |
                         access_key2 = (access_key.to_s + fkey.to_s).to_sym
-                        @value_store.set_value(access_key2, fval)
+                        store_hash(access_key2, fval)
                     end
                 end
             end
         end
 
-        def recreate
+        def store_hash(access_key, hash)
+            if @parsed_hash.has_key?(access_key)
+                @parsed_hash[access_key].merge!(hash)
+            else
+                if hash.nil?
+                    @parsed_hash.store(access_key, {})
+                else
+                    @parsed_hash.store(access_key, hash)
+                end
+            end
+        end
+
+        def rebuild_hash
             keys = {}
             value_index = 0
             key_array = []
 
-            @value_store.values.each do | key, value |
+            #@value_store.values.each do | key, value |
+            @parsed_hash.each do | key, value |
 
                 value_index = 0
                 key_array.clear
@@ -78,7 +92,7 @@ module Metadata
 
             keys
         end
-
+=begin
         class ValueStore
 
             attr_reader :values
@@ -99,5 +113,6 @@ module Metadata
                 end
             end
         end
+=end
     end
 end
