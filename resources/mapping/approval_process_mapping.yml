@@ -1,21 +1,42 @@
 full_name:
     row: 7
     column: 3
+    multi: false
+    start_row: 0
+    end_row: 0
 active:
     row: 8
     column: 17
+    multi: false
+    start_row: 0
+    end_row: 0
 allow_recall:
     row: 10
     column: 26
+    multi: false
+    start_row: 0
+    end_row: 0
 allowed_submitters_type:
     row: 10
     column: 37
+    multi: false
+    start_row: 0
+    end_row: 0
 approval_step_assigned_approver_approver_name:
     row: 28
     column: 35
+    multi: false
+    start_row: 0
+    end_row: 0
 approval_step_entry_criteria_criteria_items_field:
     row: 31
     column: 21
+    multi: false
+    start_row: 0
+    end_row: 0
+    join:
+        - approval_step_entry_criteria_criteria_items_operation
+        - approval_step_entry_criteria_criteria_items_value
 #approval_step_entry_criteria_criteria_items_operation:
 #    row: 31
 #    column: 30
@@ -25,27 +46,66 @@ approval_step_entry_criteria_criteria_items_field:
 approval_step_label:
     row: 28
     column: 21
+    multi: false
+    start_row: 0
+    end_row: 0
 approval_step_reject_behavior_type:
     row: 28
     column: 49
+    multi: false
+    start_row: 0
+    end_row: 0
 email_template:
     row: 10
     column: 44
+    multi: false
+    start_row: 0
+    end_row: 0
 entry_criteria_criteria_items:
     row: 8
     column: 19
+    multi: false
+    start_row: 0
+    end_row: 0
+final_approval_actions_action_name:
+    row: 57
+    column: 25
+    multi: true
+    start_row: 57
+    end_row: 58
+final_approval_actions_action_type:
+    row: 57
+    column: 20
+    multi: false
+    start_row: 0
+    end_row: 0
 final_approval_record_lock:
     row: 57
     column: 20
+    multi: false
+    start_row: 0
+    end_row: 0
 final_rejection_record_lock:
     row: 60
     column: 20
+    multi: false
+    start_row: 0
+    end_row: 0
 label:
     row: 7
     column: 9
+    multi: false
+    start_row: 0
+    end_row: 0
 next_automated_approver_user_hierarchy_field:
     row: 8
     column: 44
+    multi: false
+    start_row: 0
+    end_row: 0
 record_editability:
     row: 10
     column: 19
+    multi: false
+    start_row: 0
+    end_row: 0

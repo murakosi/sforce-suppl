@@ -4,6 +4,7 @@ Rails.application.routes.draw do
 
   root :to => 'login#new'
 
+  get "meta_test", to: "metadata#index"
   get     'login',   to: 'login#new'
   post    'login',   to: 'login#create'
   delete  'logout',  to: 'login#destroy'
@@ -14,10 +15,11 @@ Rails.application.routes.draw do
   get   'desc_download',  to: 'describe#download'
 
   get   'metadata',  to: 'metadata#show'
-  post  'metadata',  to: 'metadata#execute'
+  post  'metadata',  to: 'metadata#list'
   #get   'meta_change',  to: 'metadata#change'
   get   'meta_refresh',   to: 'metadata#refresh'
-  get   'meta_download',  to: 'metadata#download'
+  post   'read',      to: 'metadata#read'
+  post   'meta_download',  to: 'metadata#download'
 
   get   'soql',      to: 'soqlexecuter#show'
   post  'soql',      to: 'soqlexecuter#execute'

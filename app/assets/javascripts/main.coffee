@@ -2,8 +2,9 @@
 # All this logic will automatically be available in application.js.
 # You can use CoffeeScript in this file: http://coffeescript.org/
 mains = ->
-  $("#executerContent").load('/soqlexecuter')
-  $("#describeContent").load('/describe')
+  #$("#executerContent").hide()
+  #$("#describeContent").hide()
+  #$("#metadataContent").hide()
   #$("#describeContent").hide()
 
   $("#menuList").on "click", "a", (e) ->

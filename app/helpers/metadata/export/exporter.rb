@@ -4,8 +4,10 @@ require "rubyXL"
 module Metadata
     module Export
         class Exporter
+        include ExcelUtils            
 
             Output_file = File.expand_path("./output/output.xlsx", Rails.root)
+
             def initialize(data, template, mapping)
                 @data = data
                 @template = template
@@ -44,12 +46,24 @@ module Metadata
 
                 def get_sheet(index, name = nil)
                     if name.nil?
-                        @worksheet = @workbook[0]
+                        @worksheet = @workbook[index]
                     else
                         @worksheet = @workbook[name]
                     end
                 end
             
+                def change_cell(row_no, column_no, value)
+                    cell = get_cell(row_no, column_no)
+
+                    if cell.nil?
+                        p row_no
+                        p column_no
+                        raise StandardError.new("Cell is null")
+                    else
+                        cell.change_contents(value)
+                    end
+                end
+
                 def get_cell(row_no, column_no)
                     row = row_no.to_i - 1
                     column = column_no.to_i - 1

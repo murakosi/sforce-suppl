@@ -126,16 +126,6 @@
 }
 
 </style>
-<% javascript 'handsontable.full.min','jquery-1.11.2.min','jquery-ui-1.11.3.min', 'jstree', 'jstree.min','metadata' %>
-<div id="menuList">
-    <ul>
-		<li><%= link_to "Logout", logout_path, method: :delete %></li>
-		<li><%= link_to "SOQL", soql_path, method: :get %></li>
-		<li><%= link_to "Describe", describe_path, method: :get %></li>
-		<li><%= link_to "Metadata", "#", :onclick => "return false;" %></li>
-    </ul>
-</div>
-
 <div>
 <h1>Metadata#show</h1>
 <p>Find me in app/views/metadata/show.html.erb</p>
@@ -147,16 +137,15 @@
 		<table>
 			<tr>
 				<td><%= label_tag 'Metadata: ' %></td>
-				<td><%= select_tag :selected_directory, options_for_select(@metadata_directory), multiple: false %></td>                
 			</tr>
 			<tr>
 				<td colspan="3" class="login-button">
 				<%= submit_tag 'Metadata', :class => 'btn btn-primary execute-metadata' %>
+                <td><%= select_tag :selected_directory, options_for_select(@metadata_directory), multiple: false %></td>
 				</td>
 			</tr>
 		</table>
 		<% end %>
-		<div id="syncErrorMessageArea"><%= @error_message %></div>
 		<div id="messageArea"></div>
 	</div>
 
