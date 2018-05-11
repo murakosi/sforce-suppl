@@ -9,7 +9,7 @@ class DescribeController < ApplicationController
   protect_from_forgery :except => [:execute]
 
   def show
-    sobjects = DescribeHelper.describe_global.select{|hash| hash[:is_custom] }.map{|hash| hash[:name]}
+    sobjects = Describe::Describer.describe_global.select{|hash| hash[:is_custom] }.map{|hash| hash[:name]}
     render partial: 'objectlist', locals: {data_source: sobjects}
   end
 
@@ -35,9 +35,9 @@ class DescribeController < ApplicationController
     sobject = params[:selected_sobject]
 
     #begin
-      field_result = DescribeHelper.describe_field(sobject)
-      sobject_info = DescribeHelper.get_sobject_info(field_result)
-      formatted_result = DescribeHelper.format_field_result(field_result[:fields])
+      field_result = Describe::Describer.describe_field(current_client, sobject)
+      sobject_info = Describe::Describer.get_sobject_info(field_result)
+      formatted_result = Describe::Describer.format_field_result(field_result[:fields])
 
       result = {:method => sobject_info, :columns => formatted_result.first.keys, :rows => formatted_result.each{ |hash| hash.values}}
 
@@ -61,9 +61,9 @@ class DescribeController < ApplicationController
 
   def download_csv
     csv_data = CSV.generate(encoding: Encoding::SJIS, row_sep: "\r\n", force_quotes: true) do |csv|
-      csv_column_names = DescribeHelper.formatted_field_result.first.keys
+      csv_column_names = Describe::Describer.formatted_field_result.first.keys
       csv << csv_column_names
-      DescribeHelper.formatted_field_result.each do | hash |
+      Describe::Describer.formatted_field_result.each do | hash |
           csv << hash.values
       end
     end
@@ -71,7 +71,7 @@ class DescribeController < ApplicationController
     send_data(csv_data,
       :disposition => 'attachment',
       :type => 'text/csv',
-      :filename => DescribeHelper.described_object_name + '.csv',
+      :filename => Describe::Describer.described_object_name + '.csv',
       :status => 200
     )
   end
@@ -88,7 +88,7 @@ class DescribeController < ApplicationController
     sheet = workbook.first
 
     row = 2
-    DescribeHelper.formatted_field_result.each do | values |
+    Describe::Describer.formatted_field_result.each do | values |
       values.each do | k,v |
         sheet.add_cell(row, DescribeConstants.column_number(k), v)
       end
@@ -100,7 +100,7 @@ class DescribeController < ApplicationController
     send_data(workbook.stream.read,
       :disposition => 'attachment',
       :type => 'application/excel',
-      :filename => DescribeHelper.described_object_name + '.xlsx',
+      :filename => Describe::Describer.described_object_name + '.xlsx',
       :status => 200
     )
     

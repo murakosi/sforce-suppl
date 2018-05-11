@@ -2,7 +2,7 @@ module Describe
     class Describer
         class << self
            
-        def describe_global(client, object_type = nil)
+        def describe_global(client)
             if DescribeResults.global_result.present?
                 DescribeResults.global_result
             else
