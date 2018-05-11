@@ -7,10 +7,12 @@ mains = ->
   #$("#metadataContent").hide()
   #$("#describeContent").hide()
 
-  $("#menuList").on "click", "a", (e) ->
+  $("#menuList").on "click", "a", (e) ->    
+    toggled = ($(this).prop("id"))
+    if toggled == "logoutLink"
+      return
     e.stopPropagation()
     e.preventDefault()
-    toggled = ($(this).prop("id"))
     $("div#mainArea").prop("class", toggled)
 
 $(document).ready(mains)

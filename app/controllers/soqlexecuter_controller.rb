@@ -1,4 +1,3 @@
-require 'exceptions'
 
 class SoqlexecuterController < ApplicationController
   before_action :require_sign_in!
@@ -30,17 +29,10 @@ class SoqlexecuterController < ApplicationController
   end
 
   def get_records(soql)
-
-    puts "query start"
-    puts Time.now
-
     query_result = current_client().query(soql)
-    
-    puts "sfdc query end"
-    puts Time.now
 
     if query_result.empty?
-       raise Exceptions::NoMatchedRecordError.new("No matched records found")
+       raise StandardError.new("No matched records found")
     end
 
     records = query_result.records.map{ |record| record.to_h }

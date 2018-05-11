@@ -9,18 +9,13 @@
 	padding: 4px;
 	margin-bottom: 2px;
 	margin-top: 2px;
+	white-space: pre;
 }
 
 .resultGrid {
 	background: white;
 	outline: 0;
 	border: 0px solid gray;
-}
-
-#add-tab{
-	margin-bottom: 5px;
-	font-size: 14px;
-	font-family:Arial;
 }
 
 .ui-tabs .ui-tabs-panel {
@@ -99,7 +94,7 @@
     white-space: pre;
 }
 
-#mainArea{
+#describeArea{
 	padding-top: 20px;
 	width:100%;
 	margin: 0 auto;
@@ -122,30 +117,51 @@
 	/*border: 1px solid lightgray;*/
 	float: left;
 }
+.button_to,
+.button_to div {
+	font-size: 14px;
+	font-family:Arial;
+  	display: inline;
+}
 </style>
-<div id="mainArea">
+<div id="describeArea">
 	<div id="formArea">
-		<%= form_tag soql_path(), :method => :post, :class => "execute-form" do %>
-		<%= text_area_tag :input_soql, "select id,name from procure__c", :size => "120x5" %>
-		<br>
-		<%= submit_tag "Execute", :class => "btn btn-primary execute-soql" %>
+		<%= form_tag desc_change_path(), :method => :get, :class => "chk" do %>
+		<%= radio_button_tag 'SOType', :all, false, :class => "chk" %>All&nbsp;&nbsp;
+		<%= radio_button_tag 'SOType', :standard, false, :class => "chk" %>Standard&nbsp;&nbsp;
+		<%= radio_button_tag 'SOType', :custom, true, :class => "chk" %>Custom&nbsp;&nbsp;
 		<% end %>
-		<p><div id="messageArea"></div></p>
+
+	    <%= form_tag describe_path(), :method => :post, :class => "describe-form" do %>
+		<table>
+			<tr>
+				<td><%= label_tag 'sObjects: ' %></td>
+				<td>
+					<div id="object_list">
+						<%#= render partial: 'describe/objectlist', locals: {data_source: @sobjects} %>
+						<%= render partial: 'describe/objectlist', locals: {data_source: initial_sobjects_list} %>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="3" class="login-button">
+				<%= submit_tag 'Describe', :class => 'btn btn-primary execute-describe' %>
+				</td>
+			</tr>
+		</table>
+		<% end %>
+		<div id="messageArea"><%= @input_error %></div>
 	</div>
 
 	<div id="dummyArea"></div>
 	
 	<div id="tabArea">
-		<%= button_tag "Add tab", :type => "button", :id => "add-tab", :class => "btn btn-default" %>		
-		<ul>
-			<li class="noselect"><a href="#tab1">Grid1</a>
-			<span class="ui-icon ui-icon-close ui-closable-tab"></span>
-			</li>
-		</ul>
+		<br>
+		<%= button_to "CSV Export", desc_download_path(:format => "csv"), :method => :get, :id => "exp-btn", :class => "btn btn-default exp-btn" %>
+		<%= button_to "Excel Export", desc_download_path(:format => "excel"), :method => :get, :id => "exp-btn", :class => "btn btn-default exp-btn" %>
+
 		<div id="tab1" class="resultTab">
-			<div id="soql1" class="resultSoql">
-			alala alala
-			</div>
+			<div id="method1" class="resultSoql"></div>
 			<div id="grid1" class="resultGrid"></div>
 		</div>
 	</div>

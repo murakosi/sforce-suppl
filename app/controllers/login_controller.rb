@@ -12,7 +12,8 @@ class LoginController < ApplicationController
       #sforcelogin_to_salesforce(login_params)
       sign_in(login_params)
       redirect_to soql_path
-    rescue Savon::SOAPFault => e
+    #rescue Savon::SOAPFault => e
+  rescue StandardError => e
       @error_message = e.message
       render 'new'
     end

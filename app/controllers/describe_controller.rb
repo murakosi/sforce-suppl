@@ -8,33 +8,26 @@ class DescribeController < ApplicationController
 
   protect_from_forgery :except => [:execute]
 
-  def describe_global
-    if !DescribeHelper.is_global_fetched?
-      DescribeHelper.describe_global(current_client)
-    end
-  end
-  
   def show
-    describe_global
-    @sobjects = DescribeHelper.global_result.select{|hash| hash[:is_custom] }.map{|hash| hash[:name]}
+    sobjects = DescribeHelper.describe_global.select{|hash| hash[:is_custom] }.map{|hash| hash[:name]}
+    render partial: 'objectlist', locals: {data_source: sobjects}
   end
 
   def change
-    describe_global
 
     object_type = params[:object_type]
 
     if object_type == "all"
-      @sobjects = DescribeHelper.global_result.map{|hash| hash[:name]}
+      sobjects = Describe::Describer.describe_global(current_client).map{|hash| hash[:name]}
     elsif object_type == "standard"
-      @sobjects = DescribeHelper.global_result.reject{|hash| hash[:is_custom] }.map{|hash| hash[:name]}
+      sobjects = Describe::Describer.describe_global(current_client).reject{|hash| hash[:is_custom] }.map{|hash| hash[:name]}
     elsif object_type == "custom"
-      @sobjects = DescribeHelper.global_result.select{|hash| hash[:is_custom] }.map{|hash| hash[:name]}
+      sobjects = Describe::Describer.describe_global(current_client).select{|hash| hash[:is_custom] }.map{|hash| hash[:name]}
     else
       raise StandardError.new("Invalid object type parameter")
     end  
 
-    render partial: 'objectlist', locals: {data_source: @sobjects}
+    render partial: 'objectlist', locals: {data_source: sobjects}
   end
 
   def execute
@@ -42,23 +35,23 @@ class DescribeController < ApplicationController
     sobject = params[:selected_sobject]
 
     #begin
-      describe_result = DescribeHelper.describe(current_client, sobject)
-      object_info = get_object_info(describe_result)
-      field_result = DescribeHelper.format_field_result(describe_result[:fields])#get_values(describe_result[:fields])
-      @result = {:method => object_info, :columns => field_result.first.keys, :rows => field_result.each{ |hash| hash.values}}
-      render :json => @result, :status => 200
+      field_result = DescribeHelper.describe_field(sobject)
+      sobject_info = DescribeHelper.get_sobject_info(field_result)
+      formatted_result = DescribeHelper.format_field_result(field_result[:fields])
+
+      result = {:method => sobject_info, :columns => formatted_result.first.keys, :rows => formatted_result.each{ |hash| hash.values}}
+
+      render :json => result, :status => 200
     #rescue StandardError => ex
     #  render :json => {:error => ex.message}, :status => 400
     #end
   end
 
-  def get_object_info(hash)
-    info = "表示ラベル：" + hash[:label] + "\n" +
-           "API参照名：" + hash[:name] + "\n" +
-           "プレフィックス：" + hash[:key_prefix]
-  end
-
   def download
+    if !DescribeHelper.described_object_name.present?
+      return
+    end
+
     if params[:format] == "csv"
       download_csv()
     else
@@ -67,21 +60,23 @@ class DescribeController < ApplicationController
   end
 
   def download_csv
-    csv_date = CSV.generate(encoding: Encoding::SJIS, row_sep: "\r\n", force_quotes: true) do |csv|
-      csv_column_names = DescribeHelper.formatter_object_result.first.keys
+    csv_data = CSV.generate(encoding: Encoding::SJIS, row_sep: "\r\n", force_quotes: true) do |csv|
+      csv_column_names = DescribeHelper.formatted_field_result.first.keys
       csv << csv_column_names
-      DescribeHelper.formatter_object_result.each do | hash |
+      DescribeHelper.formatted_field_result.each do | hash |
           csv << hash.values
       end
     end
-    send_data(csv_date, filename: "abc.csv")
+    #send_data(csv_date, filename: "abc.csv")
+    send_data(csv_data,
+      :disposition => 'attachment',
+      :type => 'text/csv',
+      :filename => DescribeHelper.described_object_name + '.csv',
+      :status => 200
+    )
   end
 
   def download_excel
-
-    if !DescribeHelper.is_sobject_fetched?
-      return
-    end
 
     source_excel = "./resources/book1.xlsx"
 
@@ -93,7 +88,7 @@ class DescribeController < ApplicationController
     sheet = workbook.first
 
     row = 2
-    DescribeHelper.formatter_object_result.each do | values |
+    DescribeHelper.formatted_field_result.each do | values |
       values.each do | k,v |
         sheet.add_cell(row, DescribeConstants.column_number(k), v)
       end
@@ -102,11 +97,10 @@ class DescribeController < ApplicationController
 
     workbook.write(output_excel)
 
-    #ファイルの出力
     send_data(workbook.stream.read,
       :disposition => 'attachment',
       :type => 'application/excel',
-      :filename => 'abc.xlsx',
+      :filename => DescribeHelper.described_object_name + '.xlsx',
       :status => 200
     )
     

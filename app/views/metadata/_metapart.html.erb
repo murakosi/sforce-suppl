@@ -126,13 +126,8 @@
 }
 
 </style>
-<div>
-<h1>Metadata#show</h1>
-<p>Find me in app/views/metadata/show.html.erb</p>
-</div>
 <div id="mainArea">
 	<div id="formArea">
-
 	    <%= form_tag metadata_path(), :method => :post, :class => "metadata-form" do %>
 		<table>
 			<tr>
@@ -141,7 +136,7 @@
 			<tr>
 				<td colspan="3" class="login-button">
 				<%= submit_tag 'Metadata', :class => 'btn btn-primary execute-metadata' %>
-                <td><%= select_tag :selected_directory, options_for_select(@metadata_directory), multiple: false %></td>
+                <td><%= select_tag :selected_directory, options_for_select(metadata_directory), multiple: false %></td>
 				</td>
 			</tr>
 		</table>

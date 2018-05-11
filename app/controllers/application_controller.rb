@@ -1,10 +1,10 @@
 class ApplicationController < ActionController::Base
   before_action :current_user
   before_action :require_sign_in!
-  helper_method :signed_in?
-  
+  helper_method :signed_in?, :current_client, :metadata_client
+
   protect_from_forgery with: :exception
-  
+
   Production_url = "login.salesforce.com"
   Sandbox_url = "test.salesforce.com"
 
@@ -63,6 +63,7 @@ class ApplicationController < ActionController::Base
   end
 
   private
+  
     def current_user
       login_token = User.encrypt(session[:user_token])
       @current_user ||= User.find_by(user_token: login_token)

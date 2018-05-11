@@ -1,10 +1,9 @@
 Rails.application.routes.draw do
 
   get 'main', to: 'main#index'
-
+  
   root :to => 'login#new'
 
-  get "meta_test", to: "metadata#index"
   get     'login',   to: 'login#new'
   post    'login',   to: 'login#create'
   delete  'logout',  to: 'login#destroy'
@@ -17,6 +16,7 @@ Rails.application.routes.draw do
   get   'metadata',  to: 'metadata#show'
   post  'metadata',  to: 'metadata#list'
   #get   'meta_change',  to: 'metadata#change'
+  get   'metadata/change', to: 'metadata#change'
   get   'meta_refresh',   to: 'metadata#refresh'
   post   'read',      to: 'metadata#read'
   post   'meta_download',  to: 'metadata#download'
