@@ -1,4 +1,4 @@
-module Sforcesuppl
+module Sforceutils
     class SforceClient
     #class << self
         Production_url = "login.salesforce.com"
@@ -23,7 +23,7 @@ module Sforcesuppl
             soap_client.logout()
         end
 
-        def session_alive?
+        def sforce_session_alive?
             begin
                 soap_client()
                 return true

@@ -2,6 +2,31 @@ require "metadata"
 require "describe"
 
 class ApplicationController < ActionController::Base
+  #before_action :current_user
+  before_action :require_sign_in!
+  helper_method :signed_in?
+
+  protect_from_forgery with: :exception
+
+  def sign_in(login_params)
+    login_token = Sforceutils::SessionManager.initiate(login_params)
+    session[:user_token] = login_token
+    Sforceutils::SessionManager.refresh()
+  end
+
+  def sign_out
+    Sforceutils::SessionManager.terminate()
+  end
+
+  def signed_in?
+    Sforceutils::SessionManager.sesson_alive?
+  end
+
+  def require_sign_in!
+      redirect_to login_path unless signed_in?
+  end
+
+=begin
   before_action :current_user
   before_action :require_sign_in!
   helper_method :signed_in?, :current_client, :metadata_client
@@ -105,5 +130,5 @@ class ApplicationController < ActionController::Base
     def is_sandbox?(login_params)
       ActiveRecord::Type::Boolean.new.cast(login_params[:is_sandbox])
     end
-
+=end
 end
