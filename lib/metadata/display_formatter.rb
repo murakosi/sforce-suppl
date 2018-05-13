@@ -83,12 +83,6 @@ module Metadata
                 return "<b>" + key.to_s + "</b>"
             end
 
-            #if key.to_s.include?("content") && value.is_a?(Nori::StringWithAttributes)
-            #    text_value = try_decode(value)
-            #else
-            #    text_value = value
-            #end
-                
             "<b>" + key.to_s + "</b>: " + try_decode(key, value, true).to_s#text_value.to_s
         end
 
@@ -99,25 +93,5 @@ module Metadata
             :text => text
             }
         end
-=begin
-        def try_encode(value)
-            begin
-                decoded = Base64.strict_decode64(value).force_encoding('UTF-8')
-                ERB::Util.html_escape(decoded).gsub(/\r\n|\r|\n/, "<br />")
-            rescue StandardError => ex
-                value
-            end
-        end
-
-
-
-        def is_hash_array?(array)
-            array.all?{ |item| item.is_a?(Hash) }
-        end
-        
-        def include_hash?(array)
-            array.flatten.any?{ |item| item.is_a?(Hash) }
-        end
-=end
     end
 end

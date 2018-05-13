@@ -1,6 +1,3 @@
-require "fileutils"
-require "rubyXL"
-
 module Metadata
     module Export
         class Exporter

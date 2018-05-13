@@ -138,7 +138,6 @@
 				<td><%= label_tag 'sObjects: ' %></td>
 				<td>
 					<div id="object_list">
-						<%#= render partial: 'describe/objectlist', locals: {data_source: @sobjects} %>
 						<%= render partial: 'describe/objectlist', locals: {data_source: initial_sobjects_list} %>
 					</div>
 				</td>
@@ -150,7 +149,7 @@
 			</tr>
 		</table>
 		<% end %>
-		<div id="messageArea"><%= @input_error %></div>
+		<div id="messageArea"></div>
 	</div>
 
 	<div id="dummyArea"></div>

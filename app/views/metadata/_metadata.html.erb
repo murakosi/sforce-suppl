@@ -74,35 +74,12 @@
     font-style:bold;
 }
 
-#messageArea{
-    width: 50%;
-    display: none;
-    color: red;
-    white-space: pre;
-}
-
-#mainArea{
+#metadataArea{
 	padding-top: 20px;
 	width:100%;
 	margin: 0 auto;
 }
 
-#formArea{
-	width: 70%;
-	margin: 0 auto;
-}
-
-#tabArea{
-	width: 60%;
-	border: 0px solid lightgray;
-	float:left;
-}
-#dummyArea{
-	width: 15%;
-	height: 10px;
-	/*border: 1px solid lightgray;*/
-	float: left;
-}
 #tree{
 	font-size:14px;
 	height:500px;
@@ -126,17 +103,18 @@
 }
 
 </style>
-<div id="mainArea">
+<div id="metadataArea">
 	<div id="formArea">
 	    <%= form_tag metadata_path(), :method => :post, :class => "metadata-form" do %>
 		<table>
 			<tr>
 				<td><%= label_tag 'Metadata: ' %></td>
+				<td><%= select_tag :selected_directory, options_for_select(metadata_directory), multiple: false %></td>
 			</tr>
 			<tr>
-				<td colspan="3" class="login-button">
+				<td colspan="2" class="login-button">
 				<%= submit_tag 'Metadata', :class => 'btn btn-primary execute-metadata' %>
-                <td><%= select_tag :selected_directory, options_for_select(metadata_directory), multiple: false %></td>
+                
 				</td>
 			</tr>
 		</table>

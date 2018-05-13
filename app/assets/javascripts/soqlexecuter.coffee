@@ -8,37 +8,37 @@ coordinates = ->
   #$("div#tabArea").on 'dblclick', 'ul', (e) ->
   #  alert("ok")
 
-  $('.execute-soql').on 'click', (e) ->
+  $('#soqlArea .execute-soql').on 'click', (e) ->
     e.preventDefault()
-    selectedTabId =  $("div#tabArea").tabs('option', 'active') + 1
+    selectedTabId =  $("#soqlArea #tabArea").tabs('option', 'active') + 1
     getCoordinatesInRange()
 
   $(document).on 'click', 'span', (e) ->
     e.preventDefault()
-    tabContainerDiv=$(this).closest(".ui-tabs").attr("id")
-    tabCount = $("#" + tabContainerDiv).find(".ui-closable-tab").length
+    tabContainerDiv=$(this).closest("#soqlArea .ui-tabs").attr("id")
+    tabCount = $("#soqlArea #" + tabContainerDiv).find(".ui-closable-tab").length
 
     if tabCount <= 1
       return
 
     if window.confirm("Close this tab?")
-      panelId = $( this ).closest( "li" ).remove().attr( "aria-controls" )
-      $( "#" + panelId ).remove();
-      $("#" + tabContainerDiv).tabs("refresh")
+      panelId = $( this ).closest( "#soqlArea li" ).remove().attr( "aria-controls" )
+      $("#soqlArea #" + panelId ).remove();
+      $("#soqlArea #" + tabContainerDiv).tabs("refresh")
 
-  $('#add-tab').on 'click', (e) ->
+  $('#soqlArea #add-tab').on 'click', (e) ->
     e.preventDefault()
 
-    new_tab_index = $("div#tabArea ul li").length
+    new_tab_index = $("#soqlArea #tabArea ul li").length
     new_tab_id = new_tab_index + 1
 
-    $("div#tabArea ul").append(
+    $("#soqlArea #tabArea ul").append(
       "<li class=\"noselect\"><a href=\"#tab" + new_tab_id + "\">Grid" + new_tab_id + "</a>" +
       "<span class=\"ui-icon ui-icon-close ui-closable-tab\"></span>" +
       "</li>"
     )
 
-    $("div#tabArea").append(
+    $("#soqlArea #tabArea").append(
       "<div id=\"tab" + new_tab_id + "\" class=\"resultTab\">" +
       "<div id=\"soql" + new_tab_id + "\" class=\"resultSoql\"></div>" +
       "<div id=\"grid" + new_tab_id + "\" class=\"resultGrid\"></div>" +
@@ -49,17 +49,17 @@ coordinates = ->
 
     createGrid()
     
-    $("div#tabArea").tabs("refresh")
+    $("#soqlArea #tabArea").tabs("refresh")
 
-    $("div#tabArea").tabs({ active: new_tab_index });
+    $("#soqlArea #tabArea").tabs({ active: new_tab_index });
 
   getCoordinatesInRange = ->
-    post_data = {soql: $('#input_soql').val()}
+    post_data = {soql: $('#soqlArea #input_soql').val()}
 
     jqXHR = $.ajax({
       async: true
-      url: $('.execute-form').attr('action')
-      type: $('.execute-form').attr('method')
+      url: $('#soqlArea .execute-form').attr('action')
+      type: $('#soqlArea .execute-form').attr('method')
       data: post_data
       dataType: 'json'
       cache: false
@@ -67,8 +67,8 @@ coordinates = ->
 
     jqXHR.done (data, stat, xhr) ->
       console.log { done: stat, data: data, xhr: xhr }
-      $("#messageArea").empty()
-      $("#messageArea").hide()
+      $("#soqlArea #messageArea").empty()
+      $("#soqlArea #messageArea").hide()
       createGrid(xhr.responseText)
 
     jqXHR.fail (xhr, stat, err) ->
@@ -80,17 +80,17 @@ coordinates = ->
       #alert 'Ajax Finished!' if stat is 'success'
 
   displayError = (error) ->
-    $("#messageArea").html($.parseJSON(error).error)
-    $("#messageArea").show()
+    $("#soqlArea #messageArea").html($.parseJSON(error).error)
+    $("#soqlArea #messageArea").show()
 
   createGrid = (result = null) ->   
-    hotElement = document.querySelector("#grid" + selectedTabId)
+    hotElement = document.querySelector("#soqlArea #grid" + selectedTabId)
 
     table = new Handsontable(hotElement)
     table.destroy()
 
     parsedResult = $.parseJSON(result)
-    $("#soql" + selectedTabId).html(get_executed_soql(parsedResult))
+    $("#soqlArea #soql" + selectedTabId).html(get_executed_soql(parsedResult))
     header = get_columns(parsedResult)
     records = get_rows(parsedResult)
     columns_option = get_columns_option(parsedResult)
@@ -136,7 +136,7 @@ coordinates = ->
     else
       null
 
-  $("div#tabArea").tabs()
+  $("#soqlArea #tabArea").tabs()
 
   createGrid()
 

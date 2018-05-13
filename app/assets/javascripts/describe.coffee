@@ -17,8 +17,7 @@ coordinates = ->
   $('.chk').on 'change', (e) ->
     e.stopPropagation()
     e.preventDefault()
-    #console.log(document)
-    console.log($('#tabArea #tab1'))
+    #console.log($('#describeArea #tabArea'))
     val = {object_type: e.target.value}
     action = "change"
     method = "get"

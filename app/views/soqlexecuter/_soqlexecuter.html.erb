@@ -99,7 +99,7 @@
     white-space: pre;
 }
 
-#mainArea{
+#soqlArea{
 	padding-top: 20px;
 	width:100%;
 	margin: 0 auto;
@@ -123,7 +123,7 @@
 	float: left;
 }
 </style>
-<div id="mainArea">
+<div id="soqlArea">
 	<div id="formArea">
 		<%= form_tag soql_path(), :method => :post, :class => "execute-form" do %>
 		<%= text_area_tag :input_soql, "select id,name from procure__c", :size => "120x5" %>

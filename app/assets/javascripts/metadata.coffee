@@ -16,28 +16,28 @@ coordinates = ->
       "datatype": datatype
     }
  
-  $("#tree").on "before_open.jstree", (e, node) ->
+  $("#metadataArea #tree").on "before_open.jstree", (e, node) ->
     if currentId == node.node.id
       return
 
     if nodeGrids[node.node.id]
       console.error(nodeGrids[node.node.id])
-      createGrid("#sample", nodeGrids[node.node.id])
+      createGrid("#metadataArea #sample", nodeGrids[node.node.id])
 
-  $(".execute-metadata").on "click", (e) ->
+  $("#metadataArea .execute-metadata").on "click", (e) ->
     e.preventDefault()
     clearResults()
-    val = {selected_directory: $('#selected_directory').val()}
-    action = $('.metadata-form').attr('action')
-    method = $('.metadata-form').attr('method')
+    val = {selected_directory: $('#metadataArea #selected_directory').val()}
+    action = $('#metadataArea .metadata-form').attr('action')
+    method = $('#metadataArea .metadata-form').attr('method')
     options = get_options(action, method, val)
     executeAjax(options, processListSuccessResult, displayError)
 
   clearResults = () ->
-    createGrid("#grid")
-    createGrid("#sample")
-    $('#tree').jstree(true).settings.core.data = null
-    $('#tree').jstree(true).refresh()
+    createGrid("#metadataArea #grid")
+    createGrid("#metadataArea #sample")
+    $('#metadataArea #tree').jstree(true).settings.core.data = null
+    $('#metadataArea #tree').jstree(true).refresh()
     selectedRowData = {}
     nodeGrids = {}
     grids = {}
@@ -60,8 +60,8 @@ coordinates = ->
     jqXHR.done (data, stat, xhr) ->
       jqXHR = null
       console.log { done: stat, data: data, xhr: xhr }
-      $("#messageArea").empty()
-      $("#messageArea").hide()
+      $("#metadataArea #messageArea").empty()
+      $("#metadataArea #messageArea").hide()
       doneCallback($.parseJSON(xhr.responseText), params)
 
     jqXHR.fail (xhr, stat, err) ->
@@ -75,21 +75,20 @@ coordinates = ->
       console.log { always: stat, res1: res1, res2: res2 }
 
   displayError = (json) ->
-    $('#loading').hide()
-    $("#messageArea").html(json.error)
-    $("#messageArea").show()
+    $("#metadataArea #messageArea").html(json.error)
+    $("#metadataArea #messageArea").show()
   
   processListSuccessResult = (json) ->
     refreshTree(json.tree)
-    createGrid("#grid", json.grid)
+    createGrid("#metadataArea #grid", json.grid)
 
   refreshTree = (json) ->
-    $('#tree').jstree(true).settings.core.data = json
-    $('#tree').jstree(true).refresh()
-    $('#tree').jstree(true).settings.core.data = (node, cb) -> callReadMetadata(node, cb)
+    $('#metadataArea #tree').jstree(true).settings.core.data = json
+    $('#metadataArea #tree').jstree(true).refresh()
+    $('#metadataArea #tree').jstree(true).settings.core.data = (node, cb) -> callReadMetadata(node, cb)
 
   callReadMetadata = (node, callback) ->
-    val = {type: $('#selected_directory').val(), name: node.id}
+    val = {type: $('#metadataArea #selected_directory').val(), name: node.id}
     action = "read"
     method = "post"
     options = get_options(action, method, val)
@@ -98,7 +97,7 @@ coordinates = ->
   processReadSuccess = (json, callback) ->
     currentId = json.fullName
     nodeGrids[currentId] = json.grid
-    createGrid("#sample", json.grid)
+    createGrid("#metadataArea #sample", json.grid)
     callback(json.tree)
 
   createGrid = (elementId, json = null) ->   
@@ -115,7 +114,6 @@ coordinates = ->
     hotSettings = {
         data: records,
         height: 500;
-        #preventOverflow: 'horizontal',
         stretchH: 'all',
         autoWrapRow: true,
         manualRowResize: false,
@@ -135,7 +133,7 @@ coordinates = ->
       row_index = source[0][0]
       checked = source[0][3]
       if checked
-        selectedRowData[row_index] = grids["#grid"].getDataAtRow(row_index)
+        selectedRowData[row_index] = grids["#metadataArea #grid"].getDataAtRow(row_index)
       else
         delete selectedRowData[row_index]
 
@@ -164,14 +162,14 @@ coordinates = ->
     else
       json.column_options
 
-  $("div#tabArea").tabs()
+  $("#metadataArea #tabArea").tabs()
 
-  createGrid("#grid")
-  createGrid("#sample")
+  createGrid("#metadataArea #grid")
+  createGrid("#metadataArea #sample")
 
   #$(".sub-btn").hide()
 
-  $('#tree').jstree({
+  $('#metadataArea #tree').jstree({
     'core' : {
       'check_callback' : true,
       'data' : [ # 画面に表示する仮の初期データ

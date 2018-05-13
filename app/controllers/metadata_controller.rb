@@ -24,15 +24,15 @@ class MetadataController < ApplicationController
     def list
         @selected_metadata = params[:selected_directory]
 
-        begin
+        #begin
             metadata_list = metadata_client.list(@selected_metadata)
             list_result = Metadata::Parser.format_metadata_list(metadata_list)
             tree_nodes = Metadata::Parser.format_tree_nodes(list_result)
  
             render :json => list_response_json(list_result, tree_nodes), :status => 200
-        rescue StandardError => ex
-            render :json => {:error => ex.message}, :status => 400
-        end
+        #rescue StandardError => ex
+        #    render :json => {:error => ex.message}, :status => 400
+        #end
     end
     
     def list_response_json(list_result, tree_nodes)

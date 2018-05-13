@@ -122,10 +122,15 @@
 	/*border: 1px solid lightgray;*/
 	float: left;
 }
-#executerContent, #describeContent, #metadataContent {
+
+.displayed{
+	background:white;
+}
+
+#soqlexecuterContent, #describeContent, #metadataContent {
  display:none;   
 }
-.togglediv2 #executerContent, .togglediv3 #describeContent, .togglediv4 #metadataContent{
+.soqlexecuter #soqlexecuterContent, .describe #describeContent, .metadata #metadataContent{
  display:block;   
 }
 </style>
@@ -133,9 +138,9 @@
 <div id="menuList">
     <ul>
 		<li><%= link_to "Logout", logout_path, method: :delete, id: "logoutLink" %></li>
-        <li><a id="togglediv2" href="#">SOQL</a></li>
-		<li><a id="togglediv3" href="#">Describe</a></li>
-		<li><a id="togglediv4" href="#">Metadata</a></li>
+        <li><a id="soqlexecuter" href="#" class="menus">SOQL</a></li>
+		<li><a id="describe" href="#" class="menus">Describe</a></li>
+		<li><a id="metadata" href="#" class="menus">Metadata</a></li>
     </ul>
 </div>
 
@@ -145,9 +150,9 @@
 </div>
 
 <div id="mainArea">
-    <div id="executerContent"><%= render "soqlexecuter/soqlpart" %></div>
-    <div id="describeContent"><%= render "describe/describepart" %></div>
+    <div id="soqlexecuterContent"><%= render "soqlexecuter/soqlexecuter" %></div>
+    <div id="describeContent"><%= render "describe/describe" %></div>
 	
-	<div id="metadataContent"><%= render "metadata/metapart" %></div>
+	<div id="metadataContent"><%= render "metadata/metadata" %></div>
 	
 </div>

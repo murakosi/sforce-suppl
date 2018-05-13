@@ -9,7 +9,7 @@ module Metadata
                 if v.is_a?(Hash) || v.is_a?(Array)
                     parse_deep(k, v)
                 else
-                   store_hash(k, v)
+                store_hash(k, v)
                 end
             end
             rebuild_hash()
@@ -92,27 +92,5 @@ module Metadata
 
             keys
         end
-=begin
-        class ValueStore
-
-            attr_reader :values
-
-            def initialize()
-                @values = Hash.new
-            end
-
-            def set_value(access_key, hash)
-                if @values.has_key?(access_key)
-                    @values[access_key].merge!(hash)
-                else
-                    if hash.nil?
-                        @values.store(access_key, {})
-                    else
-                        @values.store(access_key, hash)
-                    end
-                end
-            end
-        end
-=end
     end
 end

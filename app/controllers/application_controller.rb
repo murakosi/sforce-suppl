@@ -1,3 +1,6 @@
+require "metadata"
+require "describe"
+
 class ApplicationController < ActionController::Base
   before_action :current_user
   before_action :require_sign_in!

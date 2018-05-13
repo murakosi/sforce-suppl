@@ -1,8 +1,10 @@
 Rails.application.routes.draw do
+ 
+  #root :to => 'login#new'
+  root :to => 'main#index'
 
-  get 'main', to: 'main#index'
-  
-  root :to => 'login#new'
+  get   'main', to: 'main#index'
+  post  'main', to: 'main#switch'
 
   get     'login',   to: 'login#new'
   post    'login',   to: 'login#create'
