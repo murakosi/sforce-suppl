@@ -40,21 +40,24 @@ module Sforceutils
         def get_attributes(login_token, sforce_result)
             {
                 :user_token => User.encrypt(login_token),
-                :sforce_session_id => result[:session_id],
-                :sforce_server_url => result[:server_url], 
-                :sforce_query_locator => result[:query_locator],
-                :sforce_metadata_server_url => result[:metadata_server_url]
+                :sforce_session_id => sforce_result[:session_id],
+                :sforce_server_url => sforce_result[:server_url], 
+                :sforce_query_locator => sforce_result[:query_locator],
+                :sforce_metadata_server_url => sforce_result[:metadata_server_url]
             }
         end
 
-        def current_user
-            if @user.present?
-                @user
-            else
-                login_token = User.encrypt(session[:user_token])
-                @user ||= User.find_by(user_token: login_token)
-            end
+        def client
+            @client
         end
+        #def current_user
+            #if @user.present?
+            #    @user
+            #else
+            #    login_token = User.encrypt(session[:user_token])
+            #    @user ||= User.find_by(user_token: login_token)
+            #end
+        #end
 
         def sforce_session
             {:session_id => @user.sforce_session_id, :server_url => @user.sforce_server_url}

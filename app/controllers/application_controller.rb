@@ -19,7 +19,7 @@ class ApplicationController < ActionController::Base
   end
 
   def signed_in?
-    Sforceutils::SessionManager.sesson_alive?
+    Sforceutils::SessionManager.sesson_alive?()
   end
 
   def require_sign_in!

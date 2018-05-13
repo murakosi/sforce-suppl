@@ -32,13 +32,13 @@ module Sforceutils
             end            
         end
 
-        def soap_client
+        def soap
             client = Soapforce::Client.new
             client.authenticate(@session_manager.sforce_session)
             client            
         end
 
-        def metadata_client
+        def metadata
             client = Metadata::Client.new
             client.authenticate(@session_manager.sforce_metadata_session)
             client               
