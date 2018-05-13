@@ -25,20 +25,20 @@ module Sforceutils
 
         def sforce_session_alive?
             begin
-                soap_client()
+                sforce_soap_client()
                 return true
             rescue StandardError => ex
                 return false
             end            
         end
 
-        def soap
+        def sforce_soap_client
             client = Soapforce::Client.new
             client.authenticate(@session_manager.sforce_session)
             client            
         end
 
-        def metadata
+        def sforce_metadata_client
             client = Metadata::Client.new
             client.authenticate(@session_manager.sforce_metadata_session)
             client               

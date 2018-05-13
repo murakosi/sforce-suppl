@@ -47,8 +47,11 @@ module Sforceutils
             }
         end
 
-        def client
-            @client
+        def soap_client
+            @client.sforce_soap_client
+        end
+        def metadata_client
+            @client.sforce_metadata_client
         end
         #def current_user
             #if @user.present?
