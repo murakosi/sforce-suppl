@@ -1,13 +1,13 @@
 coordinates = ->
   
-  selectedTabId = 1
   selectedRowData = {}
   grids = {}
   nodeGrids = {}
   currentId = null
   jqXHR = null
+  defaultDataType = "text"
   
-  get_options = (action, method, data, datatype, doAsync = true) ->
+  getAjaxOptions = (action, method, data, datatype, doAsync = true) ->
     {
       "async" : doAsync,
       "action": action,
@@ -30,7 +30,7 @@ coordinates = ->
     val = {selected_directory: $('#metadataArea #selected_directory').val()}
     action = $('#metadataArea .metadata-form').attr('action')
     method = $('#metadataArea .metadata-form').attr('method')
-    options = get_options(action, method, val)
+    options = getAjaxOptions(action, method, val, defaultDataType)
     executeAjax(options, processListSuccessResult, displayError)
 
   clearResults = () ->
@@ -49,7 +49,7 @@ coordinates = ->
       return
 
     jqXHR = $.ajax({
-      async: true
+      async: options.async
       url: options.action
       type: options.method
       data: options.data
@@ -91,7 +91,7 @@ coordinates = ->
     val = {type: $('#metadataArea #selected_directory').val(), name: node.id}
     action = "read"
     method = "post"
-    options = get_options(action, method, val)
+    options = getAjaxOptions(action, method, val, defaultDataType)
     executeAjax(options, processReadSuccess, displayError, callback)
 
   processReadSuccess = (json, callback) ->
@@ -107,9 +107,9 @@ coordinates = ->
       table = grids[elementId]
       table.destroy()
 
-    header = get_columns(json)
-    records = get_rows(json)
-    columns_option = get_columns_option(json)
+    header = getColumns(json)
+    records = getRows(json)
+    columnsOption = getColumnsOption(json)
 
     hotSettings = {
         data: records,
@@ -120,43 +120,37 @@ coordinates = ->
         manualColumnResize: true,
         rowHeaders: true,
         colHeaders: header,
-        columns: columns_option,
+        columns: columnsOption,
         contextMenu: false,
         startRows: 0,
-        afterChange: (source, changes) -> detect_check(source, changes)
+        afterChange: (source, changes) -> detectEditOnGrid(source, changes)
     }
 
     grids[elementId] = new Handsontable(hotElement, hotSettings)
 
-  detect_check = (source, changes) ->
+  detectEditOnGrid = (source, changes) ->
     if changes == 'edit'
-      row_index = source[0][0]
+      rowIndex = source[0][0]
       checked = source[0][3]
       if checked
-        selectedRowData[row_index] = grids["#metadataArea #grid"].getDataAtRow(row_index)
+        selectedRowData[rowIndex] = grids["#metadataArea #grid"].getDataAtRow(rowIndex)
       else
-        delete selectedRowData[row_index]
+        delete selectedRowData[rowIndex]
 
 
-  get_columns = (json) ->
+  getColumns = (json) ->
     if !json?
       null
     else
       json.columns
 
-  get_rows = (json) ->
+  getRows = (json) ->
     if !json?
       null
     else
       json.rows
 
-  get_executed_soql = (json) ->
-    if !json?
-      null
-    else
-      result.soql
-
-  get_columns_option = (json) ->
+  getColumnsOption = (json) ->
     if !json?
       [[]]
     else
@@ -166,8 +160,6 @@ coordinates = ->
 
   createGrid("#metadataArea #grid")
   createGrid("#metadataArea #sample")
-
-  #$(".sub-btn").hide()
 
   $('#metadataArea #tree').jstree({
     'core' : {

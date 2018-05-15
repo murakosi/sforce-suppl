@@ -1,7 +1,7 @@
 module Service
     class SelectUserService
-	include Service::ServiceCore
-	
+    include Service::ServiceCore
+    
         def call(token)
             login_token = User.encrypt(token)
             user ||= User.find_by(user_token: login_token)

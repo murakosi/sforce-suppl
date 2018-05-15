@@ -22,8 +22,6 @@ class ApplicationController < ActionController::Base
   end
 
   def signed_in?
-    p @current_user.present?
-    p sforce_session_alive?
     @current_user.present? && sforce_session_alive?
   end
 

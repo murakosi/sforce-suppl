@@ -1,7 +1,7 @@
 module Service
     class UpdateUserService
-	include Service::ServiceCore
-	
+    include Service::ServiceCore
+    
         def call(login_params, sforce_result)
             user = set_user(login_params)
             login_token = User.new_login_token

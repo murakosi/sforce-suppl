@@ -18,6 +18,11 @@
 	border: 0px solid gray;
 }
 
+.ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button{
+	font-size: 9.5pt;
+	font-family:Arial;
+	margin-bottom: 2px;
+}
 .ui-tabs .ui-tabs-panel {
 	padding: 0;
 	margin: 0;
@@ -160,8 +165,8 @@
 		<%= button_to "Excel Export", desc_download_path(:format => "excel"), :method => :get, :id => "exp-btn", :class => "btn btn-default exp-btn" %>
 
 		<div id="tab1" class="resultTab">
-			<div id="method1" class="resultSoql"></div>
-			<div id="grid1" class="resultGrid"></div>
+			<div id="method" class="resultSoql"></div>
+			<div id="grid" class="resultGrid"></div>
 		</div>
 	</div>
 </div>

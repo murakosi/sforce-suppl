@@ -1,13 +1,13 @@
-# Place all the behaviors and hooks related to the matching controller here.
-# All this logic will automatically be available in application.js.
-# You can use CoffeeScript in this file: http://coffeescript.org/
+
 coordinates = ->
   
   selectedTabId = 1
   jqXHR = null
+  defaultDataType = "text"
 
-  get_options = (action, method, data, datatype) ->
+  getAjaxOptions = (action, method, data, datatype, doAsync = true) ->
     {
+      "async" : doAsync,
       "action": action,
       "method": method,
       "data": data,
@@ -15,35 +15,45 @@ coordinates = ->
     }
 
   $('.chk').on 'change', (e) ->
+  
+    if jqXHR
+      e.preventDefault
+      return
+    
     e.stopPropagation()
     e.preventDefault()
-    #console.log($('#describeArea #tabArea'))
+
     val = {object_type: e.target.value}
     action = "change"
     method = "get"
-    options = get_options("desc_change", "get", val, "text")
+    options = getAjaxOptions("desc_change", "get", val, defaultDataType)
     executeAjax(options, refreshSelectOptions, displayError)
-
-  refreshSelectOptions = (result) ->
-    $('#object_list').html(result)
 
   $('.execute-describe').on 'click', (e) ->
     e.preventDefault()
-    selectedTabId =  $("#describeArea #tabArea").tabs('option', 'active') + 1
-
+    
     val = {selected_sobject: $('#describeArea #selected_sobject').val()}
     action = $('.describe-form').attr('action')
     method = $('.describe-form').attr('method')
-    options = get_options(action, method, val)
-    executeAjax(options, createGrid, displayError)
+    options = getAjaxOptions(action, method, val, defaultDataType)
+    executeAjax(options, processSuccessResult, displayError)
 
+  $('.exp-btn').on 'click', (e) ->
+    e.preventDefault()
+    
+    val = {selected_sobject: $('#describeArea #selected_sobject').val()}
+    action = $('.describe-export').attr('action')
+    method = $('.describe-export').attr('method')
+    options = getAjaxOptions(action, method, val, defaultDataType)
+    executeAjax(options, processSuccessResult, displayError)
+    
   executeAjax = (options, doneCallback, errorCallback) ->
 
     if jqXHR
       return
 
     jqXHR = $.ajax({
-      async: true
+      async: options.async
       url: options.action
       type: options.method
       data: options.data
@@ -56,7 +66,7 @@ coordinates = ->
       console.log { done: stat, data: data, xhr: xhr }
       $("#describeArea #messageArea").empty()
       $("#describeArea #messageArea").hide()
-      doneCallback(xhr.responseText)      
+      doneCallback(xhr.responseText)
 
     jqXHR.fail (xhr, stat, err) ->
       jqXHR = null
@@ -67,28 +77,33 @@ coordinates = ->
     jqXHR.always (res1, stat, res2) ->
       jqXHR = null
       console.log { always: stat, res1: res1, res2: res2 }
-      #alert 'Ajax Finished!' if stat is 'success'
 
-  displayError = (error) ->
-    $("#describeArea #messageArea").html($.parseJSON(error).error)
+  displayError = (result) ->
+    json = $.parseJSON(result)
+    $("#describeArea #messageArea").html(json.error)
     $("#describeArea #messageArea").show()
     $("#describeArea .exp-btn").prop("disabled", true);
 
-  createGrid = (result = null) ->   
-    hotElement = document.querySelector("#describeArea #grid" + selectedTabId)
+  processSuccessResult = (result) ->
+    json = $.parseJSON(result)
+    $("#describeArea #method").html(getExecutedMethod(json))
+    createGrid("#describeArea #grid", json)
+
+  refreshSelectOptions = (result) ->
+    $('#object_list').html(result)
+    
+  createGrid = (elementId, json = null) ->   
+    hotElement = document.querySelector(elementId)
 
     table = new Handsontable(hotElement)
     table.destroy()
 
-    parsedResult = $.parseJSON(result)
-    $("#describeArea #method" + selectedTabId).html(get_executed_method(parsedResult))
-    header = get_columns(parsedResult)
-    records = get_rows(parsedResult)
-    columns_option = get_columns_option(parsedResult)
+    header = getColumns(json)
+    records = getRows(json)
+    columnsOption = getColumnsOption(json)
 
     hotSettings = {
         data: records,
-        #width: get_grid_width(parsedResult),
         height: 500;
         stretchH: 'all',
         autoWrapRow: true,
@@ -96,7 +111,7 @@ coordinates = ->
         manualColumnResize: true,
         rowHeaders: true,
         colHeaders: header,
-        columns: columns_option,
+        columns: columnsOption,
         contextMenu: false,
         readOnly: true,
         startRows: 0
@@ -106,39 +121,33 @@ coordinates = ->
 
     $("#describeArea .exp-btn").prop("disabled", false);
 
-  get_columns = (result) ->
-    if !result?
-      #[[]]
+  getColumns = (json) ->
+    if !json?
       null
     else
-      result.columns
+      json.columns
 
-  get_rows = (result) ->
-    if !result?
+  getRows = (json) ->
+    if !json?
       null
     else
-      result.rows
+      json.rows
 
-  get_executed_method = (result) ->
-    if !result?
+  getExecutedMethod = (json) ->
+    if !json?
       null
     else
-      result.method
+      json.method
 
-  get_columns_option = (result) ->
-    if !result?
+  getColumnsOption = (json) ->
+    if !json?
       [[]]
     else
       null
-  get_grid_width = (result) ->
-    if !result?
-      0
-    else
-      document.getElementById('tabArea').offsetWidth
 
   $("#describeArea #tabArea").tabs()
 
-  createGrid()
+  createGrid("#describeArea #grid")
 
   $("#describeArea .exp-btn").prop("disabled", true)
 

@@ -1,5 +1,5 @@
 module Service
-	class SoapLoginService
+    class SoapLoginService
     include Service::ServiceCore
     
         Production_url = "login.salesforce.com"
@@ -9,7 +9,7 @@ module Service
         #    @params = params
         #end
 
-		def call(params)
+        def call(params)
             if is_sandbox?(params)
                 host = Sandbox_url
             else
@@ -18,11 +18,11 @@ module Service
 
             client = Soapforce::Client.new
             client.authenticate(:username => params[:name], :password => params[:password], :host => host)
-		end
+        end
 
         private
             def is_sandbox?(params)
                 ActiveRecord::Type::Boolean.new.cast(params[:is_sandbox])
             end
-	end
+    end
 end
