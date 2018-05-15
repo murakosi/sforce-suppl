@@ -1,5 +1,5 @@
 module MetadataHelper
     def metadata_directory
-        metadata_client.describe_metadata_objects()
+        Service::MetadataClientService.call(sforce_session).describe_metadata_objects()
     end
 end

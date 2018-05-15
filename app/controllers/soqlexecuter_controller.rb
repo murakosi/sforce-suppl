@@ -1,13 +1,11 @@
 
 class SoqlexecuterController < ApplicationController
+  include Soql::QueryExecuter
   before_action :require_sign_in!
   
-  protect_from_forgery :except => [:show]
+  protect_from_forgery :except => [:execute]
   
   Exclude_key_names = ["@xsi:type", "type"]
-  
-  def new
-  end
   
   def show
   end
@@ -18,14 +16,17 @@ class SoqlexecuterController < ApplicationController
 
   def execute_soql(soql)
     begin
-      get_records(soql)
-      puts "query end"
-      puts Time.now
-      #render :json => @records, :status => 200
-      render :json => @result, :status => 200
+      #get_records(soql)
+      #query_result = Soql:QueryExecuter.execute(soql)
+      query_result = execute_query(sforce_session, soql)
+      render :json => response_json(soql, query_result), :status => 200
     rescue StandardError => ex
       render :json => {:error => ex.message}, :status => 400
     end
+  end
+
+  def response_json(soql, query_result)
+    {:soql => soql, :columns => query_result.first.keys, :rows => query_result.each{ |hash| hash.values}}
   end
 
   def get_records(soql)
