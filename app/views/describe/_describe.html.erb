@@ -122,51 +122,61 @@
 	/*border: 1px solid lightgray;*/
 	float: left;
 }
-.button_to,
-.button_to div {
-	font-size: 14px;
-	font-family:Arial;
+
+#formArea #exportButtonArea .btn{
+    font-size:9.5pt;
   	display: inline;
 }
 </style>
 <div id="describeArea">
-	<div id="formArea">
-		<%= form_tag desc_change_path(), :method => :get, :class => "chk" do %>
-		<%= radio_button_tag 'SOType', :all, false, :class => "chk" %>All&nbsp;&nbsp;
-		<%= radio_button_tag 'SOType', :standard, false, :class => "chk" %>Standard&nbsp;&nbsp;
-		<%= radio_button_tag 'SOType', :custom, true, :class => "chk" %>Custom&nbsp;&nbsp;
-		<% end %>
+		<div id="formArea">
+			<%= form_tag desc_change_path(), :method => :get, :class => "chk" do %>
+			<%= radio_button_tag 'SOType', :all, false, :class => "chk" %>All&nbsp;&nbsp;
+			<%= radio_button_tag 'SOType', :standard, false, :class => "chk" %>Standard&nbsp;&nbsp;
+			<%= radio_button_tag 'SOType', :custom, true, :class => "chk" %>Custom&nbsp;&nbsp;
+			<% end %>
 
-	    <%= form_tag describe_path(), :method => :post, :class => "describe-form" do %>
-		<table>
-			<tr>
-				<td><%= label_tag 'sObjects: ' %></td>
-				<td>
-					<div id="object_list">
-						<%= render partial: 'describe/objectlist', locals: {data_source: initial_sobjects_list} %>
+		    <%= form_tag desc_download_path(), :method => :post, :class => "describe-form" do %>
+			<table>
+				<tr>
+					<td><%= label_tag 'sObjects: ' %></td>
+					<td>
+						<div id="object_list">
+							<%= render partial: 'describe/objectlist', locals: {data_source: initial_sobjects_list} %>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="3" class="login-button">
+					<%#= submit_tag 'Describe', :class => 'btn btn-primary execute-describe' %>
+					<%= button_tag "Describe", :action => describe_path(), :method => :post, :id => "execute-describe", :class => "btn btn-primary execute-describe" %>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="3" style="padding-top: 10px;">
+					<div id="exportButtonArea">
+					<%= button_tag "CSVa Export", :method => :post, :id => "csv-expprt", :class => "btn btn-default exp-btn", :name => "format", :value => "csv" %>
+					<%= button_tag "Excel Export", :method => :post, :id => "excel-export", :class => "btn btn-default exp-btn", :name => "format", :value => "excel" %>
 					</div>
-				</td>
-			</tr>
-			<tr>
-				<td colspan="3" class="login-button">
-				<%= submit_tag 'Describe', :class => 'btn btn-primary execute-describe' %>
-				</td>
-			</tr>
-		</table>
-		<% end %>
-		<div id="messageArea"></div>
-	</div>
-
-	<div id="dummyArea"></div>
-	
-	<div id="tabArea">
-		<br>
-		<%= button_to "CSV Export", desc_download_path(:format => "csv"), :method => :get, :id => "exp-btn", :class => "btn btn-default exp-btn" %>
-		<%= button_to "Excel Export", desc_download_path(:format => "excel"), :method => :get, :id => "exp-btn", :class => "btn btn-default exp-btn" %>
-
-		<div id="tab1" class="resultTab">
-			<div id="method" class="resultSoql"></div>
-			<div id="grid" class="resultGrid"></div>
+					</td>
+				</tr>
+			</table>
+			<% end %>
+			<div id="messageArea"></div>
 		</div>
-	</div>
+
+		<div id="dummyArea"></div>
+		
+		<div id="tabArea">
+			<br>
+			<%#= button_to "CSV Export", desc_download_path(:format => "csv"), :method => :get, :id => "exp-btn", :class => "btn btn-default exp-btn" %>
+			<%#= form_tag desc_download_path(), :method => :post, :class => "describe-export" do %>
+			<%#= button_tag "CSV Export", :type => "button", :id => "csv", :class => "btn btn-default exp-btn" %>
+			<%#= button_tag "CSVa Export", :method => :post, :id => "csv-expprt", :class => "btn btn-default exp-btn", :name => "format", :value => "csv" %>
+			<%#= button_tag "Excel Export", :method => :post, :id => "excel-export", :class => "btn btn-default exp-btn", :name => "format", :value => "excel" %>
+			<div id="tab1" class="resultTab">
+				<div id="method" class="resultSoql"></div>
+				<div id="grid" class="resultGrid"></div>
+			</div>
+		</div>
 </div>

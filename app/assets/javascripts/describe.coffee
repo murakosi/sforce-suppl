@@ -14,12 +14,13 @@ coordinates = ->
       "datatype": datatype
     }
 
-  $('.chk').on 'change', (e) ->
+  $('.chk').on 'click', (e) ->
+      if jqXHR
+        e.preventDefault
+        return false
   
-    if jqXHR
-      e.preventDefault
-      return
-    
+  $('.chk').on 'change', (e) ->
+
     e.stopPropagation()
     e.preventDefault()
 
@@ -31,19 +32,10 @@ coordinates = ->
 
   $('.execute-describe').on 'click', (e) ->
     e.preventDefault()
-    
-    val = {selected_sobject: $('#describeArea #selected_sobject').val()}
-    action = $('.describe-form').attr('action')
-    method = $('.describe-form').attr('method')
-    options = getAjaxOptions(action, method, val, defaultDataType)
-    executeAjax(options, processSuccessResult, displayError)
 
-  $('.exp-btn').on 'click', (e) ->
-    e.preventDefault()
-    
     val = {selected_sobject: $('#describeArea #selected_sobject').val()}
-    action = $('.describe-export').attr('action')
-    method = $('.describe-export').attr('method')
+    action = $('.execute-describe').attr('action')
+    method = $('.execute-describe').attr('method')
     options = getAjaxOptions(action, method, val, defaultDataType)
     executeAjax(options, processSuccessResult, displayError)
     

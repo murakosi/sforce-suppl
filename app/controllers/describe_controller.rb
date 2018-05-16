@@ -6,7 +6,7 @@ class DescribeController < ApplicationController
   include Describe::DescribeExecuter
   before_action :require_sign_in!
 
-  protect_from_forgery :except => [:execute]
+  protect_from_forgery :except => [:execute, :download]
 
   def show
     @sobjects = describe_global(sforce_session).select{|hash| hash[:is_custom] }.map{|hash| hash[:name]}
@@ -14,7 +14,6 @@ class DescribeController < ApplicationController
   end
 
   def change
-
     object_type = params[:object_type]
 
     if object_type == "all"
@@ -50,7 +49,7 @@ class DescribeController < ApplicationController
 
   def download
     sobject = params[:selected_sobject]
-
+    p params
     field_result = formatted_field_result(sobject)
 
     if !field_result.present?
@@ -95,7 +94,7 @@ class DescribeController < ApplicationController
     row = 2
     field_result.each do | values |
       values.each do | k, v |
-        sheet.add_cell(row, DescribeConstants.column_number(k), v)
+        sheet.add_cell(row, Describe::DescribeConstants.column_number(k), v)
       end
       row += 1
     end
