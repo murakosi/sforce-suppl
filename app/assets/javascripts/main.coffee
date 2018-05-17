@@ -1,11 +1,5 @@
-# Place all the behaviors and hooks related to the matching controller here.
-# All this logic will automatically be available in application.js.
-# You can use CoffeeScript in this file: http://coffeescript.org/
+
 mains = ->
-  #$("#executerContent").hide()
-  #$("#describeContent").hide()
-  #$("#metadataContent").hide()
-  #$("#describeContent").hide()
 
   $("#menuList").on "click", "a", (e) ->
     toggled = ($(this).prop("id"))
@@ -14,17 +8,22 @@ mains = ->
       return
 
     e.stopPropagation()
-    #e.preventDefault()
+
     $('.menus').not(this).removeClass('displayed');
+
     if $(this).hasClass('displayed')
       $(this).removeClass('displayed');
     else
       $(this).addClass('displayed');
-      
-    $("div#mainArea").prop("class", toggled)
+
+    partialPath = $(this).attr('partialPath')
+    loadTarget = $(this).attr('loadTarget')
+    loadPartial(toggled, loadTarget, partialPath)
+  
+  loadPartial = (toggleId, loadTarget, partialPath) ->
+    $("div#mainArea").prop("class", toggleId)
 
   changeDisplay = (d) ->
-    #$("div#mainArea").prop("class", d)
     $("#" + d)[0].click();
 
   executeAjax = (options) ->

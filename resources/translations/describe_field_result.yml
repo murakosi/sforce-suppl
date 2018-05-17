@@ -1,0 +1,72 @@
+id:
+ label: "ID"
+ type: "string"
+anytype:
+ label: "AnyType"
+ type: "string"
+base64:
+ label: "Base64"
+ type: "string"
+email:
+ label: "電子メール"
+ type: "string"
+phone:
+ label: "電話"
+ type: "string"
+combobox:
+ label: "テキスト（＋選択リスト）"
+ type: "string"
+encryptedstring:
+ label: "パスワード"
+ type: "string"
+string:
+ label: "テキスト"
+ type: "string"
+textarea:
+ label: "テキストエリア"
+ type: "string"
+url:
+ label: "URL"
+ type: "string"
+time:
+ label: "時間"
+ type: "string"
+boolean:
+ label: "チェックボックス"
+ type: ""
+date:
+ label: "日付"
+ type: ""
+datetime:
+ label: "日付/時間"
+ type: ""
+picklist:
+ label: "選択リスト"
+ type: ""
+multipicklist:
+ label: "選択リスト(複数選択)"
+ type: ""
+reference:
+ label: "ルックアップ"
+ type: ""
+int:
+ label: "数値"
+ type: "integer"
+currency:
+ label: "通貨"
+ type: "double"
+double:
+ label: "数値"
+ type: "double"
+percent:
+ label: "パーセント"
+ type: "double"
+auto_number:
+ label: "自動採番"
+ type: "string"
+formula:
+ label: "数式"
+ type: ""
+external_id:
+ label: "（外部ID）"
+ type: "string"

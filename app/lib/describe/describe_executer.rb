@@ -1,6 +1,11 @@
 module Describe
     module DescribeExecuter
 
+        def get_sobject_names(sforce_session, sobject_type)
+            raw_result = describe_global(sforce_session)
+            map_global_result(raw_result, sobject_type)
+        end
+
         def describe_global(sforce_session)
             if Describe::DescribeResults.global_result.present?
                 Describe::DescribeResults.global_result
@@ -26,7 +31,7 @@ module Describe
             if Describe::DescribeResults.formatted_field_result[object_name].present?
                 Describe::DescribeResults.formatted_field_result[object_name]
             else
-                Describe::DescribeResults.formatted_field_result[object_name] = Describe::DescribeFormatter.format_field_result(field_result)
+                Describe::DescribeResults.formatted_field_result[object_name] = Describe::DescribeFormatter.format(field_result)
             end
         end
 
@@ -34,10 +39,28 @@ module Describe
             Describe::DescribeResults.formatted_field_result[object_name]
         end
 
-        def get_sobject_info(field_result)
-            info = "表示ラベル：" + field_result[:label] + "\n" +
-                "API参照名：" + field_result[:name] + "\n" +
-                "プレフィックス：" + field_result[:key_prefix]
-        end
+        private
+
+            def map_global_result(raw_result, sobject_type)
+                if sobject_type == Describe::SobjectType::All
+                    all_sobject_names(raw_result)
+                elsif sobject_type == Describe::SobjectType::Standard
+                    standard_sobject_names(raw_result)
+                elsif sobject_type == Describe::SobjectType::Custom
+                    custom_sobject_names(raw_result)
+                end
+            end
+
+            def all_sobject_names(raw_result)
+                raw_result.map{|hash| hash[:name]}
+            end
+
+            def standard_sobject_names(raw_result)
+                raw_result.reject{|hash| hash[:is_custom] }.map{|hash| hash[:name]}
+            end
+
+            def custom_sobject_names(raw_result)
+                raw_result.select{|hash| hash[:is_custom] }.map{|hash| hash[:name]}
+            end
     end
 end

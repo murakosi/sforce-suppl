@@ -1,6 +1,5 @@
 require "fileutils"
-require "rubyXL"
-require "csv"
+
 
 class DescribeController < ApplicationController
   include Describe::DescribeExecuter
@@ -14,14 +13,14 @@ class DescribeController < ApplicationController
   end
 
   def change
-    object_type = params[:object_type]
+    sobject_type = params[:object_type]
 
-    if object_type == "all"
-      sobjects = describe_global(sforce_session).map{|hash| hash[:name]}
-    elsif object_type == "standard"
-      sobjects = describe_global(sforce_session).reject{|hash| hash[:is_custom] }.map{|hash| hash[:name]}
-    elsif object_type == "custom"
-      sobjects = describe_global(sforce_session).select{|hash| hash[:is_custom] }.map{|hash| hash[:name]}
+    if sobject_type == "all"
+      sobjects = get_sobject_names(sforce_session, Describe::SobjectType::All)
+    elsif sobject_type == "standard"
+      sobjects = get_sobject_names(sforce_session, Describe::SobjectType::Standard)
+    elsif sobject_type == "custom"
+      sobjects = get_sobject_names(sforce_session, Describe::SobjectType::Custom)
     else
       raise StandardError.new("Invalid object type parameter")
     end  
@@ -47,32 +46,28 @@ class DescribeController < ApplicationController
     #end
   end
 
+  def get_sobject_info(field_result)
+      info = "表示ラベル：" + field_result[:label] + "\n" +
+          "API参照名：" + field_result[:name] + "\n" +
+          "プレフィックス：" + field_result[:key_prefix]
+  end
+  
   def download
     sobject = params[:selected_sobject]
-    p params
-    field_result = formatted_field_result(sobject)
 
-    if !field_result.present?
-      return
-    end
+    field_result = describe_field(sforce_session, sobject)
+    formatted_result = format_field_result(sobject, field_result[:fields])
 
     if params[:format] == "csv"
-      download_csv(sobject, field_result)
+      download_csv(sobject, formatted_result)
     else
-      download_excel(sobject, field_result)
+      download_excel(sobject, formatted_result)
     end
   end
 
   def download_csv(sobject, field_result)
-    csv_data = CSV.generate(encoding: Encoding::SJIS, row_sep: "\r\n", force_quotes: true) do |csv|
-      csv_column_names = field_result.first.keys
-      csv << csv_column_names
-      field_result.each do | hash |
-          csv << hash.values
-      end
-    end
-
-    send_data(csv_data,
+    generator = Generator::DescribeCsvGenerator.new(Encoding::SJIS, "\r\n", true)
+    send_data(generator.generate(:data => field_result),
       :disposition => 'attachment',
       :type => 'text/csv',
       :filename => sobject + '.csv',
@@ -81,7 +76,7 @@ class DescribeController < ApplicationController
   end
 
   def download_excel(sobject, field_result)
-
+=begin
     source_excel = "./resources/book1.xlsx"
 
     output_excel = "./output/book1_copy.xlsx"
@@ -100,14 +95,15 @@ class DescribeController < ApplicationController
     end
 
     workbook.write(output_excel)
-
-    send_data(workbook.stream.read,
+=end
+    generator = Generator::ExcelGeneratorProxy.generator(:DescribeResult)
+    send_data(generator.generate(field_result),#workbook.stream.read,
       :disposition => 'attachment',
       :type => 'application/excel',
       :filename => sobject + '.xlsx',
       :status => 200
     )
     
-    FileUtils.rm(output_excel)
+    #FileUtils.rm(output_excel)
   end
 end

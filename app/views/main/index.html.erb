@@ -14,9 +14,9 @@
 <div id="menuList">
     <ul>
 		<li><%= link_to "Logout", logout_path, method: :delete, id: "logoutLink" %></li>
-        <li><a id="soqlexecuter" href="#" class="menus">SOQL</a></li>
-		<li><a id="describe" href="#" class="menus">Describe</a></li>
-		<li><a id="metadata" href="#" class="menus">Metadata</a></li>
+        <li><a id="soqlexecuter" href="#" class="menus" partialPath="soqlexecuter/soqlexecuter" loadTarget="soqlexecuterContent">SOQL</a></li>
+		<li><a id="describe" href="#" class="menus" partialPath="describe/describe" loadTarget="describeContent">Describe</a></li>
+		<li><a id="metadata" href="#" class="menus" partialPath="metadata/metadata" loadTarget="metadataContent">Metadata</a></li>
     </ul>
 </div>
 
@@ -28,7 +28,6 @@
 <div id="mainArea">
     <div id="soqlexecuterContent"><%= render "soqlexecuter/soqlexecuter" %></div>
     <div id="describeContent"><%= render "describe/describe" %></div>
-	
 	<div id="metadataContent"><%= render "metadata/metadata" %></div>
 	
 </div>
