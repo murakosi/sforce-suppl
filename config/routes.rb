@@ -13,7 +13,8 @@ Rails.application.routes.draw do
   get   'describe',  to: 'describe#show'
   post  'describe',  to: 'describe#execute'
   get   'desc_change',    to: 'describe#change'
-  post   'desc_download',  to: 'describe#download'
+  get   'desc_download',  to: 'describe#download'
+  post  'desc_download',  to: 'describe#download'
 
   get   'metadata',  to: 'metadata#show'
   post  'metadata',  to: 'metadata#list'

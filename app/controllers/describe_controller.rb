@@ -8,11 +8,13 @@ class DescribeController < ApplicationController
   protect_from_forgery :except => [:execute, :download]
 
   def show
+    # -----------  preseve for direct access ---------------------------
     @sobjects = describe_global(sforce_session).select{|hash| hash[:is_custom] }.map{|hash| hash[:name]}
     render partial: 'objectlist', locals: {data_source: @sobjects}
   end
 
   def change
+    flash.now[:alert] = "ようこそ。本日は#{Date.today}です。"
     sobject_type = params[:object_type]
 
     if sobject_type == "all"
@@ -66,13 +68,17 @@ class DescribeController < ApplicationController
   end
 
   def download_csv(sobject, field_result)
-    generator = Generator::DescribeCsvGenerator.new(Encoding::SJIS, "\r\n", true)
-    send_data(generator.generate(:data => field_result),
-      :disposition => 'attachment',
-      :type => 'text/csv',
-      :filename => sobject + '.csv',
-      :status => 200
-    )
+    begin
+      generator = Generator::DescribeCsvGenerator.new(Encoding::SJIS, "\r\n", true)
+      send_data(generator.generate(:data => field_result),
+        :disposition => 'attachment',
+        :type => 'text/csv',
+        :filename => sobject + '.csv',
+        :status => 200
+      )
+    rescue StandardError => ex
+      render :json => {:errorMessage => ex.message}
+    end
   end
 
   def download_excel(sobject, field_result)
@@ -96,13 +102,19 @@ class DescribeController < ApplicationController
 
     workbook.write(output_excel)
 =end
-    generator = Generator::ExcelGeneratorProxy.generator(:DescribeResult)
-    send_data(generator.generate(field_result),#workbook.stream.read,
-      :disposition => 'attachment',
-      :type => 'application/excel',
-      :filename => sobject + '.xlsx',
-      :status => 200
-    )
+    begin
+      raise StandardError.new("aaaa")
+      generator = Generator::ExcelGeneratorProxy.generator(:DescribeResult)
+      send_data(generator.generate(field_result),#workbook.stream.read,
+        :disposition => 'attachment',
+        :type => 'application/excel',
+        :filename => sobject + '.xlsx',
+        :status => 200
+      )
+    rescue StandardError => ex    
+      render :json => {:errorMessage => ex.message}
+    end
+
     
     #FileUtils.rm(output_excel)
   end

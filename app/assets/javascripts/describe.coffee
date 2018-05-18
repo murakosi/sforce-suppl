@@ -3,7 +3,7 @@ coordinates = ->
   
   selectedTabId = 1
   jqXHR = null
-  defaultDataType = "text"
+  defaultDataType = "text"  
 
   getAjaxOptions = (action, method, data, datatype, doAsync = true) ->
     {
@@ -13,6 +13,10 @@ coordinates = ->
       "data": data,
       "datatype": datatype
     }
+
+  $(".describe-form").on "ajax:success", (event) ->
+    if event.originalEvent.detail
+      alert(event.originalEvent.detail[0].errorMessage)
 
   $('.chk').on 'click', (e) ->
       if jqXHR

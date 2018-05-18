@@ -136,7 +136,7 @@
 			<%= radio_button_tag 'SOType', :custom, true, :class => "chk" %>Custom&nbsp;&nbsp;
 			<% end %>
 
-		    <%= form_tag desc_download_path(), :method => :post, :class => "describe-form" do %>
+		    <%= form_tag desc_download_path(), :method => :post, :remote => true, :class => "describe-form" do %>
 			<table>
 				<tr>
 					<td><%= label_tag 'sObjects: ' %></td>

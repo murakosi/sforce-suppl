@@ -31,7 +31,7 @@ module Describe
 
                 if raw_hash[:type] == "picklist"
                     val = raw_hash[:picklist_values].map{ |hash| hash[:value]}
-                    raw_hash[:picklist_values] = val.join("\n")
+                    raw_hash[:picklist_values] = val.join("\r\n")
                 end
 
                 raw_hash[:type] = type
