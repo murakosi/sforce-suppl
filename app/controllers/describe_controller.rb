@@ -1,5 +1,3 @@
-require "fileutils"
-
 
 class DescribeController < ApplicationController
   include Describe::DescribeExecuter
@@ -9,8 +7,8 @@ class DescribeController < ApplicationController
 
   def show
     # -----------  preseve for direct access ---------------------------
-    @sobjects = describe_global(sforce_session).select{|hash| hash[:is_custom] }.map{|hash| hash[:name]}
-    render partial: 'objectlist', locals: {data_source: @sobjects}
+    #@sobjects = describe_global(sforce_session).select{|hash| hash[:is_custom] }.map{|hash| hash[:name]}
+    #render partial: 'objectlist', locals: {data_source: @sobjects}
   end
 
   def change
@@ -82,40 +80,17 @@ class DescribeController < ApplicationController
   end
 
   def download_excel(sobject, field_result)
-=begin
-    source_excel = "./resources/book1.xlsx"
-
-    output_excel = "./output/book1_copy.xlsx"
-
-    FileUtils.cp(source_excel, output_excel)
-
-    workbook = RubyXL::Parser.parse(output_excel)
-    sheet = workbook.first
-
-    row = 2
-    field_result.each do | values |
-      values.each do | k, v |
-        sheet.add_cell(row, Describe::DescribeConstants.column_number(k), v)
-      end
-      row += 1
-    end
-
-    workbook.write(output_excel)
-=end
     begin
       raise StandardError.new("aaaa")
       generator = Generator::ExcelGeneratorProxy.generator(:DescribeResult)
-      send_data(generator.generate(field_result),#workbook.stream.read,
+      send_data(generator.generate(field_result),
         :disposition => 'attachment',
         :type => 'application/excel',
         :filename => sobject + '.xlsx',
         :status => 200
       )
     rescue StandardError => ex    
-      render :json => {:errorMessage => ex.message}
+      render :json => {:errorMessage => ex.message, :status => 400}
     end
-
-    
-    #FileUtils.rm(output_excel)
   end
 end
