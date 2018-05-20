@@ -1,18 +1,18 @@
 
 class DescribeController < ApplicationController
   include Describe::DescribeExecuter
+  
   before_action :require_sign_in!
 
   protect_from_forgery :except => [:execute, :download]
 
   def show
-    # -----------  preseve for direct access ---------------------------
-    #@sobjects = describe_global(sforce_session).select{|hash| hash[:is_custom] }.map{|hash| hash[:name]}
-    #render partial: 'objectlist', locals: {data_source: @sobjects}
+    sobjects = get_sobject_names(sforce_session, Describe::SobjectType::Custom)
+    html_content = render_to_string :partial => 'sobjectlist', :locals => {:data_source => sobjects}
+    render :json => {:target => "#sobjectList", :content => html_content} 
   end
 
   def change
-    flash.now[:alert] = "ようこそ。本日は#{Date.today}です。"
     sobject_type = params[:object_type]
 
     if sobject_type == "all"
@@ -25,12 +25,11 @@ class DescribeController < ApplicationController
       raise StandardError.new("Invalid object type parameter")
     end  
 
-    render partial: 'objectlist', locals: {data_source: sobjects}
+    render :partial => 'sobjectlist', :locals => {:data_source => sobjects}
     #render :json => sobjects, :status => 200
   end
 
   def execute
-
     sobject = params[:selected_sobject]
 
     #begin
@@ -66,31 +65,22 @@ class DescribeController < ApplicationController
   end
 
   def download_csv(sobject, field_result)
-    begin
-      generator = Generator::DescribeCsvGenerator.new(Encoding::SJIS, "\r\n", true)
-      send_data(generator.generate(:data => field_result),
-        :disposition => 'attachment',
-        :type => 'text/csv',
-        :filename => sobject + '.csv',
-        :status => 200
-      )
-    rescue StandardError => ex
-      render :json => {:errorMessage => ex.message}
-    end
+    generator = Generator::DescribeCsvGenerator.new(Encoding::SJIS, "\r\n", true)
+    send_data(generator.generate(:data => field_result),
+      :disposition => 'attachment',
+      :type => 'text/csv',
+      :filename => sobject + '.csv',
+      :status => 200
+    )
   end
 
   def download_excel(sobject, field_result)
-    begin
-      raise StandardError.new("aaaa")
-      generator = Generator::ExcelGeneratorProxy.generator(:DescribeResult)
-      send_data(generator.generate(field_result),
-        :disposition => 'attachment',
-        :type => 'application/excel',
-        :filename => sobject + '.xlsx',
-        :status => 200
-      )
-    rescue StandardError => ex    
-      render :json => {:errorMessage => ex.message, :status => 400}
-    end
+    generator = Generator::ExcelGeneratorProxy.generator(:DescribeResult)
+    send_data(generator.generate(field_result),
+      :disposition => 'attachment',
+      :type => 'application/excel',
+      :filename => sobject + '.xlsx',
+      :status => 200
+    )
   end
 end

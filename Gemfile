@@ -62,3 +62,5 @@ gem 'jquery-rails'
 gem 'rubyXL'
 
 gem 'hashie'
+
+gem 'attr_encrypted'

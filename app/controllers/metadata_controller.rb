@@ -11,14 +11,11 @@ class MetadataController < ApplicationController
 
     Metadata_type_column_index = 1
     Full_name_column_index = 3
-
-	def prepare_list
-    	p "here"
-    	@metadata_directory = metadata_client.describe_metadata_objects()
-	end
     
     def show
-        @metadata_directory = metadata_client.describe_metadata_objects()
+        metadata_list = Service::MetadataClientService.call(sforce_session).describe_metadata_objects()
+        html_content = render_to_string :partial => 'metadatalist', :locals => {:data_source => metadata_list}
+        render :json => {:target => "#metadata_list", :content => html_content} 
     end
 
     def list

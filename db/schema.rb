@@ -10,19 +10,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180412055450) do
+ActiveRecord::Schema.define(version: 20180520104031) do
 
   create_table "users", force: :cascade do |t|
     t.string "name"
     t.string "password_digest"
     t.integer "is_sandbox"
-    t.string "sforce_session_id"
-    t.string "sforce_server_url"
+    t.string "encrypted_sforce_session_id"
+    t.string "encrypted_sforce_server_url"
     t.string "sforce_query_locator"
     t.string "user_token"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "sforce_metadata_server_url"
+    t.string "encrypted_sforce_metadata_server_url"
+    t.string "encrypted_sforce_session_id_iv"
+    t.string "encrypted_sforce_server_url_iv"
+    t.string "encrypted_sforce_metadata_server_url_iv"
   end
 
 end

@@ -1,49 +1,101 @@
 
 mains = ->
 
-  $("#menuList").on "click", "a", (e) ->
-    toggled = ($(this).prop("id"))
+  selectedAnchor = null
+  jqXHR = null
+  loadedPartials = {}
+  defaultDetatype = "TEXT"
+  anchorObject = null
 
-    if toggled == "logoutLink"
+  getAjaxOptions = (action, method, data, datatype) ->
+    {
+      "action": action,
+      "method": method,
+      "data": data,
+      "datatype": datatype,
+    }
+
+  $("#menuList").on "click", "a", (e) ->
+    selectedAnchor = ($(this).prop("id"))
+
+    if selectedAnchor == "logoutLink"
       return
 
+    if jqXHR
+      e.preventDefault
+      return false;
+
     e.stopPropagation()
+    #changeAnchorClass(this)
+    anchorObject = this
 
-    $('.menus').not(this).removeClass('displayed');
+    method = $(this).attr('method')
+    action = $(this).attr('loadTarget')
 
-    if $(this).hasClass('displayed')
-      $(this).removeClass('displayed');
-    else
-      $(this).addClass('displayed');
-
-    partialPath = $(this).attr('partialPath')
-    loadTarget = $(this).attr('loadTarget')
-    loadPartial(toggled, loadTarget, partialPath)
+    if loadedPartials[selectedAnchor] || action == ""
+      changeDisplayDiv(selectedAnchor)
+      
+      return
+    
+    options = getAjaxOptions(action, method, null, defaultDetatype)
+    #executeSyncAjax(options, loadPartials)
+    $.get action, (result) ->
+      console.log(result)
+      loadPartials(result)
   
-  loadPartial = (toggleId, loadTarget, partialPath) ->
-    $("div#mainArea").prop("class", toggleId)
+  loadPartials = (result) ->
+    loadedPartials[selectedAnchor] = true
+    json = result#$.parseJSON(result)
+    $("div" + json.target).html(json.content)
+    changeDisplayDiv(selectedAnchor)
 
-  changeDisplay = (d) ->
-    $("#" + d)[0].click();
+  changeAnchorClass = (target) ->
+    $(".menus").not(target).removeClass("displayed");
 
-  executeAjax = (options) ->
+    if $(target).hasClass("displayed")
+      $(target).removeClass("displayed");
+    else
+      $(target).addClass("displayed");
+
+  changeDisplayDiv = (target) ->
+    changeAnchorClass(anchorObject)
+    $("div#mainArea").prop("class", target)
+
+  autoClickAnchor = (target) ->
+    $("#" + target)[0].click();
+
+  executeSyncAjax = (options, callback) ->
+    if jqXHR
+      return
+
+    $.ajax({
+      async: false,
+      url: options.action
+      type: options.method
+      data: options.data
+      dataType: options.datatype
+      cache: false
+    }).done (data, stat, xhr) ->
+      console.log { done: stat, data: data, xhr: xhr }
+      callback(data)
+
+  executeAjax = (options, callback) ->
 
     if jqXHR
       return
 
     jqXHR = $.ajax({
-      async: true
-      url: "main"
-      type: "POST"
-      data: options
-      dataType: "text"
+      url: options.action
+      type: options.method
+      data: options.data
+      dataType: options.datatype
       cache: false
     })
 
     jqXHR.done (data, stat, xhr) ->
       jqXHR = null
       console.log { done: stat, data: data, xhr: xhr }
-      changeDisplay(data)
+      callback(data)
 
     jqXHR.fail (xhr, stat, err) ->
       jqXHR = null
@@ -54,7 +106,8 @@ mains = ->
       jqXHR = null
       console.log { always: stat, res1: res1, res2: res2 }
 
-  executeAjax("describe")
+  options = getAjaxOptions("main", "POST", "describe", "TEXT")
+  executeAjax(options, autoClickAnchor)
 
 $(document).ready(mains)
 $(document).on('page:load', mains)

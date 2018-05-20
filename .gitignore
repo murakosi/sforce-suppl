@@ -26,3 +26,5 @@
 
 /output/*
 !/output/.keep
+
+/config/local_env.yml

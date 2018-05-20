@@ -10,13 +10,13 @@
  display:block;   
 }
 </style>
-<% javascript 'handsontable.full.min','jquery-1.11.2.min','jquery-ui-1.11.3.min','main','jstree', 'jstree.min','soqlexecuter', 'describe', 'metadata' %>
+<% javascript 'handsontable.full.min','jquery-1.11.2.min','jquery-ui-1.11.3.min','main','jstree', 'jstree.min', 'soqlexecuter', 'describe', 'metadata' %>
 <div id="menuList">
     <ul>
 		<li><%= link_to "Logout", logout_path, method: :delete, id: "logoutLink" %></li>
-        <li><a id="soqlexecuter" href="#" class="menus" partialPath="soqlexecuter/soqlexecuter" loadTarget="soqlexecuterContent">SOQL</a></li>
-		<li><a id="describe" href="#" class="menus" partialPath="describe/describe" loadTarget="describeContent">Describe</a></li>
-		<li><a id="metadata" href="#" class="menus" partialPath="metadata/metadata" loadTarget="metadataContent">Metadata</a></li>
+        <li><a id="soqlexecuter" href="#" class="menus" method="GET" loadTarget="">SOQL</a></li>
+		<li><a id="describe" href="#" class="menus" method="GET" loadTarget="describe">Describe</a></li>
+		<li><a id="metadata" href="#" class="menus" method="GET" loadTarget="metadata">Metadata</a></li>
     </ul>
 </div>
 

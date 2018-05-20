@@ -7,9 +7,8 @@ coordinates = ->
   jqXHR = null
   defaultDataType = "text"
   
-  getAjaxOptions = (action, method, data, datatype, doAsync = true) ->
+  getAjaxOptions = (action, method, data, datatype) ->
     {
-      "async" : doAsync,
       "action": action,
       "method": method,
       "data": data,
@@ -49,7 +48,6 @@ coordinates = ->
       return
 
     jqXHR = $.ajax({
-      async: options.async
       url: options.action
       type: options.method
       data: options.data

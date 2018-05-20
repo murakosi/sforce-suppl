@@ -1,10 +1,13 @@
 
 class SoqlexecuterController < ApplicationController
   include Soql::QueryExecuter
+
   before_action :require_sign_in!
   
   protect_from_forgery :except => [:execute]
   
+  Time_format = "%Y/%m/%d %H:%M"
+
   def show
   end
 
@@ -22,7 +25,11 @@ class SoqlexecuterController < ApplicationController
   end
 
   def response_json(soql, query_result)
-    {:soql => soql, :columns => query_result.first.keys, :rows => query_result.each{ |hash| hash.values}}
+    {:soql => soql_info(soql), :columns => query_result.first.keys, :rows => query_result.each{ |hash| hash.values}}
+  end
+
+  def soql_info(soql)
+    soql + " @" + Time.now.strftime(Time_format)
   end
 
 end

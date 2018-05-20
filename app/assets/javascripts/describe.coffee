@@ -1,45 +1,39 @@
 
 coordinates = ->
   
-  selectedTabId = 1
   jqXHR = null
   defaultDataType = "text"  
 
-  getAjaxOptions = (action, method, data, datatype, doAsync = true) ->
+  getAjaxOptions = (action, method, data, datatype) ->
     {
-      "async" : doAsync,
       "action": action,
       "method": method,
       "data": data,
       "datatype": datatype
     }
 
-  $(".describe-form").on "ajax:success", (event) ->
-    if event.originalEvent.detail
-      alert(event.originalEvent.detail[0].errorMessage)
-
-  $('.chk').on 'click', (e) ->
+  $('.sobjectTypeCheckBox').on 'click', (e) ->
       if jqXHR
         e.preventDefault
         return false
   
-  $('.chk').on 'change', (e) ->
+  $('.sobjectTypeCheckBox').on 'change', (e) ->
 
     e.stopPropagation()
     e.preventDefault()
 
     val = {object_type: e.target.value}
-    action = "change"
-    method = "get"
-    options = getAjaxOptions("desc_change", "get", val, defaultDataType)
+    action = $('#filterSObjectList').attr('action')
+    method = $('#filterSObjectList').attr('method')
+    options = getAjaxOptions(action, method, val, defaultDataType)
     executeAjax(options, refreshSelectOptions, displayError)
 
-  $('.execute-describe').on 'click', (e) ->
+  $('#executeDescribe').on 'click', (e) ->
     e.preventDefault()
 
     val = {selected_sobject: $('#describeArea #selected_sobject').val()}
-    action = $('.execute-describe').attr('action')
-    method = $('.execute-describe').attr('method')
+    action = $('#executeDescribe').attr('action')
+    method = $('#executeDescribe').attr('method')
     options = getAjaxOptions(action, method, val, defaultDataType)
     executeAjax(options, processSuccessResult, displayError)
     
@@ -49,7 +43,6 @@ coordinates = ->
       return
 
     jqXHR = $.ajax({
-      async: options.async
       url: options.action
       type: options.method
       data: options.data
@@ -78,7 +71,6 @@ coordinates = ->
     json = $.parseJSON(result)
     $("#describeArea #messageArea").html(json.error)
     $("#describeArea #messageArea").show()
-    $("#describeArea .exp-btn").prop("disabled", true);
 
   processSuccessResult = (result) ->
     json = $.parseJSON(result)
@@ -86,7 +78,7 @@ coordinates = ->
     createGrid("#describeArea #grid", json)
 
   refreshSelectOptions = (result) ->
-    $('#object_list').html(result)
+    $('#sobjectList').html(result)
     
   createGrid = (elementId, json = null) ->   
     hotElement = document.querySelector(elementId)
@@ -115,8 +107,6 @@ coordinates = ->
 
     table = new Handsontable(hotElement, hotSettings)
 
-    $("#describeArea .exp-btn").prop("disabled", false);
-
   getColumns = (json) ->
     if !json?
       null
@@ -144,8 +134,6 @@ coordinates = ->
   $("#describeArea #tabArea").tabs()
 
   createGrid("#describeArea #grid")
-
-  $("#describeArea .exp-btn").prop("disabled", true)
 
 $(document).ready(coordinates)
 $(document).on('page:load', coordinates)
