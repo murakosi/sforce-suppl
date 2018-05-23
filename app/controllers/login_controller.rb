@@ -8,13 +8,14 @@ class LoginController < ApplicationController
   def create
     @error_message = ""
 
-    #begin
+    begin
       sign_in(login_params)
       redirect_to main_path
-    #rescue StandardError => e
-    #  @error_message = e.message
-    #  render 'new'
-    #end
+    rescue StandardError => e
+      #@error_message = e.message
+      flash[:danger] = e.message
+      render 'new'
+    end
   end
 
   def destroy
@@ -23,13 +24,6 @@ class LoginController < ApplicationController
   end
 
   private
-
-    #def skip_login
-    #  if signed_in?
-    #    redirect_to soql_path
-    #  end
-    #end
-
     def login_params
       params.require(:login_param).permit(:name, :password, :is_sandbox)
     end

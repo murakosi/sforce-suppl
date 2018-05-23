@@ -4,7 +4,7 @@ mains = ->
   selectedAnchor = null
   jqXHR = null
   loadedPartials = {}
-  defaultDetatype = "TEXT"
+  defaultDetatype = ""
   anchorObject = null
 
   getAjaxOptions = (action, method, data, datatype) ->

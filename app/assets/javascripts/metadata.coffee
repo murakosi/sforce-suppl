@@ -16,7 +16,7 @@ coordinates = ->
     }
  
   $("#metadataArea .exp-btn").on "click", (e) ->
-    $("#metadataArea #format").val($(this).attr("format"))
+    $("#metadataArea #dl_format").val($(this).attr("dl_format"))
     $("#metadataArea #selected_type").val($('#metadataArea #selected_directory').val())
     $("#metadataArea #selected_record").val(Object.values(selectedRowData))
 

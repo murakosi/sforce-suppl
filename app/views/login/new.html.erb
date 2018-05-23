@@ -5,7 +5,10 @@ td{
 }
 
 #login-form{
+    float:center;
+    display:inline;
     padding-top: 20px;
+    border:1px solid black;
 }
 
 .form-label{
@@ -16,7 +19,15 @@ td{
     text-align: center;
 }
 
+#flashMessage{
+    float:center;
+    text-align:center;
+    padding:5px;
+    display:block;
+}
+
 #loginErrorMessage{
+    text-align:center;
     color: red;
     white-space: pre;
 }
@@ -30,24 +41,28 @@ td{
 <h1>Login#new</h1>
 <p>Find me in app/views/login/new.html.erb</p>
 </div>
+
+<% flash.each do |key, value| %>
+    <div id="flashMessage" class="alert alert-<%= key %>"><%= simple_format(value) %></div>
+<% end %>
+
 <div id="login-form" align="center">
     <%= form_for :login_param, url: login_path do |f| %>
-    <table>
-        <tr>
-            <td><%= f.label 'User Name:', :class => 'form-label' %></td>
-            <td><%= f.text_field :name, value: "murakoshi@cse.co.jp" %><td>
-        </tr>
-        <tr>
-            <td><%= f.label 'Password:', :class => 'form-label' %></td>
-            <td><%= f.password_field :password, value: "s13926cse" %></td>
-        </tr>
-        <tr>
-            <td><%= f.label 'Sandbox:', :class => 'form-label' %></td>
-            <td><%= f.check_box :is_sandbox %></td>
-        <tr>
-            <td colspan="2" class="login-button"><%= f.submit 'Login', :class => 'btn btn-primary' %></td>
-        </tr>
-    </table>
-    <div id="loginErrorMessage"><%= @error_message %></div>
+        <table>
+            <tr>
+                <td><%= f.label 'User Name:', :class => 'form-label' %></td>
+                <td><%= f.text_field :name, value: "murakoshi@cse.co.jp" %><td>
+            </tr>
+            <tr>
+                <td><%= f.label 'Password:', :class => 'form-label' %></td>
+                <td><%= f.password_field :password, value: "s13926cse" %></td>
+            </tr>
+            <tr>
+                <td><%= f.label 'Sandbox:', :class => 'form-label' %></td>
+                <td><%= f.check_box :is_sandbox %></td>
+            <tr>
+                <td colspan="2" class="login-button"><%= f.submit 'Login', :class => 'btn btn-primary' %></td>
+            </tr>
+        </table>
     <% end %>
 </div>

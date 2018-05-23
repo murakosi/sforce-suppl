@@ -79,19 +79,55 @@ class MetadataController < ApplicationController
 
         full_name = selected_record.split(",")[Full_name_indxe]
 
-        if full_name.nil? && params[:format] != "excel"
+        if full_name.nil? && params[:dl_format] != "excel"
             return
         end
 
         result = read_metadata(sforce_session, metadata_type, full_name)
 
-        if params[:format] == "csv"
+        if params[:dl_format] == "csv"
             download_csv(full_name, result)
-        elsif params[:format] == "yaml"
+        elsif params[:dl_format] == "yaml"
             download_yaml(full_name, result)
-        elsif params[:format] == "excel"
+        elsif params[:dl_format] == "excel"
             download_excel(full_name, result)
         end
+    end
+
+    def download_csv(full_name, result)
+        begin
+            #raise StandardError.new("eeeeeeeeeeee")
+            generator = Generator::MetadataCsvGenerator.new(Encoding::SJIS, "\r\n", true)
+            f = generator.generate(:full_name => full_name, :data => result)
+            render :js => "window.open('" + "/download/" + f + "', '_blank')"
+            #send_data(generator.generate(:full_name => full_name, :data => result),
+            #:disposition => 'attachment',
+            #:type => 'text/csv',
+            #:filename => full_name + '.csv',
+            #:status => 200
+            #)
+        rescue StandardError => ex
+            p request.format
+            p ex.message
+            render :js => "alert('" + ex.message + "')"
+            #render ajax_redirect_to(login_path)
+            #respond_to do |format|
+            #    #format.text { render ajax_redirect_to(login_path) }
+            #    format.html { render ajax_redirect_to(login_path) }
+            #    format.csv { render ajax_redirect_to(login_path) }
+            #    format.js { render :js => "alert('a');" }
+            #    format.js { render ajax_redirect_to(login_path) }
+            #end
+        end
+=begin        
+        generator = Generator::MetadataCsvGenerator.new(Encoding::SJIS, "\r\n", true)
+        send_data(generator.generate(:full_name => full_name, :data => result),
+          :disposition => 'attachment',
+          :type => 'text/csv',
+          :filename => full_name + '.csv',
+          :status => 200
+        )
+=end
     end
 
     def download_yaml(full_name, result)
@@ -100,16 +136,6 @@ class MetadataController < ApplicationController
           :disposition => 'attachment',
           :type => 'application/x-yaml',
           :filename => full_name + '.yml',
-          :status => 200
-        )
-    end
-
-    def download_csv(full_name, result)
-        generator = Generator::MetadataCsvGenerator.new(Encoding::SJIS, "\r\n", true)
-        send_data(generator.generate(:full_name => full_name, :data => result),
-          :disposition => 'attachment',
-          :type => 'text/csv',
-          :filename => full_name + '.csv',
           :status => 200
         )
     end

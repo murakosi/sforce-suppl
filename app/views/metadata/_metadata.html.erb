@@ -1,3 +1,4 @@
+<!--<% flash.each do |key, value| %><div id="flashMessage" class="alert alert-<%= key %>"><%= simple_format(value) %></div><% end %>-->
 <div id="metadataArea">
 	<div id="formArea">
 	    <%= form_tag metadata_path(), :method => :post, :class => "metadata-form" do %>
@@ -25,11 +26,11 @@
 	
 	<div id="tabArea">
 		<br>
-		<%= form_tag meta_download_path(), :id => "exportForm", :method => :post do %>
-			<%= button_tag "Export Excel", :id => "excel-export", :class => "btn btn-default sub-btn exp-btn", :format => "excel" %>
-			<%= button_tag "CSV Export",  :id => "csv-export", :class => "btn btn-default sub-btn exp-btn", :format => "csv" %>
-			<%= button_tag "YAML Export", :id => "yaml-export", :class => "btn btn-default sub-btn exp-btn", :format => "yaml" %>
-			<%= hidden_field_tag :format, "" %>
+		<%= form_tag meta_download_path(), :id => "exportForm", :remote => true, :method => :post do %>
+			<%= button_tag "Export Excel", :id => "excel-export", :class => "btn btn-default sub-btn exp-btn", :dl_format => "excel" %>
+			<%= button_tag "CSV Export",  :id => "csv-export", :class => "btn btn-default sub-btn exp-btn", :dl_format => "csv" %>
+			<%= button_tag "YAML Export", :id => "yaml-export", :class => "btn btn-default sub-btn exp-btn", :dl_format => "yaml" %>
+			<%= hidden_field_tag :dl_format, "" %>
 			<%= hidden_field_tag :selected_type, "" %>
 			<%= hidden_field_tag :selected_record, "" %>
 		<% end %>

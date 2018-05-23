@@ -88,7 +88,6 @@ coordinates = ->
     jqXHR.fail (xhr, stat, err) ->
       jqXHR = null
       console.log { fail: stat, error: err, xhr: xhr }
-      alert(err)
       errorCallback($.parseJSON(xhr.responseText))
 
     jqXHR.always (res1, stat, res2) ->
@@ -98,7 +97,6 @@ coordinates = ->
   processSuccessResult = (json) ->
     $("#soqlArea #soql" + selectedTabId).html(getExecutedSoql(json))
     elementId = "#soqlArea #grid" + selectedTabId
-    alert(elementId)
     createGrid(elementId, json)
 
   displayError = (json) ->

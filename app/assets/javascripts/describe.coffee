@@ -2,7 +2,7 @@
 coordinates = ->
   
   jqXHR = null
-  defaultDataType = "text"  
+  defaultDataType = ""  
 
   getAjaxOptions = (action, method, data, datatype) ->
     {

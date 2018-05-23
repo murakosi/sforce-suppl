@@ -26,13 +26,12 @@ class DescribeController < ApplicationController
     end  
 
     render :partial => 'sobjectlist', :locals => {:data_source => sobjects}
-    #render :json => sobjects, :status => 200
   end
 
   def execute
     sobject = params[:selected_sobject]
 
-    #begin
+    begin
       field_result = describe_field(sforce_session, sobject)
       sobject_info = get_sobject_info(field_result)
       formatted_result = format_field_result(sobject, field_result[:fields])
@@ -40,9 +39,9 @@ class DescribeController < ApplicationController
       result = {:method => sobject_info, :columns => formatted_result.first.keys, :rows => formatted_result.each{ |hash| hash.values}}
 
       render :json => result, :status => 200
-    #rescue StandardError => ex
-    #  render :json => {:error => ex.message}, :status => 400
-    #end
+    rescue StandardError => ex
+      render :json => {:error => ex.message}, :status => 400
+    end
   end
 
   def get_sobject_info(field_result)
