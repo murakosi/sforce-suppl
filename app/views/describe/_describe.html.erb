@@ -1,133 +1,3 @@
-<style>
-.resultTab{
-	padding-right: 7px;
-}
-
-.resultSoql{
-	border: 1px solid lightgray;
-	font-size: 9pt;
-	padding: 4px;
-	margin-bottom: 2px;
-	margin-top: 2px;
-	white-space: pre;
-}
-
-.resultGrid {
-	background: white;
-	outline: 0;
-	border: 0px solid gray;
-}
-
-.ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button{
-	font-size: 9.5pt;
-	font-family:Arial;
-	margin-bottom: 2px;
-}
-.ui-tabs .ui-tabs-panel {
-	padding: 0;
-	margin: 0;
-}
-
-.ui-tabs .ui-tabs-nav li a {
-	font-size:10pt !important;
-}
-
-.noselect {
-    -webkit-user-select: none; /* Safari */
-       -moz-user-select: none; /* Firefox */
-        -ms-user-select: none; /* Internet Explorer/Edge */
-            user-select: none; /* Non-prefixed version, currently
-                                  supported by Chrome and Opera */
-}
-
-.ui-tabs .ui-tabs-nav .ui-tabs-anchor {
-	float: left;
-	padding: .5em .5em .5em 1em;
-	text-decoration: none;
-}
-.ui-tabs .ui-tabs-nav:focus {
-	/*
-    padding-left: 0px; 
-    background: transparent; 
-    border-width: 0px 0px 1px 0px; 
-    -moz-border-radius: 0px; 
-    -webkit-border-radius: 0px; 
-	border-radius: 0px;
-	*/
-}
-
-#tabArea ul li a { outline:none; /* outline-color:red */; }
-#tabArea ul li { outline:none; /* outline-color:red */; }
-
-.ui-tabs .ui-tabs-nav li.ui-tabs-active .ui-tabs-anchor,
-.ui-tabs .ui-tabs-nav li.ui-state-disabled .ui-tabs-anchor,
-.ui-tabs .ui-tabs-nav li.ui-tabs-loading .ui-tabs-anchor {
-	/* cursor: pointer; */
-}
-
-.ui-tabs-nav .ui-icon { 
-	/*
-	float: right;
-	margin: 0em 0em 0 1em;
-	cursor: pointer;
-	*/
-}
-
-#tabArea li .ui-icon-close {
-	float: left;
-	margin: 0.4em 0.2em 0 0;
-	cursor: pointer; 
-}
-
-.handsontable span.colHeader{
-    font-size: 10pt;
-}
-
-.handsontable th, .handsontable td{
-    font-size: 10pt;
-}
-
-.handsontable span.data{
-    color: black;
-    font-style:bold;
-}
-
-#messageArea{
-    width: 50%;
-    display: none;
-    color: red;
-    white-space: pre;
-}
-
-#describeArea{
-	padding-top: 20px;
-	width:100%;
-	margin: 0 auto;
-}
-
-#formArea{
-	width: 70%;
-	margin: 0 auto;
-}
-
-#tabArea{
-	width: 60%;
-	border: 0px solid lightgray;
-	//margin: 0 auto;
-	float:left;
-}
-#dummyArea{
-	width: 15%;
-	height: 10px;
-	/*border: 1px solid lightgray;*/
-	float: left;
-}
-
-#formArea #exportButtonArea .btn{
-    font-size:9.5pt;
-  	display: inline;
-}
-</style>
 <div id="describeArea">
 		<div id="formArea">
 			<%= form_tag describe_changelist_path(), :id => "filterSObjectList", :method => :get do %>
@@ -136,7 +6,7 @@
 			<%= radio_button_tag 'sobjectTypeCheckBox', :custom, true, :class => "sobjectTypeCheckBox" %>Custom&nbsp;&nbsp;
 			<% end %>
 
-		    <%= form_tag describe_download_path(), :method => :post, :class => "describe-form" do %>
+		    <%#= form_tag describe_download_path(), :method => :post, :class => "describe-form" do %>
 			<table>
 				<tr>
 					<td><%= label_tag 'sObjects: ' %></td>
@@ -152,16 +22,8 @@
 					<%= button_tag "Describe", :action => describe_path(), :method => :post, :id => "executeDescribe", :class => "btn btn-primary" %>
 					</td>
 				</tr>
-				<tr>
-					<td colspan="3" style="padding-top: 10px;">
-						<div id="exportButtonArea">
-							<%= button_tag "CSV Export", :id => "csv-expprt", :class => "btn btn-default exp-btn", :name => "format", :value => "csv" %>
-							<%= button_tag "Excel Export", :id => "excel-export", :class => "btn btn-default exp-btn", :name => "format", :value => "excel" %>
-						</div>
-					</td>
-				</tr>
 			</table>
-			<% end %>
+			<%# end %>
 			<div id="messageArea"></div>
 		</div>
 
@@ -169,6 +31,14 @@
 		
 		<div id="tabArea">
 			<br>
+			<div id="exportButtonArea">
+				<%= form_tag describe_download_path(), :id => "exportForm", :method => :post do %>
+					<%= button_tag "CSV Export", :id => "csv-expprt", :class => "btn btn-default exp-btn", :format => "csv" %>
+					<%= button_tag "Excel Export", :id => "excel-export", :class => "btn btn-default exp-btn", :format => "excel" %>
+					<%= hidden_field_tag :format, "" %>
+					<%= hidden_field_tag :selected_sobject, "" %>
+				<% end %>
+			</div>	
 			<%#= button_to "CSV Export", desc_download_path(:format => "csv"), :method => :get, :id => "exp-btn", :class => "btn btn-default exp-btn" %>
 			<%#= form_tag desc_download_path(), :method => :post, :class => "describe-export" do %>
 			<%#= button_tag "CSV Export", :type => "button", :id => "csv", :class => "btn btn-default exp-btn" %>

@@ -2,6 +2,8 @@
 #require "describe"
 
 class ApplicationController < ActionController::Base
+  include AjaxRedirectHelper
+
   before_action :current_user
   before_action :require_sign_in!
   helper_method :signed_in?, :current_user, :sforce_session
@@ -25,11 +27,19 @@ class ApplicationController < ActionController::Base
   end
 
   def require_sign_in!
-      redirect_to login_path unless signed_in?
+      force_redirect unless signed_in?
   end
 
   private
   
+  def force_redirect    
+    respond_to do |format|
+      format.js { render ajax_redirect_to(login_path) }
+      format.html { redirect_to login_path }
+      format.text { redirect_to login_path }
+    end
+  end
+
   def current_user
     user_info = Service::SelectUserService.call(session[:user_token])
     @sforce_session = user_info[:sforce_session]

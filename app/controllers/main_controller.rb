@@ -7,6 +7,6 @@ class MainController < ApplicationController
   end
 
   def switch
-    render :plain => "describe", :status => 200
+    render :plain => "metadata", :status => 200
   end
 end

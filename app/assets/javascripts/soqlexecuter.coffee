@@ -4,7 +4,7 @@ coordinates = ->
   currentTabIndex = 1
   grids = {}
   jqXHR = null
-  defaultDataType = "text"
+  defaultDataType = ""
 
   getAjaxOptions = (action, method, data, datatype) ->
     {
@@ -19,8 +19,7 @@ coordinates = ->
       return
     
     e.preventDefault()
-    selectedTabId =  $("#soqlArea #tabArea").tabs('option', 'active') + 1
-    
+    selectedTabId = $("#soqlArea #tabArea .ui-tabs-panel:visible").attr("tabId");
     val = {soql: $('#soqlArea #input_soql').val()}
     action = $('#soqlArea .execute-form').attr('action')
     method = $('#soqlArea .execute-form').attr('method')
@@ -36,7 +35,7 @@ coordinates = ->
       return
 
     if window.confirm("Close this tab?")
-      panelId = $( this ).closest( "#soqlArea li" ).remove().attr( "aria-controls" )
+      panelId = $(this).closest("#soqlArea li").remove().attr("aria-controls")
       $("#soqlArea #" + panelId ).remove();
       $("#soqlArea #" + tabContainerDiv).tabs("refresh")
 
@@ -52,9 +51,9 @@ coordinates = ->
     )
 
     $("#soqlArea #tabArea").append(
-      "<div id=\"tab" + newTabId + "\" class=\"resultTab\">" +
-      "<div id=\"soql" + newTabId + "\" class=\"resultSoql\"></div>" +
-      "<div id=\"grid" + newTabId + "\" class=\"resultGrid\"></div>" +
+      "<div id=\"tab" + newTabId + "\" class=\"resultTab\" tabId=\"" + newTabId + "\">" +
+      "<div id=\"soql" + newTabId + "\" class=\"resultSoql\" tabId=\"" + newTabId + "\"></div>" +
+      "<div id=\"grid" + newTabId + "\" class=\"resultGrid\" tabId=\"" + newTabId + "\"></div>" +
       "</div>"
     )
     
@@ -99,6 +98,7 @@ coordinates = ->
   processSuccessResult = (json) ->
     $("#soqlArea #soql" + selectedTabId).html(getExecutedSoql(json))
     elementId = "#soqlArea #grid" + selectedTabId
+    alert(elementId)
     createGrid(elementId, json)
 
   displayError = (json) ->

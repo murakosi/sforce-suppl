@@ -19,12 +19,12 @@ module Service
 
         def get_attributes(login_token, sforce_result)
             {
-                :user_token => User.encrypt(login_token),
-                :encrypted_sforce_session_id => sforce_result[:session_id],
-                :encrypted_sforce_server_url => sforce_result[:server_url], 
+                :user_token => User.encrypt_token(login_token),
+                :sforce_session_id => sforce_result[:session_id],
+                :sforce_server_url => sforce_result[:server_url], 
                 :sforce_query_locator => sforce_result[:query_locator],
-                :encrypted_sforce_metadata_server_url => sforce_result[:metadata_server_url]
+                :sforce_metadata_server_url => sforce_result[:metadata_server_url]
             }
-        end
+        end        
     end
 end

@@ -36,7 +36,11 @@ coordinates = ->
     method = $('#executeDescribe').attr('method')
     options = getAjaxOptions(action, method, val, defaultDataType)
     executeAjax(options, processSuccessResult, displayError)
-    
+
+  $("#describeArea .exp-btn").on "click", (e) ->
+    $("#describeArea #format").val($(this).attr("format"))
+    $("#describeArea #selected_sobject").val($('#describeArea #selected_sobject').val())
+
   executeAjax = (options, doneCallback, errorCallback) ->
 
     if jqXHR

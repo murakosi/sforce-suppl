@@ -16,7 +16,7 @@ Rails.application.routes.draw do
   post  'describe/download',      to: 'describe#download'
 
   get   'metadata',  to: 'metadata#show'
-  get   'metadata',  to: 'metadata#list'
+  post   'metadata',  to: 'metadata#list'
   get   'metadata/change', to: 'metadata#change'
   get   'meta_refresh',   to: 'metadata#refresh'
   post   'read',      to: 'metadata#read'

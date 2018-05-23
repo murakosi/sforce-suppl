@@ -1,9 +1,10 @@
 module Metadata
-    module DisplayFormatter
-    include Formatter
+    class TreeFormatter
+    class << self
+        include Metadata::FormatUtils
 
-        def format_for_display(hash_array, id)
-            @display_array = parse_hash(hash_array, id)
+        def format(full_name, result)
+            @display_array = parse_hash(result, full_name)
         #=begin
             #puts @metadata_store.key_store.xsi_type
             #puts "keys!!!!!!!!!!!!!"
@@ -14,7 +15,7 @@ module Metadata
             @display_array
         end
 
-        def get_tree_parent_nodes(metadata_list)
+        def get_parent_tree_nodes(metadata_list)
             parent_nodes = []
             metadata_list.each do |hash|
                 parent_nodes << {:id => hash[:full_name], :parent => "#", :text => "<b>" + hash[:full_name].to_s + "<b>", :children => true }
@@ -93,5 +94,6 @@ module Metadata
             :text => text
             }
         end
+    end
     end
 end

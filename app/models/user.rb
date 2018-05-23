@@ -11,7 +11,7 @@ class User < ApplicationRecord
         SecureRandom.urlsafe_base64
     end
 
-    def self.encrypt(token)
+    def self.encrypt_token(token)
         Digest::SHA256.hexdigest(token.to_s)
     end
 

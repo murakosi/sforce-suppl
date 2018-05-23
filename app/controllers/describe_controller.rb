@@ -52,12 +52,12 @@ class DescribeController < ApplicationController
   end
   
   def download
-    sobject = params[:selected_sobject]
+    sobject = params["selected_sobject"]
 
     field_result = describe_field(sforce_session, sobject)
     formatted_result = format_field_result(sobject, field_result[:fields])
 
-    if params[:format] == "csv"
+    if params["format"] == "csv"
       download_csv(sobject, formatted_result)
     else
       download_excel(sobject, formatted_result)

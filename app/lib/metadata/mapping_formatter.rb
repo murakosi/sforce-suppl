@@ -1,15 +1,16 @@
 module Metadata
-    module ExportFormatter
-    include Formatter
+    class MappingFormatter
+    class << self
+        include Metadata::FormatUtils
 
-        def format_for_export(hashes)
-            #@value_store = ValueStore.new
+        def format(full_name, result)
+
             @parsed_hash = {}
-            hashes.each do | k, v |
+            result.each do | k, v |
                 if v.is_a?(Hash) || v.is_a?(Array)
                     parse_deep(k, v)
                 else
-                store_hash(k, v)
+                    store_hash(k, v)
                 end
             end
             rebuild_hash()
@@ -21,9 +22,7 @@ module Metadata
                     access_key = (token.to_s + "_" + k.to_s).to_sym
 
                     if v.is_a?(Hash)
-                        #p v
-                        flattened_hash = HashFlatter.flat(v)
-                        #p flattened_hash                   
+                        flattened_hash = Metadata::HashFlatter.flat(v)                
                         flattened_hash.each do | fkey, fval |
                             access_key2 = (access_key.to_s + "_" + fkey.to_s).to_sym
                             store_hash(access_key2, fval)
@@ -36,10 +35,10 @@ module Metadata
                 end
             elsif item.is_a?(Array)
                 item.each_with_index do | element, index|
-                    #p element
+
                     access_key = (token.to_s + "/" + index.to_s + "/").to_sym
 
-                    flattened_hash = HashFlatter.flat(element)
+                    flattened_hash = Metadata::HashFlatter.flat(element)
                     flattened_hash.each do | fkey, fval |
                         access_key2 = (access_key.to_s + fkey.to_s).to_sym
                         store_hash(access_key2, fval)
@@ -65,7 +64,6 @@ module Metadata
             value_index = 0
             key_array = []
 
-            #@value_store.values.each do | key, value |
             @parsed_hash.each do | key, value |
 
                 value_index = 0
@@ -92,5 +90,6 @@ module Metadata
 
             keys
         end
+    end
     end
 end

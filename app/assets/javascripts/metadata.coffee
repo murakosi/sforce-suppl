@@ -5,7 +5,7 @@ coordinates = ->
   nodeGrids = {}
   currentId = null
   jqXHR = null
-  defaultDataType = "text"
+  defaultDataType = ""
   
   getAjaxOptions = (action, method, data, datatype) ->
     {
@@ -15,6 +15,11 @@ coordinates = ->
       "datatype": datatype
     }
  
+  $("#metadataArea .exp-btn").on "click", (e) ->
+    $("#metadataArea #format").val($(this).attr("format"))
+    $("#metadataArea #selected_type").val($('#metadataArea #selected_directory').val())
+    $("#metadataArea #selected_record").val(Object.values(selectedRowData))
+
   $("#metadataArea #tree").on "before_open.jstree", (e, node) ->
     if currentId == node.node.id
       return
@@ -121,20 +126,25 @@ coordinates = ->
         columns: columnsOption,
         contextMenu: false,
         startRows: 0,
-        afterChange: (source, changes) -> detectEditOnGrid(source, changes)
+        beforeChange: (source, changes) -> detectBeforeEditOnGrid(source, changes)
     }
 
     grids[elementId] = new Handsontable(hotElement, hotSettings)
 
-  detectEditOnGrid = (source, changes) ->
-    if changes == 'edit'
-      rowIndex = source[0][0]
-      checked = source[0][3]
-      if checked
-        selectedRowData[rowIndex] = grids["#metadataArea #grid"].getDataAtRow(rowIndex)
-      else
-        delete selectedRowData[rowIndex]
+  detectBeforeEditOnGrid = (source, changes) ->
+    if changes != 'edit'
+      return
 
+    rowIndex = source[0][0]
+    checked = source[0][3]
+
+    if checked
+      if Object.keys(selectedRowData).length > 0
+        source[0][3] = false
+      else
+        selectedRowData[rowIndex] = grids["#metadataArea #grid"].getDataAtRow(rowIndex)
+    else
+      delete selectedRowData[rowIndex]
 
   getColumns = (json) ->
     if !json?

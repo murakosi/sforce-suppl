@@ -3,7 +3,7 @@ module Service
     include Service::ServiceCore
     
         def call(token)
-            login_token = User.encrypt(token)
+            login_token = User.encrypt_token(token)
             user ||= User.find_by(user_token: login_token)
             if user.nil?
                 nil_user_info
@@ -23,14 +23,14 @@ module Service
             }  
         end
 
-        def valid_user_info(user)
+        def valid_user_info(user)          
             {:user => user,
              :sforce_session => {
-                                 :session_id => user.encrypted_sforce_session_id,
-                                 :server_url => user.encrypted_sforce_server_url,
-                                 :metadata_server_url => user.encrypted_sforce_metadata_server_url
+                                 :session_id => user.sforce_session_id,
+                                 :server_url => user.sforce_server_url,
+                                 :metadata_server_url => user.sforce_metadata_server_url
                                  }
-            }            
+            }           
         end
     end
 end
