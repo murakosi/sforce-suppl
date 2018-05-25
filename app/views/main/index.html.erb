@@ -197,7 +197,10 @@
 <h1>Main#index</h1>
 <p>Find me in app/views/main/index.html.erb</p>
 </div>
-
+<%#= render :partial => 'errormsg', :locals => {:data_source => nil} %>
+<% flash.each do |key, value| %>
+    <div id="flashMessage" class="alert alert-<%= key %>"><%= simple_format(value) %></div>
+<% end %>
 <div id="mainArea">
     <div id="soqlexecuterContent"><%= render "soqlexecuter/soqlexecuter" %></div>
     <div id="describeContent"><%= render "describe/describe" %></div>

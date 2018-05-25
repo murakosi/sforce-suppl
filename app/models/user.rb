@@ -3,6 +3,7 @@ class User < ApplicationRecord
     has_secure_password validations: false
 
     secret_key = ENV['DB_US_COLUMN_KEY']
+    attribute :sforce_session_id
     attr_encrypted :sforce_session_id, :key => secret_key
     attr_encrypted :sforce_server_url, :key => secret_key
     attr_encrypted :sforce_metadata_server_url, :key => secret_key

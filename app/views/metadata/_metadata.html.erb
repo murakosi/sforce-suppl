@@ -7,7 +7,7 @@
 				<td><%= label_tag 'Metadata: ' %></td>
 				<td>
 				<div id="metadata_list">
-					<%= render :partial => 'metadata/metadatalist', :locals => {:data_source => initial_metadata_list} %>
+					<%#= render :partial => 'metadata/metadatalist', :locals => {:data_source => initial_metadata_list} %>
 				</div>
 				</td>
 			</tr>
@@ -26,7 +26,7 @@
 	
 	<div id="tabArea">
 		<br>
-		<%= form_tag meta_download_path(), :id => "exportForm", :remote => true, :method => :post do %>
+		<%= form_tag meta_download_path(), :id => "exportForm", remote: true, :method => :post do %>
 			<%= button_tag "Export Excel", :id => "excel-export", :class => "btn btn-default sub-btn exp-btn", :dl_format => "excel" %>
 			<%= button_tag "CSV Export",  :id => "csv-export", :class => "btn btn-default sub-btn exp-btn", :dl_format => "csv" %>
 			<%= button_tag "YAML Export", :id => "yaml-export", :class => "btn btn-default sub-btn exp-btn", :dl_format => "yaml" %>

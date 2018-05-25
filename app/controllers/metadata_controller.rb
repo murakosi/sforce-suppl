@@ -95,39 +95,21 @@ class MetadataController < ApplicationController
     end
 
     def download_csv(full_name, result)
-        begin
-            #raise StandardError.new("eeeeeeeeeeee")
-            generator = Generator::MetadataCsvGenerator.new(Encoding::SJIS, "\r\n", true)
-            f = generator.generate(:full_name => full_name, :data => result)
-            render :js => "window.open('" + "/download/" + f + "', '_blank')"
-            #send_data(generator.generate(:full_name => full_name, :data => result),
-            #:disposition => 'attachment',
-            #:type => 'text/csv',
-            #:filename => full_name + '.csv',
-            #:status => 200
-            #)
-        rescue StandardError => ex
-            p request.format
-            p ex.message
-            render :js => "alert('" + ex.message + "')"
-            #render ajax_redirect_to(login_path)
-            #respond_to do |format|
-            #    #format.text { render ajax_redirect_to(login_path) }
-            #    format.html { render ajax_redirect_to(login_path) }
-            #    format.csv { render ajax_redirect_to(login_path) }
-            #    format.js { render :js => "alert('a');" }
-            #    format.js { render ajax_redirect_to(login_path) }
-            #end
-        end
 =begin        
+        respond_to do |format|
+            format.html
+            format.js { render :partial => "metadata/downloadfile", :formats => [:js] }
+        end
+=end
+#=begin
         generator = Generator::MetadataCsvGenerator.new(Encoding::SJIS, "\r\n", true)
         send_data(generator.generate(:full_name => full_name, :data => result),
           :disposition => 'attachment',
           :type => 'text/csv',
           :filename => full_name + '.csv',
-          :status => 200
+          :status => 400
         )
-=end
+#=end        
     end
 
     def download_yaml(full_name, result)

@@ -8,6 +8,8 @@ class ApplicationController < ActionController::Base
     before_action :require_sign_in!
     helper_method :signed_in?, :current_user, :sforce_session
 
+    Redirect_message = "<b>Redirected due to session/connection error</b>.\n\n"
+
     protect_from_forgery with: :exception
 
     def sign_in(login_params)
@@ -31,36 +33,40 @@ class ApplicationController < ActionController::Base
     end
 
     private
-    
-    def force_redirect
-        if @sforce_session_error.present?
-            flash[:danger] = "<b>Redirected due to session/connection error</b>.\n\n" + @sforce_session_error 
+        def current_user
+            user_info = Service::SelectUserService.call(session[:user_token])
+            @sforce_session = user_info[:sforce_session]
+            @current_user = user_info[:user]
         end
         
-        respond_to do |format|
-            format.js { render ajax_redirect_to(login_path) }
-            format.html { redirect_to login_path }
-            format.text { redirect_to login_path }
+        def sforce_session
+            @sforce_session
         end
-    end
 
-    def current_user
-        user_info = Service::SelectUserService.call(session[:user_token])
-        @sforce_session = user_info[:sforce_session]
-        @current_user = user_info[:user]
-    end
-    
-    def sforce_session
-        @sforce_session
-    end
-
-    def sforce_session_alive?
-        begin
-            Service::SoapClientService.call(@sforce_session)
-            return true
-        rescue StandardError => ex
-            @sforce_session_error = ex.message
-            return false
+        def sforce_session_alive?
+            begin
+                Service::SoapClientService.call(@sforce_session)
+                return true
+            rescue StandardError => ex
+                @sforce_session_error = ex.message
+                return false
+            end
         end
-    end
+
+        def force_redirect        
+            set_flash_message
+            respond_to do |format|
+                format.js { render ajax_redirect_to(login_path) }
+                format.html { redirect_to login_path }
+                format.text { redirect_to login_path }
+            end
+        end
+
+        def set_flash_message()
+            flash.discard(:danger)
+            if @sforce_session_error.present?
+                message = Redirect_message + @sforce_session_error.encode("UTF-8", invalid: :replace, undef: :replace)
+                flash[:danger] = message
+            end            
+        end
 end
