@@ -95,21 +95,24 @@ class MetadataController < ApplicationController
     end
 
     def download_csv(full_name, result)
+        #flash.now[:danger] = "Unable to export search results"
+        #p "there"
+        #render :partial => 'errormsg'
 =begin        
         respond_to do |format|
             format.html
             format.js { render :partial => "metadata/downloadfile", :formats => [:js] }
         end
 =end
-#=begin
+=begin
         generator = Generator::MetadataCsvGenerator.new(Encoding::SJIS, "\r\n", true)
         send_data(generator.generate(:full_name => full_name, :data => result),
           :disposition => 'attachment',
           :type => 'text/csv',
           :filename => full_name + '.csv',
-          :status => 400
+          :status => 200
         )
-#=end        
+=end        
     end
 
     def download_yaml(full_name, result)

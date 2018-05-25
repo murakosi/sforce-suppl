@@ -198,9 +198,12 @@
 <p>Find me in app/views/main/index.html.erb</p>
 </div>
 <%#= render :partial => 'errormsg', :locals => {:data_source => nil} %>
+<div id="farea">
+	<%= render "metadata/errormsg" %>
 <% flash.each do |key, value| %>
     <div id="flashMessage" class="alert alert-<%= key %>"><%= simple_format(value) %></div>
 <% end %>
+</div>
 <div id="mainArea">
     <div id="soqlexecuterContent"><%= render "soqlexecuter/soqlexecuter" %></div>
     <div id="describeContent"><%= render "describe/describe" %></div>

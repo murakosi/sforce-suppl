@@ -15,9 +15,9 @@ coordinates = ->
       "datatype": datatype
     }
  
-  $(document).on "ajax:error", (e) ->
-    console.log("aaaaaa")
-    console.log(e)
+  #$(document).on "ajax:error", (e) ->
+  #  console.log("aaaaaa")
+  #  console.log(e)
 
   $("#metadataArea .exp-btn").on "click", (e) ->
     $("#metadataArea #dl_format").val($(this).attr("dl_format"))
