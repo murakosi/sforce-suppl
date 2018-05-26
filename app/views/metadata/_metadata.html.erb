@@ -19,14 +19,14 @@
 			</tr>
 		</table>
 		<% end %>
-		<div id="messageArea"></div>
+		<div id="messageArea" class="alert alert-danger"></div>
 	</div>
 
 	<div id="dummyArea"></div>
 	
 	<div id="tabArea">
 		<br>
-		<%= form_tag meta_download_path(), :id => "exportForm", remote: false, :method => :post do %>
+		<%= form_tag meta_download_path(), :id => "exportForm", remote: true, :method => :post do %>
 			<%= button_tag "Export Excel", :id => "excel-export", :class => "btn btn-default sub-btn exp-btn", :dl_format => "excel" %>
 			<%= button_tag "CSV Export",  :id => "csv-export", :class => "btn btn-default sub-btn exp-btn", :dl_format => "csv" %>
 			<%= button_tag "YAML Export", :id => "yaml-export", :class => "btn btn-default sub-btn exp-btn", :dl_format => "yaml" %>

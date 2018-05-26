@@ -18,6 +18,7 @@ module Sforcesuppl
     config.assets.precompile += %w(jquery-ui-1.11.3.min.js)
     config.assets.precompile += %w(jstree.js)
     config.assets.precompile += %w(jstree.min.js)
+    config.assets.precompile += %w(jquery.fileDownload.js)
     config.assets.precompile += %w(main.coffee)
     config.assets.precompile += %w(describe.coffee)
     config.assets.precompile += %w(soqlexecuter.coffee)

@@ -183,7 +183,7 @@
 }
 
 </style>
-<% javascript 'handsontable.full.min','jquery-1.11.2.min','jquery-ui-1.11.3.min','main','jstree', 'jstree.min', 'soqlexecuter', 'describe', 'metadata' %>
+<% javascript 'handsontable.full.min','jquery-1.11.2.min','jquery-ui-1.11.3.min','main','jstree', 'jstree.min', 'jquery.fileDownload.js', 'soqlexecuter', 'describe', 'metadata' %>
 <div id="menuList">
     <ul>
 		<li><%= link_to "Logout", logout_path, method: :delete, id: "logoutLink" %></li>
@@ -199,7 +199,6 @@
 </div>
 <%#= render :partial => 'errormsg', :locals => {:data_source => nil} %>
 <div id="farea">
-	<%= render "metadata/errormsg" %>
 <% flash.each do |key, value| %>
     <div id="flashMessage" class="alert alert-<%= key %>"><%= simple_format(value) %></div>
 <% end %>

@@ -17,12 +17,39 @@ coordinates = ->
  
   #$(document).on "ajax:error", (e) ->
   #  console.log("aaaaaa")
-  #  console.log(e)
+  #  console.log(e)  
 
   $("#metadataArea .exp-btn").on "click", (e) ->
-    $("#metadataArea #dl_format").val($(this).attr("dl_format"))
-    $("#metadataArea #selected_type").val($('#metadataArea #selected_directory').val())
-    $("#metadataArea #selected_record").val(Object.values(selectedRowData))
+    e.preventDefault()
+    #$("#metadataArea #dl_format").val($(this).attr("dl_format"))
+    #$("#metadataArea #selected_type").val($('#metadataArea #selected_directory').val())
+    #$("#metadataArea #selected_record").val(Object.values(selectedRowData))
+    doAjs(this)
+  
+  doAjs = (target) ->
+    url = $("#metadataArea #exportForm").attr('action')
+    dl_format = $(target).attr("dl_format")
+    selected_type = $('#metadataArea #selected_directory').val()
+    selected_record = selectedRowData
+
+    jqXHR = $.fileDownload(url, {
+        httpMethod: "POST",
+        data: {dl_format: dl_format, selected_type: selected_type, selected_record: selected_record}
+    })
+
+    jqXHR.done (d) ->
+      jqXHR = null
+      console.log("d")
+      console.log(d)    
+      alert("OK")
+
+    jqXHR.fail (response, url, error) ->
+      jqXHR = null
+      displayError($.parseJSON(response))
+      alert("error")
+
+    jqXHR.always () ->
+      jqXHR = null
 
   $("#metadataArea #tree").on "before_open.jstree", (e, node) ->
     if currentId == node.node.id

@@ -69,15 +69,14 @@ class MetadataController < ApplicationController
     end
 
     def download
-
-        metadata_type = params["selected_type"]
-        selected_record = params["selected_record"]
+        metadata_type = params[:selected_type]
+        selected_record = params[:selected_record]
 
         if selected_record.nil?
-            return
+            render head :bad_request
         end
 
-        full_name = selected_record.split(",")[Full_name_indxe]
+        full_name = selected_record.values[0][Full_name_indxe]
 
         if full_name.nil? && params[:dl_format] != "excel"
             return
@@ -85,34 +84,34 @@ class MetadataController < ApplicationController
 
         result = read_metadata(sforce_session, metadata_type, full_name)
 
-        if params[:dl_format] == "csv"
+        begin
+            try_download(params[:dl_format], full_name, result)
+        rescue StandardError => ex
+            respond_to do |format|
+                format.html {render :json => {:error => ex.message}}
+                format.text {render :plain => ex.message}
+            end
+        end
+    end
+
+    def try_download(format, full_name, result)
+        if format == "csv"
             download_csv(full_name, result)
-        elsif params[:dl_format] == "yaml"
+        elsif format == "yaml"
             download_yaml(full_name, result)
-        elsif params[:dl_format] == "excel"
+        elsif format == "excel"
             download_excel(full_name, result)
         end
     end
 
     def download_csv(full_name, result)
-        #flash.now[:danger] = "Unable to export search results"
-        #p "there"
-        #render :partial => 'errormsg'
-=begin        
-        respond_to do |format|
-            format.html
-            format.js { render :partial => "metadata/downloadfile", :formats => [:js] }
-        end
-=end
-=begin
         generator = Generator::MetadataCsvGenerator.new(Encoding::SJIS, "\r\n", true)
         send_data(generator.generate(:full_name => full_name, :data => result),
           :disposition => 'attachment',
           :type => 'text/csv',
           :filename => full_name + '.csv',
           :status => 200
-        )
-=end        
+        )    
     end
 
     def download_yaml(full_name, result)
