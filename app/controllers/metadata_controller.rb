@@ -71,14 +71,16 @@ class MetadataController < ApplicationController
     def download
         metadata_type = params[:selected_type]
         selected_record = params[:selected_record]
-
+        
         if selected_record.nil?
-            render head :bad_request
+            respond_download_error("record not selected")
+            return
         end
 
         full_name = selected_record.values[0][Full_name_indxe]
 
         if full_name.nil? && params[:dl_format] != "excel"
+            respond_download_error("full_name not specified")
             return
         end
 
@@ -86,11 +88,9 @@ class MetadataController < ApplicationController
 
         begin
             try_download(params[:dl_format], full_name, result)
+            set_download_success_cookie(response)
         rescue StandardError => ex
-            respond_to do |format|
-                format.html {render :json => {:error => ex.message}}
-                format.text {render :plain => ex.message}
-            end
+            respond_download_error(ex.message)
         end
     end
 
@@ -101,6 +101,17 @@ class MetadataController < ApplicationController
             download_yaml(full_name, result)
         elsif format == "excel"
             download_excel(full_name, result)
+        end
+    end
+
+    def set_download_success_cookie(response)
+        response.set_cookie("fileDownload", {:value => true, :path => "/"})
+    end
+
+    def respond_download_error(message)
+        respond_to do |format|
+            format.html {render :json => {:error => message, :status => 400}}
+            format.text {render :json => {:error => message, :status => 400}}
         end
     end
 

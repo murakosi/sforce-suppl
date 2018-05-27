@@ -60,6 +60,7 @@ mains = ->
   changeDisplayDiv = (target) ->
     changeAnchorClass(anchorObject)
     $("div#mainArea").prop("class", target)
+    $('.select').select2();
 
   autoClickAnchor = (target) ->
     $("#" + target)[0].click();

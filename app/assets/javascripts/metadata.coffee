@@ -14,42 +14,36 @@ coordinates = ->
       "data": data,
       "datatype": datatype
     }
- 
-  #$(document).on "ajax:error", (e) ->
-  #  console.log("aaaaaa")
-  #  console.log(e)  
+
+  createDownloadOptions = (url, method, data, successCallback, failCallback, alwaysCallback) ->
+    {
+      "url": url,
+      "method": method,
+      "data": data,
+      "successCallback": successCallback,
+      "failCallback": failCallback,
+      "alwaysCallback": alwaysCallback
+    }
 
   $("#metadataArea .exp-btn").on "click", (e) ->
     e.preventDefault()
-    #$("#metadataArea #dl_format").val($(this).attr("dl_format"))
-    #$("#metadataArea #selected_type").val($('#metadataArea #selected_directory').val())
-    #$("#metadataArea #selected_record").val(Object.values(selectedRowData))
-    doAjs(this)
-  
-  doAjs = (target) ->
+    options = getDownloadOptions(this)
+    $.ajaxDownload(options)
+
+  getDownloadOptions = (target) ->
     url = $("#metadataArea #exportForm").attr('action')
+    method = $("#metadataArea #exportForm").attr('method')
     dl_format = $(target).attr("dl_format")
     selected_type = $('#metadataArea #selected_directory').val()
     selected_record = selectedRowData
+    data = {dl_format: dl_format, selected_type: selected_type, selected_record: selected_record}
+    createDownloadOptions(url, method, data, downloadDone, downloadFail, ->)
 
-    jqXHR = $.fileDownload(url, {
-        httpMethod: "POST",
-        data: {dl_format: dl_format, selected_type: selected_type, selected_record: selected_record}
-    })
-
-    jqXHR.done (d) ->
-      jqXHR = null
-      console.log("d")
-      console.log(d)    
-      alert("OK")
-
-    jqXHR.fail (response, url, error) ->
-      jqXHR = null
-      displayError($.parseJSON(response))
-      alert("error")
-
-    jqXHR.always () ->
-      jqXHR = null
+  downloadDone = (url) ->
+    hideMessageArea()
+  
+  downloadFail = (response, url, error) ->
+    displayError($.parseJSON(response))
 
   $("#metadataArea #tree").on "before_open.jstree", (e, node) ->
     if currentId == node.node.id
@@ -94,8 +88,6 @@ coordinates = ->
     jqXHR.done (data, stat, xhr) ->
       jqXHR = null
       console.log { done: stat, data: data, xhr: xhr }
-      $("#metadataArea #messageArea").empty()
-      $("#metadataArea #messageArea").hide()
       doneCallback($.parseJSON(xhr.responseText), params)
 
     jqXHR.fail (xhr, stat, err) ->
@@ -112,7 +104,12 @@ coordinates = ->
     $("#metadataArea #messageArea").html(json.error)
     $("#metadataArea #messageArea").show()
   
+  hideMessageArea = () ->
+    $("#metadataArea #messageArea").empty()
+    $("#metadataArea #messageArea").hide()
+
   processListSuccessResult = (json) ->
+    hideMessageArea()
     refreshTree(json.tree)
     createGrid("#metadataArea #grid", json.grid)
 
@@ -123,12 +120,13 @@ coordinates = ->
 
   callReadMetadata = (node, callback) ->
     val = {type: $('#metadataArea #selected_directory').val(), name: node.id}
-    action = "read"
-    method = "post"
+    action = $("#read-tab").attr("action")
+    method = $("#read-tab").attr("method")
     options = getAjaxOptions(action, method, val, defaultDataType)
     executeAjax(options, processReadSuccess, displayError, callback)
 
   processReadSuccess = (json, callback) ->
+    hideMessageArea
     currentId = json.fullName
     nodeGrids[currentId] = json.grid
     createGrid("#metadataArea #sample", json.grid)

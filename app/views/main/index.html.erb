@@ -183,7 +183,19 @@
 }
 
 </style>
-<% javascript 'handsontable.full.min','jquery-1.11.2.min','jquery-ui-1.11.3.min','main','jstree', 'jstree.min', 'jquery.fileDownload.js', 'soqlexecuter', 'describe', 'metadata' %>
+<% javascript 'handsontable.full.min',
+			  'jquery-1.11.2.min',
+			  'jquery-ui-1.11.3.min',
+			  'jstree',
+			  'jstree.min', 
+			  'select2.min.js',
+			  'jquery.fileDownload.js',
+			  'ajaxDownload.js',
+			  'main',			  
+			  'soqlexecuter', 
+			  'describe', 
+			  'metadata' 
+%>
 <div id="menuList">
     <ul>
 		<li><%= link_to "Logout", logout_path, method: :delete, id: "logoutLink" %></li>

@@ -1,4 +1,3 @@
-<!--<% flash.each do |key, value| %><div id="flashMessage" class="alert alert-<%= key %>"><%= simple_format(value) %></div><% end %>-->
 <div id="metadataArea">
 	<div id="formArea">
 	    <%= form_tag metadata_path(), :method => :post, :class => "metadata-form" do %>
@@ -19,35 +18,29 @@
 			</tr>
 		</table>
 		<% end %>
-		<div id="messageArea" class="alert alert-danger"></div>
+		<div id="messageArea"></div>
 	</div>
 
 	<div id="dummyArea"></div>
 	
 	<div id="tabArea">
 		<br>
-		<%= form_tag meta_download_path(), :id => "exportForm", remote: true, :method => :post do %>
+		<%= form_tag metadata_download_path(), :id => "exportForm", :remote => true, :method => :post do %>
 			<%= button_tag "Export Excel", :id => "excel-export", :class => "btn btn-default sub-btn exp-btn", :dl_format => "excel" %>
 			<%= button_tag "CSV Export",  :id => "csv-export", :class => "btn btn-default sub-btn exp-btn", :dl_format => "csv" %>
 			<%= button_tag "YAML Export", :id => "yaml-export", :class => "btn btn-default sub-btn exp-btn", :dl_format => "yaml" %>
-			<%= hidden_field_tag :dl_format, "" %>
-			<%= hidden_field_tag :selected_type, "" %>
-			<%= hidden_field_tag :selected_record, "" %>
 		<% end %>
-		<%#= button_to "Export Excel", meta_download_path(:format => "excel"), :method => :post, :id => "exp-btn", :class => "btn btn-default sub-btn" %>
-		<%#= button_to "CSV Export", meta_download_path(:format => "csv"), :method => :post, :id => "exp-btn", :class => "btn btn-default sub-btn" %>
-		<%#= button_to "YAML Export", meta_download_path(:format => "yaml"), :method => :post, :id => "exp-btn", :class => "btn btn-default sub-btn" %>
 				
 		<ul>
-			<li class="noselect"><a href="#list-result-tab">List</a></li>
-			<li class="noselect"><a href="#read-result-tab">Tree</a></li>
+			<li class="noselect"><a href="#list-tab">List</a></li>
+			<li class="noselect"><a href="#read-tab">Tree</a></li>
 			<li class="noselect"><a href="#sample-tab">Raw Data</a></li>
 		</ul>
-		<div id="list-result-tab" class="resultTab">
+		<div id="list-tab" class="resultTab">
 			<div id="list-overview" class="resultSoql">List</div>
 			<div id="grid" class="resultGrid"></div>
 		</div>
-		<div id="read-result-tab" class="resultTab">
+		<div id="read-tab" class="resultTab" action="<%= metadata_read_path() %>" method="POST">
 			<div id="read-overview" class="resultSoql">Tree</div>
 			<div id="tree"></div>
 		</div>
