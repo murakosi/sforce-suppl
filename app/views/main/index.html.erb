@@ -1,5 +1,4 @@
 <style>
-<style>
 .resultTab{
 	padding-right: 7px;
 }
@@ -182,13 +181,87 @@
  display:block;   
 }
 
+.input-sm{
+	display:inline;
+	vertical-align: center;
+}
+
+.select2-results__options{
+        font-size:12px !important;
+        -webkit-box-shadow: none !important;
+        box-shadow:none !important;
+ }
+
+span.select2-selection.select2-selection--single {
+        outline: none;
+ }
+
+.select2-results {
+ max-height: 290px;
+}
+
+.select2-container--default .select2-results > .select2-results__options {
+    max-height: 290px;
+    min-height: 150px;
+    overflow-y: auto;
+}
+.left_block{
+    display: table;
+    border: 0px solid black;
+    width: auto;
+    vertical-align: left;
+}
+
+.combined_block{
+    display:table-cell;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    padding-right: 10px;
+    border: 0px solid black;
+    width: 100%;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.label_block{
+    display:table-cell;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    padding-right: 10px;
+    border: 0px solid black;
+    width: 40%;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.element_block{
+    display:table-cell;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    border: 0px solid black;
+    width: 60%;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.center_button_block{
+    display:table-cell;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    padding-right: 10px;
+    border: 0px solid black;
+    width: 40%;
+    text-align: left;
+    vertical-align: middle;
+}
+
 </style>
 <% javascript 'handsontable.full.min',
 			  'jquery-1.11.2.min',
 			  'jquery-ui-1.11.3.min',
 			  'jstree',
 			  'jstree.min', 
-			  'select2.min.js',
+			  'select2.full.js',
 			  'jquery.fileDownload.js',
 			  'ajaxDownload.js',
 			  'main',			  
@@ -209,15 +282,8 @@
 <h1>Main#index</h1>
 <p>Find me in app/views/main/index.html.erb</p>
 </div>
-<%#= render :partial => 'errormsg', :locals => {:data_source => nil} %>
-<div id="farea">
-<% flash.each do |key, value| %>
-    <div id="flashMessage" class="alert alert-<%= key %>"><%= simple_format(value) %></div>
-<% end %>
-</div>
 <div id="mainArea">
     <div id="soqlexecuterContent"><%= render "soqlexecuter/soqlexecuter" %></div>
     <div id="describeContent"><%= render "describe/describe" %></div>
-	<div id="metadataContent"><%= render "metadata/metadata" %></div>
-	
+	<div id="metadataContent"><%= render "metadata/metadata" %></div>	
 </div>

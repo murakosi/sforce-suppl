@@ -1,29 +1,23 @@
 <div id="describeArea">
 		<div id="formArea">
 			<%= form_tag describe_changelist_path(), :id => "filterSObjectList", :method => :get do %>
-			<%= radio_button_tag 'sobjectTypeCheckBox', :all, false, :class => "sobjectTypeCheckBox" %>All&nbsp;&nbsp;
-			<%= radio_button_tag 'sobjectTypeCheckBox', :standard, false, :class => "sobjectTypeCheckBox" %>Standard&nbsp;&nbsp;
-			<%= radio_button_tag 'sobjectTypeCheckBox', :custom, true, :class => "sobjectTypeCheckBox" %>Custom&nbsp;&nbsp;
+				<%= radio_button_tag 'sobjectTypeCheckBox', :all, false, :class => "sobjectTypeCheckBox" %>All&nbsp;&nbsp;
+				<%= radio_button_tag 'sobjectTypeCheckBox', :standard, false, :class => "sobjectTypeCheckBox" %>Standard&nbsp;&nbsp;
+				<%= radio_button_tag 'sobjectTypeCheckBox', :custom, true, :class => "sobjectTypeCheckBox" %>Custom&nbsp;&nbsp;
 			<% end %>
 
-		    <%#= form_tag describe_download_path(), :method => :post, :class => "describe-form" do %>
-			<table>
-				<tr>
-					<td><%= label_tag 'sObjects: ' %></td>
-					<td>
-						<div id="sobjectList">
-							<%= render :partial => 'describe/sobjectlist', :locals => {:data_source => initial_sobjects_list} %>
-						</div>
-					</td>
-				</tr>
-				<tr>
-					<td colspan="3" class="login-button">
-					<%#= submit_tag 'Describe', :class => 'btn btn-primary execute-describe' %>
+			<div class="left_block">
+				<div class="combined_block">
+					<%= label_tag :sobjects, 'sObjects: ' %>
+					<div id="sobjectList" class="input-sm select2-single"></div>
+				</div>
+			</div>
+			<div class="left_block">
+				<div class="label_block">
 					<%= button_tag "Describe", :action => describe_path(), :method => :post, :id => "executeDescribe", :class => "btn btn-primary" %>
-					</td>
-				</tr>
-			</table>
-			<%# end %>
+				</div>
+			</div>
+
 			<div id="messageArea"></div>
 		</div>
 
@@ -32,18 +26,12 @@
 		<div id="tabArea">
 			<br>
 			<div id="exportButtonArea">
-				<%= form_tag describe_download_path(), :id => "exportForm", :method => :post do %>
-					<%= button_tag "CSV Export", :id => "csv-expprt", :class => "btn btn-default exp-btn", :format => "csv" %>
-					<%= button_tag "Excel Export", :id => "excel-export", :class => "btn btn-default exp-btn", :format => "excel" %>
-					<%= hidden_field_tag :format, "" %>
-					<%= hidden_field_tag :selected_sobject, "" %>
+				<%= form_tag describe_download_path(), :id => "exportForm", :method => :post, :remote => true, data: {type: "script"} do %>
+					<%= button_tag "CSV Export", :id => "csv-expprt", :class => "btn btn-default exp-btn", :dl_format => "csv" %>
+					<%= button_tag "Excel Export", :id => "excel-export", :class => "btn btn-default exp-btn", :dl_format => "excel" %>
 				<% end %>
 			</div>	
-			<%#= button_to "CSV Export", desc_download_path(:format => "csv"), :method => :get, :id => "exp-btn", :class => "btn btn-default exp-btn" %>
-			<%#= form_tag desc_download_path(), :method => :post, :class => "describe-export" do %>
-			<%#= button_tag "CSV Export", :type => "button", :id => "csv", :class => "btn btn-default exp-btn" %>
-			<%#= button_tag "CSVa Export", :method => :post, :id => "csv-expprt", :class => "btn btn-default exp-btn", :name => "format", :value => "csv" %>
-			<%#= button_tag "Excel Export", :method => :post, :id => "excel-export", :class => "btn btn-default exp-btn", :name => "format", :value => "excel" %>
+
 			<div id="tab1" class="resultTab">
 				<div id="method" class="resultSoql"></div>
 				<div id="grid" class="resultGrid"></div>

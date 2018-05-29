@@ -1,22 +1,17 @@
 <div id="metadataArea">
 	<div id="formArea">
 	    <%= form_tag metadata_path(), :method => :post, :class => "metadata-form" do %>
-		<table>
-			<tr>
-				<td><%= label_tag 'Metadata: ' %></td>
-				<td>
-				<div id="metadata_list">
-					<%#= render :partial => 'metadata/metadatalist', :locals => {:data_source => initial_metadata_list} %>
-				</div>
-				</td>
-			</tr>
-			<tr>
-				<td colspan="2" class="login-button">
-				<%= submit_tag 'Metadata', :class => 'btn btn-primary execute-metadata' %>
-                
-				</td>
-			</tr>
-		</table>
+		<div class="left_block">
+			<div class="combined_block">
+				<%= label_tag 'Metadata: ' %>
+				<div id="metadata_list" class="input-sm select2-single"></div>
+			</div>
+		</div>
+		<div class="left_block">
+			<div class="label_block">
+				<%= submit_tag 'Metadata', :class => 'btn btn-primary execute-metadata' %>                
+			</div>
+		</div>
 		<% end %>
 		<div id="messageArea"></div>
 	</div>
@@ -36,14 +31,17 @@
 			<li class="noselect"><a href="#read-tab">Tree</a></li>
 			<li class="noselect"><a href="#sample-tab">Raw Data</a></li>
 		</ul>
+
 		<div id="list-tab" class="resultTab">
 			<div id="list-overview" class="resultSoql">List</div>
 			<div id="grid" class="resultGrid"></div>
 		</div>
+
 		<div id="read-tab" class="resultTab" action="<%= metadata_read_path() %>" method="POST">
 			<div id="read-overview" class="resultSoql">Tree</div>
 			<div id="tree"></div>
 		</div>
+		
 		<div id="sample-tab" class="resultTab">
 			<div id="sample-overview" class="resultSoql">Raw</div>
 			<div id="sample" class="resultGrid"></div>

@@ -12,6 +12,16 @@ coordinates = ->
       "datatype": datatype
     }
 
+  downloadOptions = (url, method, data, successCallback, failCallback, alwaysCallback) ->
+    {
+      "url": url,
+      "method": method,
+      "data": data,
+      "successCallback": successCallback,
+      "failCallback": failCallback,
+      "alwaysCallback": alwaysCallback
+    }
+
   $('.sobjectTypeCheckBox').on 'click', (e) ->
       if jqXHR
         e.preventDefault
@@ -38,8 +48,23 @@ coordinates = ->
     executeAjax(options, processSuccessResult, displayError)
 
   $("#describeArea .exp-btn").on "click", (e) ->
-    $("#describeArea #format").val($(this).attr("format"))
-    $("#describeArea #selected_sobject").val($('#describeArea #selected_sobject').val())
+    e.preventDefault()
+    options = getDownloadOptions(this)
+    $.ajaxDownload(options)
+
+  getDownloadOptions = (target) ->
+    url = $("#describeArea #exportForm").attr('action')
+    method = $("#describeArea #exportForm").attr('method')
+    dl_format = $(target).attr("dl_format")
+    selected_sobject = $('#describeArea #selected_sobject').val()
+    data = {dl_format: dl_format, selected_sobject: selected_sobject}
+    downloadOptions(url, method, data, downloadDone, downloadFail, ->)
+
+  downloadDone = (url) ->
+    hideMessageArea()
+  
+  downloadFail = (response, url, error) ->
+    displayError(response)
 
   executeAjax = (options, doneCallback, errorCallback) ->
 
@@ -57,8 +82,7 @@ coordinates = ->
     jqXHR.done (data, stat, xhr) ->
       jqXHR = null
       console.log { done: stat, data: data, xhr: xhr }
-      $("#describeArea #messageArea").empty()
-      $("#describeArea #messageArea").hide()
+      hideMessageArea()
       doneCallback(xhr.responseText)
 
     jqXHR.fail (xhr, stat, err) ->
@@ -75,6 +99,10 @@ coordinates = ->
     json = $.parseJSON(result)
     $("#describeArea #messageArea").html(json.error)
     $("#describeArea #messageArea").show()
+  
+  hideMessageArea = () ->
+    $("#describeArea #messageArea").empty()
+    $("#describeArea #messageArea").hide()
 
   processSuccessResult = (result) ->
     json = $.parseJSON(result)

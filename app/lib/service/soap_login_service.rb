@@ -3,7 +3,7 @@ module Service
     include Service::ServiceCore
     
         Production_url = "login.salesforce.com"
-        Sandbox_url = "test.salesforce.com"
+        Sandbox_url = "atest.salesforce.com"
 
         #def initialize(params)
         #    @params = params
@@ -16,8 +16,8 @@ module Service
                 host = Production_url
             end
 
-            client = Soapforce::Client.new
-            client.authenticate(:username => params[:name], :password => params[:password], :host => host)
+            client = Soapforce::Client.new(:host => host)
+            client.authenticate(:username => params[:name], :password => params[:password])
         end
 
         private

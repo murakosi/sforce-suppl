@@ -1,22 +1,12 @@
 <style>
-td{
-    padding-top: 2px;
-    padding-bottom: 2px;
-}
 
-#login-form{
-    float:center;
+#formArea{
+    /*float:center;
     display:inline;
     padding-top: 20px;
-    border:1px solid black;
-}
-
-.form-label{
-    padding-right: 5px;
-}
-
-.login-button{
-    text-align: center;
+    border:1px solid black;*/
+    padding-top: 20px;
+    margin: 0 auto;
 }
 
 #flashMessage{
@@ -26,43 +16,99 @@ td{
     display:block;
 }
 
-#loginErrorMessage{
-    text-align:center;
-    color: red;
-    white-space: pre;
+.block{
+    display: table;
+    margin: 0;
+    border: 0px solid black;
+    table-layout: fixed;
+    margin: 0 auto;
+    width: 20%;
 }
+
+.block_label{
+    display:table-cell;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    padding-right: 10px;
+    border: 0px solid black;
+    width: 40%;
+    text-align: right;
+    vertical-align: middle;
+}
+
+.block_element{
+    display:table-cell;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    border: 0px solid black;
+    width: 60%;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.login-button{
+    display:table-cell;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    border: 0px solid black;
+    width: 60%;
+    text-align: center;
+    vertical-align: middle;
+}
+
 </style>
 
 <div id="menuList">
-    <ul>
-    </ul>
+    <ul></ul>
 </div>
+
 <div>
 <h1>Login#new</h1>
 <p>Find me in app/views/login/new.html.erb</p>
 </div>
 
+<div id="flashArea">
 <% flash.each do |key, value| %>
     <div id="flashMessage" class="alert alert-<%= key %>"><%= simple_format(value) %></div>
 <% end %>
+</div>
 
-<div id="login-form" align="center">
-    <%= form_for :login_param, url: login_path do |f| %>
-        <table>
-            <tr>
-                <td><%= f.label 'User Name:', :class => 'form-label' %></td>
-                <td><%= f.text_field :name, value: "murakoshi@cse.co.jp" %><td>
-            </tr>
-            <tr>
-                <td><%= f.label 'Password:', :class => 'form-label' %></td>
-                <td><%= f.password_field :password, value: "s13926cse" %></td>
-            </tr>
-            <tr>
-                <td><%= f.label 'Sandbox:', :class => 'form-label' %></td>
-                <td><%= f.check_box :is_sandbox %></td>
-            <tr>
-                <td colspan="2" class="login-button"><%= f.submit 'Login', :class => 'btn btn-primary' %></td>
-            </tr>
-        </table>
-    <% end %>
+<div id="loginArea">
+    <div id="formArea">      
+        <%= form_for :login_param, url: login_path do |f| %>
+            <div class="block">
+                    <div class="block_label"><%= f.label 'User Name:', :class => 'form-label' %></div>
+                    <div class="block_element"><%= f.text_field :name, value: "" %></div>
+            </div>
+            <div class="block">
+                    <div class="block_label"><%= f.label 'Password:', :class => 'form-label' %></div>
+                    <div class="block_element"><%= f.password_field :password, value: "" %></div>
+            </div>
+            <div class="block">
+                    <div class="block_label"><%= f.label 'Sandbox:', :class => 'form-label' %></div>
+                    <div class="block_element"><%= f.check_box :is_sandbox %></div>
+            </div>
+            <div class="block">
+                    <div class="login-button"><%= f.submit 'Login', :class => 'btn btn-primary' %></div>
+            </div>
+        <!--
+            <table>
+                <tr>
+                    <td><%#= f.label 'User Name:', :class => 'form-label' %></td>
+                    <td><%#= f.text_field :name, value: "murakoshi@cse.co.jp" %><td>
+                </tr>
+                <tr>
+                    <td><%#= f.label 'Password:', :class => 'form-label' %></td>
+                    <td><%#= f.password_field :password, value: "s13926cse" %></td>
+                </tr>
+                <tr>
+                    <td><%#= f.label 'Sandbox:', :class => 'form-label' %></td>
+                    <td><%#= f.check_box :is_sandbox %></td>
+                <tr>
+                    <td colspan="2" class="login-button"><%#= f.submit 'Login', :class => 'btn btn-primary' %></td>
+                </tr>
+            </table>
+        -->
+        <% end %>
+    </div>
 </div>

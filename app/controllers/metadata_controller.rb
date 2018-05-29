@@ -84,9 +84,8 @@ class MetadataController < ApplicationController
             return
         end
 
-        result = read_metadata(sforce_session, metadata_type, full_name)
-
         begin
+            result = read_metadata(sforce_session, metadata_type, full_name)
             try_download(params[:dl_format], full_name, result)
             set_download_success_cookie(response)
         rescue StandardError => ex

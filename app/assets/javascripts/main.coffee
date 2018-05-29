@@ -26,7 +26,7 @@ mains = ->
       return false;
 
     e.stopPropagation()
-    #changeAnchorClass(this)
+
     anchorObject = this
 
     method = $(this).attr('method')
@@ -38,14 +38,14 @@ mains = ->
       return
     
     options = getAjaxOptions(action, method, null, defaultDetatype)
-    #executeSyncAjax(options, loadPartials)
+
     $.get action, (result) ->
       console.log(result)
       loadPartials(result)
   
   loadPartials = (result) ->
     loadedPartials[selectedAnchor] = true
-    json = result#$.parseJSON(result)
+    json = result
     $("div" + json.target).html(json.content)
     changeDisplayDiv(selectedAnchor)
 
@@ -53,17 +53,21 @@ mains = ->
     $(".menus").not(target).removeClass("displayed");
 
     if $(target).hasClass("displayed")
-      $(target).removeClass("displayed");
+      $(target).removeClass("displayed")
     else
-      $(target).addClass("displayed");
+      $(target).addClass("displayed")
 
   changeDisplayDiv = (target) ->
     changeAnchorClass(anchorObject)
     $("div#mainArea").prop("class", target)
-    $('.select').select2();
+    $('.selectlist').select2({
+      dropdownAutoWidth : true,
+      width: 'resolve',
+      containerCssClass: ':all:'
+      })
 
   autoClickAnchor = (target) ->
-    $("#" + target)[0].click();
+    $("#" + target)[0].click()
 
   executeSyncAjax = (options, callback) ->
     if jqXHR

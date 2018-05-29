@@ -15,7 +15,7 @@ coordinates = ->
       "datatype": datatype
     }
 
-  createDownloadOptions = (url, method, data, successCallback, failCallback, alwaysCallback) ->
+  downloadOptions = (url, method, data, successCallback, failCallback, alwaysCallback) ->
     {
       "url": url,
       "method": method,
@@ -37,7 +37,7 @@ coordinates = ->
     selected_type = $('#metadataArea #selected_directory').val()
     selected_record = selectedRowData
     data = {dl_format: dl_format, selected_type: selected_type, selected_record: selected_record}
-    createDownloadOptions(url, method, data, downloadDone, downloadFail, ->)
+    downloadOptions(url, method, data, downloadDone, downloadFail, ->)
 
   downloadDone = (url) ->
     hideMessageArea()

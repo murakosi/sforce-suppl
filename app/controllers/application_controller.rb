@@ -34,6 +34,7 @@ class ApplicationController < ActionController::Base
 
     private
         def current_user
+                        p request.format
             user_info = Service::SelectUserService.call(session[:user_token])
             @sforce_session = user_info[:sforce_session]
             @current_user = user_info[:user]
@@ -44,6 +45,7 @@ class ApplicationController < ActionController::Base
         end
 
         def sforce_session_alive?
+            #return false
             begin
                 Service::SoapClientService.call(@sforce_session)
                 return true
