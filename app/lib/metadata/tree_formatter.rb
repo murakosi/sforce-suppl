@@ -1,18 +1,10 @@
 module Metadata
     class TreeFormatter
     class << self
-        include Metadata::FormatUtils
+        include Utils::FormatUtils
 
         def format(full_name, result)
-            @display_array = parse_hash(result, full_name)
-        #=begin
-            #puts @metadata_store.key_store.xsi_type
-            #puts "keys!!!!!!!!!!!!!"
-            #puts @metadata_store.key_store.keys
-            #puts "vlus!!!!!!!!!!"
-            #puts @metadata_store.key_store.values
-        #=end     
-            @display_array
+            parse_hash(result, full_name)
         end
 
         def get_parent_tree_nodes(metadata_list)

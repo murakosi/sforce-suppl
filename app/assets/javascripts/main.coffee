@@ -4,6 +4,7 @@ mains = ->
   selectedAnchor = null
   jqXHR = null
   loadedPartials = {}
+  targetDiv = null
   defaultDetatype = ""
   anchorObject = null
 
@@ -27,14 +28,14 @@ mains = ->
 
     e.stopPropagation()
 
+    targetDiv = $(this).attr("href")
     anchorObject = this
 
     method = $(this).attr('method')
     action = $(this).attr('loadTarget')
 
     if loadedPartials[selectedAnchor] || action == ""
-      changeDisplayDiv(selectedAnchor)
-      
+      changeDisplayDiv(selectedAnchor)      
       return
     
     options = getAjaxOptions(action, method, null, defaultDetatype)
@@ -43,11 +44,12 @@ mains = ->
       console.log(result)
       loadPartials(result)
   
-  loadPartials = (result) ->
+  loadPartials = (json) ->
     loadedPartials[selectedAnchor] = true
-    json = result
     $("div" + json.target).html(json.content)
     changeDisplayDiv(selectedAnchor)
+    if json.status != 200
+      createErrorDiv(json.error)
 
   changeAnchorClass = (target) ->
     $(".menus").not(target).removeClass("displayed");
@@ -65,6 +67,10 @@ mains = ->
       width: 'resolve',
       containerCssClass: ':all:'
       })
+
+  createErrorDiv = (message) ->
+    html = "<div style='text-align:center; white-space: pre; color:red; font-weight:bold;'>" + message  + "</div>"
+    $(targetDiv).html(html)
 
   autoClickAnchor = (target) ->
     $("#" + target)[0].click()

@@ -3,7 +3,7 @@ require "rubyXL"
 
 module Generator
     class ExcelGenerator
-    include Generator::ExcelUtils            
+    include Utils::ExcelUtils            
 
         Output_file = File.expand_path("./output/output.xlsx", Rails.root)
 

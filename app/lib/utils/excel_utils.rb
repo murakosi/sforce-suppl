@@ -1,6 +1,6 @@
 require "rubyXL"
 
-module Generator
+module Utils
     module ExcelUtils
 
         def copy_row(sheet, copy_from, copy_to)

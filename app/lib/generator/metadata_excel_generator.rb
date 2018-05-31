@@ -1,15 +1,17 @@
-module Metadata
-    module Export
-        class ApprovalProcessExporter < Exporter
+module Generator
+	class MetadataExcelGenerator < ExcelGenerator
 
-            def initialize(data, template, mapping)
-                super(data, template, mapping)
-                @export_file_name = "approval.xlsx"
+            def initialize(demplate, mapping)
+            	super(demplate, mapping)
                 @mapper = create_mapper(@mapping)
                 @array_delimitter = "\n"
+                #@data = Metadata::MappingFormatter.format(@data)
             end
 
             def write_excel
+
+            	format_data()
+            	
                 sheet = get_sheet(0)
 
                 @mapper.each do | map |
@@ -27,6 +29,11 @@ module Metadata
                     end
                     
                 end
+            end
+
+            def format_data
+            	full_name = @data[:full_name]
+            	@data = Metadata::MappingFormatter.format(full_name, @data)
             end
 
             def require_loop(map, data_array)
@@ -56,18 +63,11 @@ module Metadata
             end
 
             def create_mapper(mapping)
-                mapping.map{ |k, v| Mapping.new(k, v)}
+                mapping.map{ |k, v| Generator::MetadataExcelMappingWrapper.new(k, v)}
             end
 
             def trans(key, value)
 
             end
-            Trans = {
-                    :active => {true => "○", false => "×"},
-                    :allow_recall => {true => "○", false => "×"}
-                    }
-            
-
-        end
-    end
+	end
 end

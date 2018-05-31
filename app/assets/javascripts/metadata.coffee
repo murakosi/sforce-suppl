@@ -170,10 +170,13 @@ coordinates = ->
     if checked
       if Object.keys(selectedRowData).length > 0
         source[0][3] = false
+        return
       else
         selectedRowData[rowIndex] = grids["#metadataArea #grid"].getDataAtRow(rowIndex)
+        return
     else
       delete selectedRowData[rowIndex]
+      return
 
   getColumns = (json) ->
     if !json?

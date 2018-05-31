@@ -7,9 +7,14 @@ class DescribeController < ApplicationController
     protect_from_forgery :except => [:execute, :download]
 
     def show
-        sobjects = get_sobject_names(sforce_session, Describe::SobjectType::Custom)
-        html_content = render_to_string :partial => 'sobjectlist', :locals => {:data_source => sobjects}
-        render :json => {:target => "#sobjectList", :content => html_content} 
+        begin
+            sobjects = get_sobject_names(sforce_session, Describe::SobjectType::Custom)
+            html_content = render_to_string :partial => 'sobjectlist', :locals => {:data_source => sobjects}
+            render :json => {:target => "#sobjectList", :content => html_content, :error => nil, :status => 200}
+        rescue StandardError => ex
+            html_content = render_to_string :partial => 'sobjectlist', :locals => {:data_source => []}
+            render :json => {:target => "#sobjectList", :content => html_content, :error => ex.message, :status => 400}
+        end
     end
 
     def change
@@ -84,6 +89,7 @@ class DescribeController < ApplicationController
     end
 
     def download_csv(sobject, result)
+        #raise StandardError.new("aaaaaaaaa")
         generator = Generator::DescribeCsvGenerator.new(Encoding::SJIS, "\r\n", true)
         send_data(generator.generate(:data => result),
             :disposition => 'attachment',

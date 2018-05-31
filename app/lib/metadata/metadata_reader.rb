@@ -1,63 +1,32 @@
 module Metadata
-	module MetadataReader
+	class MetadataReader
+		class << self
 
-        def results
-            if @metadata_results.present?
-                @metadata_results
-            else
-                @metadata_results = MetadataResults.new
-            end
-        end
+			def clear
+				Metadata::MetadataResults.clear
+			end
 
-		def get_metadata_types(sforce_session)
-			Service::MetadataClientService.call(sforce_session).describe_metadata_objects()
-		end
+			def get_metadata_types(sforce_session)
+				Service::MetadataClientService.call(sforce_session).describe_metadata_objects()
+			end
 
-		def list_metadata(sforce_session, metadata_type)
-			if results.list_result(metadata_type).present?
-				results.list_result(metadata_type)
-			else
+			def list_metadata(sforce_session, metadata_type)
+				if Metadata::MetadataResults.list_result(metadata_type).present?
+					return Metadata::MetadataResults.list_result(metadata_type)
+				end
+
 				metadata_list = Service::MetadataClientService.call(sforce_session).list(metadata_type)
-				results.store_list_result(metadata_type, metadata_list)
+				Metadata::MetadataResults.store_list_result(metadata_type, metadata_list)
 			end
-		end
 
-		def read_metadata(sforce_session, metadata_type, full_name)
-			if results.read_result(full_name).present?
-				results.read_result(full_name)
-			else
+			def read_metadata(sforce_session, metadata_type, full_name)
+				if Metadata::MetadataResults.read_result(metadata_type, full_name).present?
+					return Metadata::MetadataResults.read_result(metadata_type, full_name)
+				end
+
 				read_result = Service::MetadataClientService.call(sforce_session).read(metadata_type, full_name)[:records]
-				results.store_read_result(full_name, read_result)
+				Metadata::MetadataResults.store_read_result(metadata_type, full_name, read_result)
 			end
 		end
-
-		def format_result(format_type, full_name, result)
-
-		end
-
-		class MetadataResults
-
-			def initialize
-				@list_results = {}
-				@read_results = {}
-			end
-
-			def store_list_result(metadata_type, result)
-				@list_results[metadata_type] = result
-			end
-
-			def list_result(metadata_type)
-				@list_results[metadata_type]
-			end
-
-			def store_read_result(full_name, result)
-				@read_results[full_name] = result
-			end
-
-			def read_result(full_name)
-				@read_results[full_name]
-			end
-		end
-
 	end
 end

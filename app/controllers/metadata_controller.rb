@@ -1,7 +1,5 @@
 
 class MetadataController < ApplicationController
-    #helper_method :list
-    include Metadata::MetadataReader
 
     before_action :require_sign_in!
 
@@ -10,16 +8,22 @@ class MetadataController < ApplicationController
     Full_name_indxe = 3
     
     def show
-        metadata_types = get_metadata_types(sforce_session)
-        html_content = render_to_string :partial => 'metadatalist', :locals => {:data_source => metadata_types}
-        render :json => {:target => "#metadata_list", :content => html_content} 
+        begin
+            metadata_types = Metadata::MetadataReader.get_metadata_types(sforce_session)
+            html_content = render_to_string :partial => 'metadatalist', :locals => {:data_source => metadata_types}
+            render :json => {:target => "#metadata_list", :content => html_content, :error => nil, :status => 200} 
+        rescue StandardError => ex
+            html_content = render_to_string :partial => 'metadatalist', :locals => {:data_source => []}
+            render :json => {:target => "#metadata_list", :content => html_content, :error => ex.message, :status => 400}
+        end
     end
 
     def list
         @metadata_type = params[:selected_directory]
 
         #begin
-            metadata_list = list_metadata(sforce_session, @metadata_type)
+            Metadata::MetadataReader.clear
+            metadata_list = Metadata::MetadataReader.list_metadata(sforce_session, @metadata_type)
             formatted_list = Metadata::MetadataFormatter.format_metadata_list(metadata_list)
             parent_tree_nodes = Metadata::MetadataFormatter.format_parent_tree_nodes(formatted_list)
             
@@ -46,7 +50,7 @@ class MetadataController < ApplicationController
         metadata_type = params[:type]
         full_name = params[:name]
         #begin
-            result = read_metadata(sforce_session, metadata_type, full_name)
+            result = Metadata::MetadataReader.read_metadata(sforce_session, metadata_type, full_name)
             tree_data = Metadata::MetadataFormatter.format(Metadata::MetadataFormatType::Tree, full_name, result)
             yaml_data = Metadata::MetadataFormatter.format(Metadata::MetadataFormatType::Yaml, full_name, result)
             render :json => read_response_json(full_name, tree_data, yaml_data), :status => 200            
@@ -71,7 +75,8 @@ class MetadataController < ApplicationController
     def download
         metadata_type = params[:selected_type]
         selected_record = params[:selected_record]
-        
+        export_format = params[:dl_format]
+      
         if selected_record.nil?
             respond_download_error("record not selected")
             return
@@ -79,27 +84,27 @@ class MetadataController < ApplicationController
 
         full_name = selected_record.values[0][Full_name_indxe]
 
-        if full_name.nil? && params[:dl_format] != "excel"
+        if full_name.nil?
             respond_download_error("full_name not specified")
             return
         end
 
-        begin
-            result = read_metadata(sforce_session, metadata_type, full_name)
-            try_download(params[:dl_format], full_name, result)
+        #begin
+            result = Metadata::MetadataReader.read_metadata(sforce_session, metadata_type, full_name)
+            try_download(export_format, metadata_type, full_name, result)
             set_download_success_cookie(response)
-        rescue StandardError => ex
-            respond_download_error(ex.message)
-        end
+        #rescue StandardError => ex
+        #    respond_download_error(ex.message)
+        #end
     end
 
-    def try_download(format, full_name, result)
+    def try_download(format, metadata_type, full_name, result)
         if format == "csv"
             download_csv(full_name, result)
         elsif format == "yaml"
             download_yaml(full_name, result)
         elsif format == "excel"
-            download_excel(full_name, result)
+            download_excel(metadata_type, full_name, result)
         end
     end
 
@@ -134,29 +139,14 @@ class MetadataController < ApplicationController
         )
     end
 
-    def download_excel(full_name, result)
-
-        #if !Metadata::Formatter.metadata_store.stored?
-        #  return
-        #end
-        describe_result = metadata_client.read("ApprovalProcess", "Order__c.Qty_under_10")[:records]
-        parsed = Metadata::Parser.parse(describe_result, "Order__c.Qty_under_10")
-
-        exporter = Metadata::HelperProxy.get_exporter("ApprovalProcess", Metadata::Parser.metadata_store["Order__c.Qty_under_10"].export_data)
-        begin
-            result = exporter.export()
-            if result.nil?
-                return
-            end
-            send_data(result.data,
-                :disposition => 'attachment',
-                :type => 'application/excel',
-                :filename => result.file_name,
-                :status => 200
-            )
-        rescue StandardError => ex
-            raise ex
-        end
+    def download_excel(metadata_type, full_name, result)
+        fmetadata_type_sym = metadata_type.to_sym
+        generator = Generator::ExcelGeneratorProxy.generator(fmetadata_type_sym)
+        send_data(generator.generate(result),
+            :disposition => 'attachment',
+            :type => 'application/excel',
+            :filename => full_name + '.xlsx',
+            :status => 200
+        )     
     end
-
 end

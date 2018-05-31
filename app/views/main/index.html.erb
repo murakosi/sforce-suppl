@@ -169,18 +169,6 @@
 	float: left;
 }
 
-.displayed{
-	background:white;
-}
-
-#soqlexecuterContent, #describeContent, #metadataContent {
- display:none;   
-}
-
-.soqlexecuter #soqlexecuterContent, .describe #describeContent, .metadata #metadataContent{
- display:block;   
-}
-
 .input-sm{
 	display:inline;
 	vertical-align: center;
@@ -255,6 +243,18 @@ span.select2-selection.select2-selection--single {
     vertical-align: middle;
 }
 
+.displayed{
+    background:white;
+}
+
+#soqlexecuterContent, #describeContent, #metadataContent {
+ display:none;   
+}
+
+.soqlexecuter #soqlexecuterContent, .describe #describeContent, .metadata #metadataContent{
+ display:block;   
+}
+
 </style>
 <% javascript 'handsontable.full.min',
 			  'jquery-1.11.2.min',
@@ -269,21 +269,24 @@ span.select2-selection.select2-selection--single {
 			  'describe', 
 			  'metadata' 
 %>
-<div id="menuList">
-    <ul>
-		<li><%= link_to "Logout", logout_path, method: :delete, id: "logoutLink" %></li>
-        <li><a id="soqlexecuter" href="#" class="menus" method="GET" loadTarget="">SOQL</a></li>
-		<li><a id="describe" href="#" class="menus" method="GET" loadTarget="describe">Describe</a></li>
-		<li><a id="metadata" href="#" class="menus" method="GET" loadTarget="metadata">Metadata</a></li>
-    </ul>
-</div>
-
-<div>
-<h1>Main#index</h1>
-<p>Find me in app/views/main/index.html.erb</p>
-</div>
 <div id="mainArea">
-    <div id="soqlexecuterContent"><%= render "soqlexecuter/soqlexecuter" %></div>
-    <div id="describeContent"><%= render "describe/describe" %></div>
-	<div id="metadataContent"><%= render "metadata/metadata" %></div>	
+    <div id="menuList">
+        <ul>
+    		<li><%= link_to "Logout", logout_path, method: :delete, id: "logoutLink" %></li>
+            <li><a id="soqlexecuter" href="#soqlexecuterContent" class="menus" method="GET" loadTarget="">SOQL</a></li>
+    		<li><a id="describe" href="#describeContent" class="menus" method="GET" loadTarget="describe">Describe</a></li>
+    		<li><a id="metadata" href="#metadataContent" class="menus" method="GET" loadTarget="metadata">Metadata</a></li>
+        </ul>
+    </div>
+
+    <div>
+    <h1>Main#index</h1>
+    <p>Find me in app/views/main/index.html.erb</p>
+    </div>
+
+    <div id="mainArea">
+        <div id="soqlexecuterContent"><%= render "soqlexecuter/soqlexecuter" %></div>
+        <div id="describeContent"><%= render "describe/describe" %></div>
+    	<div id="metadataContent"><%= render "metadata/metadata" %></div>	
+    </div>
 </div>

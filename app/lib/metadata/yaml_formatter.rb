@@ -1,7 +1,7 @@
 module Metadata
 	class YamlFormatter
     class << self
-		include Metadata::FormatUtils
+		include Utils::FormatUtils
 
         Key_order = %i[type id full_name file_name created_date created_by_id created_by_name last_modified_date last_modified_by_id last_modified_by_name monegeable_state]
 

@@ -1,7 +1,7 @@
 module Metadata
     class MappingFormatter
     class << self
-        include Metadata::FormatUtils
+        include Utils::FormatUtils
 
         def format(full_name, result)
 
@@ -22,7 +22,7 @@ module Metadata
                     access_key = (token.to_s + "_" + k.to_s).to_sym
 
                     if v.is_a?(Hash)
-                        flattened_hash = Metadata::HashFlatter.flat(v)                
+                        flattened_hash = Utils::HashFlatter.flat(v)                
                         flattened_hash.each do | fkey, fval |
                             access_key2 = (access_key.to_s + "_" + fkey.to_s).to_sym
                             store_hash(access_key2, fval)
@@ -38,7 +38,7 @@ module Metadata
 
                     access_key = (token.to_s + "/" + index.to_s + "/").to_sym
 
-                    flattened_hash = Metadata::HashFlatter.flat(element)
+                    flattened_hash = Utils::HashFlatter.flat(element)
                     flattened_hash.each do | fkey, fval |
                         access_key2 = (access_key.to_s + fkey.to_s).to_sym
                         store_hash(access_key2, fval)

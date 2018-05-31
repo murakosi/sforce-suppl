@@ -1,4 +1,4 @@
-module Metadata
+module Utils
     class HashFlatter
         def set(hash)
             @hash = hash

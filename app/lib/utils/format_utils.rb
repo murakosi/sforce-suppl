@@ -1,5 +1,6 @@
-module Metadata
+module Utils
     module FormatUtils
+        
         def try_decode(key, value, escape = false)
             if key.to_s.include?("content") && value.is_a?(Nori::StringWithAttributes)
                 begin

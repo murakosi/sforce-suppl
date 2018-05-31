@@ -3,6 +3,8 @@ Rails.application.routes.draw do
   #root :to => 'login#new'
   root :to => 'main#index'
 
+  post    'check',                  to: 'main#check'
+
   get     'main',                   to: 'main#index'
   post    'main',                   to: 'main#switch'
 

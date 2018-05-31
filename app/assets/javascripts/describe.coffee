@@ -47,6 +47,10 @@ coordinates = ->
     options = getAjaxOptions(action, method, val, defaultDataType)
     executeAjax(options, processSuccessResult, displayError)
 
+   #$("#describeArea .exp-btn").on "click", (e) ->
+   # $("#describeArea #dl_format").val($(this).attr("dl_format"))
+   # $("#describeArea #selected_sobject").val($('#describeArea #selected_sobject').val())
+
   $("#describeArea .exp-btn").on "click", (e) ->
     e.preventDefault()
     options = getDownloadOptions(this)
@@ -64,6 +68,8 @@ coordinates = ->
     hideMessageArea()
   
   downloadFail = (response, url, error) ->
+    console.log(response)
+    console.log(error)
     displayError(response)
 
   executeAjax = (options, doneCallback, errorCallback) ->

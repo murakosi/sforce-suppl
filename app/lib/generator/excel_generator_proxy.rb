@@ -16,11 +16,12 @@ module Generator
 
         private
             def get_generator(key)
+                p key
                 template = File.expand_path(@settings[key][:template_name], Rails.root)
                 mapping = File.expand_path(@settings[key][:mapping_name], Rails.root)
                 case key.to_sym
 	                when :ApprovalProcess
-	                    Metadata::Export::ApprovalProcessExporter.new(template, mapping)
+	                    Generator::MetadataExcelGenerator.new(template, mapping)
 	                when :DescribeResult
 	                	Generator::DescribeExcelGenerator.new(template, mapping)
 	                else
