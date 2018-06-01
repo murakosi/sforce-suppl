@@ -28,11 +28,11 @@ mains = ->
 
     e.stopPropagation()
 
-    targetDiv = $(this).attr("href")
+    targetDiv = $(this).attr("loadTarget")
     anchorObject = this
 
     method = $(this).attr('method')
-    action = $(this).attr('loadTarget')
+    action = $(this).attr('action')
 
     if loadedPartials[selectedAnchor] || action == ""
       changeDisplayDiv(selectedAnchor)      

@@ -5,14 +5,26 @@ module Describe
             raw_result = describe_global(sforce_session)
             map_global_result(raw_result, sobject_type)
         end
+        def cached_title(sforce_session)
+            Rails.cache.fetch("global_result", expired_in: 1.hour) do                
+                result = Service::SoapClientService.call(sforce_session).describe_global()
+                result[:sobjects].map { |sobject| {:name => sobject[:name], :is_custom => sobject[:custom]} }
+            end
+        end
 
         def describe_global(sforce_session)
-            if Describe::DescribeResults.global_result.present?
-                Describe::DescribeResults.global_result
-            else
-                result = Service::SoapClientService.call(sforce_session).describe_global()
-                Describe::DescribeResults.global_result = result[:sobjects].map { |sobject| {:name => sobject[:name], :is_custom => sobject[:custom]} }
-            end
+
+            p Time.now.iso8601(3)
+            r = cached_title(sforce_session)
+            p Time.now.iso8601(3)
+            r
+            #if Describe::DescribeResults.global_result.present?
+            #    p "present"
+            #    Describe::DescribeResults.global_result
+            #else
+            #    result = Service::SoapClientService.call(sforce_session).describe_global()
+            #    Describe::DescribeResults.global_result = result[:sobjects].map { |sobject| {:name => sobject[:name], :is_custom => sobject[:custom]} }
+            #end
         end
 
         def describe_field(sforce_session, object_name)

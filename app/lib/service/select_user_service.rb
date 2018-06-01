@@ -27,6 +27,7 @@ module Service
         def valid_user_info(user)          
             {:user => user,
              :sforce_session => {
+                                 :site_user_id => user.id,
                                  :session_id => user.sforce_session_id,
                                  :server_url => user.sforce_server_url,
                                  :metadata_server_url => user.sforce_metadata_server_url

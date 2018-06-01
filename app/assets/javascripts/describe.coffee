@@ -28,7 +28,6 @@ coordinates = ->
         return false
   
   $('.sobjectTypeCheckBox').on 'change', (e) ->
-
     e.stopPropagation()
     e.preventDefault()
 
@@ -36,20 +35,18 @@ coordinates = ->
     action = $('#filterSObjectList').attr('action')
     method = $('#filterSObjectList').attr('method')
     options = getAjaxOptions(action, method, val, defaultDataType)
+    console.log("start ajax")
+    $('#sobjectList').empty()
     executeAjax(options, refreshSelectOptions, displayError)
 
   $('#executeDescribe').on 'click', (e) ->
     e.preventDefault()
-
     val = {selected_sobject: $('#describeArea #selected_sobject').val()}
     action = $('#executeDescribe').attr('action')
     method = $('#executeDescribe').attr('method')
     options = getAjaxOptions(action, method, val, defaultDataType)
     executeAjax(options, processSuccessResult, displayError)
 
-   #$("#describeArea .exp-btn").on "click", (e) ->
-   # $("#describeArea #dl_format").val($(this).attr("dl_format"))
-   # $("#describeArea #selected_sobject").val($('#describeArea #selected_sobject').val())
 
   $("#describeArea .exp-btn").on "click", (e) ->
     e.preventDefault()
@@ -68,8 +65,6 @@ coordinates = ->
     hideMessageArea()
   
   downloadFail = (response, url, error) ->
-    console.log(response)
-    console.log(error)
     displayError(response)
 
   executeAjax = (options, doneCallback, errorCallback) ->
@@ -116,8 +111,11 @@ coordinates = ->
     createGrid("#describeArea #grid", json)
 
   refreshSelectOptions = (result) ->
+    console.log("ajax end")
+    console.log("timeStamp()")
     $('#sobjectList').html(result)
-    
+  
+
   createGrid = (elementId, json = null) ->   
     hotElement = document.querySelector(elementId)
 
