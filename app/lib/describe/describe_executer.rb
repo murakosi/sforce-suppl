@@ -5,34 +5,18 @@ module Describe
             raw_result = describe_global(sforce_session)
             map_global_result(raw_result, sobject_type)
         end
-        def cached_title(sforce_session)
-            Rails.cache.fetch("global_result", expired_in: 1.hour) do                
-                result = Service::SoapClientService.call(sforce_session).describe_global()
-                result[:sobjects].map { |sobject| {:name => sobject[:name], :is_custom => sobject[:custom]} }
-            end
-        end
 
         def describe_global(sforce_session)
-
-            p Time.now.iso8601(3)
-            r = cached_title(sforce_session)
-            p Time.now.iso8601(3)
-            r
-            #if Describe::DescribeResults.global_result.present?
-            #    p "present"
-            #    Describe::DescribeResults.global_result
-            #else
-            #    result = Service::SoapClientService.call(sforce_session).describe_global()
-            #    Describe::DescribeResults.global_result = result[:sobjects].map { |sobject| {:name => sobject[:name], :is_custom => sobject[:custom]} }
-            #end
+            if session[:global_result]
+                session[:global_result]
+            else
+                result = Service::SoapClientService.call(sforce_session).describe_global()
+                session[:global_result] = result[:sobjects].map { |sobject| {:name => sobject[:name], :is_custom => sobject[:custom]} }
+            end
         end
 
         def describe_field(sforce_session, object_name)
-            if Describe::DescribeResults.field_result[object_name].present?
-                Describe::DescribeResults.field_result[object_name]
-            else
-                Describe::DescribeResults.field_result[object_name] = Service::SoapClientService.call(sforce_session).describe(object_name)
-            end
+            Service::SoapClientService.call(sforce_session).describe(object_name)
         end
 
         def field_result(object_name)
@@ -40,11 +24,7 @@ module Describe
         end
 
         def format_field_result(object_name, field_result)
-            if Describe::DescribeResults.formatted_field_result[object_name].present?
-                Describe::DescribeResults.formatted_field_result[object_name]
-            else
-                Describe::DescribeResults.formatted_field_result[object_name] = Describe::DescribeFormatter.format(field_result)
-            end
+            Describe::DescribeFormatter.format(field_result)
         end
 
         def formatted_field_result(object_name)
