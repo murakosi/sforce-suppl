@@ -1,105 +1,72 @@
+#require "metadata"
+#require "describe"
+
 class ApplicationController < ActionController::Base
-  before_action :current_user
-  before_action :require_sign_in!
-  helper_method :signed_in?
-  
-  protect_from_forgery with: :exception
-  
-  Production_url = "login.salesforce.com"
-  Sandbox_url = "test.salesforce.com"
+    include AjaxRedirectHelper
 
-  def login_to_salesforce(login_params)
-    if is_sandbox?(login_params)
-      host = Sandbox_url
-    else
-      host = Production_url
+    before_action :current_user
+    before_action :require_sign_in!
+    helper_method :signed_in?, :current_user, :sforce_session
+
+    Redirect_message = "<b>Redirected due to session/connection error</b>.\n\n"
+
+    protect_from_forgery with: :exception
+
+    def sign_in(login_params)
+        sforce_result = Service::SoapLoginService.call(login_params)
+        login_token = Service::UpdateUserService.call(login_params, sforce_result)
+        session[:user_token] = login_token
     end
 
-    client = Soapforce::Client.new
-    client.authenticate(:username => login_params[:name], :password => login_params[:password], :host => host)
-  end
-
-  def sign_in(login_params)
-    sforce_result = login_to_salesforce(login_params)
-    
-    user = get_user(login_params)
-    login_token = User.new_login_token
-    session[:user_token] = login_token
-
-    user.update_attributes(get_attributes(login_token, sforce_result))
-    
-    @current_user = user
-  end
-
-  def sign_out
-    current_client.logout()
-    @current_user = nil
-    session.delete(:user_token)
-  end
-
-  def signed_in?
-    @current_user.present? && valid_sforce_session?
-  end
-
-  def valid_sforce_session?
-    begin
-      current_client()
-      return true
-    rescue StandardError => ex
-      return false
-    end
-  end
-
-  def current_client
-    client = Soapforce::Client.new
-    client.authenticate(sforce_session)
-    client
-  end
-
-  def metadata_client
-    client = Metadata::Client.new
-    client.authenticate(sforce_metadata_session)
-    client   
-  end
-
-  private
-    def current_user
-      login_token = User.encrypt(session[:user_token])
-      @current_user ||= User.find_by(user_token: login_token)
+    def sign_out
+        Service::SoapLogoutService.call(@sforce_session)
+        @current_user = nil
+        session.delete(:user_token)
     end
 
-    def get_user(login_params)
-      begin
-        User.find_by!(name: login_params[:name])
-      rescue ActiveRecord::RecordNotFound => ex
-        User.create(login_params)
-      end
+    def signed_in?
+        @current_user.present? && sforce_session_alive?
     end
 
     def require_sign_in!
-      redirect_to login_path unless signed_in?
+        force_redirect unless signed_in?
     end
 
-    def get_attributes(token, result)
-      {
-        :user_token => User.encrypt(token),
-        :sforce_session_id => result[:session_id],
-        :sforce_server_url => result[:server_url], 
-        :sforce_query_locator => result[:query_locator],
-        :sforce_metadata_server_url => result[:metadata_server_url]
-      }
-    end
+    private
+        def current_user
+            user_info = Service::SelectUserService.call(session[:user_token])
+            @sforce_session = user_info[:sforce_session]
+            @current_user = user_info[:user]
+        end
+        
+        def sforce_session
+            @sforce_session
+        end
 
-    def sforce_session
-      {:session_id => @current_user.sforce_session_id, :server_url => @current_user.sforce_server_url}
-    end
+        def sforce_session_alive?
+            begin
+                Service::SoapClientService.call(@sforce_session)
+                return true
+            rescue StandardError => ex
+                @sforce_session_error = ex.message
+                return false
+            end
+        end
 
-    def sforce_metadata_session
-      {:session_id => @current_user.sforce_session_id, :metadata_server_url => @current_user.sforce_metadata_server_url}
-    end
+        def force_redirect        
+            set_flash_message
+            respond_to do |format|
+                format.js { render ajax_redirect_to(login_path) }
+                format.html { redirect_to login_path }
+                format.text { redirect_to login_path }
+            end
+        end
 
-    def is_sandbox?(login_params)
-      ActiveRecord::Type::Boolean.new.cast(login_params[:is_sandbox])
-    end
-
+        def set_flash_message()
+            flash.discard(:danger)
+            if @sforce_session_error.present?
+                message = Redirect_message + @sforce_session_error.encode("UTF-8", invalid: :replace, undef: :replace)
+                flash[:danger] = message
+            end            
+        end
 end

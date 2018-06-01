@@ -1,144 +1,164 @@
-# Place all the behaviors and hooks related to the matching controller here.
-# All this logic will automatically be available in application.js.
-# You can use CoffeeScript in this file: http://coffeescript.org/
 coordinates = ->
   
   selectedTabId = 1
+  currentTabIndex = 1
+  grids = {}
+  jqXHR = null
+  defaultDataType = ""
 
-  #$("div#tabArea").on 'dblclick', 'ul', (e) ->
-  #  alert("ok")
+  getAjaxOptions = (action, method, data, datatype) ->
+    {
+      "action": action,
+      "method": method,
+      "data": data,
+      "datatype": datatype
+    }
 
-  $('.execute-soql').on 'click', (e) ->
+  $('#soqlArea .execute-soql').on 'click', (e) ->
+    if jqXHR
+      return
+    
     e.preventDefault()
-    selectedTabId =  $("div#tabArea").tabs('option', 'active') + 1
-    getCoordinatesInRange()
+    selectedTabId = $("#soqlArea #tabArea .ui-tabs-panel:visible").attr("tabId");
+    val = {soql: $('#soqlArea #input_soql').val()}
+    action = $('#soqlArea .execute-form').attr('action')
+    method = $('#soqlArea .execute-form').attr('method')
+    options = getAjaxOptions(action, method, val, defaultDataType)
+    executeAjax(options, processSuccessResult, displayError)
 
   $(document).on 'click', 'span', (e) ->
     e.preventDefault()
-    tabContainerDiv=$(this).closest(".ui-tabs").attr("id")
-    tabCount = $("#" + tabContainerDiv).find(".ui-closable-tab").length
+    tabContainerDiv=$(this).closest("#soqlArea .ui-tabs").attr("id")
+    tabCount = $("#soqlArea #" + tabContainerDiv).find(".ui-closable-tab").length
 
     if tabCount <= 1
       return
 
     if window.confirm("Close this tab?")
-      panelId = $( this ).closest( "li" ).remove().attr( "aria-controls" )
-      $( "#" + panelId ).remove();
-      $("#" + tabContainerDiv).tabs("refresh")
+      panelId = $(this).closest("#soqlArea li").remove().attr("aria-controls")
+      $("#soqlArea #" + panelId ).remove();
+      $("#soqlArea #" + tabContainerDiv).tabs("refresh")
 
-  $('#add-tab').on 'click', (e) ->
+  $('#soqlArea #add-tab').on 'click', (e) ->
     e.preventDefault()
+    currentTabIndex = currentTabIndex + 1
+    newTabId = currentTabIndex
 
-    new_tab_index = $("div#tabArea ul li").length
-    new_tab_id = new_tab_index + 1
-
-    $("div#tabArea ul").append(
-      "<li class=\"noselect\"><a href=\"#tab" + new_tab_id + "\">Grid" + new_tab_id + "</a>" +
+    $("#soqlArea #tabArea ul").append(
+      "<li class=\"noselect\"><a href=\"#tab" + newTabId + "\">Grid" + newTabId + "</a>" +
       "<span class=\"ui-icon ui-icon-close ui-closable-tab\"></span>" +
       "</li>"
     )
 
-    $("div#tabArea").append(
-      "<div id=\"tab" + new_tab_id + "\" class=\"resultTab\">" +
-      "<div id=\"soql" + new_tab_id + "\" class=\"resultSoql\"></div>" +
-      "<div id=\"grid" + new_tab_id + "\" class=\"resultGrid\"></div>" +
+    $("#soqlArea #tabArea").append(
+      "<div id=\"tab" + newTabId + "\" class=\"resultTab\" tabId=\"" + newTabId + "\">" +
+      "<div id=\"soql" + newTabId + "\" class=\"resultSoql\" tabId=\"" + newTabId + "\"></div>" +
+      "<div id=\"grid" + newTabId + "\" class=\"resultGrid\" tabId=\"" + newTabId + "\"></div>" +
       "</div>"
     )
     
-    selectedTabId =  new_tab_id
-
-    createGrid()
+    createGrid("#soqlArea #grid" + newTabId)
     
-    $("div#tabArea").tabs("refresh")
+    $("#soqlArea #tabArea").tabs("refresh")
+    
+    newTabIndex = $("#soqlArea #tabArea ul li").length - 1
+    selectedTabId = newTabIndex
+    $("#soqlArea #tabArea").tabs({ active: newTabIndex });
 
-    $("div#tabArea").tabs({ active: new_tab_index });
+  executeAjax = (options, doneCallback, errorCallback, params = null) ->
 
-  getCoordinatesInRange = ->
-    post_data = {soql: $('#input_soql').val()}
+    if jqXHR
+      return
 
     jqXHR = $.ajax({
-      async: true
-      url: $('.execute-form').attr('action')
-      type: $('.execute-form').attr('method')
-      data: post_data
-      dataType: 'json'
+      url: options.action
+      type: options.method
+      data: options.data
+      dataType: options.datatype
       cache: false
     })
 
     jqXHR.done (data, stat, xhr) ->
+      jqXHR = null
       console.log { done: stat, data: data, xhr: xhr }
-      $("#messageArea").empty()
-      $("#messageArea").hide()
-      createGrid(xhr.responseText)
+      $("#soqlArea #messageArea").empty()
+      $("#soqlArea #messageArea").hide()
+      doneCallback($.parseJSON(xhr.responseText), params)
 
     jqXHR.fail (xhr, stat, err) ->
+      jqXHR = null
       console.log { fail: stat, error: err, xhr: xhr }
-      displayError(xhr.responseText)
+      errorCallback($.parseJSON(xhr.responseText))
 
     jqXHR.always (res1, stat, res2) ->
+      jqXHR = null
       console.log { always: stat, res1: res1, res2: res2 }
-      #alert 'Ajax Finished!' if stat is 'success'
+      
+  processSuccessResult = (json) ->
+    $("#soqlArea #soql" + selectedTabId).html(getExecutedSoql(json))
+    elementId = "#soqlArea #grid" + selectedTabId
+    createGrid(elementId, json)
 
-  displayError = (error) ->
-    $("#messageArea").html($.parseJSON(error).error)
-    $("#messageArea").show()
+  displayError = (json) ->
+    $("#soqlArea #messageArea").html(json.error)
+    $("#soqlArea #messageArea").show()
 
-  createGrid = (result = null) ->   
-    hotElement = document.querySelector("#grid" + selectedTabId)
+  createGrid = (elementId, json = null) ->   
+    hotElement = document.querySelector(elementId)
 
-    table = new Handsontable(hotElement)
-    table.destroy()
+    if grids[elementId]
+      table = grids[elementId]
+      table.destroy()
 
-    parsedResult = $.parseJSON(result)
-    $("#soql" + selectedTabId).html(get_executed_soql(parsedResult))
-    header = get_columns(parsedResult)
-    records = get_rows(parsedResult)
-    columns_option = get_columns_option(parsedResult)
+    header = getColumns(json)
+    records = getRows(json)
+    columnsOption = getColumnsOption(json)
 
     hotSettings = {
         data: records,
+        height: 500;
         stretchH: 'all',
         autoWrapRow: true,
         manualRowResize: false,
         manualColumnResize: true,
         rowHeaders: true,
         colHeaders: header,
-        columns: columns_option,
-        contextMenu: true,
+        columns: columnsOption,
+        contextMenu: false,
         readOnly: true,
         startRows: 0
     }
 
-    table = new Handsontable(hotElement, hotSettings)
+    grids[elementId] = new Handsontable(hotElement, hotSettings)
 
-  get_columns = (result) ->
-    if !result?
-      #[[]]
+  getColumns = (json) ->
+    if !json?
       null
     else
-      result.columns
+      json.columns
 
-  get_rows = (result) ->
-    if !result?
+  getRows = (json) ->
+    if !json?
       null
     else
-      result.rows
+      json.rows
 
-  get_executed_soql = (result) ->
-    if !result?
+  getExecutedSoql = (json) ->
+    if !json?
       null
     else
-      result.soql
+      json.soql
 
-  get_columns_option = (result) ->
-    if !result?
+  getColumnsOption = (json) ->
+    if !json?
       [[]]
     else
       null
 
-  $("div#tabArea").tabs()
+  selectedTabId = 1
+  createGrid("#soqlArea #grid" + selectedTabId)
 
-  createGrid()
+  $("#soqlArea #tabArea").tabs()
 
 $(document).ready(coordinates)
 $(document).on('page:load', coordinates)

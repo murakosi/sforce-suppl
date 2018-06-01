@@ -1,28 +1,30 @@
 Rails.application.routes.draw do
+ 
+  #root :to => 'login#new'
+  root :to => 'main#index'
 
-  get 'main', to: 'main#index'
+  post    'check',                  to: 'main#check'
 
-  root :to => 'login#new'
+  get     'main',                   to: 'main#index'
+  post    'main',                   to: 'main#switch'
 
-  get "meta_test", to: "metadata#index"
-  get     'login',   to: 'login#new'
-  post    'login',   to: 'login#create'
-  delete  'logout',  to: 'login#destroy'
+  get     'login',                  to: 'login#new'
+  post    'login',                  to: 'login#create'
+  delete  'logout',                 to: 'login#destroy'
 
-  get   'describe',  to: 'describe#show'
-  post  'describe',  to: 'describe#execute'
-  get   'desc_change',    to: 'describe#change'
-  get   'desc_download',  to: 'describe#download'
+  get     'describe',               to: 'describe#show'
+  post    'describe',               to: 'describe#execute'
+  get     'describe/changelist',    to: 'describe#change'
+  post    'describe/download',      to: 'describe#download'
 
-  get   'metadata',  to: 'metadata#show'
-  post  'metadata',  to: 'metadata#list'
-  #get   'meta_change',  to: 'metadata#change'
-  get   'meta_refresh',   to: 'metadata#refresh'
-  post   'read',      to: 'metadata#read'
-  post   'meta_download',  to: 'metadata#download'
+  get     'metadata',               to: 'metadata#show'
+  post    'metadata',               to: 'metadata#list'
+  get     'metadata/change',        to: 'metadata#change'
+  post    'metadata/read',          to: 'metadata#read'
+  post    'metadata/download',      to: 'metadata#download'
 
-  get   'soql',      to: 'soqlexecuter#show'
-  post  'soql',      to: 'soqlexecuter#execute'
+  get     'soql',                   to: 'soqlexecuter#show'
+  post    'soql',                   to: 'soqlexecuter#execute'
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end

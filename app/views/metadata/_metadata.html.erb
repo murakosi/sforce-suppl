@@ -1,0 +1,50 @@
+<div id="metadataArea">
+	<div id="formArea">
+	    <%= form_tag metadata_path(), :method => :post, :class => "metadata-form" do %>
+		<div class="left_block">
+			<div class="combined_block">
+				<%= label_tag 'Metadata: ' %>
+				<div id="metadata_list" class="input-sm select2-single"></div>
+			</div>
+		</div>
+		<div class="left_block">
+			<div class="label_block">
+				<%= submit_tag 'Metadata', :class => 'btn btn-primary execute-metadata' %>                
+			</div>
+		</div>
+		<% end %>
+		<div id="messageArea"></div>
+	</div>
+
+	<div id="dummyArea"></div>
+	
+	<div id="tabArea">
+		<br>
+		<%= form_tag metadata_download_path(), :id => "exportForm", :remote => true, :method => :post do %>
+			<%= button_tag "Export Excel", :id => "excel-export", :class => "btn btn-default sub-btn exp-btn", :dl_format => "excel" %>
+			<%= button_tag "CSV Export",  :id => "csv-export", :class => "btn btn-default sub-btn exp-btn", :dl_format => "csv" %>
+			<%= button_tag "YAML Export", :id => "yaml-export", :class => "btn btn-default sub-btn exp-btn", :dl_format => "yaml" %>
+		<% end %>
+				
+		<ul>
+			<li class="noselect"><a href="#list-tab">List</a></li>
+			<li class="noselect"><a href="#read-tab">Tree</a></li>
+			<li class="noselect"><a href="#sample-tab">Raw Data</a></li>
+		</ul>
+
+		<div id="list-tab" class="resultTab">
+			<div id="list-overview" class="resultSoql">List</div>
+			<div id="grid" class="resultGrid"></div>
+		</div>
+
+		<div id="read-tab" class="resultTab" action="<%= metadata_read_path() %>" method="POST">
+			<div id="read-overview" class="resultSoql">Tree</div>
+			<div id="tree"></div>
+		</div>
+		
+		<div id="sample-tab" class="resultTab">
+			<div id="sample-overview" class="resultSoql">Raw</div>
+			<div id="sample" class="resultGrid"></div>
+		</div>
+	</div>
+</div>

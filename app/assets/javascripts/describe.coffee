@@ -1,12 +1,10 @@
-# Place all the behaviors and hooks related to the matching controller here.
-# All this logic will automatically be available in application.js.
-# You can use CoffeeScript in this file: http://coffeescript.org/
+
 coordinates = ->
   
-  selectedTabId = 1
   jqXHR = null
+  defaultDataType = ""  
 
-  get_options = (action, method, data, datatype) ->
+  getAjaxOptions = (action, method, data, datatype) ->
     {
       "action": action,
       "method": method,
@@ -14,28 +12,60 @@ coordinates = ->
       "datatype": datatype
     }
 
-  $('.chk').on 'change', (e) ->
+  downloadOptions = (url, method, data, successCallback, failCallback, alwaysCallback) ->
+    {
+      "url": url,
+      "method": method,
+      "data": data,
+      "successCallback": successCallback,
+      "failCallback": failCallback,
+      "alwaysCallback": alwaysCallback
+    }
+
+  $('.sobjectTypeCheckBox').on 'click', (e) ->
+      if jqXHR
+        e.preventDefault
+        return false
+  
+  $('.sobjectTypeCheckBox').on 'change', (e) ->
     e.stopPropagation()
     e.preventDefault()
- 
+
     val = {object_type: e.target.value}
-    action = "change"
-    method = "get"
-    options = get_options("desc_change", "get", val, "text")
+    action = $('#filterSObjectList').attr('action')
+    method = $('#filterSObjectList').attr('method')
+    options = getAjaxOptions(action, method, val, defaultDataType)
+    console.log("start ajax")
+    $('#sobjectList').empty()
     executeAjax(options, refreshSelectOptions, displayError)
 
-  refreshSelectOptions = (result) ->
-    $('#object_list').html(result)
-
-  $('.execute-describe').on 'click', (e) ->
+  $('#executeDescribe').on 'click', (e) ->
     e.preventDefault()
-    selectedTabId =  $("div#tabArea").tabs('option', 'active') + 1
+    val = {selected_sobject: $('#describeArea #selected_sobject').val()}
+    action = $('#executeDescribe').attr('action')
+    method = $('#executeDescribe').attr('method')
+    options = getAjaxOptions(action, method, val, defaultDataType)
+    executeAjax(options, processSuccessResult, displayError)
 
-    val = {selected_sobject: $('#selected_sobject').val()}
-    action = $('.describe-form').attr('action')
-    method = $('.describe-form').attr('method')
-    options = get_options(action, method, val)
-    executeAjax(options, createGrid, displayError)
+
+  $("#describeArea .exp-btn").on "click", (e) ->
+    e.preventDefault()
+    options = getDownloadOptions(this)
+    $.ajaxDownload(options)
+
+  getDownloadOptions = (target) ->
+    url = $("#describeArea #exportForm").attr('action')
+    method = $("#describeArea #exportForm").attr('method')
+    dl_format = $(target).attr("dl_format")
+    selected_sobject = $('#describeArea #selected_sobject').val()
+    data = {dl_format: dl_format, selected_sobject: selected_sobject}
+    downloadOptions(url, method, data, downloadDone, downloadFail, ->)
+
+  downloadDone = (url) ->
+    hideMessageArea()
+  
+  downloadFail = (response, url, error) ->
+    displayError(response)
 
   executeAjax = (options, doneCallback, errorCallback) ->
 
@@ -43,7 +73,6 @@ coordinates = ->
       return
 
     jqXHR = $.ajax({
-      async: true
       url: options.action
       type: options.method
       data: options.data
@@ -54,9 +83,8 @@ coordinates = ->
     jqXHR.done (data, stat, xhr) ->
       jqXHR = null
       console.log { done: stat, data: data, xhr: xhr }
-      $("#messageArea").empty()
-      $("#messageArea").hide()
-      doneCallback(xhr.responseText)      
+      hideMessageArea()
+      doneCallback(xhr.responseText)
 
     jqXHR.fail (xhr, stat, err) ->
       jqXHR = null
@@ -67,28 +95,39 @@ coordinates = ->
     jqXHR.always (res1, stat, res2) ->
       jqXHR = null
       console.log { always: stat, res1: res1, res2: res2 }
-      #alert 'Ajax Finished!' if stat is 'success'
 
-  displayError = (error) ->
-    $("#messageArea").html($.parseJSON(error).error)
-    $("#messageArea").show()
-    $(".exp-btn").prop("disabled", true);
+  displayError = (result) ->
+    json = $.parseJSON(result)
+    $("#describeArea #messageArea").html(json.error)
+    $("#describeArea #messageArea").show()
+  
+  hideMessageArea = () ->
+    $("#describeArea #messageArea").empty()
+    $("#describeArea #messageArea").hide()
 
-  createGrid = (result = null) ->   
-    hotElement = document.querySelector("#grid" + selectedTabId)
+  processSuccessResult = (result) ->
+    json = $.parseJSON(result)
+    $("#describeArea #method").html(getExecutedMethod(json))
+    createGrid("#describeArea #grid", json)
+
+  refreshSelectOptions = (result) ->
+    console.log("ajax end")
+    console.log("timeStamp()")
+    $('#sobjectList').html(result)
+  
+
+  createGrid = (elementId, json = null) ->   
+    hotElement = document.querySelector(elementId)
 
     table = new Handsontable(hotElement)
     table.destroy()
 
-    parsedResult = $.parseJSON(result)
-    $("#method" + selectedTabId).html(get_executed_method(parsedResult))
-    header = get_columns(parsedResult)
-    records = get_rows(parsedResult)
-    columns_option = get_columns_option(parsedResult)
+    header = getColumns(json)
+    records = getRows(json)
+    columnsOption = getColumnsOption(json)
 
     hotSettings = {
         data: records,
-        width: get_grid_width(parsedResult),
         height: 500;
         stretchH: 'all',
         autoWrapRow: true,
@@ -96,7 +135,7 @@ coordinates = ->
         manualColumnResize: true,
         rowHeaders: true,
         colHeaders: header,
-        columns: columns_option,
+        columns: columnsOption,
         contextMenu: false,
         readOnly: true,
         startRows: 0
@@ -104,43 +143,33 @@ coordinates = ->
 
     table = new Handsontable(hotElement, hotSettings)
 
-    $(".exp-btn").prop("disabled", false);
-
-  get_columns = (result) ->
-    if !result?
-      #[[]]
+  getColumns = (json) ->
+    if !json?
       null
     else
-      result.columns
+      json.columns
 
-  get_rows = (result) ->
-    if !result?
+  getRows = (json) ->
+    if !json?
       null
     else
-      result.rows
+      json.rows
 
-  get_executed_method = (result) ->
-    if !result?
+  getExecutedMethod = (json) ->
+    if !json?
       null
     else
-      result.method
+      json.method
 
-  get_columns_option = (result) ->
-    if !result?
+  getColumnsOption = (json) ->
+    if !json?
       [[]]
     else
       null
-  get_grid_width = (result) ->
-    if !result?
-      0
-    else
-      document.getElementById('tabArea').offsetWidth
 
-  $("div#tabArea").tabs()
+  $("#describeArea #tabArea").tabs()
 
-  createGrid()
-
-  $(".exp-btn").prop("disabled", true)
+  createGrid("#describeArea #grid")
 
 $(document).ready(coordinates)
 $(document).on('page:load', coordinates)

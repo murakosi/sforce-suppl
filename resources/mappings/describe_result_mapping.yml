@@ -1,0 +1,66 @@
+"no":
+    row: 3
+    column: 1
+    multi: false
+    start_row: 0
+    end_row: 0
+label:
+    row: 3
+    column: 2
+    multi: false
+    start_row: 0
+    end_row: 0
+name:
+    row: 3
+    column: 3
+    multi: false
+    start_row: 0
+    end_row: 0
+type:
+    row: 3
+    column: 4
+    multi: false
+    start_row: 0
+    end_row: 0
+calculated_formula:
+    row: 3
+    column: 7
+    multi: false
+    start_row: 0
+    end_row: 0
+length:
+    row: 3
+    column: 5
+    multi: false
+    start_row: 0
+    end_row: 0
+picklist_values:
+    row: 3
+    column: 6
+    multi: false
+    start_row: 0
+    end_row: 0
+nillable:
+    row: 3
+    column: 9
+    multi: false
+    start_row: 0
+    end_row: 0
+custom:
+    row: 3
+    column: 10
+    multi: false
+    start_row: 0
+    end_row: 0
+inline_help_text:
+    row: 3
+    column: 8
+    multi: false
+    start_row: 0
+    end_row: 0
+default_value_formula:
+    row: 3
+    column: 11
+    multi: false
+    start_row: 0
+    end_row: 0

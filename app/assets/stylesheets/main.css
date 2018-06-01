@@ -44,7 +44,7 @@
     transition: all 0.2s linear;
     text-decoration: none;
 }
- 
+
 #menuList ul li:hover > a {
     background: #fff;
     /*font-weight: bold;*/

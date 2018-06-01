@@ -9,11 +9,11 @@ class LoginController < ApplicationController
     @error_message = ""
 
     begin
-      #sforcelogin_to_salesforce(login_params)
       sign_in(login_params)
-      redirect_to soql_path
-    rescue Savon::SOAPFault => e
-      @error_message = e.message
+      redirect_to main_path
+    rescue StandardError => e
+      #@error_message = e.message
+      flash[:danger] = e.message
       render 'new'
     end
   end
@@ -24,13 +24,6 @@ class LoginController < ApplicationController
   end
 
   private
-
-    def skip_login
-      if signed_in?
-        redirect_to soql_path
-      end
-    end
-
     def login_params
       params.require(:login_param).permit(:name, :password, :is_sandbox)
     end
