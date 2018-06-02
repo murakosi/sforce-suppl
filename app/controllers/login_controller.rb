@@ -12,8 +12,9 @@ class LoginController < ApplicationController
     begin
       sign_in(login_params)
       redirect_to main_path
-    rescue StandardError => e
-      flash[:danger] = e.message
+    rescue StandardError => ex
+      message = ex.message.encode("UTF-8", invalid: :replace, undef: :replace)
+      flash[:danger] = message
       render 'new'
     end
   end
