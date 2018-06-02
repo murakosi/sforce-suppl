@@ -35,8 +35,6 @@ coordinates = ->
     action = $('#filterSObjectList').attr('action')
     method = $('#filterSObjectList').attr('method')
     options = getAjaxOptions(action, method, val, defaultDataType)
-    console.log("start ajax")
-    $('#sobjectList').empty()
     executeAjax(options, refreshSelectOptions, displayError)
 
   $('#executeDescribe').on 'click', (e) ->
@@ -89,7 +87,6 @@ coordinates = ->
     jqXHR.fail (xhr, stat, err) ->
       jqXHR = null
       console.log { fail: stat, error: err, xhr: xhr }
-      alert(err)
       errorCallback(xhr.responseText)
 
     jqXHR.always (res1, stat, res2) ->
@@ -111,8 +108,6 @@ coordinates = ->
     createGrid("#describeArea #grid", json)
 
   refreshSelectOptions = (result) ->
-    console.log("ajax end")
-    console.log("timeStamp()")
     $('#sobjectList').html(result)
   
 

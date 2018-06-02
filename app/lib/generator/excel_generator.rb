@@ -1,4 +1,4 @@
-require "Fileutils"
+require "FileUtils"
 require "rubyXL"
 
 module Generator

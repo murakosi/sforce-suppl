@@ -63,4 +63,4 @@ gem 'rubyXL'
 
 gem "attr_encrypted", "~> 3.0.0"
 
-#gem "dalli"
+gem 'activerecord-session_store'

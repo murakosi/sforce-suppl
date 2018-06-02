@@ -15,13 +15,13 @@ class ApplicationController < ActionController::Base
     def sign_in(login_params)
         sforce_result = Service::SoapLoginService.call(login_params)
         login_token = Service::UpdateUserService.call(login_params, sforce_result)
-        session[:user_token] = login_token
+        initialize_session(login_token)
     end
 
     def sign_out
         Service::SoapLogoutService.call(@sforce_session)
         @current_user = nil
-        session.delete(:user_token)
+        reset_session
     end
 
     def signed_in?
@@ -33,6 +33,12 @@ class ApplicationController < ActionController::Base
     end
 
     private
+        def initialize_session(login_token)
+            Session.sweep
+            reset_session
+            session[:user_token] = login_token
+        end
+
         def current_user
             user_info = Service::SelectUserService.call(session[:user_token])
             @sforce_session = user_info[:sforce_session]

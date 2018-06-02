@@ -93,8 +93,7 @@ coordinates = ->
     jqXHR.fail (xhr, stat, err) ->
       jqXHR = null
       console.log { fail: stat, error: err, xhr: xhr }
-      alert(err)
-      errorCallback($.parseJSON(xhr.responseText))
+      errorCallback($.parseJSON(xhr.responseText), params)
 
     jqXHR.always (res1, stat, res2) ->
       jqXHR = null
@@ -123,7 +122,7 @@ coordinates = ->
     action = $("#read-tab").attr("action")
     method = $("#read-tab").attr("method")
     options = getAjaxOptions(action, method, val, defaultDataType)
-    executeAjax(options, processReadSuccess, displayError, callback)
+    executeAjax(options, processReadSuccess, processReadError, callback)
 
   processReadSuccess = (json, callback) ->
     hideMessageArea
@@ -131,6 +130,11 @@ coordinates = ->
     nodeGrids[currentId] = json.grid
     createGrid("#metadataArea #sample", json.grid)
     callback(json.tree)
+
+  processReadError = (json, callback) ->
+    callback([])
+    $("#metadataArea #messageArea").html(json.error)
+    $("#metadataArea #messageArea").show()    
 
   createGrid = (elementId, json = null) ->   
     hotElement = document.querySelector(elementId)

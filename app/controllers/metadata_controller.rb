@@ -21,16 +21,23 @@ class MetadataController < ApplicationController
     def list
         @metadata_type = params[:selected_directory]
 
-        #begin
-            Metadata::MetadataReader.clear
+        begin
             metadata_list = Metadata::MetadataReader.list_metadata(sforce_session, @metadata_type)
+            if metadata_list.nil?
+                render :json => {:error => "No data found"}, :status => 400
+                return
+            end
+            
             formatted_list = Metadata::MetadataFormatter.format_metadata_list(metadata_list)
             parent_tree_nodes = Metadata::MetadataFormatter.format_parent_tree_nodes(formatted_list)
             
             render :json => list_response_json(formatted_list, parent_tree_nodes), :status => 200
-        #rescue StandardError => ex
-        #    render :json => {:error => ex.message}, :status => 400
-        #end
+        rescue StandardError => ex
+            p ex.message
+            #p ex.backtrace.join("\n")
+            p Rails.backtrace_cleaner.clean(ex.backtrace)
+            render :json => {:error => ex.message}, :status => 400
+        end
     end   
 
     def list_response_json(metadata_list, parent_tree_nodes)
@@ -49,14 +56,14 @@ class MetadataController < ApplicationController
     def read
         metadata_type = params[:type]
         full_name = params[:name]
-        #begin
+        begin
             result = Metadata::MetadataReader.read_metadata(sforce_session, metadata_type, full_name)
             tree_data = Metadata::MetadataFormatter.format(Metadata::MetadataFormatType::Tree, full_name, result)
             yaml_data = Metadata::MetadataFormatter.format(Metadata::MetadataFormatType::Yaml, full_name, result)
             render :json => read_response_json(full_name, tree_data, yaml_data), :status => 200            
-        #rescue StandardError => ex
-        #  render :json => {:error => ex.message}, :status => 400
-        #end
+        rescue StandardError => ex
+          render :json => {:error => ex.message}, :status => 400
+        end
     end
 
     def read_response_json(full_name, tree_data, yaml_data)

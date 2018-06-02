@@ -19,7 +19,11 @@ module Metadata
         end
 
         def format_metadata_list(metadata_list)
-            metadata_list.map{ |hash| hash.slice(*Key_order)}.sort_by{|k,v| k[:full_name]}
+            if metadata_list.is_a?(Hash)
+                [metadata_list.slice(*Key_order)]
+            else
+                metadata_list.map{ |hash| hash.slice(*Key_order)}.sort_by{|k,v| k[:full_name]}
+            end
         end
 
         def format_parent_tree_nodes(metadata_list)

@@ -1,6 +1,7 @@
 class LoginController < ApplicationController
   before_action :require_sign_in!, except: [:destroy]
   skip_before_action :require_sign_in!, only: [:new, :create]
+  protect_from_forgery :except => [:create]
 
   def new
   end
@@ -11,9 +12,9 @@ class LoginController < ApplicationController
     begin
       sign_in(login_params)
       redirect_to main_path
-    rescue StandardError => e
-      #@error_message = e.message
-      flash[:danger] = e.message
+    rescue StandardError => ex
+      message = ex.message.encode("UTF-8", invalid: :replace, undef: :replace)
+      flash[:danger] = message
       render 'new'
     end
   end

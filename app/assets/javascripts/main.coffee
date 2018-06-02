@@ -75,21 +75,6 @@ mains = ->
   autoClickAnchor = (target) ->
     $("#" + target)[0].click()
 
-  executeSyncAjax = (options, callback) ->
-    if jqXHR
-      return
-
-    $.ajax({
-      async: false,
-      url: options.action
-      type: options.method
-      data: options.data
-      dataType: options.datatype
-      cache: false
-    }).done (data, stat, xhr) ->
-      console.log { done: stat, data: data, xhr: xhr }
-      callback(data)
-
   executeAjax = (options, callback) ->
 
     if jqXHR
