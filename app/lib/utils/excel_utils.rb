@@ -3,6 +3,14 @@ require "rubyXL"
 module Utils
     module ExcelUtils
 
+        def allocate_output_file
+            file_name = File.expand_path("./output/#{SecureRandom.hex}.xlsx", Rails.root)
+            while File.exist?(file_name) do
+                file_name = File.expand_path("./output/#{SecureRandom.hex}.xlsx", Rails.root)
+            end
+            file_name
+        end
+
         def copy_row(sheet, copy_from, copy_to)
             rows_to_copy = []
             added_rows = []

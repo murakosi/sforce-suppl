@@ -11,7 +11,7 @@ class MetadataController < ApplicationController
         begin
             metadata_types = Metadata::MetadataReader.get_metadata_types(sforce_session)
             html_content = render_to_string :partial => 'metadatalist', :locals => {:data_source => metadata_types}
-            render :json => {:target => "#metadata_list", :content => html_content, :error => nil, :status => 200} 
+            render :json => {:target => "#metadata_list", :content => html_content, :error => nil, :status => 200}
         rescue StandardError => ex
             html_content = render_to_string :partial => 'metadatalist', :locals => {:data_source => []}
             render :json => {:target => "#metadata_list", :content => html_content, :error => ex.message, :status => 400}
@@ -33,9 +33,9 @@ class MetadataController < ApplicationController
             
             render :json => list_response_json(formatted_list, parent_tree_nodes), :status => 200
         rescue StandardError => ex
-            p ex.message
+            p print_error(ex)
             #p ex.backtrace.join("\n")
-            p Rails.backtrace_cleaner.clean(ex.backtrace)
+            #p Rails.backtrace_cleaner.clean(ex.backtrace)
             render :json => {:error => ex.message}, :status => 400
         end
     end   

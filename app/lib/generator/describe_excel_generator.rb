@@ -1,7 +1,7 @@
 module Generator
 	class DescribeExcelGenerator < ExcelGenerator
 
-        def write_excel
+        def edit
         	sheet = get_sheet(0)
 
 		    first_key = @mapping.keys.first

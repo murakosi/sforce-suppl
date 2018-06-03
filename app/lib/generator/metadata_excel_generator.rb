@@ -8,7 +8,7 @@ module Generator
                 #@data = Metadata::MappingFormatter.format(@data)
             end
 
-            def write_excel
+            def edit
 
             	format_data()
             	

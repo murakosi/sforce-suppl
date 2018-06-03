@@ -1,13 +1,9 @@
 module Service
     class SoapLoginService
-    include Service::ServiceCore
+        include Service::ServiceCore
     
         Production_url = "login.salesforce.com"
-        Sandbox_url = "atest.salesforce.com"
-
-        #def initialize(params)
-        #    @params = params
-        #end
+        Sandbox_url = "test.salesforce.com"
 
         def call(params)
             if is_sandbox?(params)
