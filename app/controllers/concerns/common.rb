@@ -8,6 +8,7 @@ module Common
   end
 
   def print_error(exception)
-    Rails.backtrace_cleaner.clean(ex.backtrace)
+  	p exception.message
+    p Rails.backtrace_cleaner.clean(exception.backtrace)
   end
 end

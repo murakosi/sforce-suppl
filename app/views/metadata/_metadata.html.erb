@@ -25,7 +25,9 @@
 			<%= button_tag "CSV Export",  :id => "csv-export", :class => "btn btn-default sub-btn exp-btn", :dl_format => "csv" %>
 			<%= button_tag "YAML Export", :id => "yaml-export", :class => "btn btn-default sub-btn exp-btn", :dl_format => "yaml" %>
 		<% end %>
-				
+		<%= form_tag metadata_edit_path(), :id => "editor", :remote => true, :method => :post do %>
+			<%= button_tag "Edit", :id => "edit", :class => "btn btn-default sub-btn" %>
+		<% end %>
 		<ul>
 			<li class="noselect"><a href="#list-tab">List</a></li>
 			<li class="noselect"><a href="#read-tab">Tree</a></li>

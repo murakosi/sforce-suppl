@@ -28,3 +28,4 @@
 !/output/.keep
 
 /config/local_env.yml
+/lib/corp_cacert.cer

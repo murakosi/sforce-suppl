@@ -4,7 +4,7 @@ module Soql
         Exclude_key_names = ["@xsi:type", "type"]
         
         def execute_query(sforce_session, soql)
-            query_result = Service::SoapClientService.call(sforce_session).query(soql)
+            query_result = Service::SoapSessionService.call(sforce_session).query(soql)
 
             if query_result.empty?
                raise StandardError.new("No matched records found")

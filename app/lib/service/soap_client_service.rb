@@ -1,16 +1,23 @@
+require "soapforce"
+
 module Service
     class SoapClientService
-    include Service::ServiceCore
+        include Service::ServiceCore
     
         def call(params)
-            client = Soapforce::Client.new
-            client.authenticate(saop_session(params))
-            client  
+            client = Soapforce::Client.new(client_options(params))
         end
 
         private
-            def saop_session(params)
-                {:session_id => params[:session_id], :server_url => params[:server_url]}
+            def client_options(params)
+                {
+                    :wsdl => Service::ResourceLocator.call(:partner_wsdl),
+                    :version => params[:api_version],
+                    :host => Utils::SforceApiUtils.sforce_host(params),
+                    :ssl_version => Constants::SSLVersion,
+                    :ssl_ca_cert_file => Utils::SforceApiUtils.ssl_certificate
+                    #:logger => Logger.new(STDOUT)
+                }                
             end
     end
 end

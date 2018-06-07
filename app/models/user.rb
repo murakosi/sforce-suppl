@@ -4,6 +4,8 @@ class User < ApplicationRecord
 
     secret_key = ENV['DB_US_COLUMN_KEY']
     attribute :sforce_session_id
+    attribute :sforce_server_url
+    attribute :sforce_metadata_server_url
     attr_encrypted :sforce_session_id, :key => secret_key
     attr_encrypted :sforce_server_url, :key => secret_key
     attr_encrypted :sforce_metadata_server_url, :key => secret_key

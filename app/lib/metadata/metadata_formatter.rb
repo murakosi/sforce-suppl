@@ -1,8 +1,7 @@
 module Metadata
-    class MetadataFormatter
-    class << self
+    module MetadataFormatter
 
-        Key_order = %i[type id full_name file_name created_date created_by_id created_by_name last_modified_date last_modified_by_id last_modified_by_name monegeable_state]
+        Key_order = %i[type id namespace_prefix full_name file_name created_date created_by_id created_by_name last_modified_date last_modified_by_id last_modified_by_name monegeable_state]
         
         def format(format_type, full_name, read_result)
             case format_type
@@ -29,6 +28,5 @@ module Metadata
         def format_parent_tree_nodes(metadata_list)
             Metadata::TreeFormatter.get_parent_tree_nodes(metadata_list)
         end
-    end
     end
 end

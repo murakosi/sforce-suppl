@@ -48,14 +48,17 @@
 
 .login-button{
     display:table-cell;
-    padding-top: 2px;
+    padding-top: 10px;
     padding-bottom: 2px;
     border: 0px solid black;
     width: 60%;
     text-align: center;
     vertical-align: middle;
 }
-
+select{
+    width: inherit;
+    font:inherit;
+}
 </style>
 
 <div id="menuList">
@@ -86,29 +89,15 @@
             </div>
             <div class="block">
                     <div class="block_label"><%= f.label 'Sandbox:', :class => 'form-label' %></div>
-                    <div class="block_element"><%= f.check_box :is_sandbox %></div>
+                    <div class="block_element"><%= f.check_box :sandbox %></div>
+            </div>
+            <div class="block">
+                    <div class="block_label"><%= f.label :api_version, 'API Version:', :class => 'form-label' %></div>
+                    <div class="block_element"><%= f.select :api_version, api_version_list %></div>
             </div>
             <div class="block">
                     <div class="login-button"><%= f.submit 'Login', :class => 'btn btn-primary' %></div>
             </div>
-        <!--
-            <table>
-                <tr>
-                    <td><%#= f.label 'User Name:', :class => 'form-label' %></td>
-                    <td><%#= f.text_field :name, value: "murakoshi@cse.co.jp" %><td>
-                </tr>
-                <tr>
-                    <td><%#= f.label 'Password:', :class => 'form-label' %></td>
-                    <td><%#= f.password_field :password, value: "s13926cse" %></td>
-                </tr>
-                <tr>
-                    <td><%#= f.label 'Sandbox:', :class => 'form-label' %></td>
-                    <td><%#= f.check_box :is_sandbox %></td>
-                <tr>
-                    <td colspan="2" class="login-button"><%#= f.submit 'Login', :class => 'btn btn-primary' %></td>
-                </tr>
-            </table>
-        -->
         <% end %>
     </div>
 </div>

@@ -1,22 +1,14 @@
 module Metadata
     class Client
-        Metadata_namespace = "{http://soap.sforce.com/2006/04/metadata}"
 
         def initialize(options={})
-            @describe_cache = {}
-            @describe_layout_cache = {}
             @headers = {}
 
-            @wsdl = File.expand_path("./resources/metadata.xml")
+            @wsdl = options[:wsdl]
 
-            # If a client_id is provided then it needs to be included
-            # in the header for every request.  This allows ISV Partners
-            # to make SOAP calls in Professional/Group Edition organizations.
+            @headers = { 'tns:LocaleOptions' => { 'tns:language' => 'ja_JP' } }
 
-            client_id = options[:client_id] || Soapforce.configuration.client_id
-            @headers = { 'tns:LocaleOptions' => { 'tns:language' => 'ja' } }
-
-            @version = options[:version] || Soapforce.configuration.version || 41.0#28.0
+            @version = options[:version]
 
             @logger = options[:logger] || false
             # Due to SSLv3 POODLE vulnerabilty and disabling of TLSv1, use TLSv1_2
@@ -31,26 +23,15 @@ module Metadata
             end
 
             # Override optional Savon attributes
-            savon_options = {}
-            %w(read_timeout open_timeout proxy raise_errors).each do |prop|
+            @savon_options = {}
+            %w(read_timeout open_timeout proxy raise_errors ssl_ca_cert_file).each do |prop|
                 key = prop.to_sym
-                savon_options[key] = options[key] if options.key?(key)
+                @savon_options[key] = options[key] if options.key?(key)
             end
-
-            @client = Savon.client({
-                wsdl: @wsdl,
-                soap_header: @headers,
-                convert_request_keys_to: :none,
-                convert_response_tags_to: @response_tags,
-                pretty_print_xml: true,
-                logger: @logger,
-                log: (@logger != false),
-                ssl_version: @ssl_version # Sets ssl_version for HTTPI adapter
-            }.update(savon_options))
         end
 
         def login(options={})
-            result = nil
+
             if options[:session_id] && options[:metadata_server_url]
                 @session_id = options[:session_id]
                 @server_url = options[:metadata_server_url]
@@ -60,7 +41,7 @@ module Metadata
 
             @headers = @headers.merge({"tns:SessionHeader" => {"tns:sessionId" => @session_id}})
 
-            @client = Savon.client(
+            @client = Savon.client({
                 wsdl: @wsdl,
                 soap_header: @headers,
                 convert_request_keys_to: :none,
@@ -69,7 +50,7 @@ module Metadata
                 log: (@logger != false),
                 endpoint: @server_url,
                 ssl_version: @ssl_version # Sets ssl_version for HTTPI adapter
-            )
+            }.update(@savon_options))
 
         end
         alias_method :authenticate, :login
@@ -95,6 +76,36 @@ module Metadata
 
         def read(type_name, full_name)
             call_metadata_api(:read_metadata, {:type_name => type_name, :full_name => full_name})
+        end
+
+        def update(type,params)
+            #type = type.to_s.camelize
+            #aram = get_param(type, current_name, metadata)
+            #params.store('@xsi:type', "#{type}")
+            p params
+            #call_metadata_api(:update_metadata, {:metadata => [params]})
+            #call_metadata_api(:update_metadata, get_param(type, params))
+        end
+=begin
+req2 = {:labels => {:full_name=>"test_label", :categories=>"category", :language=>"ja", :protected=>true,
+:short_description=>"test label", :value=>"values are here"}}
+
+b = {:metadata => [req2], :attributes! => { :metadata => { 'xsi:type' => "tns:CustomLabels" }}}
+
+message_hash = b
+response = meta.call(:update_metadata) do |locals|
+    locals.message message_hash
+end
+
+=end
+        def get_param(type, args)
+            if args.has_key?("@xsi:type")
+                args.delete("@xsi:type")
+            end
+
+            {
+              :metadata => [args], :attributes! => { :metadata => {'xsi:type' => "tns:#{type}"}}          
+            }
         end
 
         def call_metadata_api(method, message_hash={})

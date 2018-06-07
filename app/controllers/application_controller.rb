@@ -1,5 +1,3 @@
-#require "metadata"
-#require "describe"
 
 class ApplicationController < ActionController::Base
     include Common
@@ -50,7 +48,7 @@ class ApplicationController < ActionController::Base
 
         def sforce_session_alive?
             begin
-                Service::SoapClientService.call(@sforce_session)
+                Service::SoapSessionService.call(@sforce_session)
                 return true
             rescue StandardError => ex
                 @sforce_session_error = ex.message

@@ -1,5 +1,7 @@
 
 class MetadataController < ApplicationController
+    include Metadata::MetadataFormatter
+    include Metadata::MetadataReader
 
     before_action :require_sign_in!
 
@@ -9,7 +11,7 @@ class MetadataController < ApplicationController
     
     def show
         begin
-            metadata_types = Metadata::MetadataReader.get_metadata_types(sforce_session)
+            metadata_types = get_metadata_types(sforce_session)
             html_content = render_to_string :partial => 'metadatalist', :locals => {:data_source => metadata_types}
             render :json => {:target => "#metadata_list", :content => html_content, :error => nil, :status => 200}
         rescue StandardError => ex
@@ -19,32 +21,28 @@ class MetadataController < ApplicationController
     end
 
     def list
-        @metadata_type = params[:selected_directory]
+        metadata_type = params[:selected_directory]
 
         begin
-            metadata_list = Metadata::MetadataReader.list_metadata(sforce_session, @metadata_type)
+            metadata_list = list_metadata(sforce_session, metadata_type)
             if metadata_list.nil?
-                render :json => {:error => "No data found"}, :status => 400
-                return
+                raise StandardError.new("No data found")
             end
+            formatted_list = format_metadata_list(metadata_list)
+            parent_tree_nodes = format_parent_tree_nodes(formatted_list)
             
-            formatted_list = Metadata::MetadataFormatter.format_metadata_list(metadata_list)
-            parent_tree_nodes = Metadata::MetadataFormatter.format_parent_tree_nodes(formatted_list)
-            
-            render :json => list_response_json(formatted_list, parent_tree_nodes), :status => 200
+            render :json => list_response_json(metadata_type, formatted_list, parent_tree_nodes), :status => 200
         rescue StandardError => ex
-            p print_error(ex)
-            #p ex.backtrace.join("\n")
-            #p Rails.backtrace_cleaner.clean(ex.backtrace)
+            print_error(ex)
             render :json => {:error => ex.message}, :status => 400
         end
     end   
 
-    def list_response_json(metadata_list, parent_tree_nodes)
+    def list_response_json(metadata_type, metadata_list, parent_tree_nodes)
         column_options = [{type: "checkbox", readOnly: false, className: "htCenter htMiddle"}]
         metadata_list.first.keys.size.times{column_options << {type: "text", readOnly: true}}
         {
-            :fullName => @metadata_type,
+            :fullName => metadata_type,
             :grid => {:column_options => column_options,
                     :columns => [""] + metadata_list.first.keys, 
                     :rows => metadata_list.map{|hash| [false] + hash.values}
@@ -57,9 +55,9 @@ class MetadataController < ApplicationController
         metadata_type = params[:type]
         full_name = params[:name]
         begin
-            result = Metadata::MetadataReader.read_metadata(sforce_session, metadata_type, full_name)
-            tree_data = Metadata::MetadataFormatter.format(Metadata::MetadataFormatType::Tree, full_name, result)
-            yaml_data = Metadata::MetadataFormatter.format(Metadata::MetadataFormatType::Yaml, full_name, result)
+            result = read_metadata(sforce_session, metadata_type, full_name)
+            tree_data = format(Metadata::MetadataFormatType::Tree, full_name, result)
+            yaml_data = format(Metadata::MetadataFormatType::Yaml, full_name, result)
             render :json => read_response_json(full_name, tree_data, yaml_data), :status => 200            
         rescue StandardError => ex
           render :json => {:error => ex.message}, :status => 400
@@ -77,6 +75,11 @@ class MetadataController < ApplicationController
                     },
             :tree => tree_data
         }
+    end
+
+    def edit
+        result = read_metadata(sforce_session, :CustomLabels, "CustomLabels")
+        update(result)
     end
 
     def download
@@ -97,7 +100,7 @@ class MetadataController < ApplicationController
         end
 
         #begin
-            result = Metadata::MetadataReader.read_metadata(sforce_session, metadata_type, full_name)
+            result = read_metadata(sforce_session, metadata_type, full_name)
             try_download(export_format, metadata_type, full_name, result)
             set_download_success_cookie(response)
         #rescue StandardError => ex
@@ -147,8 +150,7 @@ class MetadataController < ApplicationController
     end
 
     def download_excel(metadata_type, full_name, result)
-        fmetadata_type_sym = metadata_type.to_sym
-        generator = Generator::ExcelGeneratorProxy.generator(fmetadata_type_sym)
+        generator = Generator::ExcelGeneratorProxy.generator(metadata_type.to_sym)
         send_data(generator.generate(result),
             :disposition => 'attachment',
             :type => 'application/excel',
