@@ -6,7 +6,8 @@ coordinates = ->
   currentId = null
   jqXHR = null
   defaultDataType = ""
-  
+  selectedNode = null
+
   getAjaxOptions = (action, method, data, datatype) ->
     {
       "action": action,
@@ -67,6 +68,10 @@ coordinates = ->
     createGrid("#metadataArea #sample")
     $('#metadataArea #tree').jstree(true).settings.core.data = null
     $('#metadataArea #tree').jstree(true).refresh()
+    # to eidt
+    $('#metadataArea #editTree').jstree(true).settings.core.data = null
+    $('#metadataArea #editTree').jstree(true).refresh()
+    # ==============
     selectedRowData = {}
     nodeGrids = {}
     grids = {}
@@ -116,6 +121,10 @@ coordinates = ->
     $('#metadataArea #tree').jstree(true).settings.core.data = json
     $('#metadataArea #tree').jstree(true).refresh()
     $('#metadataArea #tree').jstree(true).settings.core.data = (node, cb) -> callReadMetadata(node, cb)
+    # to edit
+    $('#metadataArea #editTree').jstree(true).settings.core.data = json
+    $('#metadataArea #editTree').jstree(true).refresh()
+    $('#metadataArea #editTree').jstree(true).settings.core.data = (node, cb) -> callReadMetadata2(node, cb)
 
   callReadMetadata = (node, callback) ->
     val = {type: $('#metadataArea #selected_directory').val(), name: node.id}
@@ -135,6 +144,55 @@ coordinates = ->
     callback([])
     $("#metadataArea #messageArea").html(json.error)
     $("#metadataArea #messageArea").show()    
+  
+  # to edit ==================================
+  callReadMetadata2 = (node, callback) ->
+    val = {type: $('#metadataArea #selected_directory').val(), name: node.id}
+    action = $("#edit-tab").attr("action")
+    method = $("#edit-tab").attr("method")
+    options = getAjaxOptions(action, method, val, defaultDataType)
+    executeAjax(options, processReadSuccess2, processReadError, callback)
+
+  processReadSuccess2 = (json, callback) ->
+    hideMessageArea
+    callback(json.tree)    
+
+  $("#metadataArea #editTree").on 'select_node.jstree', (e, data) ->
+    selectedNode = data.node
+
+  $("#metadataArea #editTree").on 'rename_node.jstree', (e, data) ->
+    val = {
+           full_name: data.node.li_attr.full_name,
+           path: data.node.li_attr.path,
+           new_value: data.text,
+           old_value: data.old
+          }
+    action = $("#metadataArea #editTree").attr("action")
+    method = $("#metadataArea #editTree").attr("method")
+    options = getAjaxOptions(action, method, val, defaultDataType)
+    executeAjax(options, doneEdit, undoEdit)    
+
+  $("#expand").on "click", (e) ->
+    if selectedNode == null
+      return false
+    $("#metadataArea #editTree").jstree(true).open_all(selectedNode)
+
+  $("#collapse").on "click", (e) ->
+    if selectedNode == null
+      return false
+    $("#metadataArea #editTree").jstree(true).close_all(selectedNode)
+
+  doneEdit = (json) ->
+
+  undoEdit = (json) ->
+    node = $("#metadataArea #editTree").jstree(true).get_node(json.id)
+    node.text = json.old_text
+
+  treeChecker = (operation, node, node_parent, node_position, more) ->
+    if operation == 'edit' && !node.li_attr.editable
+      return false
+
+  # end edit =================================
 
   createGrid = (elementId, json = null) ->   
     hotElement = document.querySelector(elementId)
@@ -200,10 +258,30 @@ coordinates = ->
     else
       json.column_options
 
+  tes = (a,b) ->
+    alert("ehre")
+    false
+
   $("#metadataArea #tabArea").tabs()
 
   createGrid("#metadataArea #grid")
   createGrid("#metadataArea #sample")
+
+  $('#metadataArea #editTree').jstree({
+    
+    'core' : {
+      'check_callback' : (operation, node, node_parent, node_position, more) -> treeChecker(operation, node, node_parent, node_position, more),
+      'data' : [ 
+        { 'id' : '1', 'parent' : '#', 'text' : 'Root node 1' },
+        { 'id' : '2', 'parent' : '1', 'text' : 'Child node 1' },
+        { 'id' : '3', 'parent' : '1', 'text' : 'Child node 2' },
+        { 'id' : '4', 'parent' : '#', 'text' : 'Root node 2' }
+      ],
+      "multiple": false,
+      "animation":false,
+      "themes": {"icons":false}
+    }
+  })
 
   $('#metadataArea #tree').jstree({
     'core' : {

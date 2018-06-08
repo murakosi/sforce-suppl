@@ -5,14 +5,16 @@ module Metadata
         
         def format(format_type, full_name, read_result)
             case format_type
-                when Metadata::MetadataFormatType::Tree
+                when Metadata::FormatType::Tree
                     Metadata::TreeFormatter.format(full_name, read_result)
-                when Metadata::MetadataFormatType::Mapping
+                when Metadata::FormatType::Mapping
                     Metadata::MappingFormatter.format(full_name, read_result)
-                when Metadata::MetadataFormatType::Yaml
+                when Metadata::FormatType::Yaml
                     mapping_data = Metadata::MappingFormatter.format(full_name, read_result)
                     Metadata::YamlFormatter.format(full_name, mapping_data)
-                else     
+                when Metadata::FormatType::Edit
+                    Metadata::UpdateFormatter.format(full_name, read_result)
+                else
                     raise StandardError.new("Invalid format type")
             end
         end

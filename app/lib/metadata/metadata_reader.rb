@@ -1,5 +1,8 @@
+require "hashie"
+
 module Metadata
 	module MetadataReader
+
 		def get_metadata_types(sforce_session)
 			Service::MetadataClientService.call(sforce_session).describe_metadata_objects()
 		end
@@ -10,16 +13,20 @@ module Metadata
 
 		def read_metadata(sforce_session, metadata_type, full_name)
 			raw_result = Service::MetadataClientService.call(sforce_session).read(metadata_type, full_name)
-			p raw_result[:records].to_xml
 			raw_result[:records]
 		end
 
-		def update(result)
-			#p result
-			#r = result.delete("@xsi:type")
-			r = result
-			#p r
-			Service::MetadataClientService.call(sforce_session).update(:CustomLabels, r)
+		def update(source, path, new_text)
+			#Service::MetadataClientService.call(sforce_session).update(:CustomLabels, r)
+			p update_source(source, path, new_text)
+		end
+
+		def update_source(source, path, new_text)
+			mash = Hashie::Mash.new(source)
+			update = "mash." + path + " = new_text"
+			p update
+			eval(update)
+			mash.to_hash
 		end
 	end
 end

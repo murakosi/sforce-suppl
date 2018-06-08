@@ -4,87 +4,112 @@ module Metadata
         include Utils::FormatUtils
 
         def format(full_name, result)
+            @full_name = full_name
             parse_hash(result, full_name)
         end
 
-        def get_parent_tree_nodes(metadata_list)
-            parent_nodes = []
-            metadata_list.each do |hash|
-                parent_nodes << {:id => hash[:full_name], :parent => "#", :text => "<b>" + hash[:full_name].to_s + "<b>", :children => true }
-            end
-            parent_nodes
-        end
-
         def parse_hash(hashes, parent)
-            result = []
+            @result = []
             hashes.each do |k, v|
                 if v.is_a?(Hash)
-                    result << remodel(get_id(parent, k), parent, get_text(k), k, v, nil)
-                    parse_child(result, get_id(parent, k), v)
+                    remodel(get_id(parent, k), parent, key_text(k), false)
+                    parse_child(get_id(parent, k), v)
                 elsif v.is_a?(Array)
-                    result << remodel(get_id(parent, k), parent, get_text(k), k, v, nil)
+                    remodel(get_id(parent, k), parent, key_text(k), false)
                     v.each_with_index do |val, idx|
                         id = get_id(parent, k, idx)
-                        result << remodel(id, get_id(parent, k), get_text(k, idx), k, val, idx)
-                        parse_child(result, id, val, idx)
+                        remodel(id, get_id(parent, k), key_text(k, idx), false)
+                        parse_child(id, val, idx)
                     end
                 else
-                    result << remodel(get_id(parent, k), parent, get_text(k, v), k, v, nil)
+                    key_id = get_id(parent, k)
+                    value_id = get_id(key_id, "value")
+                    if k == :"@xsi:type"
+                        create_value_node(parent, key_id, k, value_id, v, true)
+                    else
+                        create_value_node(parent, key_id, k, value_id, v)
+                    end
                 end
             end
-            result
+            @result
         end
 
-        def parse_child(result, parent, hash, index = nil)
+        def parse_child(parent, hash, index = nil)
             hash.each do |k, v|
                 if v.is_a?(Hash)
                     id = get_id(parent, k)
-                    result << remodel(id, parent, get_text(k), k, v, index)
-                    parse_child(result, id, v, index)
+                    remodel(id, parent, key_text(k), false)
+                    parse_child(id, v, index)
                 elsif v.is_a?(Array)
                     if is_hash_array?(v)
                         v.each_with_index do |item, idx|
-                            if item.is_a?(Hash)
-                                id = get_id(parent, k, idx)
-                                result << remodel(id, parent, get_text(k, idx), k, item, idx)
-                                parse_child(result, id, item, idx)
-                            else
-                                result << remodel(get_id(parent, item, idx), parent, get_text(item), k,  v)
-                            end
+                            id = get_id(parent, k, idx)
+                            remodel(id, parent, key_text(k, idx), false)
+                            parse_child(id, item, idx)
                         end
                     else
-                        joined_value = v.join(",")
-                        result << remodel(get_id(parent, k), parent, get_text(k, joined_value), k, v, index)
+                        key_id = get_id(parent, k)
+                        value_id = get_id(key_id, "value")
+                        create_value_node(parent, key_id, k, value_id, v.join(","))
                     end
                 else
-                    result << remodel(get_id(parent, k), parent, get_text(k, v), k, v, index)
+                    key_id = get_id(parent, k)
+                    value_id = get_id(key_id, "value")
+                    create_value_node(parent, key_id, k, value_id, v)
                 end
-                result
+            end
+        end
+
+        def create_value_node(parent, key_id, key, value_id, value, force_lock_value = false)
+            remodel(key_id, parent, key_text(key), false)
+            if force_lock_value
+                remodel(value_id, key_id, value_text(key_id, value), false, value_path(key_id))
+            else
+                remodel(value_id, key_id, value_text(key_id, value), true, value_path(key_id))
             end
         end
 
         def get_id(parent, current, index = nil)
             if index.nil?
-                parent.to_s + "_" + current.to_s
+                id = parent.to_s + "/" + current.to_s
             else
-                parent.to_s + "_" + current.to_s + "_" + index.to_s
+                id = parent.to_s + "/" + current.to_s + "[" + index.to_s + "]"
             end
         end
 
-        def get_text(key, value = nil)     
-            if value.nil?
-                return "<b>" + key.to_s + "</b>"
+        def key_text(key, index = -1)
+            if index < 0
+                "<b>" + key.to_s + "</b>"
+            else
+                "<b>" + key.to_s + " #" + index.to_s + "</b>"
             end
-
-            "<b>" + key.to_s + "</b>: " + try_decode(key, value, true).to_s#text_value.to_s
         end
 
-        def remodel(id, parent_id, text, key, value, index)
-            {
-            :id => id,
-            :parent => parent_id,
-            :text => text
-            }
+        def value_path(id)
+            split_path = id.split("/")
+            split_path.shift
+            split_path.join(".")
+        end
+        
+        def value_text(id, value)     
+            split_path = id.split("/")
+            last_element = split_path.reverse.shift
+            try_decode(last_element, value, true)
+        end
+
+        def remodel(id, parent_id, text, editable, path = nil)
+            if path.present?
+                data_type = text.class
+            else
+                data_type = nil
+            end
+            
+            @result << {
+                        :id => id,
+                        :parent => parent_id,
+                        :text => text.to_s,
+                        :li_attr => {:full_name => @full_name, :editable => editable, :path => path, :data_type => data_type}
+                        }
         end
     end
     end

@@ -1,3 +1,15 @@
+<style type="text/css">
+.inButtonArea{
+    border: 1px solid lightgray;
+    display: inline-block;
+    width: 100%;
+    padding: 5px;
+}
+.btn-info{
+    font-size: 8pt !important;
+    font-family:Arial;
+}
+</style>
 <div id="metadataArea">
 	<div id="formArea">
 	    <%= form_tag metadata_path(), :method => :post, :class => "metadata-form" do %>
@@ -31,6 +43,7 @@
 		<ul>
 			<li class="noselect"><a href="#list-tab">List</a></li>
 			<li class="noselect"><a href="#read-tab">Tree</a></li>
+			<li class="noselect"><a href="#edit-tab">Edit</a></li>
 			<li class="noselect"><a href="#sample-tab">Raw Data</a></li>
 		</ul>
 
@@ -43,7 +56,15 @@
 			<div id="read-overview" class="resultSoql">Tree</div>
 			<div id="tree"></div>
 		</div>
-		
+
+		<div id="edit-tab" class="resultTab" action="<%= metadata_prepare_path() %>" method="POST">
+			<div id="edit-overview" class="inButtonArea">
+				<input type="button" value="Expand" id="expand" class="btn btn-info" />
+				<input type="button" value="Collapse" id="collapse" class="btn btn-info" />
+			</div>
+			<div id="editTree" action="<%= metadata_edit_path() %>" method="POST"></div>
+		</div>
+
 		<div id="sample-tab" class="resultTab">
 			<div id="sample-overview" class="resultSoql">Raw</div>
 			<div id="sample" class="resultGrid"></div>

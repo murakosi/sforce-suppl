@@ -5,7 +5,7 @@ class MetadataController < ApplicationController
 
     before_action :require_sign_in!
 
-    protect_from_forgery :except => [:list, :read, :download]
+    protect_from_forgery :except => [:list, :read, :prepare, :edit, :download]
     
     Full_name_indxe = 3
     
@@ -26,17 +26,25 @@ class MetadataController < ApplicationController
         begin
             metadata_list = list_metadata(sforce_session, metadata_type)
             if metadata_list.nil?
-                raise StandardError.new("No data found")
+                raise StandardError.new("No metadata available")
             end
             formatted_list = format_metadata_list(metadata_list)
             parent_tree_nodes = format_parent_tree_nodes(formatted_list)
-            
+            clear_session
             render :json => list_response_json(metadata_type, formatted_list, parent_tree_nodes), :status => 200
         rescue StandardError => ex
             print_error(ex)
             render :json => {:error => ex.message}, :status => 400
         end
     end   
+
+    def clear_session
+        session[:read_result] = {}
+    end
+
+    def save_session(full_name, result)
+        session[:read_result][full_name] = result
+    end
 
     def list_response_json(metadata_type, metadata_list, parent_tree_nodes)
         column_options = [{type: "checkbox", readOnly: false, className: "htCenter htMiddle"}]
@@ -51,13 +59,38 @@ class MetadataController < ApplicationController
         }
     end
 
+    def prepare
+        metadata_type = params[:type]
+        full_name = params[:name]
+        #begin
+            result = read_metadata(sforce_session, metadata_type, full_name)
+            tree_data = format(Metadata::FormatType::Edit, full_name, result)
+            save_session(full_name, result)
+            render :json => {:tree => tree_data}, :status => 200            
+        #rescue StandardError => ex
+        #  render :json => {:error => ex.message}, :status => 400
+        #end
+    end
+
+    def edit
+        full_name = params[:full_name]
+        path = params[:path]
+        new_text = params[:new_value]
+        old_text = params[:old_value]
+
+        update(session[:read_result][full_name], path, new_text)
+        #edit_result = update(session[:read_result][full_name], path, new_text)
+        #save_session(full_name, edit_result)
+        render :json => {:result => "ok"}, :status => 200
+    end
+
     def read
         metadata_type = params[:type]
         full_name = params[:name]
         begin
             result = read_metadata(sforce_session, metadata_type, full_name)
-            tree_data = format(Metadata::MetadataFormatType::Tree, full_name, result)
-            yaml_data = format(Metadata::MetadataFormatType::Yaml, full_name, result)
+            tree_data = format(Metadata::FormatType::Tree, full_name, result)
+            yaml_data = format(Metadata::FormatType::Yaml, full_name, result)
             render :json => read_response_json(full_name, tree_data, yaml_data), :status => 200            
         rescue StandardError => ex
           render :json => {:error => ex.message}, :status => 400
@@ -75,11 +108,6 @@ class MetadataController < ApplicationController
                     },
             :tree => tree_data
         }
-    end
-
-    def edit
-        result = read_metadata(sforce_session, :CustomLabels, "CustomLabels")
-        update(result)
     end
 
     def download

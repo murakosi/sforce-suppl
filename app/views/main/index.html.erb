@@ -1,41 +1,83 @@
 <style>
-.resultTab{
-	padding-right: 7px;
+/* ------------------------------
+   #menuList
+------------------------------ */
+#menuList {
+    margin-top: 15px;
+    width: 100%;
+    height: 45px;
+    border-top: #aaa 1px solid;
+    border-bottom: #aaa 1px solid;
+    position: relative;
+    z-index: 10;
+    background: #d3cbdb;
+    display: flex;
+    font-size:10pt;
+}
+ 
+#menuList ul {
+    /*margin: 0 auto;*/
+    /*width: 800px;*/
+    /*width: 60%;*/
+    height: 45px;
+    /*text-align: left;*/
+    margin-left:70%;
+    list-style: none;
+}
+ 
+#menuList ul li {
+    width: 120px;
+    height: 45px;
+    float: left;
+    border-left: #aaa 1px solid;
+    box-sizing: border-box;
+}
+ 
+#menuList ul li:last-child {
+    border-right: #aaa 1px solid;
+}
+ 
+#menuList ul li a {
+    height: 45px;    
+    line-height: 45px;
+    display: block;
+    text-align: center;
+    transition: all 0.2s linear;
+    text-decoration: none;
 }
 
-.resultSoql{
-	border: 1px solid lightgray;
-	font-size: 9pt;
-	font-family:Arial;
-	padding: 4px;
-	margin-bottom: 2px;
-	margin-top: 2px;
-	white-space: pre;
+#menuList ul li:hover > a {
+    background: #fff;
+    /*font-weight: bold;*/
 }
 
-.resultGrid {
-	background: white;
-	outline: 0;
-	border: 0px solid gray;
+.displayed{
+    background:white;
 }
 
-.button_to,
-.button_to div {
-  	display: inline;
+#soqlexecuterContent, #describeContent, #metadataContent {
+ display:none;   
 }
 
+.soqlexecuter #soqlexecuterContent, .describe #describeContent, .metadata #metadataContent{
+ display:block;   
+}
+
+/* ------------------------------
+   #JQuery UI
+------------------------------ */
 .ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button{
-	font-size: 9.5pt;
-	font-family:Arial;
-	margin-bottom: 2px;
+    font-size: 9.5pt;
+    font-family:Arial;
+    margin-bottom: 2px;
 }
 .ui-tabs .ui-tabs-panel {
-	padding: 0;
-	margin: 0;
+    padding: 0;
+    margin: 0;
 }
 
 .ui-tabs .ui-tabs-nav li a {
-	font-size:10pt !important;
+    font-size:10pt !important;
 }
 
 .noselect {
@@ -47,19 +89,19 @@
 }
 
 .ui-tabs .ui-tabs-nav .ui-tabs-anchor {
-	float: left;
-	padding: .5em .5em .5em 1em;
-	text-decoration: none;
+    float: left;
+    padding: .5em .5em .5em 1em;
+    text-decoration: none;
 }
 .ui-tabs .ui-tabs-nav:focus {
-	/*
+    /*
     padding-left: 0px; 
     background: transparent; 
     border-width: 0px 0px 1px 0px; 
     -moz-border-radius: 0px; 
     -webkit-border-radius: 0px; 
-	border-radius: 0px;
-	*/
+    border-radius: 0px;
+    */
 }
 
 #tabArea ul li a { outline:none; /* outline-color:red */; }
@@ -68,17 +110,20 @@
 .ui-tabs .ui-tabs-nav li.ui-tabs-active .ui-tabs-anchor,
 .ui-tabs .ui-tabs-nav li.ui-state-disabled .ui-tabs-anchor,
 .ui-tabs .ui-tabs-nav li.ui-tabs-loading .ui-tabs-anchor {
-	/* cursor: pointer; */
+    /* cursor: pointer; */
 }
 
 .ui-tabs-nav .ui-icon { 
-	/*
-	float: right;
-	margin: 0em 0em 0 1em;
-	cursor: pointer;
-	*/
+    /*
+    float: right;
+    margin: 0em 0em 0 1em;
+    cursor: pointer;
+    */
 }
 
+/* ------------------------------
+   #Handontable
+------------------------------ */
 .handsontable span.colHeader{
     font-size: 10pt;
 }
@@ -92,54 +137,64 @@
     font-style:bold;
 }
 
+/* ------------------------------
+   #jstree
+------------------------------ */
 .jstree-default a { 
     white-space:normal !important; height: auto; 
 }
+
 .jstree-anchor {
     height: auto !important;
 }
+
 .jstree-default li > ins { 
     vertical-align:top; 
 }
+
 .jstree-leaf {
     height: auto;
 }
+
 .jstree-leaf a{
     height: auto !important;
 }
 
-#metadataArea{
-	padding-top: 20px;
-	width:100%;
-	margin: 0 auto;
-}
-
+/* ------------------------------
+   #Areas
+------------------------------ */
 #soqlArea{
-	padding-top: 20px;
-	width:100%;
-	margin: 0 auto;
+    padding-top: 20px;
+    width:100%;
+    margin: 0 auto;
 }
 
 #describeArea{
-	padding-top: 20px;
-	width:100%;
-	margin: 0 auto;
+    padding-top: 20px;
+    width:100%;
+    margin: 0 auto;
 }
 
-#tree{
-	font-size:14px;
-	height:500px;
-	overflow:auto;
+#metadataArea{
+    padding-top: 20px;
+    width:100%;
+    margin: 0 auto;
+}
+
+#tree, #editTree{
+    font-size:14px;
+    height:500px;
+    overflow:auto;
 }
 
 #formArea{
-	width: 70%;
-	margin: 0 auto;
+    width: 70%;
+    margin: 0 auto;
 }
 
 #formArea #exportButtonArea .btn{
     font-size:9.5pt;
-  	display: inline;
+    display: inline;
 }
 
 #messageArea{
@@ -150,28 +205,31 @@
 }
 
 #tabArea{
-	width: 60%;
-	border: 0px solid lightgray;
-	//margin: 0 auto;
-	float:left;
+    width: 60%;
+    border: 0px solid lightgray;
+    /*margin: 0 auto;*/
+    float:left;
 }
 
 #tabArea li .ui-icon-close {
-	float: left;
-	margin: 0.4em 0.2em 0 0;
-	cursor: pointer; 
+    float: left;
+    margin: 0.4em 0.2em 0 0;
+    cursor: pointer; 
 }
 
 #dummyArea{
-	width: 15%;
-	height: 10px;
-	/*border: 1px solid lightgray;*/
-	float: left;
+    width: 15%;
+    height: 10px;
+    /*border: 1px solid lightgray;*/
+    float: left;
 }
 
+/* ------------------------------
+   #select2
+------------------------------ */
 .input-sm{
-	display:inline;
-	vertical-align: center;
+    display:inline;
+    vertical-align: center;
 }
 
 .select2-results__options{
@@ -185,7 +243,7 @@ span.select2-selection.select2-selection--single {
  }
 
 .select2-results {
- max-height: 290px;
+    max-height: 290px;
 }
 
 .select2-container--default .select2-results > .select2-results__options {
@@ -193,6 +251,39 @@ span.select2-selection.select2-selection--single {
     min-height: 150px;
     overflow-y: auto;
 }
+
+
+/* ------------------------------
+   #tab area
+------------------------------ */
+.resultTab{
+    padding-right: 7px;
+}
+
+.resultSoql{
+    border: 1px solid lightgray;
+    font-size: 9pt;
+    font-family:Arial;
+    padding: 4px;
+    margin-bottom: 2px;
+    margin-top: 2px;
+    white-space: pre;
+}
+
+.resultGrid {
+    background: white;
+    outline: 0;
+    border: 0px solid gray;
+}
+
+.button_to,
+.button_to div {
+    display: inline;
+}
+
+/* ------------------------------
+   #block
+------------------------------ */
 .left_block{
     display: table;
     border: 0px solid black;
@@ -243,24 +334,11 @@ span.select2-selection.select2-selection--single {
     vertical-align: middle;
 }
 
-.displayed{
-    background:white;
-}
-
-#soqlexecuterContent, #describeContent, #metadataContent {
- display:none;   
-}
-
-.soqlexecuter #soqlexecuterContent, .describe #describeContent, .metadata #metadataContent{
- display:block;   
-}
-
 </style>
 <% javascript 'handsontable.full.min',
 			  'jquery-1.11.2.min',
 			  'jquery-ui-1.11.3.min',
 			  'jstree',
-			  'jstree.min', 
 			  'select2.full.js',
 			  'jquery.fileDownload.js',
 			  'ajaxDownload.js',

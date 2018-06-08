@@ -114,6 +114,7 @@ end
             end
 
             # Convert SOAP XML to Hash
+            #File.write("C:\\Users\\murakosi\\rubytest\\a.xml", response, encoding: 'ASCII-8BIT:UTF-8')
             response = response.to_hash
 
             # Get Response Body
