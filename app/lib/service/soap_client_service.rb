@@ -12,7 +12,7 @@ module Service
             def client_options(params)
                 {
                     :wsdl => Service::ResourceLocator.call(:partner_wsdl),
-                    :version => params[:api_version],
+                    :version => params[:api_version] || Constants::DefaultApiVersion,
                     :host => Utils::SforceApiUtils.sforce_host(params),
                     :ssl_version => Constants::SSLVersion,
                     :ssl_ca_cert_file => Utils::SforceApiUtils.ssl_certificate

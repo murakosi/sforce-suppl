@@ -77,8 +77,8 @@ module Metadata
             end
         end
 
-        def key_text(key, index = -1)
-            if index < 0
+        def key_text(key, index = nil)
+            if index.nil?
                 "<b>" + key.to_s + "</b>"
             else
                 "<b>" + key.to_s + " #" + index.to_s + "</b>"
@@ -99,7 +99,7 @@ module Metadata
 
         def remodel(id, parent_id, text, editable, path = nil)
             if path.present?
-                data_type = text.class
+                data_type = text.class.to_s
             else
                 data_type = nil
             end

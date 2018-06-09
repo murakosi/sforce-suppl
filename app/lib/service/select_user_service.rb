@@ -4,7 +4,7 @@ module Service
     
         def call(token)
             login_token = User.encrypt_token(token)
-            user ||= User.find_by(user_token: login_token)
+            user ||= User.find_by(:user_token => login_token)
 
             if user.nil?
                 nil_user_info

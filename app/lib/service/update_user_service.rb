@@ -11,9 +11,9 @@ module Service
 
         def set_user(login_params)
             begin
-                User.find_by!(name: login_params[:name])
+                User.find_by!(:name => login_params[:name], :sandbox => login_params[:sandbox])
             rescue ActiveRecord::RecordNotFound => ex
-                User.create(login_params)
+                User.create(:name => login_params[:name], :sandbox => login_params[:sandbox])
             end
         end
 

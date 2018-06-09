@@ -1,7 +1,7 @@
 require "hashie"
 
 module Metadata
-	module MetadataReader
+	module Reader
 
 		def get_metadata_types(sforce_session)
 			Service::MetadataClientService.call(sforce_session).describe_metadata_objects()
@@ -16,17 +16,34 @@ module Metadata
 			raw_result[:records]
 		end
 
-		def update(source, path, new_text)
+		def update(source, path, new_text, data_type)
 			#Service::MetadataClientService.call(sforce_session).update(:CustomLabels, r)
-			p update_source(source, path, new_text)
+			p update_source(source, path, new_text, data_type)
 		end
 
-		def update_source(source, path, new_text)
+		def update_source(source, path, new_text, data_type)
 			mash = Hashie::Mash.new(source)
-			update = "mash." + path + " = new_text"
-			p update
+			text = to_type(new_text, data_type)
+			update = "mash." + path + " = text"
 			eval(update)
 			mash.to_hash
+		end
+
+		def to_type(text, data_type)
+			begin
+				case data_type.to_s
+				when TrueClass.to_s, FalseClass.to_s
+					text.to_bool
+				when Integer.to_s
+					text.to_i
+				when Float.to_s
+					text.to_f
+				else
+					text
+				end
+			rescue StandardError => ex
+				raise StandardError.new("Invalid value for data type")
+			end
 		end
 	end
 end

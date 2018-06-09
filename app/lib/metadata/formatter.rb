@@ -1,5 +1,5 @@
 module Metadata
-    module MetadataFormatter
+    module Formatter
 
         Key_order = %i[type id namespace_prefix full_name file_name created_date created_by_id created_by_name last_modified_date last_modified_by_id last_modified_by_name monegeable_state]
         
@@ -20,10 +20,20 @@ module Metadata
         end
 
         def format_metadata_list(metadata_list)
+            added_metadata_list = add_missing_key(metadata_list)
+
             if metadata_list.is_a?(Hash)
                 [metadata_list.slice(*Key_order)]
             else
-                metadata_list.map{ |hash| hash.slice(*Key_order)}.sort_by{|k,v| k[:full_name]}
+                added_metadata_list.map{ |hash| hash.slice(*Key_order)}.sort_by{|k,v| k[:full_name]}
+            end
+        end
+
+        def add_missing_key(metadata_list)
+            if metadata_list.is_a?(Hash)
+                metadata_list.store(:namespace_prefix, nil) unless metadata_list.has_key?(:namespace_prefix)
+            else
+                metadata_list.each{ |hash| hash.store(:namespace_prefix, nil) unless hash.has_key?(:namespace_prefix) }
             end
         end
 

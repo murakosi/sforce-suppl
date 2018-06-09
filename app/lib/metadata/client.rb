@@ -8,8 +8,6 @@ module Metadata
 
             @headers = { 'tns:LocaleOptions' => { 'tns:language' => 'ja_JP' } }
 
-            @version = options[:version]
-
             @logger = options[:logger] || false
             # Due to SSLv3 POODLE vulnerabilty and disabling of TLSv1, use TLSv1_2
             @ssl_version = options[:ssl_version] || :TLSv1_2

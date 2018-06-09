@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180604081712) do
+ActiveRecord::Schema.define(version: 20180609071948) do
 
   create_table "sessions", force: :cascade do |t|
     t.string "session_id", null: false
@@ -22,7 +22,7 @@ ActiveRecord::Schema.define(version: 20180604081712) do
   end
 
   create_table "users", force: :cascade do |t|
-    t.string "name"
+    t.string "name", null: false
     t.string "password_digest"
     t.string "encrypted_sforce_session_id"
     t.string "encrypted_sforce_server_url"

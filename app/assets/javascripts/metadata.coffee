@@ -161,11 +161,16 @@ coordinates = ->
     selectedNode = data.node
 
   $("#metadataArea #editTree").on 'rename_node.jstree', (e, data) ->
+    if data.text == data.old
+      return
+
     val = {
+           node_id: data.node.id
            full_name: data.node.li_attr.full_name,
            path: data.node.li_attr.path,
            new_value: data.text,
-           old_value: data.old
+           old_value: data.old,
+           data_type: data.node.li_attr.data_type
           }
     action = $("#metadataArea #editTree").attr("action")
     method = $("#metadataArea #editTree").attr("method")
@@ -185,8 +190,9 @@ coordinates = ->
   doneEdit = (json) ->
 
   undoEdit = (json) ->
-    node = $("#metadataArea #editTree").jstree(true).get_node(json.id)
-    node.text = json.old_text
+    node = $("#metadataArea #editTree").jstree(true).get_node(json.node_id)
+    $("#metadataArea #editTree").jstree(true).edit(node, json.old_text)
+    displayError(json)
 
   treeChecker = (operation, node, node_parent, node_position, more) ->
     if operation == 'edit' && !node.li_attr.editable

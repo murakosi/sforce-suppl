@@ -1,13 +1,14 @@
 
 class MetadataController < ApplicationController
-    include Metadata::MetadataFormatter
-    include Metadata::MetadataReader
+    include Metadata::Formatter
+    include Metadata::Reader
 
     before_action :require_sign_in!
 
     protect_from_forgery :except => [:list, :read, :prepare, :edit, :download]
     
     Full_name_indxe = 3
+    Max_metadata_count = 5
     
     def show
         begin
@@ -42,7 +43,10 @@ class MetadataController < ApplicationController
         session[:read_result] = {}
     end
 
-    def save_session(full_name, result)
+    def try_save_session(full_name, result)
+        if session[:read_result].present? && session[:read_result].values.size >= Max_metadata_count
+            raise StandardError.new("Cannot read/edit more than 5 meatadata all at once")
+        end
         session[:read_result][full_name] = result
     end
 
@@ -62,26 +66,34 @@ class MetadataController < ApplicationController
     def prepare
         metadata_type = params[:type]
         full_name = params[:name]
-        #begin
+
+        begin
             result = read_metadata(sforce_session, metadata_type, full_name)
             tree_data = format(Metadata::FormatType::Edit, full_name, result)
-            save_session(full_name, result)
+            try_save_session(full_name, result)
             render :json => {:tree => tree_data}, :status => 200            
-        #rescue StandardError => ex
-        #  render :json => {:error => ex.message}, :status => 400
-        #end
+        rescue StandardError => ex
+          render :json => {:error => ex.message}, :status => 400
+        end
     end
 
     def edit
+        node_id = params[:node_id]
         full_name = params[:full_name]
         path = params[:path]
         new_text = params[:new_value]
         old_text = params[:old_value]
-
-        update(session[:read_result][full_name], path, new_text)
-        #edit_result = update(session[:read_result][full_name], path, new_text)
-        #save_session(full_name, edit_result)
-        render :json => {:result => "ok"}, :status => 200
+        data_type = params[:data_type]
+        
+        begin
+            update(session[:read_result][full_name], path, new_text, data_type)
+            #edit_result = update(session[:read_result][full_name], path, new_text)
+            #save_session(full_name, edit_result)
+            render :json => {:result => "ok"}, :status => 200
+        rescue StandardError => ex
+            print_error(ex)
+            render :json => {:node_id => node_id, :old_text => old_text, :error => ex.message}, :status => 400
+        end
     end
 
     def read

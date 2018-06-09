@@ -12,7 +12,6 @@ module Service
             def client_options(params)
                 {
                     :wsdl => Service::ResourceLocator.call(:metadata_wsdl),
-                    :version => params[:api_version],
                     :ssl_version => Constants::SSLVersion,
                     :ssl_ca_cert_file => Utils::SforceApiUtils.ssl_certificate
                     #:logger => Logger.new(STDOUT)
