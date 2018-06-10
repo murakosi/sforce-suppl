@@ -127,7 +127,7 @@ coordinates = ->
     $('#metadataArea #editTree').jstree(true).settings.core.data = (node, cb) -> callReadMetadata2(node, cb)
 
   callReadMetadata = (node, callback) ->
-    val = {type: $('#metadataArea #selected_directory').val(), name: node.id}
+    val = {metadata_type: $('#metadataArea #selected_directory').val(), name: node.id}
     action = $("#read-tab").attr("action")
     method = $("#read-tab").attr("method")
     options = getAjaxOptions(action, method, val, defaultDataType)
@@ -147,7 +147,7 @@ coordinates = ->
   
   # to edit ==================================
   callReadMetadata2 = (node, callback) ->
-    val = {type: $('#metadataArea #selected_directory').val(), name: node.id}
+    val = {metadata_type: $('#metadataArea #selected_directory').val(), name: node.id}
     action = $("#edit-tab").attr("action")
     method = $("#edit-tab").attr("method")
     options = getAjaxOptions(action, method, val, defaultDataType)
@@ -157,6 +157,16 @@ coordinates = ->
     hideMessageArea
     callback(json.tree)    
 
+  $("#saveButton").on "click", (e) ->
+    val = {metadata_type: $('#metadataArea #selected_directory').val()}
+    action = $(this).attr("action")
+    method = $(this).attr("method")
+    options = getAjaxOptions(action, method, val, defaultDataType)
+    executeAjax(options, saveSuccess, displayError)
+
+  saveSuccess = (json) ->
+    alert("Saved")
+
   $("#metadataArea #editTree").on 'select_node.jstree', (e, data) ->
     selectedNode = data.node
 
@@ -165,7 +175,8 @@ coordinates = ->
       return
 
     val = {
-           node_id: data.node.id
+           metadata_type: $('#metadataArea #selected_directory').val(),
+           node_id: data.node.id,
            full_name: data.node.li_attr.full_name,
            path: data.node.li_attr.path,
            new_value: data.text,

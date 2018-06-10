@@ -17,8 +17,12 @@ module Metadata
 		end
 
 		def update(source, path, new_text, data_type)
-			#Service::MetadataClientService.call(sforce_session).update(:CustomLabels, r)
-			p update_source(source, path, new_text, data_type)
+			update_source(source, path, new_text, data_type)
+		end
+
+		def save(sforce_session, metadata_type, metadata)
+			p metadata.class
+			#Service::MetadataClientService.call(sforce_session).update_metadata(metadata_type, metadata)
 		end
 
 		def update_source(source, path, new_text, data_type)
@@ -42,6 +46,7 @@ module Metadata
 					text
 				end
 			rescue StandardError => ex
+				p ex.message
 				raise StandardError.new("Invalid value for data type")
 			end
 		end

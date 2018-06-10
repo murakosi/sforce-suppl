@@ -5,7 +5,7 @@ class MetadataController < ApplicationController
 
     before_action :require_sign_in!
 
-    protect_from_forgery :except => [:list, :read, :prepare, :edit, :download]
+    protect_from_forgery :except => [:list, :read, :prepare, :edit, :save, :download]
     
     Full_name_indxe = 3
     Max_metadata_count = 5
@@ -31,7 +31,7 @@ class MetadataController < ApplicationController
             end
             formatted_list = format_metadata_list(metadata_list)
             parent_tree_nodes = format_parent_tree_nodes(formatted_list)
-            clear_session
+            clear_session(metadata_type)
             render :json => list_response_json(metadata_type, formatted_list, parent_tree_nodes), :status => 200
         rescue StandardError => ex
             print_error(ex)
@@ -39,15 +39,32 @@ class MetadataController < ApplicationController
         end
     end   
 
-    def clear_session
+    def clear_session(metadata_type)
+        session[:metadata_type] = metadata_type
         session[:read_result] = {}
     end
 
-    def try_save_session(full_name, result)
+    def current_metadata_type
+        session[:metadata_type]
+    end
+
+    def raise_error_when_type_unmached(metadata_type)
+        if session[:metadata_type] != metadata_type
+            raise StandardError.new("Metadata type has been changed")
+        end
+    end
+
+    def try_save_session(metadata_type, full_name, result)
+        raise_error_when_type_unmached(metadata_type)
+
         if session[:read_result].present? && session[:read_result].values.size >= Max_metadata_count
             raise StandardError.new("Cannot read/edit more than 5 meatadata all at once")
         end
         session[:read_result][full_name] = result
+    end
+
+    def read_results
+        session[:read_result]
     end
 
     def list_response_json(metadata_type, metadata_list, parent_tree_nodes)
@@ -64,20 +81,23 @@ class MetadataController < ApplicationController
     end
 
     def prepare
-        metadata_type = params[:type]
+        metadata_type = params[:metadata_type]
         full_name = params[:name]
 
         begin
+            raise_error_when_type_unmached(metadata_type)
             result = read_metadata(sforce_session, metadata_type, full_name)
             tree_data = format(Metadata::FormatType::Edit, full_name, result)
-            try_save_session(full_name, result)
+            try_save_session(metadata_type, full_name, result)
             render :json => {:tree => tree_data}, :status => 200            
         rescue StandardError => ex
-          render :json => {:error => ex.message}, :status => 400
+            print_error(ex)
+            render :json => {:error => ex.message}, :status => 400
         end
     end
 
     def edit
+        metadata_type = params[:metadata_type]
         node_id = params[:node_id]
         full_name = params[:full_name]
         path = params[:path]
@@ -86,9 +106,8 @@ class MetadataController < ApplicationController
         data_type = params[:data_type]
         
         begin
-            update(session[:read_result][full_name], path, new_text, data_type)
-            #edit_result = update(session[:read_result][full_name], path, new_text)
-            #save_session(full_name, edit_result)
+            edit_result = update(session[:read_result][full_name], path, new_text, data_type)
+            try_save_session(metadata_type, full_name, edit_result)
             render :json => {:result => "ok"}, :status => 200
         rescue StandardError => ex
             print_error(ex)
@@ -96,8 +115,19 @@ class MetadataController < ApplicationController
         end
     end
 
+    def save
+        metadata_type = params[:metadata_type]
+        begin
+            raise_error_when_type_unmached(metadata_type)
+            save(sforce_session, metadata_type, read_results())
+        rescue StandardError => ex
+            print_error(ex)
+            render :json => {:error => ex.message}, :status => 400
+        end
+    end
+
     def read
-        metadata_type = params[:type]
+        metadata_type = params[:metadata_type]
         full_name = params[:name]
         begin
             result = read_metadata(sforce_session, metadata_type, full_name)

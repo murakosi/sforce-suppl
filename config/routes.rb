@@ -24,6 +24,7 @@ Rails.application.routes.draw do
   post    'metadata/download',      to: 'metadata#download'
   post    'metadata/prepare',       to: 'metadata#prepare'
   post    'metadata/edit',          to: 'metadata#edit'
+  post    'metadata/save',          to: 'metadata#save'
 
   get     'soql',                   to: 'soqlexecuter#show'
   post    'soql',                   to: 'soqlexecuter#execute'

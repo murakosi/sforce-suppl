@@ -76,11 +76,12 @@ module Metadata
             call_metadata_api(:read_metadata, {:type_name => type_name, :full_name => full_name})
         end
 
-        def update(type,params)
+        def update_metadata(type_name, metadata = {})
+            body = {:metadata => [metadata], :attributes! => { :metadata => { 'xsi:type' => "tns:#{type_name}" }}}
+            call_metadata_api(:update_metadata, body)
             #type = type.to_s.camelize
             #aram = get_param(type, current_name, metadata)
             #params.store('@xsi:type', "#{type}")
-            p params
             #call_metadata_api(:update_metadata, {:metadata => [params]})
             #call_metadata_api(:update_metadata, get_param(type, params))
         end
