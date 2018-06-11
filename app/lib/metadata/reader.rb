@@ -20,17 +20,12 @@ module Metadata
 			update_source(source, path, new_text, data_type)
 		end
 
-		def save(sforce_session, metadata_type, metadata)
-			p metadata.class
-			#Service::MetadataClientService.call(sforce_session).update_metadata(metadata_type, metadata)
-		end
-
 		def update_source(source, path, new_text, data_type)
 			mash = Hashie::Mash.new(source)
 			text = to_type(new_text, data_type)
 			update = "mash." + path + " = text"
 			eval(update)
-			mash.to_hash
+			mash.to_hash.deep_symbolize_keys
 		end
 
 		def to_type(text, data_type)
@@ -46,9 +41,24 @@ module Metadata
 					text
 				end
 			rescue StandardError => ex
-				p ex.message
 				raise StandardError.new("Invalid value for data type")
 			end
 		end
+
+		def save_metadata(sforce_session, metadata_type, metadata)
+			save_result = Service::MetadataClientService.call(sforce_session).update_metadata(metadata_type, metadata)
+			parse_save_result(save_result)
+		end
+
+		def parse_save_result(result)
+			if !result.has_key?(:errors)
+				return result
+			end
+
+			error = result[:errors].first
+			error_message = error[:status_code] + ": " + error[:message]
+			raise StandardError.new(error_message)
+		end
+
 	end
 end

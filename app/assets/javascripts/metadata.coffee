@@ -158,9 +158,10 @@ coordinates = ->
     callback(json.tree)    
 
   $("#saveButton").on "click", (e) ->
+    e.preventDefault()
     val = {metadata_type: $('#metadataArea #selected_directory').val()}
-    action = $(this).attr("action")
-    method = $(this).attr("method")
+    action = $("#editor").attr("action")
+    method = $("#editor").attr("method")
     options = getAjaxOptions(action, method, val, defaultDataType)
     executeAjax(options, saveSuccess, displayError)
 

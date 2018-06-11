@@ -42,11 +42,15 @@ module Metadata
             @client = Savon.client({
                 wsdl: @wsdl,
                 soap_header: @headers,
-                convert_request_keys_to: :none,
                 convert_response_tags_to: @response_tags,
                 logger: @logger,
                 log: (@logger != false),
                 endpoint: @server_url,
+                #log: true,
+                #logger: Rails.logger,
+                #log_level: :debug,
+                #pretty_print_xml: true,
+                convert_request_keys_to: :lower_camelcase,
                 ssl_version: @ssl_version # Sets ssl_version for HTTPI adapter
             }.update(@savon_options))
 
@@ -76,15 +80,22 @@ module Metadata
             call_metadata_api(:read_metadata, {:type_name => type_name, :full_name => full_name})
         end
 
-        def update_metadata(type_name, metadata = {})
-            body = {:metadata => [metadata], :attributes! => { :metadata => { 'xsi:type' => "tns:#{type_name}" }}}
+        def update_metadata(type_name, metadata = {})           
+            body = {:metadata => prepare_metadata(metadata), :attributes! => { :metadata => { 'xsi:type' => "tns:#{type_name}" }}}
             call_metadata_api(:update_metadata, body)
+
             #type = type.to_s.camelize
             #aram = get_param(type, current_name, metadata)
             #params.store('@xsi:type', "#{type}")
             #call_metadata_api(:update_metadata, {:metadata => [params]})
             #call_metadata_api(:update_metadata, get_param(type, params))
         end
+
+        def prepare_metadata(metadata)
+            metadata.values.map{|arr| arr.reject{|k, v| k == :"@xsi:type"}}
+        end
+
+
 =begin
 req2 = {:labels => {:full_name=>"test_label", :categories=>"category", :language=>"ja", :protected=>true,
 :short_description=>"test label", :value=>"values are here"}}

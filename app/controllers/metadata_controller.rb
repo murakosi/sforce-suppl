@@ -119,7 +119,8 @@ class MetadataController < ApplicationController
         metadata_type = params[:metadata_type]
         begin
             raise_error_when_type_unmached(metadata_type)
-            save(sforce_session, metadata_type, read_results())
+            save_metadata(sforce_session, metadata_type, read_results())
+            render :json => {:result => "ok"}, :status => 200
         rescue StandardError => ex
             print_error(ex)
             render :json => {:error => ex.message}, :status => 400
