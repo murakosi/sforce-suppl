@@ -8,7 +8,11 @@ module Metadata
 
             @headers = { 'tns:LocaleOptions' => { 'tns:language' => 'ja_JP' } }
 
+            @version = options[:version] || Constants::DefaultApiVersion
+
             @logger = options[:logger] || false
+
+            @log_level = options[:log_level] || :debug
             # Due to SSLv3 POODLE vulnerabilty and disabling of TLSv1, use TLSv1_2
             @ssl_version = options[:ssl_version] || :TLSv1_2
 
@@ -45,11 +49,9 @@ module Metadata
                 convert_response_tags_to: @response_tags,
                 logger: @logger,
                 log: (@logger != false),
+                log_level: @log_level,
                 endpoint: @server_url,
-                #log: true,
-                #logger: Rails.logger,
-                #log_level: :debug,
-                #pretty_print_xml: true,
+                pretty_print_xml: true,
                 convert_request_keys_to: :lower_camelcase,
                 ssl_version: @ssl_version # Sets ssl_version for HTTPI adapter
             }.update(@savon_options))
@@ -73,50 +75,51 @@ module Metadata
         end
 
         def describe_metadata_objects
-            describe[:metadata_objects].collect{|type| type[:xml_name] }.sort
+            #describe[:metadata_objects].map{|hash| hash[:xml_name] }.sort
+            result = describe[:metadata_objects]
+            xml_names = result.reject{|hash| hash[:xml_name] == "CustomLabels"}.map{|hash| hash[:xml_name]}
+            children = result.select{|hash| hash.has_key?(:child_xml_names)}.map{|hash| hash[:child_xml_names]}
+            Array[xml_names | children].flatten.sort
         end
 
         def read(type_name, full_name)
             call_metadata_api(:read_metadata, {:type_name => type_name, :full_name => full_name})
         end
 
-        def update_metadata(type_name, metadata = {})           
-            body = {:metadata => prepare_metadata(metadata), :attributes! => { :metadata => { 'xsi:type' => "tns:#{type_name}" }}}
-            call_metadata_api(:update_metadata, body)
-
-            #type = type.to_s.camelize
-            #aram = get_param(type, current_name, metadata)
-            #params.store('@xsi:type', "#{type}")
-            #call_metadata_api(:update_metadata, {:metadata => [params]})
-            #call_metadata_api(:update_metadata, get_param(type, params))
+        def update(type_name, metadata = {})           
+            request_body = {:metadata => prepare_metadata(metadata), :attributes! => { :metadata => { 'xsi:type' => "tns:#{type_name}" }}}
+            call_metadata_api(:update_metadata, request_body)
         end
 
         def prepare_metadata(metadata)
             metadata.values.map{|arr| arr.reject{|k, v| k == :"@xsi:type"}}
         end
 
+        def retrieve(metadata_type, metadata)
+            request_body = retrieve_request(metadata_type, metadata)
+            call_metadata_api(:retrieve, request_body)
+        end
 
-=begin
-req2 = {:labels => {:full_name=>"test_label", :categories=>"category", :language=>"ja", :protected=>true,
-:short_description=>"test label", :value=>"values are here"}}
+        def retrieve_status(id, include_zip)
+            request_body = {:id => id, :include_zip => include_zip}
+            call_metadata_api(:check_retrieve_status, request_body)
+        end
 
-b = {:metadata => [req2], :attributes! => { :metadata => { 'xsi:type' => "tns:CustomLabels" }}}
-
-message_hash = b
-response = meta.call(:update_metadata) do |locals|
-    locals.message message_hash
-end
-
-=end
-        def get_param(type, args)
-            if args.has_key?("@xsi:type")
-                args.delete("@xsi:type")
-            end
-
+        def retrieve_request(metadata_type, metadata)
             {
-              :metadata => [args], :attributes! => { :metadata => {'xsi:type' => "tns:#{type}"}}          
+                :retrieve_request => 
+                {
+                    :api_version=> @version,
+                    :single_package => true,
+                    :unpackaged => package(metadata_type, metadata)
+                }
             }
         end
+
+        def package(metadata_type, metadata)
+            {:types => {:members => Array[metadata].compact.flatten, :name => metadata_type}}
+        end
+
 
         def call_metadata_api(method, message_hash={})
             response = @client.call(method.to_sym) do |locals|
@@ -124,7 +127,6 @@ end
             end
 
             # Convert SOAP XML to Hash
-            #File.write("C:\\Users\\murakosi\\rubytest\\a.xml", response, encoding: 'ASCII-8BIT:UTF-8')
             response = response.to_hash
 
             # Get Response Body

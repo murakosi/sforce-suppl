@@ -1,8 +1,9 @@
 coordinates = ->
   
-  selectedRowData = {}
+  fullNames = {}
+  FULL_NAME_INDEX = 4
   grids = {}
-  nodeGrids = {}
+  rawData = {}
   currentId = null
   jqXHR = null
   defaultDataType = ""
@@ -26,18 +27,19 @@ coordinates = ->
       "alwaysCallback": alwaysCallback
     }
 
-  $("#metadataArea .exp-btn").on "click", (e) ->
+  $("#metadataArea .exp").on "click", (e) ->
     e.preventDefault()
     options = getDownloadOptions(this)
+    console.log(options)
     $.ajaxDownload(options)
 
   getDownloadOptions = (target) ->
     url = $("#metadataArea #exportForm").attr('action')
     method = $("#metadataArea #exportForm").attr('method')
     dl_format = $(target).attr("dl_format")
-    selected_type = $('#metadataArea #selected_directory').val()
-    selected_record = selectedRowData
-    data = {dl_format: dl_format, selected_type: selected_type, selected_record: selected_record}
+    selected_type = getSelectedMetadata()
+    full_names = Object.values(fullNames)
+    data = {dl_format: dl_format, selected_type: selected_type, full_names: full_names}
     downloadOptions(url, method, data, downloadDone, downloadFail, ->)
 
   downloadDone = (url) ->
@@ -46,34 +48,34 @@ coordinates = ->
   downloadFail = (response, url, error) ->
     displayError($.parseJSON(response))
 
-  $("#metadataArea #tree").on "before_open.jstree", (e, node) ->
+  getSelectedMetadata = () ->
+    $('#metadataArea #selected_directory').val()
+
+  $("#metadataArea #editTree").on "before_open.jstree", (e, node) ->
     if currentId == node.node.id
       return
 
-    if nodeGrids[node.node.id]
-      console.error(nodeGrids[node.node.id])
-      createGrid("#metadataArea #sample", nodeGrids[node.node.id])
+    if rawData[node.node.id]
+      setRawData(rawData[node.node.id])
 
   $("#metadataArea .execute-metadata").on "click", (e) ->
     e.preventDefault()
     clearResults()
-    val = {selected_directory: $('#metadataArea #selected_directory').val()}
+    val = {selected_directory: getSelectedMetadata()}
     action = $('#metadataArea .metadata-form').attr('action')
     method = $('#metadataArea .metadata-form').attr('method')
     options = getAjaxOptions(action, method, val, defaultDataType)
     executeAjax(options, processListSuccessResult, displayError)
 
   clearResults = () ->
+    if jqXHR
+      jqXHR.abort()
+
     createGrid("#metadataArea #grid")
-    createGrid("#metadataArea #sample")
-    $('#metadataArea #tree').jstree(true).settings.core.data = null
-    $('#metadataArea #tree').jstree(true).refresh()
-    # to eidt
     $('#metadataArea #editTree').jstree(true).settings.core.data = null
     $('#metadataArea #editTree').jstree(true).refresh()
-    # ==============
-    selectedRowData = {}
-    nodeGrids = {}
+    fullNames = {}
+    rawData = {}
     grids = {}
     currentId = null
     
@@ -118,55 +120,52 @@ coordinates = ->
     createGrid("#metadataArea #grid", json.grid)
 
   refreshTree = (json) ->
-    $('#metadataArea #tree').jstree(true).settings.core.data = json
-    $('#metadataArea #tree').jstree(true).refresh()
-    $('#metadataArea #tree').jstree(true).settings.core.data = (node, cb) -> callReadMetadata(node, cb)
-    # to edit
     $('#metadataArea #editTree').jstree(true).settings.core.data = json
     $('#metadataArea #editTree').jstree(true).refresh()
-    $('#metadataArea #editTree').jstree(true).settings.core.data = (node, cb) -> callReadMetadata2(node, cb)
+    $('#metadataArea #editTree').jstree(true).settings.core.data = (node, cb) -> callReadMetadata(node, cb)
 
   callReadMetadata = (node, callback) ->
-    val = {metadata_type: $('#metadataArea #selected_directory').val(), name: node.id}
-    action = $("#read-tab").attr("action")
-    method = $("#read-tab").attr("method")
+    currentId = node.id
+    val = {metadata_type: getSelectedMetadata(), name: node.id}
+    action = $("#edit-tab").attr("action")
+    method = $("#edit-tab").attr("method")
     options = getAjaxOptions(action, method, val, defaultDataType)
     executeAjax(options, processReadSuccess, processReadError, callback)
 
   processReadSuccess = (json, callback) ->
     hideMessageArea
-    currentId = json.fullName
-    nodeGrids[currentId] = json.grid
-    createGrid("#metadataArea #sample", json.grid)
+    rawData[currentId] = json.raw
+    setRawData(json.raw)
     callback(json.tree)
 
   processReadError = (json, callback) ->
     callback([])
     $("#metadataArea #messageArea").html(json.error)
-    $("#metadataArea #messageArea").show()    
-  
-  # to edit ==================================
-  callReadMetadata2 = (node, callback) ->
-    val = {metadata_type: $('#metadataArea #selected_directory').val(), name: node.id}
-    action = $("#edit-tab").attr("action")
-    method = $("#edit-tab").attr("method")
-    options = getAjaxOptions(action, method, val, defaultDataType)
-    executeAjax(options, processReadSuccess2, processReadError, callback)
+    $("#metadataArea #messageArea").show()
 
-  processReadSuccess2 = (json, callback) ->
-    hideMessageArea
-    callback(json.tree)    
+  setRawData = (json) ->
+    $("#raw").empty()
+    $("#raw").html(JSON.stringify(json))
 
-  $("#saveButton").on "click", (e) ->
+  $("#updateButton").on "click", (e) ->
     e.preventDefault()
-    val = {metadata_type: $('#metadataArea #selected_directory').val()}
-    action = $("#editor").attr("action")
-    method = $("#editor").attr("method")
+    val = {crud_type: "update", metadata_type: getSelectedMetadata()}
+    action = $(".crudForm").attr("action")
+    method = $(".crudForm").attr("method")
     options = getAjaxOptions(action, method, val, defaultDataType)
     executeAjax(options, saveSuccess, displayError)
 
+  $("#deleteButton").on "click", (e) ->
+    e.preventDefault()
+    if window.confirm("Are you sure to delete Metadata?")
+      val = {crud_type: "delete", metadata_type: getSelectedMetadata(), full_names: fullNames}
+      action = $(".crudForm").attr("action")
+      method = $(".crudForm").attr("method")
+      options = getAjaxOptions(action, method, val, defaultDataType)
+      executeAjax(options, saveSuccess, displayError)
+
   saveSuccess = (json) ->
-    alert("Saved")
+    alert(json.message)
 
   $("#metadataArea #editTree").on 'select_node.jstree', (e, data) ->
     selectedNode = data.node
@@ -176,7 +175,7 @@ coordinates = ->
       return
 
     val = {
-           metadata_type: $('#metadataArea #selected_directory').val(),
+           metadata_type: getSelectedMetadata(),
            node_id: data.node.id,
            full_name: data.node.li_attr.full_name,
            path: data.node.li_attr.path,
@@ -210,8 +209,6 @@ coordinates = ->
     if operation == 'edit' && !node.li_attr.editable
       return false
 
-  # end edit =================================
-
   createGrid = (elementId, json = null) ->   
     hotElement = document.querySelector(elementId)
 
@@ -225,7 +222,7 @@ coordinates = ->
 
     hotSettings = {
         data: records,
-        height: 500;
+        height: 500,
         stretchH: 'all',
         autoWrapRow: true,
         manualRowResize: false,
@@ -235,6 +232,7 @@ coordinates = ->
         columns: columnsOption,
         contextMenu: false,
         startRows: 0,
+        columnSorting: true
         beforeChange: (source, changes) -> detectBeforeEditOnGrid(source, changes)
     }
 
@@ -248,15 +246,13 @@ coordinates = ->
     checked = source[0][3]
 
     if checked
-      if Object.keys(selectedRowData).length > 0
-        source[0][3] = false
-        return
-      else
-        selectedRowData[rowIndex] = grids["#metadataArea #grid"].getDataAtRow(rowIndex)
-        return
+        fullNames[rowIndex] = getFullName(rowIndex)
     else
-      delete selectedRowData[rowIndex]
-      return
+      delete fullNames[rowIndex]
+
+  getFullName = (rowIndex) ->
+      record = grids["#metadataArea #grid"].getDataAtRow(rowIndex)
+      record[FULL_NAME_INDEX]
 
   getColumns = (json) ->
     if !json?
@@ -276,45 +272,22 @@ coordinates = ->
     else
       json.column_options
 
-  tes = (a,b) ->
-    alert("ehre")
-    false
-
   $("#metadataArea #tabArea").tabs()
 
   createGrid("#metadataArea #grid")
-  createGrid("#metadataArea #sample")
 
   $('#metadataArea #editTree').jstree({
     
     'core' : {
       'check_callback' : (operation, node, node_parent, node_position, more) -> treeChecker(operation, node, node_parent, node_position, more),
-      'data' : [ 
-        { 'id' : '1', 'parent' : '#', 'text' : 'Root node 1' },
-        { 'id' : '2', 'parent' : '1', 'text' : 'Child node 1' },
-        { 'id' : '3', 'parent' : '1', 'text' : 'Child node 2' },
-        { 'id' : '4', 'parent' : '#', 'text' : 'Root node 2' }
-      ],
+      'data' : [],
       "multiple": false,
       "animation":false,
       "themes": {"icons":false}
-    }
+    }  
   })
 
-  $('#metadataArea #tree').jstree({
-    'core' : {
-      'check_callback' : true,
-      'data' : [ # 画面に表示する仮の初期データ
-        { 'id' : '1', 'parent' : '#', 'text' : 'Root node 1' },
-        { 'id' : '2', 'parent' : '1', 'text' : 'Child node 1' },
-        { 'id' : '3', 'parent' : '1', 'text' : 'Child node 2' },
-        { 'id' : '4', 'parent' : '#', 'text' : 'Root node 2' }
-      ],
-      "multiple": false,
-      "animation":false,
-      "themes": {"icons":false}
-    }
-  })
+  #$("#metadataArea #tabArea").tabs({ active: 1 });
 
 $(document).ready(coordinates)
 $(document).on('page:load', coordinates)

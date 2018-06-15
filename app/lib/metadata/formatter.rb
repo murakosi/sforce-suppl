@@ -21,20 +21,12 @@ module Metadata
 
         def format_metadata_list(metadata_list)
             added_metadata_list = add_missing_key(metadata_list)
-
-            if metadata_list.is_a?(Hash)
-                [metadata_list.slice(*Key_order)]
-            else
-                added_metadata_list.map{ |hash| hash.slice(*Key_order)}.sort_by{|k,v| k[:full_name]}
-            end
+            added_metadata_list.map{ |hash| hash.slice(*Key_order)}.sort_by{|hash| hash[:full_name]}
         end
 
         def add_missing_key(metadata_list)
-            if metadata_list.is_a?(Hash)
-                metadata_list.store(:namespace_prefix, nil) unless metadata_list.has_key?(:namespace_prefix)
-            else
-                metadata_list.each{ |hash| hash.store(:namespace_prefix, nil) unless hash.has_key?(:namespace_prefix) }
-            end
+            modified_list = Array[metadata_list].compact.flatten
+            modified_list.each{ |hash| hash.store(:namespace_prefix, "") unless hash.has_key?(:namespace_prefix) }
         end
 
         def format_parent_tree_nodes(metadata_list)

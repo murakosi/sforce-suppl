@@ -16,11 +16,7 @@ module Metadata
 			raw_result[:records]
 		end
 
-		def update(source, path, new_text, data_type)
-			update_source(source, path, new_text, data_type)
-		end
-
-		def update_source(source, path, new_text, data_type)
+		def edit_metadata(source, path, new_text, data_type)
 			mash = Hashie::Mash.new(source)
 			text = to_type(new_text, data_type)
 			update = "mash." + path + " = text"
@@ -45,17 +41,23 @@ module Metadata
 			end
 		end
 
-		def save_metadata(sforce_session, metadata_type, metadata)
-			save_result = Service::MetadataClientService.call(sforce_session).update_metadata(metadata_type, metadata)
-			parse_save_result(save_result)
+		def update_metadata(sforce_session, metadata_type, metadata)
+			save_result = Service::MetadataClientService.call(sforce_session).update(metadata_type, metadata)
+			parse_crud_result(save_result)
 		end
 
-		def parse_save_result(result)
+		def delete_metadata(sforce_session, metadata_type, full_names)
+			delete_result = Service::MetadataClientService.call(sforce_session).delete(metadata_type, full_names)
+			parse_crud_result(delete_result)
+		end
+
+		def parse_crud_result(crud_result)
+			result = Array[crud_result].flatten.first
 			if !result.has_key?(:errors)
 				return result
 			end
 
-			error = result[:errors].first
+			error = result[:errors]
 			error_message = error[:status_code] + ": " + error[:message]
 			raise StandardError.new(error_message)
 		end

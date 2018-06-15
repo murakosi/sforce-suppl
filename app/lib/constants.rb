@@ -1,5 +1,5 @@
 module Constants
-	DefaultApiVersion = "41.0"
+	DefaultApiVersion = "42.0"
 	ApiVersions = 
 	[
 		"42.0",

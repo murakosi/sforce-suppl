@@ -5,10 +5,32 @@
     width: 100%;
     padding: 5px;
 }
+
 .btn-info{
     font-size: 8pt !important;
     font-family:Arial;
 }
+
+
+.ex-small-btn{
+    font-size: 8pt !important;
+    font-family:Arial;
+}
+
+.rawResult{
+	border: 1px solid lightgray;
+    width: inherit;
+    height: 500px;
+    overflow: auto;
+    white-space: pre-wrap;
+    padding: 5px;
+}
+
+.crudForm{
+	float:left;
+	margin-right:5px;
+}
+
 </style>
 <div id="metadataArea">
 	<div id="formArea">
@@ -32,42 +54,41 @@
 	
 	<div id="tabArea">
 		<br>
-		<%= form_tag metadata_download_path(), :id => "exportForm", :remote => true, :method => :post do %>
-			<%= button_tag "Export Excel", :id => "excel-export", :class => "btn btn-default sub-btn exp-btn", :dl_format => "excel" %>
-			<%= button_tag "CSV Export",  :id => "csv-export", :class => "btn btn-default sub-btn exp-btn", :dl_format => "csv" %>
-			<%= button_tag "YAML Export", :id => "yaml-export", :class => "btn btn-default sub-btn exp-btn", :dl_format => "yaml" %>
-		<% end %>
-		<%= form_tag metadata_save_path(), :id => "editor", :method => :post do %>
-			<%= button_tag "Save", :id => "saveButton", :class => "btn btn-default sub-btn" %>
-		<% end %>
+
 		<ul>
 			<li class="noselect"><a href="#list-tab">List</a></li>
-			<li class="noselect"><a href="#read-tab">Tree</a></li>
 			<li class="noselect"><a href="#edit-tab">Edit</a></li>
-			<li class="noselect"><a href="#sample-tab">Raw Data</a></li>
+			<li class="noselect"><a href="#raw-tab">Raw</a></li>
 		</ul>
 
 		<div id="list-tab" class="resultTab">
-			<div id="list-overview" class="resultSoql">List</div>
+			<div id="list-overview" class="inButtonArea">
+				<%= form_tag metadata_crud_path(), :id => "listForm", :method => :post, :class => "crudForm" do %>
+					<%= button_tag "Delete", :id => "deleteButton", :class => "btn btn-warning ex-small-btn" %>
+				<% end %>
+				<%= form_tag metadata_download_path(), :id => "exportForm", :method => :post do %>
+					<%= button_tag "Retrieve metadata", :id => "xml-export", :class => "btn btn-info ex-small-btn", :dl_format => "xml" %>
+					<%= button_tag "CSV Export",  :id => "csv-export", :class => "btn btn-info ex-small-btn", :dl_format => "csv" %>
+				<% end %>
+			</div>
 			<div id="grid" class="resultGrid"></div>
 		</div>
 
-		<div id="read-tab" class="resultTab" action="<%= metadata_read_path() %>" method="POST">
-			<div id="read-overview" class="resultSoql">Tree</div>
-			<div id="tree"></div>
-		</div>
-
-		<div id="edit-tab" class="resultTab" action="<%= metadata_prepare_path() %>" method="POST">
+		<div id="edit-tab" class="resultTab" action="<%= metadata_read_path() %>" method="POST">
 			<div id="edit-overview" class="inButtonArea">
+				<%= form_tag metadata_crud_path(), :id => "editForm", :method => :post, :class => "crudForm" do %>
+					<%= button_tag "Update", :id => "updateButton", :class => "btn btn-warning ex-small-btn" %>
+				<% end %>
 				<input type="button" value="Expand" id="expand" class="btn btn-info" />
 				<input type="button" value="Collapse" id="collapse" class="btn btn-info" />
 			</div>
 			<div id="editTree" action="<%= metadata_edit_path() %>" method="POST"></div>
 		</div>
 
-		<div id="sample-tab" class="resultTab">
-			<div id="sample-overview" class="resultSoql">Raw</div>
-			<div id="sample" class="resultGrid"></div>
+		<div id="raw-tab" class="resultTab">
+			<div id="raw-overview" class="resultSoql">Raw</div>
+			<div id="raw" class="rawResult"></div>
 		</div>
+
 	</div>
 </div>

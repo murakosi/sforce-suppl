@@ -49,7 +49,6 @@
             }
 
             function executeDownload(){
-
                 task = $.fileDownload(settings.url, {
                     httpMethod: settings.method,
                     data: settings.data

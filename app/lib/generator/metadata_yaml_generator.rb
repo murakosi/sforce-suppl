@@ -1,8 +1,9 @@
 module Generator
 	class MetadataYamlGenerator
+		include Metadata::MetadataFormatter
 
 		def generate(params)
-	        yaml_data = Metadata::MetadataFormatter.format(Metadata::MetadataFormatType::Yaml, params[:full_name], params[:data])
+	        yaml_data = format(Metadata::MetadataFormatType::Yaml, params[:full_name], params[:data])
 	        yaml = []
 	        yaml_data.data.each do | data |
 	            yaml << data[0].to_s + ":"
