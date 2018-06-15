@@ -1,5 +1,8 @@
 module Metadata
 	module SessionController
+		
+		Max_metadata_count = 10
+
 	    def clear_session(metadata_type)
 	        session[:metadata_type] = metadata_type
 	        session[:read_result] = {}

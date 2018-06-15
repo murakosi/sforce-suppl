@@ -58,6 +58,7 @@
 		<ul>
 			<li class="noselect"><a href="#list-tab">List</a></li>
 			<li class="noselect"><a href="#edit-tab">Edit</a></li>
+			<li class="noselect"><a href="#create-tab">Create</a></li>
 			<li class="noselect"><a href="#raw-tab">Raw</a></li>
 		</ul>
 
@@ -83,6 +84,17 @@
 				<input type="button" value="Collapse" id="collapse" class="btn btn-info" />
 			</div>
 			<div id="editTree" action="<%= metadata_edit_path() %>" method="POST"></div>
+		</div>
+
+		<div id="create-tab" class="resultTab">
+			<div id="create-overview" class="inButtonArea">
+				<%= form_tag metadata_crud_path(), :id => "createForm", :method => :post, :class => "crudForm" do %>
+					<%= button_tag "Create", :id => "createButton", :class => "btn btn-warning ex-small-btn" %>
+				<% end %>
+				<input type="button" value="Add row" id="addRow" class="btn btn-info" />
+				<input type="button" value="Remove row" id ="removeRow" class="btn btn-info" />
+			</div>
+			<div id="createGrid" class="resultGrid"></div>
 		</div>
 
 		<div id="raw-tab" class="resultTab">

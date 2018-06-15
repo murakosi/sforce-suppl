@@ -55,7 +55,6 @@ module Metadata
                 convert_request_keys_to: :lower_camelcase,
                 ssl_version: @ssl_version # Sets ssl_version for HTTPI adapter
             }.update(@savon_options))
-
         end
         alias_method :authenticate, :login
 
@@ -65,39 +64,62 @@ module Metadata
             @client.operations
         end
         
-        def list(*args)
-            queries = args.map(&:to_s).map(&:camelize).map { |t| {:type => t} }
-            call_metadata_api(:list_metadata, {:query => queries})
+        def namespace
+            @client.wsdl.namespace
         end
 
         def describe
             call_metadata_api(:describe_metadata, {:api_version => @version})
         end
-
+        alias :describe_metadata :describe
+        
         def describe_metadata_objects
-            #describe[:metadata_objects].map{|hash| hash[:xml_name] }.sort
             result = describe[:metadata_objects]
             xml_names = result.reject{|hash| hash[:xml_name] == "CustomLabels"}.map{|hash| hash[:xml_name]}
             children = result.select{|hash| hash.has_key?(:child_xml_names)}.map{|hash| hash[:child_xml_names]}
             Array[xml_names | children].flatten.sort
         end
 
+        def describe_value_type(metadata_type)
+            request_body = {:type => "{#{namespace}}" + metadata_type.to_s}
+            call_metadata_api(:describe_value_type, request_body)
+        end
+
+        def list(*args)
+            queries = args.map(&:to_s).map(&:camelize).map { |t| {:type => t} }
+            call_metadata_api(:list_metadata, {:query => queries})
+        end
+        alias :list_metadata :list
+
         def read(type_name, full_name)
             call_metadata_api(:read_metadata, {:type_name => type_name, :full_name => full_name})
         end
+        alias :read_metadata :read
 
         def update(type_name, metadata = {})           
             request_body = {:metadata => prepare_metadata(metadata), :attributes! => { :metadata => { 'xsi:type' => "tns:#{type_name}" }}}
             call_metadata_api(:update_metadata, request_body)
         end
-
-        def prepare_metadata(metadata)
-            metadata.values.map{|arr| arr.reject{|k, v| k == :"@xsi:type"}}
+        alias :update_metadata :update
+        
+        def delete(metadata_type, full_names)
+            request_body = {:metadata_type => metadata_type, :full_names => Array[full_names].compact.flatten }
+            call_metadata_api(:delete_metadata, request_body)
         end
+        alias :delete_metadata :delete
+
+        def create(metadata_type, full_names)
+            raise ArgumentError.new("not available")
+        end
+        alias :create_metadata :create
 
         def retrieve(metadata_type, metadata)
             request_body = retrieve_request(metadata_type, metadata)
             call_metadata_api(:retrieve, request_body)
+        end
+
+        def prepare_metadata(metadata)
+            metadata.values.map{|arr| arr.reject{|k, v| k == :"@xsi:type"}}
         end
 
         def retrieve_status(id, include_zip)

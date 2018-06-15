@@ -11,6 +11,10 @@ module Metadata
 			Service::MetadataClientService.call(sforce_session).list(metadata_type)
 		end
 
+		def get_field_value_types(sforce_session, metadata_type)
+			Service::MetadataClientService.call(sforce_session).describe_value_type(metadata_type)
+		end
+
 		def read_metadata(sforce_session, metadata_type, full_name)
 			raw_result = Service::MetadataClientService.call(sforce_session).read(metadata_type, full_name)
 			raw_result[:records]

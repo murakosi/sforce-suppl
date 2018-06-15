@@ -1,14 +1,14 @@
+require 'json'
 
 class MetadataController < ApplicationController
     include Metadata::Formatter
     include Metadata::Reader
     include Metadata::SessionController
+    include Metadata::GridDataGenerator
 
     before_action :require_sign_in!
 
     protect_from_forgery :except => [:list, :read, :prepare, :edit, :crud, :download]
-
-    Max_metadata_count = 10
     
     def show
         begin
@@ -28,27 +28,26 @@ class MetadataController < ApplicationController
             metadata_list = list_metadata(sforce_session, metadata_type)
             if metadata_list.nil?
                 raise StandardError.new("No metadata available")
-            end
-            formatted_list = format_metadata_list(metadata_list)
+            else
+                formatted_list = format_metadata_list(metadata_list)
+            end           
             parent_tree_nodes = format_parent_tree_nodes(formatted_list)
+            field_types = get_field_value_types(sforce_session, metadata_type)
             clear_session(metadata_type)
-            render :json => list_response_json(metadata_type, formatted_list, parent_tree_nodes), :status => 200
+            render :json => list_response_json(metadata_type, formatted_list, parent_tree_nodes, field_types), :status => 200
         rescue StandardError => ex
             print_error(ex)
             render :json => {:error => ex.message}, :status => 400
         end
     end   
 
-    def list_response_json(metadata_type, metadata_list, parent_tree_nodes)
-        column_options = [{type: "checkbox", readOnly: false, className: "htCenter htMiddle"}]
-        metadata_list.first.keys.size.times{column_options << {type: "text", readOnly: true}}
+    def list_response_json(metadata_type, formatted_list, parent_tree_nodes, field_types)
         {
             :fullName => metadata_type,
-            :grid => {:column_options => column_options,
-                    :columns => [""] + metadata_list.first.keys, 
-                    :rows => metadata_list.map{|hash| [false] + hash.values}
-                    },
-            :tree => parent_tree_nodes
+            :list_grid => list_grid_column_options(formatted_list),
+            :tree => parent_tree_nodes,
+            :create_grid => create_grid_options(field_types),
+            :crud_info => api_crud_info(field_types)
         }
     end
 
@@ -102,7 +101,7 @@ class MetadataController < ApplicationController
         begin
             raise_when_type_unmached(metadata_type)
             change_metadata(crud_type, metadata_type)
-            render :json => {:result => "ok"}, :status => 200
+            render :json => {:message => crud_type.camelize + " complate"}, :status => 200
         rescue StandardError => ex
             print_error(ex)
             render :json => {:error => ex.message}, :status => 400
@@ -111,23 +110,28 @@ class MetadataController < ApplicationController
 
     def change_metadata(crud_type, metadata_type)
         if crud_type == "update"
-            update(metadata_type)
+            try_update(metadata_type)
         elsif crud_type == "delete"
-            delete(metadata_type)
+            try_delete(metadata_type)
         elsif crud_type == "create"
-            create(metadata_type)
+            try_create(metadata_type)
         else
             raise StandardError.new("Invalid crud type")
         end     
     end
 
-    def update(metadata_type)
+    def try_update(metadata_type)
         update_metadata(sforce_session, metadata_type, read_results())
     end
 
-    def delete(metadata_type)
+    def try_delete(metadata_type)
         full_names = params[:full_names]
         delete_metadata(sforce_session, metadata_type, full_names)      
+    end
+
+    def try_create(metadata_type)
+        data = params[:data]
+        p data.values
     end
 
     def download
