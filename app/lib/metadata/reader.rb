@@ -47,23 +47,35 @@ module Metadata
 
 		def update_metadata(sforce_session, metadata_type, metadata)
 			save_result = Service::MetadataClientService.call(sforce_session).update(metadata_type, metadata)
-			parse_crud_result(save_result)
+			parse_crud_result(:update, save_result)
 		end
 
 		def delete_metadata(sforce_session, metadata_type, full_names)
 			delete_result = Service::MetadataClientService.call(sforce_session).delete(metadata_type, full_names)
-			parse_crud_result(delete_result)
+			parse_crud_result(:delete, delete_result)
 		end
 
-		def parse_crud_result(crud_result)
-			result = Array[crud_result].flatten.first
-			if !result.has_key?(:errors)
-				return result
+		def create_metadata(sforce_session, metadata_type, tags, values)
+			metadata = []
+			values.each do | value |
+				merged = [tags, value].transpose
+				metadata << Hash[*merged.flatten]
 			end
 
-			error = result[:errors]
-			error_message = error[:status_code] + ": " + error[:message]
-			raise StandardError.new(error_message)
+			save_result = Service::MetadataClientService.call(sforce_session).create(metadata_type, metadata)
+			parse_crud_result(:create, save_result)
+		end
+
+		def parse_crud_result(crud_type, crud_result)
+			result = Array[crud_result].flatten.first
+			if (error = result[:errors]).present?
+				error_message = error[:status_code] + ": " + error[:message]
+				raise StandardError.new(error_message)
+			elsif !result[:success]
+				raise StandardError.new(crud_type.to_s.camelize + " metadata failed")
+			else
+				return crud_result
+			end
 		end
 
 	end

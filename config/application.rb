@@ -20,6 +20,7 @@ module Sforcesuppl
     config.assets.precompile += %w(select2.full.js)
     config.assets.precompile += %w(jquery.fileDownload.js)
     config.assets.precompile += %w(ajaxDownload.js)
+    config.assets.precompile += %w(ajaxUtils.js)
     config.assets.precompile += %w(main.coffee)
     config.assets.precompile += %w(describe.coffee)
     config.assets.precompile += %w(soqlexecuter.coffee)

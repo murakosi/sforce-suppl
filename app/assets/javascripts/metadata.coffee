@@ -8,6 +8,7 @@ coordinates = ->
   jqXHR = null
   defaultDataType = ""
   selectedNode = null
+  fieldNames = null
 
   getAjaxOptions = (action, method, data, datatype) ->
     {
@@ -54,7 +55,7 @@ coordinates = ->
     Object.values(fullNames)
 
   getDataOnCreateGrid = () ->
-    grids["#metadataArea #createGrid"].getData()
+    JSON.stringify(grids["#metadataArea #createGrid"].getData())
 
   $("#metadataArea #editTree").on "before_open.jstree", (e, node) ->
     if currentId == node.node.id
@@ -69,8 +70,9 @@ coordinates = ->
     val = {selected_directory: getSelectedMetadata()}
     action = $('#metadataArea .metadata-form').attr('action')
     method = $('#metadataArea .metadata-form').attr('method')
-    options = getAjaxOptions(action, method, val, defaultDataType)
-    executeAjax(options, processListSuccessResult, displayError)
+    options = $.getAjaxOptions(action, method, val, defaultDataType)
+    callbacks = $.getAjaxCallbacks(processListSuccessResult, displayError, (->))
+    $.executeAjax(options, callbacks)
 
   clearResults = () ->
     if jqXHR
@@ -83,6 +85,7 @@ coordinates = ->
     fullNames = {}
     rawData = {}
     grids = {}
+    fieldNames = null
     currentId = null
     
   executeAjax = (options, doneCallback, errorCallback, params = null) ->
@@ -93,9 +96,11 @@ coordinates = ->
     jqXHR = $.ajax({
       url: options.action,
       type: options.method,
-      data: options.data,
+      #data: options.data,
       dataType: options.datatype,
-      traditional: true,
+      #traditional: true,
+      contentType: 'application/json',
+      data: JSON.stringify(options.data),
       cache: false
     })
 
@@ -125,6 +130,7 @@ coordinates = ->
     hideMessageArea()
     refreshTree(json.tree)
     changeButtonStyles(json.crud_info)
+    fieldNames = json.create_grid.field_names
     createGrid("#metadataArea #grid", json.list_grid)
     createGrid("#metadataArea #createGrid", json.create_grid)
 
@@ -160,8 +166,9 @@ coordinates = ->
     val = {metadata_type: getSelectedMetadata(), name: node.id}
     action = $("#edit-tab").attr("action")
     method = $("#edit-tab").attr("method")
-    options = getAjaxOptions(action, method, val, defaultDataType)
-    executeAjax(options, processReadSuccess, processReadError, callback)
+    options = $.getAjaxOptions(action, method, val, defaultDataType)
+    callbacks = $.getAjaxCallbacks(processReadSuccess, processReadError, (->), callback)
+    $.executeAjax(options, callbacks)
 
   processReadSuccess = (json, callback) ->
     hideMessageArea
@@ -183,8 +190,9 @@ coordinates = ->
     val = {crud_type: "update", metadata_type: getSelectedMetadata()}
     action = $(".crudForm").attr("action")
     method = $(".crudForm").attr("method")
-    options = getAjaxOptions(action, method, val, defaultDataType)
-    executeAjax(options, saveSuccess, displayError)
+    options = $.getAjaxOptions(action, method, val, defaultDataType)
+    callbacks = $.getAjaxCallbacks(saveSuccess, displayError, ->)
+    $.executeAjax(options, callbacks)
 
   $("#deleteButton").on "click", (e) ->
     e.preventDefault()
@@ -192,20 +200,18 @@ coordinates = ->
       val = {crud_type: "delete", metadata_type: getSelectedMetadata(), full_names: getFullNames()}
       action = $(".crudForm").attr("action")
       method = $(".crudForm").attr("method")
-      options = getAjaxOptions(action, method, val, defaultDataType)
-      executeAjax(options, saveSuccess, displayError)
+      options = $.getAjaxOptions(action, method, val, defaultDataType)
+      callbacks = $.getAjaxCallbacks(saveSuccess, displayError, ->)
+      $.executeAjax(options, callbacks)
 
   $("#createButton").on "click", (e) ->
     e.preventDefault()
-    console.log(getDataOnCreateGrid())
-    val = {crud_type: "create", metadata_type: getSelectedMetadata(), grid_data: getDataOnCreateGrid()}
-    #console.log(val)
-    #val = JSON.stringify(val)
-    #console.log(val)
+    val = {crud_type: "create", metadata_type: getSelectedMetadata(), field_headers: fieldNames, field_values: getDataOnCreateGrid()}
     action = $(".crudForm").attr("action")
     method = $(".crudForm").attr("method")
-    options = getAjaxOptions(action, method, val, "json")
-    executeAjax(options, saveSuccess, displayError)
+    options = $.getAjaxOptions(action, method, val, "json")
+    callbacks = $.getAjaxCallbacks(saveSuccess, displayError, ->)
+    $.executeAjax(options, callbacks)
 
   saveSuccess = (json) ->
     hideMessageArea()
@@ -229,8 +235,9 @@ coordinates = ->
           }
     action = $("#metadataArea #editTree").attr("action")
     method = $("#metadataArea #editTree").attr("method")
-    options = getAjaxOptions(action, method, val, defaultDataType)
-    executeAjax(options, doneEdit, undoEdit)    
+    options = $.getAjaxOptions(action, method, val, defaultDataType)
+    callbacks = $.getAjaxCallbacks(((json)->), undoEdit, ->)
+    $.executeAjax(options, callbacks)    
 
   $("#expand").on "click", (e) ->
     if selectedNode == null
@@ -241,8 +248,6 @@ coordinates = ->
     if selectedNode == null
       return false
     $("#metadataArea #editTree").jstree(true).close_all(selectedNode)
-
-  doneEdit = (json) ->
 
   undoEdit = (json) ->
     node = $("#metadataArea #editTree").jstree(true).get_node(json.node_id)
@@ -277,7 +282,7 @@ coordinates = ->
         rowHeaders: true,
         colHeaders: header,
         columns: columnsOption,
-        contextMenu: contextMenu,
+        #contextMenu: contextMenu,
         startRows: 0,
         #minRow: minRow,
         #minSpareRows: minRow,

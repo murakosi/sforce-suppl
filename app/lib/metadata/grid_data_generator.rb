@@ -15,10 +15,12 @@ module Metadata
 		def create_grid_options(type_fields)
 			@columns = []
 			@column_options = []
+			@field_names = []
 			type_fields[:value_type_fields].each{|hash| generate(hash, create_grid_column, create_grid_column_option)}
 			{
 				:rows => [Array.new(@columns.size)],
 				:columns => @columns,
+				:field_names => @field_names,
 				:column_options => @column_options,
 				:context_menu => true,
 				:min_row => min_row(type_fields)
@@ -32,6 +34,7 @@ module Metadata
 
 		def create_grid_column
 			proc{|hash|
+				@field_names << hash[:name]
 			    if hash[:is_name_field] || hash[:min_occurs].to_i > 0
 			        hash[:name] + "(*)"
 			    else
@@ -43,12 +46,12 @@ module Metadata
 		def create_grid_column_option
 			proc{|hash|
 			    if hash[:soap_type] == "boolean"
-			        {:type => "checkbox", :className => "htCenter htMiddle"}
+			        type = {:type => "checkbox", :className => "htCenter htMiddle"}
 			    elsif hash.has_key?(:picklist_values)
-			        {:type => "autocomplete", :source => hash[:picklist_values].map{|hash| hash[:value]}}
+			        type = {:type => "autocomplete", :source => hash[:picklist_values].map{|hash| hash[:value]}}
 			    else
-			        {:type => "text"}
-			    end
+			        type = {:type => "text"}
+				end
 			}
 		end
 
@@ -61,7 +64,7 @@ module Metadata
 		end
 
 		def api_crud_info(type_fields)
-			p type_fields.reject{|k, v| k == :value_type_fields}
+			type_fields.reject{|k, v| k == :value_type_fields}
 		end
 
 	end

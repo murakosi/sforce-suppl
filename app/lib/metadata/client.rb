@@ -91,13 +91,13 @@ module Metadata
         end
         alias :list_metadata :list
 
-        def read(type_name, full_name)
-            call_metadata_api(:read_metadata, {:type_name => type_name, :full_name => full_name})
+        def read(metadata_type, full_name)
+            call_metadata_api(:read_metadata, {:type_name => metadata_type, :full_name => full_name})
         end
         alias :read_metadata :read
 
-        def update(type_name, metadata = {})           
-            request_body = {:metadata => prepare_metadata(metadata), :attributes! => { :metadata => { 'xsi:type' => "tns:#{type_name}" }}}
+        def update(metadata_type, metadata)           
+            request_body = {:metadata => prepare_metadata(metadata), :attributes! => { :metadata => { 'xsi:type' => "tns:#{metadata_type}" }}}
             call_metadata_api(:update_metadata, request_body)
         end
         alias :update_metadata :update
@@ -108,8 +108,9 @@ module Metadata
         end
         alias :delete_metadata :delete
 
-        def create(metadata_type, full_names)
-            raise ArgumentError.new("not available")
+        def create(metadata_type, metadata)
+            request_body = {:metadata => metadata, :attributes! => { :metadata => { 'xsi:type' => "tns:#{metadata_type}" }}}
+            call_metadata_api(:create_metadata, request_body)
         end
         alias :create_metadata :create
 

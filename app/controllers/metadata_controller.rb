@@ -1,4 +1,3 @@
-require 'json'
 
 class MetadataController < ApplicationController
     include Metadata::Formatter
@@ -130,8 +129,9 @@ class MetadataController < ApplicationController
     end
 
     def try_create(metadata_type)
-        data = params[:data]
-        p data.values
+        field_headers = params[:field_headers]
+        field_values = JSON.parse(params[:field_values])
+        create_metadata(sforce_session, metadata_type, field_headers, field_values)
     end
 
     def download

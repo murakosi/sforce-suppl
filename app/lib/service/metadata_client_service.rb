@@ -23,7 +23,7 @@ module Service
             end
 
             def set_temp_logger
-                file_name = 'C:\\Users\\murakosi\\rubytest\\log.txt'
+                file_name = File.expand_path("log/" + "metadata_log.txt", Rails.root)
                 if File.exist?(file_name)                  
                     File.open(file_name, 'w') do |file|
                         file.close
