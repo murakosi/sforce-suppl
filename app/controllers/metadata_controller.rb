@@ -139,12 +139,10 @@ class MetadataController < ApplicationController
         full_names = params[:full_names]
         export_format = params[:dl_format]
 
-        if full_names.nil?
-            respond_download_error("No record selected")
-            return
-        end
-
         begin
+            if full_names.nil?
+                raise StandardError.new("No record selected")
+            end
             raise_when_type_unmached(metadata_type)
             try_download(export_format, metadata_type, full_names)
             set_download_success_cookie(response)

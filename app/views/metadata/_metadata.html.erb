@@ -56,9 +56,9 @@
 		<br>
 
 		<ul>
-			<li class="noselect"><a href="#list-tab">List</a></li>
-			<li class="noselect"><a href="#edit-tab">Edit</a></li>
-			<li class="noselect"><a href="#create-tab">Create</a></li>
+			<li class="noselect" id="list"><a href="#list-tab">List</a></li>
+			<li class="noselect" id="edit"><a href="#edit-tab">Edit</a></li>
+			<li class="noselect" id="create"><a href="#create-tab">Create</a></li>
 			<li class="noselect"><a href="#raw-tab">Raw</a></li>
 		</ul>
 
@@ -68,8 +68,8 @@
 					<%= button_tag "Delete", :id => "deleteButton", :class => "btn btn-warning ex-small-btn" %>
 				<% end %>
 				<%= form_tag metadata_download_path(), :id => "exportForm", :method => :post do %>
-					<%= button_tag "Retrieve metadata", :id => "xml-export", :class => "btn btn-info ex-small-btn", :dl_format => "xml" %>
-					<%= button_tag "CSV Export",  :id => "csv-export", :class => "btn btn-info ex-small-btn", :dl_format => "csv" %>
+					<%= button_tag "Retrieve metadata", :id => "xml-export", :class => "btn btn-info ex-small-btn exp", :dl_format => "xml" %>
+					<%= button_tag "CSV Export",  :id => "csv-export", :class => "btn btn-info ex-small-btn exp", :dl_format => "csv" %>
 				<% end %>
 			</div>
 			<div id="grid" class="resultGrid"></div>

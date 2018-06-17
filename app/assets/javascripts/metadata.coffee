@@ -5,18 +5,10 @@ coordinates = ->
   grids = {}
   rawData = {}
   currentId = null
-  jqXHR = null
   defaultDataType = ""
   selectedNode = null
   fieldNames = null
-
-  getAjaxOptions = (action, method, data, datatype) ->
-    {
-      "action": action,
-      "method": method,
-      "data": data,
-      "datatype": datatype
-    }
+  selectedCellOnCreateGrid = null
 
   downloadOptions = (url, method, data, successCallback, failCallback, alwaysCallback) ->
     {
@@ -40,7 +32,7 @@ coordinates = ->
     selected_type = getSelectedMetadata()
     full_names = getFullNames()
     data = {dl_format: dl_format, selected_type: selected_type, full_names: full_names}
-    downloadOptions(url, method, data, downloadDone, downloadFail, ->)
+    $.getAjaxDownloadOptions(url, method, data, downloadDone, downloadFail, ->)
 
   downloadDone = (url) ->
     hideMessageArea()
@@ -75,8 +67,8 @@ coordinates = ->
     $.executeAjax(options, callbacks)
 
   clearResults = () ->
-    if jqXHR
-      jqXHR.abort()
+    if $.isAjaxBusy()
+      $.abortAjax()
 
     createGrid("#metadataArea #grid")
     createGrid("#metadataArea #createGrid")
@@ -87,36 +79,7 @@ coordinates = ->
     grids = {}
     fieldNames = null
     currentId = null
-    
-  executeAjax = (options, doneCallback, errorCallback, params = null) ->
-
-    if jqXHR
-      return
-
-    jqXHR = $.ajax({
-      url: options.action,
-      type: options.method,
-      #data: options.data,
-      dataType: options.datatype,
-      #traditional: true,
-      contentType: 'application/json',
-      data: JSON.stringify(options.data),
-      cache: false
-    })
-
-    jqXHR.done (data, stat, xhr) ->
-      jqXHR = null
-      console.log { done: stat, data: data, xhr: xhr }
-      doneCallback($.parseJSON(xhr.responseText), params)
-
-    jqXHR.fail (xhr, stat, err) ->
-      jqXHR = null
-      console.log { fail: stat, error: err, xhr: xhr }
-      errorCallback($.parseJSON(xhr.responseText), params)
-
-    jqXHR.always (res1, stat, res2) ->
-      jqXHR = null
-      console.log { always: stat, res1: res1, res2: res2 }
+    selectedCellOnCreateGrid = null
 
   displayError = (json) ->
     $("#metadataArea #messageArea").html(json.error)
@@ -134,6 +97,15 @@ coordinates = ->
     createGrid("#metadataArea #grid", json.list_grid)
     createGrid("#metadataArea #createGrid", json.create_grid)
 
+  $("#metadataArea #list").on "click", (e) ->
+    #console.log(grids["#metadataArea #grid"])
+    #grids["#metadataArea #grid"].render();
+    $("#metadataArea #grid").focus()
+
+  $("#metadataArea #create").on "click", (e) ->
+    #console.log(grids["#metadataArea #grid"])
+    #grids["#metadataArea #createGrid"].render();
+
   changeButtonStyles = (json) ->
     $("#createButton").prop("disabled", !json.api_creatable)
     $("#addRow").prop("disabled", !json.api_creatable)
@@ -148,10 +120,12 @@ coordinates = ->
 
   $("#addRow").on "click", (e) ->
     grid = grids["#metadataArea #createGrid"]
-    if grid.getSelected() == undefined
+    #if grid.getSelected() == undefined
+    if selectedCellOnCreateGrid.row < 0
       return false
     else
-      grid.alter('insert_row', grid.getSelected()[0][0] + 1, 1)
+      #grid.alter('insert_row', grid.getSelected()[0][0] + 1, 1)
+      grid.alter('insert_row', selectedCellOnCreateGrid.row + 1, 1)
 
   #cell arrays [[startRow, startCol, endRow, endCol], ...]
   $("#removeRow").on "click", (e) ->
@@ -270,6 +244,7 @@ coordinates = ->
     columnsOption = getColumnsOption(json)
     contextMenu = getContextMenuOption(json)
     minRow = getMinRow(json)
+    onClickFunc = getOnClickFunc(elementId, json)
 
     hotSettings = {
         data: records,
@@ -282,17 +257,27 @@ coordinates = ->
         rowHeaders: true,
         colHeaders: header,
         columns: columnsOption,
-        #contextMenu: contextMenu,
         startRows: 0,
         #minRow: minRow,
         #minSpareRows: minRow,
         columnSorting: true,
-        outsideClickDeselects: false,
-        beforeChange: (source, changes) -> detectBeforeEditOnGrid(source, changes)
+        #outsideClickDeselects: false,
+        beforeChange: (source, changes) -> detectBeforeEditOnGrid(source, changes),
+        afterOnCellMouseDown: (event, coords, td) -> onClickFunc(event, coords, td)
     }
 
     grids[elementId] = new Handsontable(hotElement, hotSettings)
 
+  getOnClickFunc = (elementId, json) ->
+    if !json? || elementId != "#metadataArea #createGrid"
+      return ((event, coords, td) ->)
+  
+    return onCellClick
+
+  onCellClick = (event, coords, td) ->
+    console.log(coords)
+    selectedCellOnCreateGrid = coords
+    
   detectBeforeEditOnGrid = (source, changes) ->
     if changes != 'edit'
       return

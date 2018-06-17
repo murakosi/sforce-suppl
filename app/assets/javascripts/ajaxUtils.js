@@ -28,11 +28,11 @@
 
         ajaxCallbacks: function (options) {
             return $.extend({
-                doneCallback: function () { },
+                doneCallback: function (json, params) { },
                 doneCallbackParams: null,
-                failCallback: function () { },
+                failCallback: function (json, params) { },
                 failCallbackParams: null,
-                alwaysCallback: function () { },
+                alwaysCallback: function (params) { },
                 alwaysCallbackParams: null
             }, options);
         },
@@ -44,6 +44,20 @@
                 failCallback: failCallback,
                 alwaysCallback: alwaysCallback,
             });
+        },
+
+        isAjaxBusy: function () {
+            if (jqXHR) {
+                return true;
+            } else {
+                return false;
+            }
+        },
+
+        abortAjax: function () {
+            if (jqXHR) {
+                jqXHR.abort();
+            }
         },
 
         executeAjax: function (options, callbacks) {
