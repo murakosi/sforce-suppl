@@ -121,11 +121,12 @@ coordinates = ->
   $("#addRow").on "click", (e) ->
     grid = grids["#metadataArea #createGrid"]
     #if grid.getSelected() == undefined
-    if selectedCellOnCreateGrid.row < 0
+    if !selectedCellOnCreateGrid? || selectedCellOnCreateGrid.row < 0
       return false
     else
       #grid.alter('insert_row', grid.getSelected()[0][0] + 1, 1)
       grid.alter('insert_row', selectedCellOnCreateGrid.row + 1, 1)
+      grid.selectCell(selectedCellOnCreateGrid.row, selectedCellOnCreateGrid.col)
 
   #cell arrays [[startRow, startCol, endRow, endCol], ...]
   $("#removeRow").on "click", (e) ->
@@ -267,7 +268,7 @@ coordinates = ->
     }
 
     grids[elementId] = new Handsontable(hotElement, hotSettings)
-
+    
   getOnClickFunc = (elementId, json) ->
     if !json? || elementId != "#metadataArea #createGrid"
       return ((event, coords, td) ->)
