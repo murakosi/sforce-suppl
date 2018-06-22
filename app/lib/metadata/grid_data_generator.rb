@@ -67,7 +67,7 @@ module Metadata
 
 		def create_grid_column(hash)
 		    if hash[:is_name_field] || hash[:min_occurs].to_i > 0
-		        "(*)" + hash[:name]
+		        "*" + hash[:name]
 		    else
 		        hash[:name]
 		    end

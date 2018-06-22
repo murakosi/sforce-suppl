@@ -102,7 +102,7 @@ class MetadataController < ApplicationController
         begin
             raise_when_type_unmached(metadata_type)
             result = change_metadata(crud_type, metadata_type)
-            render :json => {:message => result.message, :refresh => result.refresh_required}, :status => 200
+            render :json => {:message => result[:message], :refresh => result[:refresh_required]}, :status => 200
         rescue StandardError => ex
             print_error(ex)
             render :json => {:error => ex.message}, :status => 400

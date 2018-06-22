@@ -46,9 +46,25 @@ module Metadata
 
 		def rebuild(metadata_type, records)
 			if !mapping_exists?(metadata_type, Rebuild_mapping)
-				return records
+				simple_reconstruct(records)
+				#records
+			else
+				reconstruct(records)
 			end
+		end
 
+		def simple_reconstruct(records)
+			#p records.each{|record| record.map{|k,v| {k => encode_content(k, v)}}}
+			rebuild_result = {}
+			records.each do |record|
+			 	record.each do |k,v|
+			 		rebuild_result.store(k, encode_content(k, v))
+			 	end
+			end
+			rebuild_result
+		end
+
+		def reconstruct(records)
 			rebuild_fields = @mapping["rebuild_fields"]
 			skip_fields = @mapping["skip_fields"]
 
@@ -62,17 +78,25 @@ module Metadata
 						rebuild_fields[k].each do | field_key, field_hash|
 							field_hash.each do | source_key, rebuild_key |
 								fields << rebuild_key
-								fields << record[source_key]
+								fields << encode_content(rebuild_key, record[source_key])
 							end
 							rebuild_result.store(field_key, Hash[*fields])
 						end						
 					else
-						rebuild_result.store(k, v)
+						rebuild_result.store(k, encode_content(k, v))
 					end
 				end
 			end
 
 			rebuild_result
+		end
+
+		def encode_content(key, value)
+			if key.to_s.downcase == "content"
+				Base64.strict_encode64(value)
+			else
+				value
+			end
 		end
 
 	end
