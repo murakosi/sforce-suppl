@@ -1,7 +1,9 @@
 require "hashie"
 
 module Metadata
-	module Reader
+	module Crud
+
+		All_or_none_error = "ALL_OR_NONE_OPERATION_ROLLED_BACK"
 
 		def get_metadata_types(sforce_session)
 			Service::MetadataClientService.call(sforce_session).describe_metadata_objects()
@@ -51,8 +53,8 @@ module Metadata
 		end
 
 		def delete_metadata(sforce_session, metadata_type, full_names)
-			delete_result = Service::MetadataClientService.call(sforce_session).delete(metadata_type, full_names)
-			parse_crud_result(:delete, delete_result)
+			save_result = Service::MetadataClientService.call(sforce_session).delete(metadata_type, full_names)
+			parse_crud_result(:delete, save_result)
 		end
 
 		def create_metadata(sforce_session, metadata_type, tags, values)
@@ -62,19 +64,47 @@ module Metadata
 				metadata << Hash[*merged.flatten]
 			end
 
+			metadata = Metadata::ValueFieldSupplier.rebuild(metadata_type, metadata)
 			save_result = Service::MetadataClientService.call(sforce_session).create(metadata_type, metadata)
-			parse_crud_result(:create, save_result)
+			parse_save_result(:create, save_result)
 		end
 
-		def parse_crud_result(crud_type, crud_result)
-			result = Array[crud_result].flatten.first
-			if (error = result[:errors]).present?
-				error_message = error[:status_code] + ": " + error[:message]
-				raise StandardError.new(error_message)
-			elsif !result[:success]
-				raise StandardError.new(crud_type.to_s.camelize + " metadata failed")
+		def parse_save_result(crud_type, crud_result)
+			result = Array[crud_result].flatten
+			if result.any?{|hash| !hash[:success]}
+				crud_error_result(crud_type, result)
 			else
-				return crud_result
+				crud_success_result(crud_type, result)
+			end
+		end
+
+		def crud_error_result(crud_type, result)
+			result = result.select{|hash| !hash[:success]}
+
+			if result.any?{|hash| hash.has_key?(:errors)}
+				result = result.reject{|hash| hash[:errors][:status_code] == All_or_none_error}.first				
+				error = result[:errors]
+				raise StandardError.new(error[:status_code] + ": " + error[:message])
+			else
+				raise StandardError.new(crud_type.to_s.camelize + " metadata failed")
+			end
+		end
+
+		def crud_success_result(crud_type, result)
+			{
+				:message => crud_type.to_s.camelize + " metadata succeeded",
+				:refresh_required => refresh_required?(crud_type)
+			}
+		end
+
+		def refresh_required?(crud_type)
+	        case crud_type
+	        when Metadata::CrudType::Create
+	            return false
+	        when Metadata::CrudType::Update
+	            return false
+	        when Metadata::CrudType::Delete
+	            return true
 			end
 		end
 

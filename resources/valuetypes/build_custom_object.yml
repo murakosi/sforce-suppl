@@ -1,0 +1,38 @@
+fullName:
+  name: fullName
+  soap_type: string
+  is_name_field: true
+  min_occurs: 1
+deploymentStatus:
+  name: deploymentStatus
+  soap_type: string
+  picklist_values:
+    - value: InDevelopment
+    - value: Deployed
+  min_occurs: 1
+label:
+  name: label
+  soap_type: string
+  min_occurs: 1
+nameFieldType:
+  name: nameFieldType
+  soap_type: string
+  min_occurs: 1
+  picklist_values:
+    - value: Text
+    - value: AutoNumber
+nameFieldLabel:
+  name: nameFieldLabel
+  soap_type: string
+  min_occurs: 1
+sharingModel:
+  name: sharingModel
+  soap_type: string
+  min_occurs: 1
+  picklist_values:
+    - value: Private
+    - value: Read
+    - value: ReadWrite
+    - value: ReadWriteTransfer
+    - value: FullAccess
+    - value: ControlledByParent

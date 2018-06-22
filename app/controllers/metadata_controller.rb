@@ -1,13 +1,15 @@
 
 class MetadataController < ApplicationController
     include Metadata::Formatter
-    include Metadata::Reader
+    include Metadata::Crud
     include Metadata::SessionController
     include Metadata::GridDataGenerator
 
     before_action :require_sign_in!
 
-    protect_from_forgery :except => [:list, :read, :prepare, :edit, :crud, :download]
+    protect_from_forgery :except => [:list, :read, :prepare, :edit, :crud, :retrieve]
+
+    Full_name_index = 4
     
     def show
         begin
@@ -45,7 +47,7 @@ class MetadataController < ApplicationController
             :fullName => metadata_type,
             :list_grid => list_grid_column_options(formatted_list),
             :tree => parent_tree_nodes,
-            :create_grid => create_grid_options(field_types),
+            :create_grid => create_grid_options(metadata_type, field_types),
             :crud_info => api_crud_info(field_types)
         }
     end
@@ -99,8 +101,8 @@ class MetadataController < ApplicationController
 
         begin
             raise_when_type_unmached(metadata_type)
-            change_metadata(crud_type, metadata_type)
-            render :json => {:message => crud_type.camelize + " complate"}, :status => 200
+            result = change_metadata(crud_type, metadata_type)
+            render :json => {:message => result.message, :refresh => result.refresh_required}, :status => 200
         rescue StandardError => ex
             print_error(ex)
             render :json => {:error => ex.message}, :status => 400
@@ -108,15 +110,16 @@ class MetadataController < ApplicationController
     end
 
     def change_metadata(crud_type, metadata_type)
-        if crud_type == "update"
-            try_update(metadata_type)
-        elsif crud_type == "delete"
-            try_delete(metadata_type)
-        elsif crud_type == "create"
+        case crud_type
+        when Metadata::CrudType::Create
             try_create(metadata_type)
+        when Metadata::CrudType::Update
+            try_update(metadata_type)
+        when Metadata::CrudType::Delete
+            try_delete(metadata_type)
         else
             raise StandardError.new("Invalid crud type")
-        end     
+        end 
     end
 
     def try_update(metadata_type)
@@ -124,7 +127,8 @@ class MetadataController < ApplicationController
     end
 
     def try_delete(metadata_type)
-        full_names = params[:full_names]
+        selected_records = JSON.parse(params[:selected_records])
+        full_names = extract_full_names(selected_records)
         delete_metadata(sforce_session, metadata_type, full_names)      
     end
 
@@ -134,17 +138,14 @@ class MetadataController < ApplicationController
         create_metadata(sforce_session, metadata_type, field_headers, field_values)
     end
 
-    def download
+    def retrieve
         metadata_type = params[:selected_type]
-        full_names = params[:full_names]
-        export_format = params[:dl_format]
-
+        selected_records = JSON.parse(params[:selected_records])
+        
         begin
-            if full_names.nil?
-                raise StandardError.new("No record selected")
-            end
+            full_names = extract_full_names(selected_records)
             raise_when_type_unmached(metadata_type)
-            try_download(export_format, metadata_type, full_names)
+            try_retrieve(metadata_type, full_names)
             set_download_success_cookie(response)
         rescue StandardError => ex
             print_error(ex)
@@ -152,17 +153,7 @@ class MetadataController < ApplicationController
         end
     end
 
-    def try_download(format, metadata_type, full_names)
-        if format == "csv"
-            full_name = full_names.first
-            result = read_metadata(sforce_session, metadata_type, full_name)
-            download_csv(full_name, result)
-        elsif format == "xml"
-            download_metadata(metadata_type, full_names)
-        end
-    end
-
-    def download_metadata(metadata_type, full_names)
+    def try_retrieve(metadata_type, full_names)
         result = Metadata::Retriever.retrieve(sforce_session, metadata_type, full_names)
         send_data(result[:zip_file],
           :disposition => 'attachment',
@@ -172,14 +163,11 @@ class MetadataController < ApplicationController
         )        
     end
 
-    def download_csv(full_name, result)
-        generator = Generator::MetadataCsvGenerator.new(Encoding::SJIS, "\r\n", true)
-        send_data(generator.generate(:full_name => full_name, :data => result),
-          :disposition => 'attachment',
-          :type => 'text/csv',
-          :filename => full_name + '.csv',
-          :status => 200
-        )    
+    def extract_full_names(selected_records)
+        if selected_records.empty?
+            raise StandardError.new("No metadata selected")
+        end
+        selected_records.map{|array| array[Full_name_index]}
     end
 
 end

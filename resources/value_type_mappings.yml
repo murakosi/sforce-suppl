@@ -1,0 +1,5 @@
+CustomObject:
+  build_mapping: "./valuetypes/build_custom_object.yml"
+  rebuild_mapping: "./valuetypes/rebuild_custom_object.yml"
+CustomField:
+  build_mapping: "./valuetypes/build_custom_field.yml"

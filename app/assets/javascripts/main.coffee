@@ -41,7 +41,6 @@ mains = ->
     options = getAjaxOptions(action, method, null, defaultDetatype)
 
     $.get action, (result) ->
-      console.log(result)
       loadPartials(result)
   
   loadPartials = (json) ->

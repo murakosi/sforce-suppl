@@ -41,7 +41,7 @@ module Metadata
                 raise ArgumentError.new("Must provide session_id/metadata_server_url.")
             end
 
-            @headers = @headers.merge({"tns:SessionHeader" => {"tns:sessionId" => @session_id}})
+            @headers = @headers.merge({"tns:SessionHeader" => {"tns:sessionId" => @session_id}, "tns:AllOrNoneHeader" => {"tns:allOrNone" => true}})
 
             @client = Savon.client({
                 wsdl: @wsdl,
@@ -85,11 +85,45 @@ module Metadata
             call_metadata_api(:describe_value_type, request_body)
         end
 
-        def list(*args)
-            queries = args.map(&:to_s).map(&:camelize).map { |t| {:type => t} }
-            call_metadata_api(:list_metadata, {:query => queries})
+        def list(metadata_type)
+            if in_folder?(metadata_type)
+                list_in_folder_metadata(metadata_type)
+            else
+                call_metadata_api(:list_metadata, {:query => {:type => metadata_type}})
+            end
         end
         alias :list_metadata :list
+
+        def list_in_folder_metadata(metadata_type)
+            result = call_metadata_api(:list_metadata, :query => {:type => folder_name(metadata_type)})
+            folders = Array[result].compact.flatten.map{|hash| hash[:full_name]}
+            queries = folders.map{|folder| {:folder => folder, :type=> metadata_type}}
+            call_metadata_api(:list_metadata, {:query => queries})
+        end
+
+        def in_folder?(metadata_type)
+            case metadata_type.to_sym
+            when :Report,:Dashboard,:Document,:EmailTemplate
+                true
+            else
+                false
+            end
+        end
+
+        def folder_name(metadata_type)
+            case metadata_type.to_sym
+            when :Report
+                "ReportFolder"
+            when :Dashboard
+                "DashboardFolder"
+            when :Document
+                "DocumentFolder"
+            when :EmailTemplate
+                "EmailFolder"
+            else
+                nil
+            end
+        end
 
         def read(metadata_type, full_name)
             call_metadata_api(:read_metadata, {:type_name => metadata_type, :full_name => full_name})
@@ -142,7 +176,6 @@ module Metadata
         def package(metadata_type, metadata)
             {:types => {:members => Array[metadata].compact.flatten, :name => metadata_type}}
         end
-
 
         def call_metadata_api(method, message_hash={})
             response = @client.call(method.to_sym) do |locals|

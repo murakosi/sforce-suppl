@@ -37,12 +37,12 @@
             }, options);
         },
 
-        getAjaxCallbacks: function (doneCallback, failCallback, alwaysCallback, doneCallbackParams) {
+        getAjaxCallbacks: function (doneCallback, failCallback, callbackParams) {
             return $.ajaxCallbacks({
                 doneCallback: doneCallback,
-                doneCallbackParams: doneCallbackParams,
+                doneCallbackParams: callbackParams,
                 failCallback: failCallback,
-                alwaysCallback: alwaysCallback,
+                failCallbackParams: callbackParams
             });
         },
 

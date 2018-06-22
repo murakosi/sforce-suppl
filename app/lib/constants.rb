@@ -1,7 +1,8 @@
 module Constants
-	DefaultApiVersion = "42.0"
+	DefaultApiVersion = "43.0"
 	ApiVersions = 
 	[
+		"43.0",
 		"42.0",
 		"41.0",
 		"40.0",
@@ -30,5 +31,4 @@ module Constants
     ProductionUrl = "login.salesforce.com"
     SandboxUrl = "test.salesforce.com"
     SSLVersion = :TLSv1_2
-
 end

@@ -14,6 +14,8 @@ module Service
         		file_name = "excel_export_settings.yml"
         	when :translations
         		file_name = "translations.yml"
+            when :valuetypes
+                file_name = "value_type_mappings.yml"
         	else
         		file_name = param
         	end
