@@ -75,7 +75,7 @@ module Metadata
         
         def describe_metadata_objects
             result = describe[:metadata_objects]
-            xml_names = result.reject{|hash| hash[:xml_name] == "CustomLabels"}.map{|hash| hash[:xml_name]}
+            xml_names = result.map{|hash| hash[:xml_name]}
             children = result.select{|hash| hash.has_key?(:child_xml_names)}.map{|hash| hash[:child_xml_names]}
             Array[xml_names | children].flatten.sort
         end
@@ -125,8 +125,9 @@ module Metadata
             end
         end
 
-        def read(metadata_type, full_name)
-            call_metadata_api(:read_metadata, {:type_name => metadata_type, :full_name => full_name})
+        def read(metadata_type, full_names)
+            request_body = {:metadata_type => metadata_type, :full_names => Array[full_names].compact.flatten }
+            call_metadata_api(:read_metadata, request_body)
         end
         alias :read_metadata :read
 

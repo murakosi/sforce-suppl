@@ -8,7 +8,112 @@ coordinates = ->
   selectedNode = null
   fieldNames = null
   selectedCellOnCreateGrid = null
-  
+
+  disableButtons = () ->
+    $("#createButton").prop("disabled", true)
+    $("#addRow").prop("disabled", true)
+    $("#removeRow").prop("disabled", true)
+    $("#updateButton").prop("disabled", true)
+    $("#deleteButton").prop("disabled", true)
+    $("#expand").prop("disabled", true)
+    $("#collapse").prop("disabled", true)
+    $("#retrieveButton").prop("disabled", true)
+
+  getSelectedMetadata = () ->
+    $('#metadataArea #selected_directory').val()
+
+  getSelectedRecords = () ->
+    JSON.stringify(Object.values(selectedRecords))
+
+  getDataOnCreateGrid = () ->
+    JSON.stringify(grids["#metadataArea #createGrid"].getData())
+
+  #------------------------------------------------
+  # list metadata
+  #------------------------------------------------
+  $("#metadataArea .execute-metadata").on "click", (e) ->
+    e.preventDefault()
+    listMetadate()
+
+  listMetadate = () ->
+    hideMessageArea()
+    clearResults()
+    val = {selected_directory: getSelectedMetadata()}
+    action = $('#metadataArea .metadata-form').attr('action')
+    method = $('#metadataArea .metadata-form').attr('method')
+    options = $.getAjaxOptions(action, method, val, defaultDataType)
+    callbacks = $.getAjaxCallbacks(processListSuccessResult, processListError, null)
+    $.executeAjax(options, callbacks)
+
+  clearResults = () ->
+    if $.isAjaxBusy()
+      $.abortAjax()
+
+    createGrid("#metadataArea #grid")
+    createGrid("#metadataArea #createGrid")
+    $('#metadataArea #editTree').jstree(true).settings.core.data = null
+    $('#metadataArea #editTree').jstree(true).refresh()
+    selectedRecords = {}
+    rawData = {}
+    grids = {}
+    fieldNames = null
+    currentId = null
+    selectedCellOnCreateGrid = null
+
+  processListError = (json) ->
+    disableButtons()
+    displayError(json)
+
+  processListSuccessResult = (json) ->
+    hideMessageArea()
+    refreshTree(json.tree)
+    changeButtonStyles(json.crud_info)
+    fieldNames = json.create_grid.field_names
+    createGrid("#metadataArea #grid", json.list_grid)
+    createGrid("#metadataArea #createGrid", json.create_grid)
+
+  changeButtonStyles = (json) ->
+    $("#createButton").prop("disabled", !json.api_creatable)
+    $("#addRow").prop("disabled", !json.api_creatable)
+    $("#removeRow").prop("disabled", !json.api_creatable)
+    $("#updateButton").prop("disabled", !json.api_updatable)
+    $("#deleteButton").prop("disabled", !json.api_deletable)
+    $("#expand").prop("disabled", !json.api_readable)
+    $("#collapse").prop("disabled", !json.api_readable)
+    $("#retrieveButton").prop("disabled", false)
+
+  refreshTree = (json) ->
+    $('#metadataArea #editTree').jstree(true).settings.core.data = json
+    $('#metadataArea #editTree').jstree(true).refresh()
+    $('#metadataArea #editTree').jstree(true).settings.core.data = (node, callback) -> callReadMetadata(node, callback)
+
+  #------------------------------------------------
+  # Read metadata
+  #------------------------------------------------
+  callReadMetadata = (node, callback) ->
+    currentId = node.id
+    val = {metadata_type: getSelectedMetadata(), name: node.id}
+    action = $("#edit-tab").attr("action")
+    method = $("#edit-tab").attr("method")
+    options = $.getAjaxOptions(action, method, val, defaultDataType)
+    callbacks = $.getAjaxCallbacks(processReadSuccess, processReadError, callback)
+    $.executeAjax(options, callbacks)
+
+  processReadSuccess = (json, callback) ->
+    hideMessageArea
+    rawData[currentId] = json.raw
+    setRawData(json.raw)
+    callback(json.tree)
+
+  processReadError = (json, callback) ->
+    callback([])
+    $("#metadataArea #messageArea").html(json.error)
+    $("#metadataArea #messageArea").show()
+
+  setRawData = (json) ->
+    $("#raw").empty()
+    $("#raw").html(JSON.stringify(json))
+
   #------------------------------------------------
   # retrieve
   #------------------------------------------------
@@ -92,58 +197,6 @@ coordinates = ->
       return false
 
   #------------------------------------------------
-  # list metadata
-  #------------------------------------------------
-  $("#metadataArea .execute-metadata").on "click", (e) ->
-    e.preventDefault()
-    listMetadate()
-
-  listMetadate = () ->
-    hideMessageArea()
-    clearResults()
-    val = {selected_directory: getSelectedMetadata()}
-    action = $('#metadataArea .metadata-form').attr('action')
-    method = $('#metadataArea .metadata-form').attr('method')
-    options = $.getAjaxOptions(action, method, val, defaultDataType)
-    callbacks = $.getAjaxCallbacks(processListSuccessResult, displayError, null)
-    $.executeAjax(options, callbacks)
-
-  clearResults = () ->
-    if $.isAjaxBusy()
-      $.abortAjax()
-
-    createGrid("#metadataArea #grid")
-    createGrid("#metadataArea #createGrid")
-    $('#metadataArea #editTree').jstree(true).settings.core.data = null
-    $('#metadataArea #editTree').jstree(true).refresh()
-    selectedRecords = {}
-    rawData = {}
-    grids = {}
-    fieldNames = null
-    currentId = null
-    selectedCellOnCreateGrid = null
-
-  processListSuccessResult = (json) ->
-    hideMessageArea()
-    refreshTree(json.tree)
-    changeButtonStyles(json.crud_info)
-    fieldNames = json.create_grid.field_names
-    createGrid("#metadataArea #grid", json.list_grid)
-    createGrid("#metadataArea #createGrid", json.create_grid)
-
-  changeButtonStyles = (json) ->
-    $("#createButton").prop("disabled", !json.api_creatable)
-    $("#addRow").prop("disabled", !json.api_creatable)
-    $("#removeRow").prop("disabled", !json.api_creatable)
-    $("#updateButton").prop("disabled", !json.api_updatable)
-    $("#deleteButton").prop("disabled", !json.api_deletable)
-
-  refreshTree = (json) ->
-    $('#metadataArea #editTree').jstree(true).settings.core.data = json
-    $('#metadataArea #editTree').jstree(true).refresh()
-    $('#metadataArea #editTree').jstree(true).settings.core.data = (node, cb) -> callReadMetadata(node, cb)
-
-  #------------------------------------------------
   # Create metadata
   #------------------------------------------------
   $("#createButton").on "click", (e) ->
@@ -178,33 +231,6 @@ coordinates = ->
       selectedCellOnCreateGrid.row = lastRow
     else
       selectedCellOnCreateGrid.row
-
-  #------------------------------------------------
-  # Read metadata
-  #------------------------------------------------
-  callReadMetadata = (node, callback) ->
-    currentId = node.id
-    val = {metadata_type: getSelectedMetadata(), name: node.id}
-    action = $("#edit-tab").attr("action")
-    method = $("#edit-tab").attr("method")
-    options = $.getAjaxOptions(action, method, val, defaultDataType)
-    callbacks = $.getAjaxCallbacks(processReadSuccess, processReadError, callback)
-    $.executeAjax(options, callbacks)
-
-  processReadSuccess = (json, callback) ->
-    hideMessageArea
-    rawData[currentId] = json.raw
-    setRawData(json.raw)
-    callback(json.tree)
-
-  processReadError = (json, callback) ->
-    callback([])
-    $("#metadataArea #messageArea").html(json.error)
-    $("#metadataArea #messageArea").show()
-
-  setRawData = (json) ->
-    $("#raw").empty()
-    $("#raw").html(JSON.stringify(json))
 
   #------------------------------------------------
   # Delete metadata
@@ -338,18 +364,11 @@ coordinates = ->
   onCellClick = (event, coords, td) ->
     selectedCellOnCreateGrid = coords
 
-  getSelectedMetadata = () ->
-    $('#metadataArea #selected_directory').val()
-
-  getSelectedRecords = () ->
-    JSON.stringify(Object.values(selectedRecords))
-
-  getDataOnCreateGrid = () ->
-    JSON.stringify(grids["#metadataArea #createGrid"].getData())
-
   #------------------------------------------------
   # page load actions
   #------------------------------------------------
+  disableButtons()
+
   $("#metadataArea #tabArea").tabs()
 
   createGrid("#metadataArea #grid")

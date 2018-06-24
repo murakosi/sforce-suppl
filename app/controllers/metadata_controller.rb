@@ -11,6 +11,9 @@ class MetadataController < ApplicationController
 
     Full_name_index = 4
     
+    #----------------------------------
+    # Responses select options of metadata types
+    #----------------------------------
     def show
         begin
             metadata_types = get_metadata_types(sforce_session)
@@ -31,24 +34,25 @@ class MetadataController < ApplicationController
                 raise StandardError.new("No metadata available")
             else
                 formatted_list = format_metadata_list(metadata_list)
-            end           
-            parent_tree_nodes = format_parent_tree_nodes(formatted_list)
+            end
             field_types = get_field_value_types(sforce_session, metadata_type)
+            crud_info = api_crud_info(field_types)
+            parent_tree_nodes = format_parent_tree_nodes(crud_info, formatted_list)            
             clear_session(metadata_type)
-            render :json => list_response_json(metadata_type, formatted_list, parent_tree_nodes, field_types), :status => 200
+            render :json => list_response_json(metadata_type, formatted_list, parent_tree_nodes, field_types, crud_info), :status => 200
         rescue StandardError => ex
             print_error(ex)
             render :json => {:error => ex.message}, :status => 400
         end
     end   
 
-    def list_response_json(metadata_type, formatted_list, parent_tree_nodes, field_types)
+    def list_response_json(metadata_type, formatted_list, parent_tree_nodes, field_types, crud_info)
         {
             :fullName => metadata_type,
             :list_grid => list_grid_column_options(formatted_list),
             :tree => parent_tree_nodes,
             :create_grid => create_grid_options(metadata_type, field_types),
-            :crud_info => api_crud_info(field_types)
+            :crud_info => crud_info
         }
     end
 
@@ -59,7 +63,7 @@ class MetadataController < ApplicationController
         begin
             raise_when_type_unmached(metadata_type)
             result = read_metadata(sforce_session, metadata_type, full_name)
-            tree_data = format(Metadata::FormatType::Edit, full_name, result)
+            tree_data = format_read_result(full_name, result)
             try_save_session(metadata_type, full_name, result)
             render :json => read_response_json(result, tree_data), :status => 200            
         rescue StandardError => ex

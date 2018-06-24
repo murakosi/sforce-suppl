@@ -7,10 +7,15 @@ module Metadata
             parse_hash(result, full_name)
         end
 
-        def get_parent_tree_nodes(metadata_list)
+        def get_parent_tree_nodes(api_crud_info, metadata_list)
+            if api_crud_info[:api_readable]
+                children = true
+            else
+                children = false
+            end
             parent_nodes = []
             metadata_list.each do |hash|
-                parent_nodes << {:id => hash[:full_name], :parent => "#", :text => "<b>" + hash[:full_name].to_s + "<b>", :children => true }
+                parent_nodes << {:id => hash[:full_name], :parent => "#", :text => "<b>" + hash[:full_name].to_s + "<b>", :children => children }
             end
             parent_nodes
         end
