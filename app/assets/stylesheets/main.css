@@ -129,7 +129,8 @@
 }
 
 #tree, #editTree{
-    font-size:14px;
+    font-size:12px;
+    font-family: Verdana;
     height:500px;
     overflow:auto;
 }
@@ -296,141 +297,6 @@ span.select2-selection.select2-selection--single {
     display: flex;
     font-size:10pt;
 }
-
-.nav {
-  width: 750px;
-  height: 45px;
-  margin: 0 auto;
-  padding: 0;
-  display: flex;
-  margin-left:70%;
-}
-
-.nav li {
-    position: relative;
-    list-style: none;
-}
-
-.nav li a {
-    display: block;
-    width: 120px;
-    height: 43px;
-    text-align: center;
-    /*color: #fff;*/
-    font-size: 10pt;
-    /*line-height: 2.8;*/
-    line-height: 2;
-    background: #d3cbdb;
-    transition: 0.5s;
-    text-decoration: none;
-    border-left: #aaa 1px solid;
-    box-sizing: border-box;
-}
-
-.nav li:last-child a {
-    border-right: #aaa 1px solid;
-}
-
-.nav > li:hover > a {/*layer-1*/
-    /*color: white;*/
-    /*background: #afc6e2;*/
-    background: white;
-}
-
-.nav > li:visited > a {
-    background: white !important;
-}
-
-.nav > li li:hover > a {/*layer-2*/
-    /*color: olive;
-    background: #afc6e2;*/
-    background: #afc6e2;
-}
-
-.nav li ul {
-    top: 43px;
-    left: -40px;
-    position: absolute;
-}
-
-.nav li ul li {
-    overflow: hidden;
-    height: 0;
-    transition: 0.2s;
-}
-
-.nav li ul li a {
-    /*border-top: 1px solid #eee;*/
-    font-size: 10pt;
-    line-height: 2.8;
-    text-decoration: none;
-    border: #aaa 1px solid;
-    box-sizing: border-box;
-}
-
-.nav li:hover > ul > li {
-    overflow: visible;
-    height: 40px;
-}
-
-.nav li ul li ul {
-    top: 0;
-    left: 110px;
-    line-height: 2;
-}
-
-.nav li ul li ul:before {/*layer-2▷*/
-    position: absolute;
-    content: "";
-    top: 15px;
-    left: 30px;
-    border: 5px solid transparent;
-    border-left: 5px solid #fff;
-}
-
-.nav li ul li ul li:hover > a {/*layer-3*/
-    color: pink;
-    background: #afc6e2;
-}
-
-.nav li ul li ul.left {
-    top: 0;
-    left: -190px;
-}
-
-.nav li ul li ul.left:before,/*layer-2-left▷*/
-.nav li ul li ul li ul.left:before {/*layer-3-left▷*/
-    position: absolute;
-    content: "";
-    top: 15px;
-    left: 190px;
-    border: 5px solid transparent;
-    border-right: 5px solid #fff;
-}
-
-.nav li ul li ul.left li:hover > a {/*layer-2-left*/
-    color: pink;
-    background: #afc6e2;
-}
-
-.nav li ul li ul li ul.left li:hover > a {/*layer-3-left*/
-    color: purple;
-    background: #afc6e2;
-}
-
-/* below not used
-#menuList {
-    margin-top: 15px;
-    width: 100%;
-    height: 45px;
-    border-top: #aaa 1px solid;
-    border-bottom: #aaa 1px solid;
-    position: relative;
-    z-index: 10;
-    background: #d3cbdb;
-    display: flex;
-    font-size:10pt;
-}
  
 #menuList ul {
     height: 45px;
@@ -461,5 +327,133 @@ span.select2-selection.select2-selection--single {
 
 #menuList ul li:hover > a {
     background: #fff;
+}
+
+/* 
+#menuList {
+    margin-top: 15px;
+    width: 100%;
+    height: 45px;
+    border-top: #aaa 1px solid;
+    border-bottom: #aaa 1px solid;
+    position: relative;
+    z-index: 10;
+    background: #d3cbdb;
+    display: flex;
+    font-size:10pt;
+}
+
+.nav {
+  width: 750px;
+  height: 45px;
+  margin: 0 auto;
+  padding: 0;
+  display: flex;
+  margin-left:70%;
+}
+
+.nav li {
+    position: relative;
+    list-style: none;
+}
+
+.nav li a {
+    display: block;
+    width: 120px;
+    height: 43px;
+    text-align: center;
+    font-size: 10pt;
+    line-height: 2;
+    background: #d3cbdb;
+    transition: 0.5s;
+    text-decoration: none;
+    border-left: #aaa 1px solid;
+    box-sizing: border-box;
+}
+
+.nav li:last-child a {
+    border-right: #aaa 1px solid;
+}
+
+.nav > li:hover > a {
+    background: white;
+}
+
+.nav > li:visited > a {
+    background: white !important;
+}
+
+.nav > li li:hover > a {
+    background: #afc6e2;
+}
+
+.nav li ul {
+    top: 43px;
+    left: -40px;
+    position: absolute;
+}
+
+.nav li ul li {
+    overflow: hidden;
+    height: 0;
+    transition: 0.2s;
+}
+
+.nav li ul li a {
+    font-size: 10pt;
+    line-height: 2.8;
+    text-decoration: none;
+    border: #aaa 1px solid;
+    box-sizing: border-box;
+}
+
+.nav li:hover > ul > li {
+    overflow: visible;
+    height: 40px;
+}
+
+.nav li ul li ul {
+    top: 0;
+    left: 110px;
+    line-height: 2;
+}
+
+.nav li ul li ul:before {
+    position: absolute;
+    content: "";
+    top: 15px;
+    left: 30px;
+    border: 5px solid transparent;
+    border-left: 5px solid #fff;
+}
+
+.nav li ul li ul li:hover > a {
+    color: pink;
+    background: #afc6e2;
+}
+
+.nav li ul li ul.left {
+    top: 0;
+    left: -190px;
+}
+
+.nav li ul li ul.left:before,
+.nav li ul li ul li ul.left:before {
+    position: absolute;
+    content: "";
+    top: 15px;
+    left: 190px;
+    border: 5px solid transparent;
+    border-right: 5px solid #fff;
+}
+
+.nav li ul li ul.left li:hover > a {
+    color: pink;
+    background: #afc6e2;
+}
+
+.nav li ul li ul li ul.left li:hover > a {
+    color: purple;
+    background: #afc6e2;
 }
 */

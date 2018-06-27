@@ -100,15 +100,14 @@ coordinates = ->
     $.executeAjax(options, callbacks)
 
   processReadSuccess = (json, callback) ->
-    hideMessageArea
+    hideMessageArea()
     rawData[currentId] = json.raw
     setRawData(json.raw)
     callback(json.tree)
 
   processReadError = (json, callback) ->
     callback([])
-    $("#metadataArea #messageArea").html(json.error)
-    $("#metadataArea #messageArea").show()
+    displayError(json)
 
   setRawData = (json) ->
     $("#raw").empty()
@@ -192,9 +191,9 @@ coordinates = ->
     $("#metadataArea #editTree").jstree(true).edit(node, json.old_text)
     displayError(json)
 
-  treeChecker = (operation, node, node_parent, node_position, more) ->
+  treeChecker = (operation, node, node_parent, node_position, more) ->    
     if operation == 'edit' && !node.li_attr.editable
-      return false
+        return false
 
   #------------------------------------------------
   # Create metadata
@@ -226,7 +225,6 @@ coordinates = ->
 
   getValidRowAfterRemove = (grid) ->
     lastRow = grid.countVisibleRows() - 1
-    console.log("last:" + lastRow + " selected:" + selectedCellOnCreateGrid.row)
     if selectedCellOnCreateGrid.row > lastRow
       selectedCellOnCreateGrid.row = lastRow
     else
@@ -299,7 +297,7 @@ coordinates = ->
         minSpareRows: 0,
         minSpareCols: 0,
         fillHandle: {autoInsertRow: false},
-        contextMenu: contextMenu,
+        #contextMenu: contextMenu,
         columnSorting: allowSort,
         beforeChange: (source, changes) -> detectBeforeEditOnGrid(source, changes),
         afterOnCellMouseDown: (event, coords, td) -> onClickFunc(event, coords, td)
@@ -382,11 +380,12 @@ coordinates = ->
       "multiple": false,
       "animation":false,
       "themes": {"icons":false}
-    }  
+    },
+    "plugins": ["dropdown"]
   })
 
-  #$("#metadataArea #tabArea").tabs({ active: 3 });
-  $("#metadataArea #tabArea").tabs();
+  $("#metadataArea #tabArea").tabs({ active: 1 });
+  #$("#metadataArea #tabArea").tabs();
 
 $(document).ready(coordinates)
 $(document).on('page:load', coordinates)

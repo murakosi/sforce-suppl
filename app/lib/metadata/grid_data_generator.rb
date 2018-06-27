@@ -69,7 +69,7 @@ module Metadata
 		    if hash[:is_name_field] || hash[:min_occurs].to_i > 0
 		        "*" + hash[:name]
 		    else
-		        hash[:name]
+		         hash[:name]
 		    end
 		end
 
@@ -93,6 +93,20 @@ module Metadata
 
 		def api_crud_info(type_fields)
 			type_fields.reject{|k, v| k == :value_type_fields}
+		end
+
+		def tree_type_info(type_fields)
+			types = {}
+			type_fields[:value_type_fields].each do |hash|
+				if hash[:soap_type] == "boolean"
+					types[hash[:name]] = {:is_picklist => true, :picklist_source => ["true", "false"]}
+				elsif hash.has_key?(:picklist_values)
+					types[hash[:name]] = {:is_picklist => true, :picklist_source => hash[:picklist_values].map{|hash| hash[:value]}}
+				else
+					types[hash[:name]] = {:is_picklist => false}
+				end
+			end
+			types
 		end
 
 	end

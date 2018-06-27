@@ -54,7 +54,6 @@ module Metadata
 		end
 
 		def simple_reconstruct(records)
-			#p records.each{|record| record.map{|k,v| {k => encode_content(k, v)}}}
 			rebuild_result = {}
 			records.each do |record|
 			 	record.each do |k,v|

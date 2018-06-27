@@ -1,35 +1,21 @@
 module Metadata
     module Formatter
+        include Metadata::FieldTypeFormatter
         include Utils::FormatUtils
 
         Key_order = %i[type id namespace_prefix full_name file_name created_date created_by_id created_by_name last_modified_date last_modified_by_id last_modified_by_name monegeable_state]
 
-        def format_read_result(full_name, read_result)
+        def format_read_result(full_name, read_result, type_info)
             if read_result.nil?
                 raise StandardError.new("No read results")
             else
                 @full_name = full_name
+                @type_info = type_info
                 parse_hash(read_result, full_name)
             end
         end        
-=begin        
-        def format(format_type, full_name, read_result)
-            case format_type
-                when Metadata::FormatType::Tree
-                    Metadata::TreeFormatter.format(full_name, read_result)
-                when Metadata::FormatType::Mapping
-                    Metadata::MappingFormatter.format(full_name, read_result)
-                when Metadata::FormatType::Yaml
-                    mapping_data = Metadata::MappingFormatter.format(full_name, read_result)
-                    Metadata::YamlFormatter.format(full_name, mapping_data)
-                when Metadata::FormatType::Edit
-                    Metadata::UpdateFormatter.format(full_name, read_result)
-                else
-                    raise StandardError.new("Invalid format type")
-            end
-        end
-=end
-        def format_metadata_list(metadata_list)           
+
+        def format_metadata_list(metadata_list)
             added_metadata_list = add_missing_key(metadata_list)
             added_metadata_list.map{ |hash| hash.slice(*Key_order)}.sort_by{|hash| hash[:full_name]}
         end
@@ -47,9 +33,13 @@ module Metadata
             end
             parent_nodes = []
             metadata_list.each do |hash|
-                parent_nodes << {:id => hash[:full_name], :parent => "#", :text => "<b>" + hash[:full_name].to_s + "<b>", :children => children }
+                parent_nodes << {:id => hash[:full_name], :parent => "#", :text => "<b>" + hash[:full_name].to_s + "<b>", :children => children, :li_attr => {:editable => false} }
             end
             parent_nodes
+        end
+
+        def format_field_type_result(field_type_result)
+            format_field_type(field_type_result[:value_type_fields])
         end
 
         def parse_hash(hashes, parent)
@@ -141,18 +131,44 @@ module Metadata
             try_decode(last_element, value, true)
         end
 
+        def value_field_name(path)
+            split_path = path.split("/")
+            split_path.reverse.shift
+        end
+
+        def picklist_info(field)
+            picklist = @type_info[field.to_s.camelize(:lower)]
+            if picklist.nil?
+                {}
+            else
+                picklist
+            end
+        end
+
+        def data_type(value)
+            if value.is_a?(Nori::StringWithAttributes)
+                "String"
+            else
+                value.class.to_s
+            end
+        end
+
         def remodel(id, parent_id, text, editable, path = nil)
             if path.present?
-                data_type = text.class.to_s
+                data_type = data_type(text)
+                picklist = picklist_info(value_field_name(path))
             else
                 data_type = nil
+                picklist = {}
             end
+
+            li_attr = {:full_name => @full_name, :editable => editable, :path => path, :data_type => data_type}.merge!(picklist)           
             
             @result << {
                         :id => id,
                         :parent => parent_id,
                         :text => text.to_s,
-                        :li_attr => {:full_name => @full_name, :editable => editable, :path => path, :data_type => data_type}
+                        :li_attr => li_attr
                         }
         end        
     end

@@ -1,15 +1,18 @@
 module Metadata
 	module SessionController
-		
-		Max_metadata_count = 10
 
-	    def clear_session(metadata_type)
+	    def clear_session(metadata_type, type_info)
 	        session[:metadata_type] = metadata_type
+	        session[:metadata_type_info] = type_info
 	        session[:read_result] = {}
 	    end
 
 	    def current_metadata_type
 	        session[:metadata_type]
+	    end
+
+	    def current_metadata_field_types
+	    	session[:metadata_type_info]
 	    end
 
 	    def raise_when_type_unmached(metadata_type)
@@ -20,11 +23,6 @@ module Metadata
 
 	    def try_save_session(metadata_type, full_name, result)
 	        raise_when_type_unmached(metadata_type)
-
-	        if session[:read_result].present? && session[:read_result].values.size >= Max_metadata_count
-	            raise StandardError.new("Cannot read/edit more than #{Max_metadata_count} meatadata all at once")
-	        end
-
 	        session[:read_result][full_name] = result
 	    end
 

@@ -38,7 +38,7 @@ class MetadataController < ApplicationController
             field_types = get_field_value_types(sforce_session, metadata_type)
             crud_info = api_crud_info(field_types)
             parent_tree_nodes = format_parent_tree_nodes(crud_info, formatted_list)            
-            clear_session(metadata_type)
+            clear_session(metadata_type, field_types)
             render :json => list_response_json(metadata_type, formatted_list, parent_tree_nodes, field_types, crud_info), :status => 200
         rescue StandardError => ex
             print_error(ex)
@@ -63,7 +63,11 @@ class MetadataController < ApplicationController
         begin
             raise_when_type_unmached(metadata_type)
             result = read_metadata(sforce_session, metadata_type, full_name)
-            tree_data = format_read_result(full_name, result)
+            type_info = tree_type_info(current_metadata_field_types)
+            #parsed = format_field_type_result(field_types)
+            tree_data = format_read_result(full_name, result, type_info)
+
+            #tree_data = format_read_result(full_name, result)
             try_save_session(metadata_type, full_name, result)
             render :json => read_response_json(result, tree_data), :status => 200            
         rescue StandardError => ex
