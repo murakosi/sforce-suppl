@@ -44,7 +44,7 @@ module Metadata
 				hash.each do |k, v|
 					field_names << k
 					columns << create_grid_column(k, v)
-					column_options << create_grid_column_option(k, v)
+					column_options << create_grid_column_option(v)
 				end
 			end
 
@@ -119,8 +119,8 @@ module Metadata
 			end
 		end
 =end
-		def create_grid_column_option(key, hash)
-			if key.include?(".") && key.split(".").shift == hash[:name]
+		def create_grid_column_option(hash)
+			if hash[:parent]
 				type = {:readOnly => true}
 		    elsif hash[:soap_type] == "boolean"
 		        type = {:type => "checkbox", :className => "htCenter htMiddle"}
