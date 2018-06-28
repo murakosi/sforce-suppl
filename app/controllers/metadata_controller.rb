@@ -55,7 +55,8 @@ class MetadataController < ApplicationController
         parent_tree_nodes = format_parent_tree_nodes(crud_info, formatted_list)            
         clear_session(metadata_type, formatted_field_types)
 
-        list_response_json(metadata_type, formatted_list, parent_tree_nodes, field_types, crud_info)
+        #list_response_json(metadata_type, formatted_list, parent_tree_nodes, field_types, crud_info)
+        list_response_json(metadata_type, formatted_list, parent_tree_nodes, formatted_field_types, crud_info)
     end
 
     def list_response_json(metadata_type, formatted_list, parent_tree_nodes, field_types, crud_info)
@@ -63,7 +64,7 @@ class MetadataController < ApplicationController
             :fullName => metadata_type,
             :list_grid => list_grid_column_options(formatted_list),
             :tree => parent_tree_nodes,
-            :create_grid => create_grid_options(metadata_type, field_types),
+            :create_grid => create_grid_options(metadata_type, crud_info, field_types),
             :crud_info => crud_info
         }
     end

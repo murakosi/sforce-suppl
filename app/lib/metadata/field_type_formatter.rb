@@ -52,12 +52,12 @@ module Metadata
 
 		def parse_fields(parent, hash)
 		    remnant = hash.delete(:fields)
-		    if parent.nil?
-		        key = hash[:name]#get_soap(h)
+			if parent.nil?
+				key = hash[:name]#get_soap(h)
 		    else
 		        key = parent
 		    end
-		    parse_field_types(key, hash)
+		    parse_field_types(key, hash.merge({:parent => true}))
 
 		    if remnant.present?
 		        remnant = Array[remnant].flatten
