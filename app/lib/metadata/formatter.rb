@@ -1,3 +1,5 @@
+require "yaml"
+
 module Metadata
     module Formatter
         include Metadata::FieldTypeFormatter
@@ -10,10 +12,36 @@ module Metadata
                 raise StandardError.new("No read results")
             else
                 @full_name = full_name
-                @type_info = type_info
+                @type_info = tree_type_info(type_info)
                 parse_hash(read_result, full_name)
             end
-        end        
+        end     
+
+        def tree_type_info(type_fields)
+            types = {}
+            enums = get_enums()
+            
+            type_fields.each do |type_field|
+                hash = Hash[*type_field.values]
+                name = hash[:name]
+
+                if hash[:soap_type] == "boolean"
+                    types[name] = {:is_picklist => true, :picklist_source => ["true", "false"]}
+                elsif hash.has_key?(:picklist_values)
+                    types[name] = {:is_picklist => true, :picklist_source => hash[:picklist_values].map{|hash| hash[:value]}}
+                elsif enums.has_key?(name)
+                    types[name] = {:is_picklist => true, :picklist_source => enums[name]}
+                else
+                    types[name] = {:is_picklist => false}
+                end
+            end
+            types
+        end
+
+        def get_enums
+            enums_file = Service::ResourceLocator.call(:enums)
+            YAML.load_file(enums_file)
+        end
 
         def format_metadata_list(metadata_list)
             added_metadata_list = add_missing_key(metadata_list)
@@ -38,8 +66,8 @@ module Metadata
             parent_nodes
         end
 
-        def format_field_type_result(field_type_result)
-            format_field_type(field_type_result[:value_type_fields])
+        def format_field_type_result(metadata_type, field_type_result)
+            format_field_type(metadata_type, field_type_result[:value_type_fields])
         end
 
         def parse_hash(hashes, parent)
@@ -170,6 +198,7 @@ module Metadata
                         :text => text.to_s,
                         :li_attr => li_attr
                         }
-        end        
+        end
+
     end
 end

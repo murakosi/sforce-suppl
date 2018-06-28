@@ -95,19 +95,5 @@ module Metadata
 			type_fields.reject{|k, v| k == :value_type_fields}
 		end
 
-		def tree_type_info(type_fields)
-			types = {}
-			type_fields[:value_type_fields].each do |hash|
-				if hash[:soap_type] == "boolean"
-					types[hash[:name]] = {:is_picklist => true, :picklist_source => ["true", "false"]}
-				elsif hash.has_key?(:picklist_values)
-					types[hash[:name]] = {:is_picklist => true, :picklist_source => hash[:picklist_values].map{|hash| hash[:value]}}
-				else
-					types[hash[:name]] = {:is_picklist => false}
-				end
-			end
-			types
-		end
-
 	end
 end

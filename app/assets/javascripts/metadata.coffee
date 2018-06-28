@@ -2,8 +2,6 @@ coordinates = ->
   
   selectedRecords = {}
   grids = {}
-  rawData = {}
-  currentId = null
   defaultDataType = ""
   selectedNode = null
   fieldNames = null
@@ -54,10 +52,8 @@ coordinates = ->
     $('#metadataArea #editTree').jstree(true).settings.core.data = null
     $('#metadataArea #editTree').jstree(true).refresh()
     selectedRecords = {}
-    rawData = {}
     grids = {}
     fieldNames = null
-    currentId = null
     selectedCellOnCreateGrid = null
 
   processListError = (json) ->
@@ -91,7 +87,6 @@ coordinates = ->
   # Read metadata
   #------------------------------------------------
   callReadMetadata = (node, callback) ->
-    currentId = node.id
     val = {metadata_type: getSelectedMetadata(), name: node.id}
     action = $("#edit-tab").attr("action")
     method = $("#edit-tab").attr("method")
@@ -101,17 +96,11 @@ coordinates = ->
 
   processReadSuccess = (json, callback) ->
     hideMessageArea()
-    rawData[currentId] = json.raw
-    setRawData(json.raw)
     callback(json.tree)
 
   processReadError = (json, callback) ->
     callback([])
     displayError(json)
-
-  setRawData = (json) ->
-    $("#raw").empty()
-    $("#raw").html(JSON.stringify(json))
 
   #------------------------------------------------
   # retrieve
@@ -146,13 +135,6 @@ coordinates = ->
     options = $.getAjaxOptions(action, method, val, defaultDataType)
     callbacks = $.getAjaxCallbacks(saveSuccess, displayError, null)
     $.executeAjax(options, callbacks)
-
-  $("#metadataArea #editTree").on "before_open.jstree", (e, node) ->
-    if currentId == node.node.id
-      return
-
-    if rawData[node.node.id]
-      setRawData(rawData[node.node.id])
 
   $("#metadataArea #editTree").on 'select_node.jstree', (e, data) ->
     selectedNode = data.node

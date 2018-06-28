@@ -1,346 +1,346 @@
-{"fullName"=>{:is_foreign_key=>false, :is_name_field=>true, :min_occurs=>"0", :name=>"fullName", :soap_type=>"string", :value_required=>true}}
-{"actionOverrides"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"actionOverrides", :soap_type=>"ActionOverride", :value_required=>true}}
-{"actionOverrides.actionName"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"actionName", :soap_type=>"string", :value_required=>true}}
-{"actionOverrides.comment"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"comment", :soap_type=>"string", :value_required=>true}}
-{"actionOverrides.content"=>{:foreign_key_domain=>["ApexPage", "AuraDefinitionBundle", "FlexiPage", "Scontrol"], :is_foreign_key=>true, :is_name_field=>false, :min_occurs=>"0", :name=>"content", :soap_type=>"string", :value_required=>true}}
-{"actionOverrides.formFactor"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"formFactor", :picklist_values=>[{:active=>true, :default_value=>false, :label=>nil, :value=>"Small"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"Medium"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"Large"}], :soap_type=>"FormFactor", :value_required=>true}}
-{"actionOverrides.skipRecordTypeSelect"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"skipRecordTypeSelect", :soap_type=>"boolean", :value_required=>true}}
-{"actionOverrides.type"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"type", :picklist_values=>[{:active=>true, :default_value=>false, :label=>nil, :value=>"Default"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"Standard"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"Scontrol"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"Visualforce"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"Flexipage"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"LightningComponent"}], :soap_type=>"ActionOverrideType", :value_required=>true}}
-{"allowInChatterGroups"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"allowInChatterGroups", :soap_type=>"boolean", :value_required=>true}}
-{"articleTypeChannelDisplay"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"articleTypeChannelDisplay", :soap_type=>"ArticleTypeChannelDisplay", :value_required=>true}}
-{"articleTypeChannelDisplay.articleTypeTemplates"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"1", :name=>"articleTypeTemplates", :soap_type=>"ArticleTypeTemplate", :value_required=>true}}
-{"articleTypeChannelDisplay.articleTypeTemplates.page"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"page", :soap_type=>"string", :value_required=>true}}
-{"businessProcesses"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"businessProcesses", :soap_type=>"BusinessProcess", :value_required=>true}}
-{"businessProcesses.description"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"description", :soap_type=>"String", :value_required=>false}}
-{"businessProcesses.fullName"=>{:is_foreign_key=>false, :is_name_field=>true, :min_occurs=>"0", :name=>"fullName", :soap_type=>"string", :value_required=>true}}
-{"businessProcesses.isActive"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"isActive", :soap_type=>"Boolean", :value_required=>false}}
-{"businessProcesses.values"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"1", :name=>"values", :soap_type=>"PicklistValue", :value_required=>true}}
-{"businessProcesses.values.fullName"=>{:is_foreign_key=>false, :is_name_field=>true, :min_occurs=>"0", :name=>"fullName", :soap_type=>"string", :value_required=>true}}
-{"businessProcesses.values.color"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"color", :soap_type=>"string", :value_required=>true}}
-{"businessProcesses.values.default"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"1", :name=>"default", :soap_type=>"boolean", :value_required=>true}}
-{"businessProcesses.values.description"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"description", :soap_type=>"string", :value_required=>true}}
-{"businessProcesses.values.isActive"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"isActive", :soap_type=>"boolean", :value_required=>true}}
-{"businessProcesses.values.allowEmail"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"allowEmail", :soap_type=>"boolean", :value_required=>true}}
-{"businessProcesses.values.closed"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"closed", :soap_type=>"boolean", :value_required=>true}}
-{"businessProcesses.values.controllingFieldValues"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"controllingFieldValues", :soap_type=>"string", :value_required=>true}}
-{"businessProcesses.values.converted"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"converted", :soap_type=>"boolean", :value_required=>true}}
-{"businessProcesses.values.cssExposed"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"cssExposed", :soap_type=>"boolean", :value_required=>true}}
-{"businessProcesses.values.highPriority"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"highPriority", :soap_type=>"boolean", :value_required=>true}}
-{"businessProcesses.values.probability"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"probability", :soap_type=>"int", :value_required=>true}}
-{"businessProcesses.values.reverseRole"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"reverseRole", :soap_type=>"string", :value_required=>true}}
-{"businessProcesses.values.reviewed"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"reviewed", :soap_type=>"boolean", :value_required=>true}}
-{"businessProcesses.values.won"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"won", :soap_type=>"boolean", :value_required=>true}}
-{"compactLayoutAssignment"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"compactLayoutAssignment", :soap_type=>"string", :value_required=>true}}
-{"compactLayouts"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"compactLayouts", :soap_type=>"CompactLayout", :value_required=>true}}
-{"compactLayouts.fullName"=>{:is_foreign_key=>false, :is_name_field=>true, :min_occurs=>"0", :name=>"fullName", :soap_type=>"string", :value_required=>true}}
-{"compactLayouts.fields"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"1", :name=>"fields", :soap_type=>"string", :value_required=>true}}
-{"compactLayouts.label"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"1", :name=>"label", :soap_type=>"string", :value_required=>true}}
-{"customHelp"=>{:foreign_key_domain=>["ApexPage", "Scontrol"], :is_foreign_key=>true, :is_name_field=>false, :min_occurs=>"0", :name=>"customHelp", :soap_type=>"string", :value_required=>true}}
-{"customHelpPage"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"customHelpPage", :soap_type=>"string", :value_required=>true}}
-{"dataStewardGroup"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"dataStewardGroup", :soap_type=>"string", :value_required=>true}}
-{"dataStewardUser"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"dataStewardUser", :soap_type=>"string", :value_required=>true}}
-{"deprecated"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"deprecated", :soap_type=>"boolean", :value_required=>true}}
-{"description"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"description", :soap_type=>"string", :value_required=>true}}
-{"enableActivities"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"enableActivities", :soap_type=>"boolean", :value_required=>true}}
-{"enableBulkApi"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"enableBulkApi", :soap_type=>"boolean", :value_required=>true}}
-{"enableChangeDataCapture"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"enableChangeDataCapture", :soap_type=>"boolean", :value_required=>true}}
-{"enableDivisions"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"enableDivisions", :soap_type=>"boolean", :value_required=>true}}
-{"enableEnhancedLookup"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"enableEnhancedLookup", :soap_type=>"boolean", :value_required=>true}}
-{"enableFeeds"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"enableFeeds", :soap_type=>"boolean", :value_required=>true}}
-{"enableHistory"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"enableHistory", :soap_type=>"boolean", :value_required=>true}}
-{"enableReports"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"enableReports", :soap_type=>"boolean", :value_required=>true}}
-{"enableSearch"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"enableSearch", :soap_type=>"boolean", :value_required=>true}}
-{"enableSharing"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"enableSharing", :soap_type=>"boolean", :value_required=>true}}
-{"enableStreamingApi"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"enableStreamingApi", :soap_type=>"boolean", :value_required=>true}}
-{"externalDataSource"=>{:foreign_key_domain=>["ExternalDataSource", "XOrgSpoke"], :is_foreign_key=>true, :is_name_field=>false, :min_occurs=>"0", :name=>"externalDataSource", :soap_type=>"string", :value_required=>true}}
-{"externalName"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"externalName", :soap_type=>"string", :value_required=>true}}
-{"externalRepository"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"externalRepository", :soap_type=>"string", :value_required=>true}}
-{"fieldSets"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"fieldSets", :soap_type=>"FieldSet", :value_required=>true}}
-{"fieldSets.fullName"=>{:is_foreign_key=>false, :is_name_field=>true, :min_occurs=>"0", :name=>"fullName", :soap_type=>"string", :value_required=>true}}
-{"fieldSets.availableFields"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"availableFields", :soap_type=>"FieldSetItem", :value_required=>true}}
-{"fieldSets.availableFields.field"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"field", :soap_type=>"string", :value_required=>true}}
-{"fieldSets.availableFields.isFieldManaged"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"isFieldManaged", :soap_type=>"boolean", :value_required=>true}}
-{"fieldSets.availableFields.isRequired"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"isRequired", :soap_type=>"boolean", :value_required=>true}}
-{"fieldSets.description"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"1", :name=>"description", :soap_type=>"string", :value_required=>true}}
-{"fieldSets.displayedFields"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"displayedFields", :soap_type=>"FieldSetItem", :value_required=>true}}
-{"fieldSets.displayedFields.field"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"field", :soap_type=>"string", :value_required=>true}}
-{"fieldSets.displayedFields.isFieldManaged"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"isFieldManaged", :soap_type=>"boolean", :value_required=>true}}
-{"fieldSets.displayedFields.isRequired"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"isRequired", :soap_type=>"boolean", :value_required=>true}}
-{"fieldSets.label"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"1", :name=>"label", :soap_type=>"string", :value_required=>true}}
-{"fields"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"fields", :soap_type=>"CustomField", :value_required=>true}}
-{"fields.fullName"=>{:is_foreign_key=>false, :is_name_field=>true, :min_occurs=>"0", :name=>"fullName", :soap_type=>"string", :value_required=>true}}
-{"fields.businessOwnerGroup"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"businessOwnerGroup", :soap_type=>"string", :value_required=>true}}
-{"fields.businessOwnerUser"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"businessOwnerUser", :soap_type=>"string", :value_required=>true}}
-{"fields.businessStatus"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"businessStatus", :soap_type=>"string", :value_required=>true}}
-{"fields.caseSensitive"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"caseSensitive", :soap_type=>"boolean", :value_required=>true}}
-{"fields.customDataType"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"customDataType", :soap_type=>"string", :value_required=>true}}
-{"fields.defaultValue"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"defaultValue", :soap_type=>"string", :value_required=>true}}
-{"fields.deprecated"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"deprecated", :soap_type=>"boolean", :value_required=>true}}
-{"fields.description"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"description", :soap_type=>"string", :value_required=>true}}
-{"fields.displayFormat"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"displayFormat", :soap_type=>"string", :value_required=>true}}
-{"fields.encrypted"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"encrypted", :soap_type=>"boolean", :value_required=>true}}
-{"fields.escapeMarkup"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"escapeMarkup", :soap_type=>"boolean", :value_required=>true}}
-{"fields.externalDeveloperName"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"externalDeveloperName", :soap_type=>"string", :value_required=>true}}
-{"fields.externalId"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"externalId", :soap_type=>"boolean", :value_required=>true}}
-{"fields.formula"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"formula", :soap_type=>"string", :value_required=>true}}
-{"fields.inlineHelpText"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"inlineHelpText", :soap_type=>"string", :value_required=>true}}
-{"fields.isConvertLeadDisabled"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"isConvertLeadDisabled", :soap_type=>"boolean", :value_required=>true}}
-{"fields.isFilteringDisabled"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"isFilteringDisabled", :soap_type=>"boolean", :value_required=>true}}
-{"fields.isNameField"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"isNameField", :soap_type=>"boolean", :value_required=>true}}
-{"fields.isSortingDisabled"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"isSortingDisabled", :soap_type=>"boolean", :value_required=>true}}
-{"fields.label"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"label", :soap_type=>"string", :value_required=>true}}
-{"fields.length"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"length", :soap_type=>"int", :value_required=>true}}
-{"fields.lookupFilter"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"lookupFilter", :soap_type=>"LookupFilter", :value_required=>true}}
-{"fields.lookupFilter.active"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"1", :name=>"active", :soap_type=>"Boolean", :value_required=>true}}
-{"fields.lookupFilter.booleanFilter"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"booleanFilter", :soap_type=>"string", :value_required=>true}}
-{"fields.lookupFilter.description"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"description", :soap_type=>"String", :value_required=>false}}
-{"fields.lookupFilter.errorMessage"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"errorMessage", :soap_type=>"String", :value_required=>false}}
-{"fields.lookupFilter.filterItems"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"filterItems", :soap_type=>"FilterItem", :value_required=>true}}
-{"fields.lookupFilter.filterItems.field"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"1", :name=>"field", :soap_type=>"string", :value_required=>true}}
-{"fields.lookupFilter.filterItems.value"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"value", :soap_type=>"string", :value_required=>true}}
-{"fields.lookupFilter.filterItems.valueField"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"valueField", :soap_type=>"string", :value_required=>true}}
-{"fields.lookupFilter.infoMessage"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"infoMessage", :soap_type=>"String", :value_required=>false}}
-{"fields.lookupFilter.isOptional"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"1", :name=>"isOptional", :soap_type=>"Boolean", :value_required=>true}}
-{"fields.maskChar"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"maskChar", :picklist_values=>[{:active=>true, :default_value=>false, :label=>nil, :value=>"asterisk"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"X"}], :soap_type=>"EncryptedFieldMaskChar", :value_required=>true}}
-{"fields.maskType"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"maskType", :picklist_values=>[{:active=>true, :default_value=>false, :label=>nil, :value=>"all"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"creditCard"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"ssn"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"lastFour"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"sin"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"nino"}], :soap_type=>"EncryptedFieldMaskType", :value_required=>true}}
-{"fields.metadataRelationshipControllingField"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"metadataRelationshipControllingField", :soap_type=>"string", :value_required=>true}}
-{"fields.populateExistingRows"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"populateExistingRows", :soap_type=>"boolean", :value_required=>true}}
-{"fields.precision"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"precision", :soap_type=>"int", :value_required=>true}}
-{"fields.referenceTargetField"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"referenceTargetField", :soap_type=>"string", :value_required=>true}}
-{"fields.referenceTo"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"referenceTo", :soap_type=>"string", :value_required=>true}}
-{"fields.relationshipLabel"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"relationshipLabel", :soap_type=>"string", :value_required=>true}}
-{"fields.relationshipName"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"relationshipName", :soap_type=>"string", :value_required=>true}}
-{"fields.relationshipOrder"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"relationshipOrder", :soap_type=>"int", :value_required=>true}}
-{"fields.reparentableMasterDetail"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"reparentableMasterDetail", :soap_type=>"boolean", :value_required=>true}}
-{"fields.required"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"required", :soap_type=>"boolean", :value_required=>true}}
-{"fields.restrictedAdminField"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"restrictedAdminField", :soap_type=>"boolean", :value_required=>true}}
-{"fields.scale"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"scale", :soap_type=>"int", :value_required=>true}}
-{"fields.securityClassification"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"securityClassification", :picklist_values=>[{:active=>true, :default_value=>false, :label=>nil, :value=>"AccountInformation"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"ConfigurationAndUsageData"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"DataIntendedToBePublic"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"BusinessSetupDataBusinessDataAndAggregates"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"AssociativeBusinessOrPersonalData"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"AuthenticationData"}], :soap_type=>"SecurityClassification", :value_required=>true}}
-{"fields.startingNumber"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"startingNumber", :soap_type=>"int", :value_required=>true}}
-{"fields.stripMarkup"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"stripMarkup", :soap_type=>"boolean", :value_required=>true}}
-{"fields.summarizedField"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"summarizedField", :soap_type=>"string", :value_required=>true}}
-{"fields.summaryFilterItems"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"summaryFilterItems", :soap_type=>"FilterItem", :value_required=>true}}
-{"fields.summaryFilterItems.field"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"1", :name=>"field", :soap_type=>"string", :value_required=>true}}
-{"fields.summaryFilterItems.value"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"value", :soap_type=>"string", :value_required=>true}}
-{"fields.summaryFilterItems.valueField"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"valueField", :soap_type=>"string", :value_required=>true}}
-{"fields.summaryForeignKey"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"summaryForeignKey", :soap_type=>"string", :value_required=>true}}
-{"fields.summaryOperation"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"summaryOperation", :picklist_values=>[{:active=>true, :default_value=>false, :label=>nil, :value=>"count"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"sum"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"min"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"max"}], :soap_type=>"SummaryOperations", :value_required=>true}}
-{"fields.trackFeedHistory"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"trackFeedHistory", :soap_type=>"boolean", :value_required=>true}}
-{"fields.trackHistory"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"trackHistory", :soap_type=>"boolean", :value_required=>true}}
-{"fields.trackTrending"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"trackTrending", :soap_type=>"boolean", :value_required=>true}}
-{"fields.unique"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"unique", :soap_type=>"boolean", :value_required=>true}}
-{"fields.valueSet"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"valueSet", :soap_type=>"ValueSet", :value_required=>true}}
-{"fields.valueSet.controllingField"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"controllingField", :soap_type=>"string", :value_required=>true}}
-{"fields.valueSet.restricted"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"restricted", :soap_type=>"boolean", :value_required=>true}}
-{"fields.valueSet.valueSetDefinition"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"valueSetDefinition", :soap_type=>"ValueSetValuesDefinition", :value_required=>true}}
-{"fields.valueSet.valueSetDefinition.sorted"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"1", :name=>"sorted", :soap_type=>"boolean", :value_required=>true}}
-{"fields.valueSet.valueSetDefinition.value"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"1", :name=>"value", :soap_type=>"CustomValue", :value_required=>true}}
-{"fields.valueSet.valueSetDefinition.value.fullName"=>{:is_foreign_key=>false, :is_name_field=>true, :min_occurs=>"0", :name=>"fullName", :soap_type=>"string", :value_required=>true}}
-{"fields.valueSet.valueSetDefinition.value.color"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"color", :soap_type=>"string", :value_required=>true}}
-{"fields.valueSet.valueSetDefinition.value.default"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"1", :name=>"default", :soap_type=>"boolean", :value_required=>true}}
-{"fields.valueSet.valueSetDefinition.value.description"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"description", :soap_type=>"string", :value_required=>true}}
-{"fields.valueSet.valueSetDefinition.value.isActive"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"isActive", :soap_type=>"boolean", :value_required=>true}}
-{"fields.valueSet.valueSetDefinition.value.label"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"label", :soap_type=>"string", :value_required=>true}}
-{"fields.valueSet.valueSetName"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"valueSetName", :soap_type=>"string", :value_required=>true}}
-{"fields.valueSet.valueSettings"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"valueSettings", :soap_type=>"ValueSettings", :value_required=>true}}
-{"fields.valueSet.valueSettings.controllingFieldValue"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"1", :name=>"controllingFieldValue", :soap_type=>"string", :value_required=>true}}
-{"fields.valueSet.valueSettings.valueName"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"1", :name=>"valueName", :soap_type=>"string", :value_required=>true}}
-{"fields.visibleLines"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"visibleLines", :soap_type=>"int", :value_required=>true}}
-{"fields.writeRequiresMasterRead"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"writeRequiresMasterRead", :soap_type=>"boolean", :value_required=>true}}
-{"historyRetentionPolicy"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"historyRetentionPolicy", :soap_type=>"HistoryRetentionPolicy", :value_required=>true}}
-{"historyRetentionPolicy.archiveAfterMonths"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"1", :name=>"archiveAfterMonths", :soap_type=>"int", :value_required=>true}}
-{"historyRetentionPolicy.archiveRetentionYears"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"1", :name=>"archiveRetentionYears", :soap_type=>"int", :value_required=>true}}
-{"historyRetentionPolicy.description"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"description", :soap_type=>"string", :value_required=>true}}
-{"household"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"household", :soap_type=>"boolean", :value_required=>true}}
-{"indexes"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"indexes", :soap_type=>"Index", :value_required=>true}}
-{"indexes.fullName"=>{:is_foreign_key=>false, :is_name_field=>true, :min_occurs=>"0", :name=>"fullName", :soap_type=>"string", :value_required=>true}}
-{"indexes.fields"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"1", :name=>"fields", :soap_type=>"IndexField", :value_required=>true}}
-{"indexes.fields.name"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"1", :name=>"name", :soap_type=>"string", :value_required=>true}}
-{"indexes.fields.sortDirection"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"1", :name=>"sortDirection", :picklist_values=>[{:active=>true, :default_value=>false, :label=>nil, :value=>"ASC"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"DESC"}], :soap_type=>"string", :value_required=>true}}
-{"indexes.label"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"1", :name=>"label", :soap_type=>"string", :value_required=>true}}
-{"label"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"label", :soap_type=>"string", :value_required=>true}}
-{"listViews"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"listViews", :soap_type=>"ListView", :value_required=>true}}
-{"listViews.fullName"=>{:is_foreign_key=>false, :is_name_field=>true, :min_occurs=>"0", :name=>"fullName", :soap_type=>"string", :value_required=>true}}
-{"listViews.booleanFilter"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"booleanFilter", :soap_type=>"string", :value_required=>true}}
-{"listViews.columns"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"columns", :soap_type=>"string", :value_required=>true}}
-{"listViews.division"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"division", :soap_type=>"string", :value_required=>true}}
-{"listViews.filters"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"filters", :soap_type=>"ListViewFilter", :value_required=>true}}
-{"listViews.filters.field"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"1", :name=>"field", :soap_type=>"string", :value_required=>true}}
-{"listViews.filters.value"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"value", :soap_type=>"string", :value_required=>true}}
-{"listViews.label"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"1", :name=>"label", :soap_type=>"string", :value_required=>true}}
-{"listViews.language"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"language", :soap_type=>"Language", :value_required=>true}}
-{"listViews.queue"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"queue", :soap_type=>"string", :value_required=>true}}
-{"listViews.sharedTo"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"sharedTo", :soap_type=>"SharedTo", :value_required=>true}}
-{"listViews.sharedTo.allCustomerPortalUsers"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"allCustomerPortalUsers", :soap_type=>"string", :value_required=>true}}
-{"listViews.sharedTo.allInternalUsers"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"allInternalUsers", :soap_type=>"string", :value_required=>true}}
-{"listViews.sharedTo.allPartnerUsers"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"allPartnerUsers", :soap_type=>"string", :value_required=>true}}
-{"listViews.sharedTo.channelProgramGroup"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"channelProgramGroup", :soap_type=>"string", :value_required=>true}}
-{"listViews.sharedTo.channelProgramGroups"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"channelProgramGroups", :soap_type=>"string", :value_required=>true}}
-{"listViews.sharedTo.group"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"group", :soap_type=>"string", :value_required=>true}}
-{"listViews.sharedTo.groups"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"groups", :soap_type=>"string", :value_required=>true}}
-{"listViews.sharedTo.managerSubordinates"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"managerSubordinates", :soap_type=>"string", :value_required=>true}}
-{"listViews.sharedTo.managers"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"managers", :soap_type=>"string", :value_required=>true}}
-{"listViews.sharedTo.portalRole"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"portalRole", :soap_type=>"string", :value_required=>true}}
-{"listViews.sharedTo.portalRoleAndSubordinates"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"portalRoleAndSubordinates", :soap_type=>"string", :value_required=>true}}
-{"listViews.sharedTo.queue"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"queue", :soap_type=>"string", :value_required=>true}}
-{"listViews.sharedTo.role"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"role", :soap_type=>"string", :value_required=>true}}
-{"listViews.sharedTo.roleAndSubordinates"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"roleAndSubordinates", :soap_type=>"string", :value_required=>true}}
-{"listViews.sharedTo.roleAndSubordinatesInternal"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"roleAndSubordinatesInternal", :soap_type=>"string", :value_required=>true}}
-{"listViews.sharedTo.roles"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"roles", :soap_type=>"string", :value_required=>true}}
-{"listViews.sharedTo.rolesAndSubordinates"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"rolesAndSubordinates", :soap_type=>"string", :value_required=>true}}
-{"listViews.sharedTo.territories"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"territories", :soap_type=>"string", :value_required=>true}}
-{"listViews.sharedTo.territoriesAndSubordinates"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"territoriesAndSubordinates", :soap_type=>"string", :value_required=>true}}
-{"listViews.sharedTo.territory"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"territory", :soap_type=>"string", :value_required=>true}}
-{"listViews.sharedTo.territoryAndSubordinates"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"territoryAndSubordinates", :soap_type=>"string", :value_required=>true}}
-{"nameField"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"nameField", :soap_type=>"CustomField", :value_required=>true}}
-{"nameField.fullName"=>{:is_foreign_key=>false, :is_name_field=>true, :min_occurs=>"0", :name=>"fullName", :soap_type=>"string", :value_required=>true}}
-{"nameField.businessOwnerGroup"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"businessOwnerGroup", :soap_type=>"string", :value_required=>true}}
-{"nameField.businessOwnerUser"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"businessOwnerUser", :soap_type=>"string", :value_required=>true}}
-{"nameField.businessStatus"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"businessStatus", :soap_type=>"string", :value_required=>true}}
-{"nameField.caseSensitive"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"caseSensitive", :soap_type=>"boolean", :value_required=>true}}
-{"nameField.customDataType"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"customDataType", :soap_type=>"string", :value_required=>true}}
-{"nameField.defaultValue"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"defaultValue", :soap_type=>"string", :value_required=>true}}
-{"nameField.deprecated"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"deprecated", :soap_type=>"boolean", :value_required=>true}}
-{"nameField.description"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"description", :soap_type=>"string", :value_required=>true}}
-{"nameField.displayFormat"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"displayFormat", :soap_type=>"string", :value_required=>true}}
-{"nameField.encrypted"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"encrypted", :soap_type=>"boolean", :value_required=>true}}
-{"nameField.escapeMarkup"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"escapeMarkup", :soap_type=>"boolean", :value_required=>true}}
-{"nameField.externalDeveloperName"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"externalDeveloperName", :soap_type=>"string", :value_required=>true}}
-{"nameField.externalId"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"externalId", :soap_type=>"boolean", :value_required=>true}}
-{"nameField.formula"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"formula", :soap_type=>"string", :value_required=>true}}
-{"nameField.inlineHelpText"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"inlineHelpText", :soap_type=>"string", :value_required=>true}}
-{"nameField.isConvertLeadDisabled"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"isConvertLeadDisabled", :soap_type=>"boolean", :value_required=>true}}
-{"nameField.isFilteringDisabled"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"isFilteringDisabled", :soap_type=>"boolean", :value_required=>true}}
-{"nameField.isNameField"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"isNameField", :soap_type=>"boolean", :value_required=>true}}
-{"nameField.isSortingDisabled"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"isSortingDisabled", :soap_type=>"boolean", :value_required=>true}}
-{"nameField.label"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"label", :soap_type=>"string", :value_required=>true}}
-{"nameField.length"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"length", :soap_type=>"int", :value_required=>true}}
-{"nameField.lookupFilter"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"lookupFilter", :soap_type=>"LookupFilter", :value_required=>true}}
-{"nameField.lookupFilter.active"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"1", :name=>"active", :soap_type=>"Boolean", :value_required=>true}}
-{"nameField.lookupFilter.booleanFilter"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"booleanFilter", :soap_type=>"string", :value_required=>true}}
-{"nameField.lookupFilter.description"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"description", :soap_type=>"String", :value_required=>false}}
-{"nameField.lookupFilter.errorMessage"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"errorMessage", :soap_type=>"String", :value_required=>false}}
-{"nameField.lookupFilter.filterItems"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"filterItems", :soap_type=>"FilterItem", :value_required=>true}}
-{"nameField.lookupFilter.filterItems.field"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"1", :name=>"field", :soap_type=>"string", :value_required=>true}}
-{"nameField.lookupFilter.filterItems.value"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"value", :soap_type=>"string", :value_required=>true}}
-{"nameField.lookupFilter.filterItems.valueField"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"valueField", :soap_type=>"string", :value_required=>true}}
-{"nameField.lookupFilter.infoMessage"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"infoMessage", :soap_type=>"String", :value_required=>false}}
-{"nameField.lookupFilter.isOptional"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"1", :name=>"isOptional", :soap_type=>"Boolean", :value_required=>true}}
-{"nameField.maskChar"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"maskChar", :picklist_values=>[{:active=>true, :default_value=>false, :label=>nil, :value=>"asterisk"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"X"}], :soap_type=>"EncryptedFieldMaskChar", :value_required=>true}}
-{"nameField.maskType"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"maskType", :picklist_values=>[{:active=>true, :default_value=>false, :label=>nil, :value=>"all"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"creditCard"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"ssn"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"lastFour"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"sin"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"nino"}], :soap_type=>"EncryptedFieldMaskType", :value_required=>true}}
-{"nameField.metadataRelationshipControllingField"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"metadataRelationshipControllingField", :soap_type=>"string", :value_required=>true}}
-{"nameField.populateExistingRows"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"populateExistingRows", :soap_type=>"boolean", :value_required=>true}}
-{"nameField.precision"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"precision", :soap_type=>"int", :value_required=>true}}
-{"nameField.referenceTargetField"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"referenceTargetField", :soap_type=>"string", :value_required=>true}}
-{"nameField.referenceTo"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"referenceTo", :soap_type=>"string", :value_required=>true}}
-{"nameField.relationshipLabel"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"relationshipLabel", :soap_type=>"string", :value_required=>true}}
-{"nameField.relationshipName"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"relationshipName", :soap_type=>"string", :value_required=>true}}
-{"nameField.relationshipOrder"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"relationshipOrder", :soap_type=>"int", :value_required=>true}}
-{"nameField.reparentableMasterDetail"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"reparentableMasterDetail", :soap_type=>"boolean", :value_required=>true}}
-{"nameField.required"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"required", :soap_type=>"boolean", :value_required=>true}}
-{"nameField.restrictedAdminField"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"restrictedAdminField", :soap_type=>"boolean", :value_required=>true}}
-{"nameField.scale"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"scale", :soap_type=>"int", :value_required=>true}}
-{"nameField.securityClassification"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"securityClassification", :picklist_values=>[{:active=>true, :default_value=>false, :label=>nil, :value=>"AccountInformation"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"ConfigurationAndUsageData"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"DataIntendedToBePublic"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"BusinessSetupDataBusinessDataAndAggregates"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"AssociativeBusinessOrPersonalData"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"AuthenticationData"}], :soap_type=>"SecurityClassification", :value_required=>true}}
-{"nameField.startingNumber"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"startingNumber", :soap_type=>"int", :value_required=>true}}
-{"nameField.stripMarkup"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"stripMarkup", :soap_type=>"boolean", :value_required=>true}}
-{"nameField.summarizedField"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"summarizedField", :soap_type=>"string", :value_required=>true}}
-{"nameField.summaryFilterItems"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"summaryFilterItems", :soap_type=>"FilterItem", :value_required=>true}}
-{"nameField.summaryFilterItems.field"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"1", :name=>"field", :soap_type=>"string", :value_required=>true}}
-{"nameField.summaryFilterItems.value"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"value", :soap_type=>"string", :value_required=>true}}
-{"nameField.summaryFilterItems.valueField"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"valueField", :soap_type=>"string", :value_required=>true}}
-{"nameField.summaryForeignKey"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"summaryForeignKey", :soap_type=>"string", :value_required=>true}}
-{"nameField.summaryOperation"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"summaryOperation", :picklist_values=>[{:active=>true, :default_value=>false, :label=>nil, :value=>"count"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"sum"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"min"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"max"}], :soap_type=>"SummaryOperations", :value_required=>true}}
-{"nameField.trackFeedHistory"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"trackFeedHistory", :soap_type=>"boolean", :value_required=>true}}
-{"nameField.trackHistory"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"trackHistory", :soap_type=>"boolean", :value_required=>true}}
-{"nameField.trackTrending"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"trackTrending", :soap_type=>"boolean", :value_required=>true}}
-{"nameField.unique"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"unique", :soap_type=>"boolean", :value_required=>true}}
-{"nameField.valueSet"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"valueSet", :soap_type=>"ValueSet", :value_required=>true}}
-{"nameField.valueSet.controllingField"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"controllingField", :soap_type=>"string", :value_required=>true}}
-{"nameField.valueSet.restricted"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"restricted", :soap_type=>"boolean", :value_required=>true}}
-{"nameField.valueSet.valueSetDefinition"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"valueSetDefinition", :soap_type=>"ValueSetValuesDefinition", :value_required=>true}}
-{"nameField.valueSet.valueSetDefinition.sorted"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"1", :name=>"sorted", :soap_type=>"boolean", :value_required=>true}}
-{"nameField.valueSet.valueSetDefinition.value"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"1", :name=>"value", :soap_type=>"CustomValue", :value_required=>true}}
-{"nameField.valueSet.valueSetDefinition.value.fullName"=>{:is_foreign_key=>false, :is_name_field=>true, :min_occurs=>"0", :name=>"fullName", :soap_type=>"string", :value_required=>true}}
-{"nameField.valueSet.valueSetDefinition.value.color"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"color", :soap_type=>"string", :value_required=>true}}
-{"nameField.valueSet.valueSetDefinition.value.default"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"1", :name=>"default", :soap_type=>"boolean", :value_required=>true}}
-{"nameField.valueSet.valueSetDefinition.value.description"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"description", :soap_type=>"string", :value_required=>true}}
-{"nameField.valueSet.valueSetDefinition.value.isActive"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"isActive", :soap_type=>"boolean", :value_required=>true}}
-{"nameField.valueSet.valueSetDefinition.value.label"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"label", :soap_type=>"string", :value_required=>true}}
-{"nameField.valueSet.valueSetName"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"valueSetName", :soap_type=>"string", :value_required=>true}}
-{"nameField.valueSet.valueSettings"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"valueSettings", :soap_type=>"ValueSettings", :value_required=>true}}
-{"nameField.valueSet.valueSettings.controllingFieldValue"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"1", :name=>"controllingFieldValue", :soap_type=>"string", :value_required=>true}}
-{"nameField.valueSet.valueSettings.valueName"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"1", :name=>"valueName", :soap_type=>"string", :value_required=>true}}
-{"nameField.visibleLines"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"visibleLines", :soap_type=>"int", :value_required=>true}}
-{"nameField.writeRequiresMasterRead"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"writeRequiresMasterRead", :soap_type=>"boolean", :value_required=>true}}
-{"pluralLabel"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"pluralLabel", :soap_type=>"string", :value_required=>true}}
-{"recordTypeTrackFeedHistory"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"recordTypeTrackFeedHistory", :soap_type=>"boolean", :value_required=>true}}
-{"recordTypeTrackHistory"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"recordTypeTrackHistory", :soap_type=>"boolean", :value_required=>true}}
-{"recordTypes"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"recordTypes", :soap_type=>"RecordType", :value_required=>true}}
-{"recordTypes.fullName"=>{:is_foreign_key=>false, :is_name_field=>true, :min_occurs=>"0", :name=>"fullName", :soap_type=>"string", :value_required=>true}}
-{"recordTypes.active"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"1", :name=>"active", :soap_type=>"boolean", :value_required=>true}}
-{"recordTypes.businessProcess"=>{:foreign_key_domain=>"BusinessProcess", :is_foreign_key=>true, :is_name_field=>false, :min_occurs=>"0", :name=>"businessProcess", :soap_type=>"string", :value_required=>true}}
-{"recordTypes.compactLayoutAssignment"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"compactLayoutAssignment", :soap_type=>"string", :value_required=>true}}
-{"recordTypes.description"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"description", :soap_type=>"string", :value_required=>true}}
-{"recordTypes.label"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"1", :name=>"label", :soap_type=>"string", :value_required=>true}}
-{"recordTypes.picklistValues"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"picklistValues", :soap_type=>"RecordTypePicklistValue", :value_required=>true}}
-{"recordTypes.picklistValues.picklist"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"1", :name=>"picklist", :soap_type=>"string", :value_required=>true}}
-{"recordTypes.picklistValues.values"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"values", :soap_type=>"PicklistValue", :value_required=>true}}
-{"recordTypes.picklistValues.values.fullName"=>{:is_foreign_key=>false, :is_name_field=>true, :min_occurs=>"0", :name=>"fullName", :soap_type=>"string", :value_required=>true}}
-{"recordTypes.picklistValues.values.color"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"color", :soap_type=>"string", :value_required=>true}}
-{"recordTypes.picklistValues.values.default"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"1", :name=>"default", :soap_type=>"boolean", :value_required=>true}}
-{"recordTypes.picklistValues.values.description"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"description", :soap_type=>"string", :value_required=>true}}
-{"recordTypes.picklistValues.values.isActive"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"isActive", :soap_type=>"boolean", :value_required=>true}}
-{"recordTypes.picklistValues.values.allowEmail"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"allowEmail", :soap_type=>"boolean", :value_required=>true}}
-{"recordTypes.picklistValues.values.closed"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"closed", :soap_type=>"boolean", :value_required=>true}}
-{"recordTypes.picklistValues.values.controllingFieldValues"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"controllingFieldValues", :soap_type=>"string", :value_required=>true}}
-{"recordTypes.picklistValues.values.converted"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"converted", :soap_type=>"boolean", :value_required=>true}}
-{"recordTypes.picklistValues.values.cssExposed"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"cssExposed", :soap_type=>"boolean", :value_required=>true}}
-{"recordTypes.picklistValues.values.highPriority"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"highPriority", :soap_type=>"boolean", :value_required=>true}}
-{"recordTypes.picklistValues.values.probability"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"probability", :soap_type=>"int", :value_required=>true}}
-{"recordTypes.picklistValues.values.reverseRole"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"reverseRole", :soap_type=>"string", :value_required=>true}}
-{"recordTypes.picklistValues.values.reviewed"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"reviewed", :soap_type=>"boolean", :value_required=>true}}
-{"recordTypes.picklistValues.values.won"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"won", :soap_type=>"boolean", :value_required=>true}}
-{"searchLayouts"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"searchLayouts", :soap_type=>"SearchLayouts", :value_required=>true}}
-{"searchLayouts.customTabListAdditionalFields"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"customTabListAdditionalFields", :soap_type=>"string", :value_required=>true}}
-{"searchLayouts.excludedStandardButtons"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"excludedStandardButtons", :soap_type=>"string", :value_required=>true}}
-{"searchLayouts.listViewButtons"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"listViewButtons", :soap_type=>"string", :value_required=>true}}
-{"searchLayouts.lookupDialogsAdditionalFields"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"lookupDialogsAdditionalFields", :soap_type=>"string", :value_required=>true}}
-{"searchLayouts.lookupFilterFields"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"lookupFilterFields", :soap_type=>"string", :value_required=>true}}
-{"searchLayouts.lookupPhoneDialogsAdditionalFields"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"lookupPhoneDialogsAdditionalFields", :soap_type=>"string", :value_required=>true}}
-{"searchLayouts.searchFilterFields"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"searchFilterFields", :soap_type=>"string", :value_required=>true}}
-{"searchLayouts.searchResultsAdditionalFields"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"searchResultsAdditionalFields", :soap_type=>"string", :value_required=>true}}
-{"searchLayouts.searchResultsCustomButtons"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"searchResultsCustomButtons", :soap_type=>"string", :value_required=>true}}
-{"sharingReasons"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"sharingReasons", :soap_type=>"SharingReason", :value_required=>true}}
-{"sharingReasons.fullName"=>{:is_foreign_key=>false, :is_name_field=>true, :min_occurs=>"0", :name=>"fullName", :soap_type=>"string", :value_required=>true}}
-{"sharingReasons.label"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"1", :name=>"label", :soap_type=>"string", :value_required=>true}}
-{"sharingRecalculations"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"sharingRecalculations", :soap_type=>"SharingRecalculation", :value_required=>true}}
-{"sharingRecalculations.className"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"1", :name=>"className", :soap_type=>"string", :value_required=>true}}
-{"validationRules"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"validationRules", :soap_type=>"ValidationRule", :value_required=>true}}
-{"validationRules.active"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"1", :name=>"active", :soap_type=>"Boolean", :value_required=>true}}
-{"validationRules.description"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"description", :soap_type=>"string", :value_required=>true}}
-{"validationRules.errorConditionFormula"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"1", :name=>"errorConditionFormula", :soap_type=>"string", :value_required=>true}}
-{"validationRules.errorDisplayField"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"errorDisplayField", :soap_type=>"string", :value_required=>true}}
-{"validationRules.errorMessage"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"1", :name=>"errorMessage", :soap_type=>"string", :value_required=>true}}
-{"validationRules.fullName"=>{:is_foreign_key=>false, :is_name_field=>true, :min_occurs=>"0", :name=>"fullName", :soap_type=>"string", :value_required=>true}}
-{"webLinks"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"webLinks", :soap_type=>"WebLink", :value_required=>true}}
-{"webLinks.availability"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"1", :name=>"availability", :picklist_values=>[{:active=>true, :default_value=>false, :label=>nil, :value=>"online"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"offline"}], :soap_type=>"WebLinkAvailabilityEnum", :value_required=>true}}
-{"webLinks.description"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"description", :soap_type=>"String", :value_required=>false}}
-{"webLinks.encodingKey"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"encodingKey", :picklist_values=>[{:active=>true, :default_value=>false, :label=>nil, :value=>"UTF-8"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"ISO-8859-1"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"Shift_JIS"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"ISO-2022-JP"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"EUC-JP"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"ks_c_5601-1987"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"Big5"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"GB2312"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"Big5-HKSCS"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"x-SJIS_0213"}], :soap_type=>"Encoding", :value_required=>true}}
-{"webLinks.fullName"=>{:is_foreign_key=>false, :is_name_field=>true, :min_occurs=>"0", :name=>"fullName", :soap_type=>"string", :value_required=>true}}
-{"webLinks.hasMenubar"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"hasMenubar", :soap_type=>"boolean", :value_required=>true}}
-{"webLinks.hasScrollbars"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"hasScrollbars", :soap_type=>"boolean", :value_required=>true}}
-{"webLinks.hasToolbar"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"hasToolbar", :soap_type=>"boolean", :value_required=>true}}
-{"webLinks.height"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"height", :soap_type=>"int", :value_required=>true}}
-{"webLinks.isResizable"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"isResizable", :soap_type=>"boolean", :value_required=>true}}
-{"webLinks.linkType"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"1", :name=>"linkType", :picklist_values=>[{:active=>true, :default_value=>false, :label=>nil, :value=>"url"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"sControl"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"javascript"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"page"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"flow"}], :soap_type=>"WebLinkTypeEnum", :value_required=>true}}
-{"webLinks.masterLabel"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"masterLabel", :soap_type=>"String", :value_required=>false}}
-{"webLinks.openType"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"1", :name=>"openType", :picklist_values=>[{:active=>true, :default_value=>false, :label=>nil, :value=>"newWindow"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"sidebar"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"noSidebar"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"replace"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"onClickJavaScript"}], :soap_type=>"WebLinkWindowType", :value_required=>true}}
-{"webLinks.page"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"page", :soap_type=>"string", :value_required=>true}}
-{"webLinks.position"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"position", :picklist_values=>[{:active=>true, :default_value=>false, :label=>nil, :value=>"fullScreen"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"none"}, {:active=>true, :default_value=>false, :label=>nil, :value=>"topLeft"}], :soap_type=>"WebLinkPosition", :value_required=>true}}
-{"webLinks.protected"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"1", :name=>"protected", :soap_type=>"boolean", :value_required=>true}}
-{"webLinks.requireRowSelection"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"requireRowSelection", :soap_type=>"boolean", :value_required=>true}}
-{"webLinks.scontrol"=>{:foreign_key_domain=>["ApexPage", "FlowDefinition", "Scontrol"], :is_foreign_key=>true, :is_name_field=>false, :min_occurs=>"0", :name=>"scontrol", :soap_type=>"string", :value_required=>true}}
-{"webLinks.showsLocation"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"showsLocation", :soap_type=>"boolean", :value_required=>true}}
-{"webLinks.showsStatus"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"showsStatus", :soap_type=>"boolean", :value_required=>true}}
-{"webLinks.url"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"url", :soap_type=>"string", :value_required=>true}}
-{"webLinks.width"=>{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"width", :soap_type=>"int", :value_required=>true}}
+fullName = fullName@string
+actionOverrides = actionOverrides@ActionOverride
+actionOverrides.actionName = actionName@string
+actionOverrides.comment = comment@string
+actionOverrides.content = content@string
+actionOverrides.formFactor = formFactor@FormFactor
+actionOverrides.skipRecordTypeSelect = skipRecordTypeSelect@boolean
+actionOverrides.type = type@ActionOverrideType
+allowInChatterGroups = allowInChatterGroups@boolean
+articleTypeChannelDisplay = articleTypeChannelDisplay@ArticleTypeChannelDisplay
+articleTypeChannelDisplay.articleTypeTemplates = articleTypeTemplates@ArticleTypeTemplate !!!!!!!!!!!!!!
+articleTypeChannelDisplay.articleTypeTemplates.page = page@string
+businessProcesses = businessProcesses@BusinessProcess
+businessProcesses.description = description@String
+businessProcesses.fullName = fullName@string
+businessProcesses.isActive = isActive@Boolean
+businessProcesses.values = values@PicklistValue !!!!!!!!!!!!!!
+businessProcesses.values.fullName = fullName@string
+businessProcesses.values.color = color@string
+businessProcesses.values.default = default@boolean !!!!!!!!!!!!!!
+businessProcesses.values.description = description@string
+businessProcesses.values.isActive = isActive@boolean
+businessProcesses.values.allowEmail = allowEmail@boolean
+businessProcesses.values.closed = closed@boolean
+businessProcesses.values.controllingFieldValues = controllingFieldValues@string
+businessProcesses.values.converted = converted@boolean
+businessProcesses.values.cssExposed = cssExposed@boolean
+businessProcesses.values.highPriority = highPriority@boolean
+businessProcesses.values.probability = probability@int
+businessProcesses.values.reverseRole = reverseRole@string
+businessProcesses.values.reviewed = reviewed@boolean
+businessProcesses.values.won = won@boolean
+compactLayoutAssignment = compactLayoutAssignment@string
+compactLayouts = compactLayouts@CompactLayout
+compactLayouts.fullName = fullName@string
+compactLayouts.fields = fields@string !!!!!!!!!!!!!!
+compactLayouts.label = label@string !!!!!!!!!!!!!!
+customHelp = customHelp@string
+customHelpPage = customHelpPage@string
+dataStewardGroup = dataStewardGroup@string
+dataStewardUser = dataStewardUser@string
+deprecated = deprecated@boolean
+description = description@string
+enableActivities = enableActivities@boolean
+enableBulkApi = enableBulkApi@boolean
+enableChangeDataCapture = enableChangeDataCapture@boolean
+enableDivisions = enableDivisions@boolean
+enableEnhancedLookup = enableEnhancedLookup@boolean
+enableFeeds = enableFeeds@boolean
+enableHistory = enableHistory@boolean
+enableReports = enableReports@boolean
+enableSearch = enableSearch@boolean
+enableSharing = enableSharing@boolean
+enableStreamingApi = enableStreamingApi@boolean
+externalDataSource = externalDataSource@string
+externalName = externalName@string
+externalRepository = externalRepository@string
+fieldSets = fieldSets@FieldSet
+fieldSets.fullName = fullName@string
+fieldSets.availableFields = availableFields@FieldSetItem
+fieldSets.availableFields.field = field@string
+fieldSets.availableFields.isFieldManaged = isFieldManaged@boolean
+fieldSets.availableFields.isRequired = isRequired@boolean
+fieldSets.description = description@string !!!!!!!!!!!!!!
+fieldSets.displayedFields = displayedFields@FieldSetItem
+fieldSets.displayedFields.field = field@string
+fieldSets.displayedFields.isFieldManaged = isFieldManaged@boolean
+fieldSets.displayedFields.isRequired = isRequired@boolean
+fieldSets.label = label@string !!!!!!!!!!!!!!
+fields = fields@CustomField
+fields.fullName = fullName@string
+fields.businessOwnerGroup = businessOwnerGroup@string
+fields.businessOwnerUser = businessOwnerUser@string
+fields.businessStatus = businessStatus@string
+fields.caseSensitive = caseSensitive@boolean
+fields.customDataType = customDataType@string
+fields.defaultValue = defaultValue@string
+fields.deprecated = deprecated@boolean
+fields.description = description@string
+fields.displayFormat = displayFormat@string
+fields.encrypted = encrypted@boolean
+fields.escapeMarkup = escapeMarkup@boolean
+fields.externalDeveloperName = externalDeveloperName@string
+fields.externalId = externalId@boolean
+fields.formula = formula@string
+fields.inlineHelpText = inlineHelpText@string
+fields.isConvertLeadDisabled = isConvertLeadDisabled@boolean
+fields.isFilteringDisabled = isFilteringDisabled@boolean
+fields.isNameField = isNameField@boolean
+fields.isSortingDisabled = isSortingDisabled@boolean
+fields.label = label@string
+fields.length = length@int
+fields.lookupFilter = lookupFilter@LookupFilter
+fields.lookupFilter.active = active@Boolean !!!!!!!!!!!!!!
+fields.lookupFilter.booleanFilter = booleanFilter@string
+fields.lookupFilter.description = description@String
+fields.lookupFilter.errorMessage = errorMessage@String
+fields.lookupFilter.filterItems = filterItems@FilterItem
+fields.lookupFilter.filterItems.field = field@string !!!!!!!!!!!!!!
+fields.lookupFilter.filterItems.value = value@string
+fields.lookupFilter.filterItems.valueField = valueField@string
+fields.lookupFilter.infoMessage = infoMessage@String
+fields.lookupFilter.isOptional = isOptional@Boolean !!!!!!!!!!!!!!
+fields.maskChar = maskChar@EncryptedFieldMaskChar
+fields.maskType = maskType@EncryptedFieldMaskType
+fields.metadataRelationshipControllingField = metadataRelationshipControllingField@string
+fields.populateExistingRows = populateExistingRows@boolean
+fields.precision = precision@int
+fields.referenceTargetField = referenceTargetField@string
+fields.referenceTo = referenceTo@string
+fields.relationshipLabel = relationshipLabel@string
+fields.relationshipName = relationshipName@string
+fields.relationshipOrder = relationshipOrder@int
+fields.reparentableMasterDetail = reparentableMasterDetail@boolean
+fields.required = required@boolean
+fields.restrictedAdminField = restrictedAdminField@boolean
+fields.scale = scale@int
+fields.securityClassification = securityClassification@SecurityClassification
+fields.startingNumber = startingNumber@int
+fields.stripMarkup = stripMarkup@boolean
+fields.summarizedField = summarizedField@string
+fields.summaryFilterItems = summaryFilterItems@FilterItem
+fields.summaryFilterItems.field = field@string !!!!!!!!!!!!!!
+fields.summaryFilterItems.value = value@string
+fields.summaryFilterItems.valueField = valueField@string
+fields.summaryForeignKey = summaryForeignKey@string
+fields.summaryOperation = summaryOperation@SummaryOperations
+fields.trackFeedHistory = trackFeedHistory@boolean
+fields.trackHistory = trackHistory@boolean
+fields.trackTrending = trackTrending@boolean
+fields.unique = unique@boolean
+fields.valueSet = valueSet@ValueSet
+fields.valueSet.controllingField = controllingField@string
+fields.valueSet.restricted = restricted@boolean
+fields.valueSet.valueSetDefinition = valueSetDefinition@ValueSetValuesDefinition
+fields.valueSet.valueSetDefinition.sorted = sorted@boolean !!!!!!!!!!!!!!
+fields.valueSet.valueSetDefinition.value = value@CustomValue !!!!!!!!!!!!!!
+fields.valueSet.valueSetDefinition.value.fullName = fullName@string
+fields.valueSet.valueSetDefinition.value.color = color@string
+fields.valueSet.valueSetDefinition.value.default = default@boolean !!!!!!!!!!!!!!
+fields.valueSet.valueSetDefinition.value.description = description@string
+fields.valueSet.valueSetDefinition.value.isActive = isActive@boolean
+fields.valueSet.valueSetDefinition.value.label = label@string
+fields.valueSet.valueSetName = valueSetName@string
+fields.valueSet.valueSettings = valueSettings@ValueSettings
+fields.valueSet.valueSettings.controllingFieldValue = controllingFieldValue@string !!!!!!!!!!!!!!
+fields.valueSet.valueSettings.valueName = valueName@string !!!!!!!!!!!!!!
+fields.visibleLines = visibleLines@int
+fields.writeRequiresMasterRead = writeRequiresMasterRead@boolean
+historyRetentionPolicy = historyRetentionPolicy@HistoryRetentionPolicy
+historyRetentionPolicy.archiveAfterMonths = archiveAfterMonths@int !!!!!!!!!!!!!!
+historyRetentionPolicy.archiveRetentionYears = archiveRetentionYears@int !!!!!!!!!!!!!!
+historyRetentionPolicy.description = description@string
+household = household@boolean
+indexes = indexes@Index
+indexes.fullName = fullName@string
+indexes.fields = fields@IndexField !!!!!!!!!!!!!!
+indexes.fields.name = name@string !!!!!!!!!!!!!!
+indexes.fields.sortDirection = sortDirection@string !!!!!!!!!!!!!!
+indexes.label = label@string !!!!!!!!!!!!!!
+label = label@string
+listViews = listViews@ListView
+listViews.fullName = fullName@string
+listViews.booleanFilter = booleanFilter@string
+listViews.columns = columns@string
+listViews.division = division@string
+listViews.filters = filters@ListViewFilter
+listViews.filters.field = field@string !!!!!!!!!!!!!!
+listViews.filters.value = value@string
+listViews.label = label@string !!!!!!!!!!!!!!
+listViews.language = language@Language
+listViews.queue = queue@string
+listViews.sharedTo = sharedTo@SharedTo
+listViews.sharedTo.allCustomerPortalUsers = allCustomerPortalUsers@string
+listViews.sharedTo.allInternalUsers = allInternalUsers@string
+listViews.sharedTo.allPartnerUsers = allPartnerUsers@string
+listViews.sharedTo.channelProgramGroup = channelProgramGroup@string
+listViews.sharedTo.channelProgramGroups = channelProgramGroups@string
+listViews.sharedTo.group = group@string
+listViews.sharedTo.groups = groups@string
+listViews.sharedTo.managerSubordinates = managerSubordinates@string
+listViews.sharedTo.managers = managers@string
+listViews.sharedTo.portalRole = portalRole@string
+listViews.sharedTo.portalRoleAndSubordinates = portalRoleAndSubordinates@string
+listViews.sharedTo.queue = queue@string
+listViews.sharedTo.role = role@string
+listViews.sharedTo.roleAndSubordinates = roleAndSubordinates@string
+listViews.sharedTo.roleAndSubordinatesInternal = roleAndSubordinatesInternal@string
+listViews.sharedTo.roles = roles@string
+listViews.sharedTo.rolesAndSubordinates = rolesAndSubordinates@string
+listViews.sharedTo.territories = territories@string
+listViews.sharedTo.territoriesAndSubordinates = territoriesAndSubordinates@string
+listViews.sharedTo.territory = territory@string
+listViews.sharedTo.territoryAndSubordinates = territoryAndSubordinates@string
+nameField = nameField@CustomField
+nameField.fullName = fullName@string
+nameField.businessOwnerGroup = businessOwnerGroup@string
+nameField.businessOwnerUser = businessOwnerUser@string
+nameField.businessStatus = businessStatus@string
+nameField.caseSensitive = caseSensitive@boolean
+nameField.customDataType = customDataType@string
+nameField.defaultValue = defaultValue@string
+nameField.deprecated = deprecated@boolean
+nameField.description = description@string
+nameField.displayFormat = displayFormat@string
+nameField.encrypted = encrypted@boolean
+nameField.escapeMarkup = escapeMarkup@boolean
+nameField.externalDeveloperName = externalDeveloperName@string
+nameField.externalId = externalId@boolean
+nameField.formula = formula@string
+nameField.inlineHelpText = inlineHelpText@string
+nameField.isConvertLeadDisabled = isConvertLeadDisabled@boolean
+nameField.isFilteringDisabled = isFilteringDisabled@boolean
+nameField.isNameField = isNameField@boolean
+nameField.isSortingDisabled = isSortingDisabled@boolean
+nameField.label = label@string
+nameField.length = length@int
+nameField.lookupFilter = lookupFilter@LookupFilter
+nameField.lookupFilter.active = active@Boolean !!!!!!!!!!!!!!
+nameField.lookupFilter.booleanFilter = booleanFilter@string
+nameField.lookupFilter.description = description@String
+nameField.lookupFilter.errorMessage = errorMessage@String
+nameField.lookupFilter.filterItems = filterItems@FilterItem
+nameField.lookupFilter.filterItems.field = field@string !!!!!!!!!!!!!!
+nameField.lookupFilter.filterItems.value = value@string
+nameField.lookupFilter.filterItems.valueField = valueField@string
+nameField.lookupFilter.infoMessage = infoMessage@String
+nameField.lookupFilter.isOptional = isOptional@Boolean !!!!!!!!!!!!!!
+nameField.maskChar = maskChar@EncryptedFieldMaskChar
+nameField.maskType = maskType@EncryptedFieldMaskType
+nameField.metadataRelationshipControllingField = metadataRelationshipControllingField@string
+nameField.populateExistingRows = populateExistingRows@boolean
+nameField.precision = precision@int
+nameField.referenceTargetField = referenceTargetField@string
+nameField.referenceTo = referenceTo@string
+nameField.relationshipLabel = relationshipLabel@string
+nameField.relationshipName = relationshipName@string
+nameField.relationshipOrder = relationshipOrder@int
+nameField.reparentableMasterDetail = reparentableMasterDetail@boolean
+nameField.required = required@boolean
+nameField.restrictedAdminField = restrictedAdminField@boolean
+nameField.scale = scale@int
+nameField.securityClassification = securityClassification@SecurityClassification
+nameField.startingNumber = startingNumber@int
+nameField.stripMarkup = stripMarkup@boolean
+nameField.summarizedField = summarizedField@string
+nameField.summaryFilterItems = summaryFilterItems@FilterItem
+nameField.summaryFilterItems.field = field@string !!!!!!!!!!!!!!
+nameField.summaryFilterItems.value = value@string
+nameField.summaryFilterItems.valueField = valueField@string
+nameField.summaryForeignKey = summaryForeignKey@string
+nameField.summaryOperation = summaryOperation@SummaryOperations
+nameField.trackFeedHistory = trackFeedHistory@boolean
+nameField.trackHistory = trackHistory@boolean
+nameField.trackTrending = trackTrending@boolean
+nameField.unique = unique@boolean
+nameField.valueSet = valueSet@ValueSet
+nameField.valueSet.controllingField = controllingField@string
+nameField.valueSet.restricted = restricted@boolean
+nameField.valueSet.valueSetDefinition = valueSetDefinition@ValueSetValuesDefinition
+nameField.valueSet.valueSetDefinition.sorted = sorted@boolean !!!!!!!!!!!!!!
+nameField.valueSet.valueSetDefinition.value = value@CustomValue !!!!!!!!!!!!!!
+nameField.valueSet.valueSetDefinition.value.fullName = fullName@string
+nameField.valueSet.valueSetDefinition.value.color = color@string
+nameField.valueSet.valueSetDefinition.value.default = default@boolean !!!!!!!!!!!!!!
+nameField.valueSet.valueSetDefinition.value.description = description@string
+nameField.valueSet.valueSetDefinition.value.isActive = isActive@boolean
+nameField.valueSet.valueSetDefinition.value.label = label@string
+nameField.valueSet.valueSetName = valueSetName@string
+nameField.valueSet.valueSettings = valueSettings@ValueSettings
+nameField.valueSet.valueSettings.controllingFieldValue = controllingFieldValue@string !!!!!!!!!!!!!!
+nameField.valueSet.valueSettings.valueName = valueName@string !!!!!!!!!!!!!!
+nameField.visibleLines = visibleLines@int
+nameField.writeRequiresMasterRead = writeRequiresMasterRead@boolean
+pluralLabel = pluralLabel@string
+recordTypeTrackFeedHistory = recordTypeTrackFeedHistory@boolean
+recordTypeTrackHistory = recordTypeTrackHistory@boolean
+recordTypes = recordTypes@RecordType
+recordTypes.fullName = fullName@string
+recordTypes.active = active@boolean !!!!!!!!!!!!!!
+recordTypes.businessProcess = businessProcess@string
+recordTypes.compactLayoutAssignment = compactLayoutAssignment@string
+recordTypes.description = description@string
+recordTypes.label = label@string !!!!!!!!!!!!!!
+recordTypes.picklistValues = picklistValues@RecordTypePicklistValue
+recordTypes.picklistValues.picklist = picklist@string !!!!!!!!!!!!!!
+recordTypes.picklistValues.values = values@PicklistValue
+recordTypes.picklistValues.values.fullName = fullName@string
+recordTypes.picklistValues.values.color = color@string
+recordTypes.picklistValues.values.default = default@boolean !!!!!!!!!!!!!!
+recordTypes.picklistValues.values.description = description@string
+recordTypes.picklistValues.values.isActive = isActive@boolean
+recordTypes.picklistValues.values.allowEmail = allowEmail@boolean
+recordTypes.picklistValues.values.closed = closed@boolean
+recordTypes.picklistValues.values.controllingFieldValues = controllingFieldValues@string
+recordTypes.picklistValues.values.converted = converted@boolean
+recordTypes.picklistValues.values.cssExposed = cssExposed@boolean
+recordTypes.picklistValues.values.highPriority = highPriority@boolean
+recordTypes.picklistValues.values.probability = probability@int
+recordTypes.picklistValues.values.reverseRole = reverseRole@string
+recordTypes.picklistValues.values.reviewed = reviewed@boolean
+recordTypes.picklistValues.values.won = won@boolean
+searchLayouts = searchLayouts@SearchLayouts
+searchLayouts.customTabListAdditionalFields = customTabListAdditionalFields@string
+searchLayouts.excludedStandardButtons = excludedStandardButtons@string
+searchLayouts.listViewButtons = listViewButtons@string
+searchLayouts.lookupDialogsAdditionalFields = lookupDialogsAdditionalFields@string
+searchLayouts.lookupFilterFields = lookupFilterFields@string
+searchLayouts.lookupPhoneDialogsAdditionalFields = lookupPhoneDialogsAdditionalFields@string
+searchLayouts.searchFilterFields = searchFilterFields@string
+searchLayouts.searchResultsAdditionalFields = searchResultsAdditionalFields@string
+searchLayouts.searchResultsCustomButtons = searchResultsCustomButtons@string
+sharingReasons = sharingReasons@SharingReason
+sharingReasons.fullName = fullName@string
+sharingReasons.label = label@string !!!!!!!!!!!!!!
+sharingRecalculations = sharingRecalculations@SharingRecalculation
+sharingRecalculations.className = className@string !!!!!!!!!!!!!!
+validationRules = validationRules@ValidationRule
+validationRules.active = active@Boolean !!!!!!!!!!!!!!
+validationRules.description = description@string
+validationRules.errorConditionFormula = errorConditionFormula@string !!!!!!!!!!!!!!
+validationRules.errorDisplayField = errorDisplayField@string
+validationRules.errorMessage = errorMessage@string !!!!!!!!!!!!!!
+validationRules.fullName = fullName@string
+webLinks = webLinks@WebLink
+webLinks.availability = availability@WebLinkAvailabilityEnum !!!!!!!!!!!!!!
+webLinks.description = description@String
+webLinks.encodingKey = encodingKey@Encoding
+webLinks.fullName = fullName@string
+webLinks.hasMenubar = hasMenubar@boolean
+webLinks.hasScrollbars = hasScrollbars@boolean
+webLinks.hasToolbar = hasToolbar@boolean
+webLinks.height = height@int
+webLinks.isResizable = isResizable@boolean
+webLinks.linkType = linkType@WebLinkTypeEnum !!!!!!!!!!!!!!
+webLinks.masterLabel = masterLabel@String
+webLinks.openType = openType@WebLinkWindowType !!!!!!!!!!!!!!
+webLinks.page = page@string
+webLinks.position = position@WebLinkPosition
+webLinks.protected = protected@boolean !!!!!!!!!!!!!!
+webLinks.requireRowSelection = requireRowSelection@boolean
+webLinks.scontrol = scontrol@string
+webLinks.showsLocation = showsLocation@boolean
+webLinks.showsStatus = showsStatus@boolean
+webLinks.url = url@string
+webLinks.width = width@int

@@ -6,9 +6,6 @@ fullName:
 deploymentStatus:
   name: deploymentStatus
   soap_type: string
-  picklist_values:
-    - value: InDevelopment
-    - value: Deployed
   min_occurs: 1
 label:
   name: label
@@ -29,10 +26,7 @@ sharingModel:
   name: sharingModel
   soap_type: string
   min_occurs: 1
-  picklist_values:
-    - value: Private
-    - value: Read
-    - value: ReadWrite
-    - value: ReadWriteTransfer
-    - value: FullAccess
-    - value: ControlledByParent
+visibility:
+  name: visibility
+  soap_type: string
+  min_occurs: 0

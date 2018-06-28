@@ -10,12 +10,16 @@ module Service
         		file_name = "partner.wsdl.xml"
         	when :metadata_wsdl
         		file_name = "metadata.wsdl.xml"
+            when :tooling_wsdl
+                file_name = "tooling.wsdl.xml"
         	when :excel_export_settings
         		file_name = "excel_export_settings.yml"
         	when :translations
         		file_name = "translations.yml"
             when :valuetypes
                 file_name = "value_type_mappings.yml"
+            when :enums
+                file_name = "enums.yml"
         	else
         		file_name = param
         	end

@@ -3,14 +3,21 @@ require "fileutils"
 module Metadata
 	module FieldTypeFormatter
 
-		def format_field_type(field_types)
+		def format_field_type(metadata_type, type_fields)
 			@result = []
-			field_types.each{|hash| parse_field_types(nil, hash)}
+			modified_field_types = Metadata::ValueFieldSupplier.add_missing_fields(metadata_type, type_fields)
+			modified_field_types.each{|hash| parse_field_types(nil, hash)}
+			validate_result
 		    @result
 		end
 
 		def validate_result
-		    file = File.open('C:\Users\murakosi\rubytestparse.log','a')
+		    file_name = 'C:\Users\murakosi\rubytestparse.log'
+		    if File.exist?(file_name)
+		    	FileUtils.rm(file_name)
+		    end
+		    file = File.open(file_name,'a')
+
 		    @result.each do |h|
 		        file.puts h
 		    end

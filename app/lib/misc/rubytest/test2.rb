@@ -29,17 +29,25 @@ def do_parse
     end
 
     file = File.open('parse.log','a')
-    #@result.each do |h|
-    #    file.puts h
-    #end
-    file.puts(Hash[*@result])
+    @result.each do |h|
+        #file.puts h
+        h.each do |k,v|
+            if v[:min_occurs].to_i > 0
+                req = " !!!!!!!!!!!!!!"
+            else
+                req = ""
+            end
+            file.puts k + " = " + v[:name] + "@" + v[:soap_type] + req
+        end
+    end
     file.close
+    #File.write("parse.log", Hash[*@result])
     
     chk = {}
     @result.each do |h|
         h.each do |k,v|
             if chk.has_key?(k)
-                raise Exception.new("aaa")
+                raise Exception.new(k)
             else
                 chk[k] = v
             end
@@ -50,11 +58,13 @@ end
 def do_f(p, h)
     rem = h.delete(:fields)
     if p.nil?
-        pk = h[:name]#get_soap(h)
+        #hk = get_soap(h)
+        pk = h[:name]
     else
         pk = p
     end
     parse_hash(h, pk)
+    #parse_hash(h,hk)
 
     if !rem.nil?
         rem = Array[rem].flatten
@@ -98,7 +108,9 @@ end
                 elsif SoapTypes.include?(hash[:soap_type].to_s.downcase)
                     next
                 else
-                    return hash[:name]#get_key(hash[:soap_type],hash[:name])
+                    #return get_key(hash[:soap_type],hash[:name])
+                    #return hash[:name]
+                    return hash[:soap_type]
                 end
             end
         end

@@ -1,56 +1,85 @@
-require "./flatter"
-
-h = [{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"active", :soap_type=>"Boolean", :value_required=>false}, {:is_foreign_key=>false, :is_name_field=>true, :min_occurs=>"0", :name=>"fullName", :soap_type=>"string", :value_required=>true}, {:fields=>[{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"assignedTo", :soap_type=>"string", :value_required=>true}, {:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"booleanFilter", :soap_type=>"string", :value_required=>true}, {:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"businessHours", :soap_type=>"string", :value_required=>true}, {:fields=>[{:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"1", :name=>"field", :soap_type=>"string", :value_required=>true}, {:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"value", :soap_type=>"string", :value_required=>true}, {:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"valueField", :soap_type=>"string", :value_required=>true}], :is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"criteriaItems", :soap_type=>"FilterItem", :value_required=>true}, {:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"disableEscalationWhenModified", :soap_type=>"boolean", :value_required=>true}, {:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"formula", :soap_type=>"string", :value_required=>true}, {:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"notifyCcRecipients", :soap_type=>"boolean", :value_required=>true}, {:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"overrideExistingTeams", :soap_type=>"boolean", :value_required=>true}, {:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"replyToEmail", :soap_type=>"string", :value_required=>true}, {:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"senderEmail", :soap_type=>"string", :value_required=>true}, {:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"senderName", :soap_type=>"string", :value_required=>true}, {:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"team", :soap_type=>"string", :value_required=>true}, {:is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"template", :soap_type=>"string", :value_required=>true}], :is_foreign_key=>false, :is_name_field=>false, :min_occurs=>"0", :name=>"ruleEntry", :soap_type=>"RuleEntry", :value_required=>true}]
-
-s = [
-{:a => :b},
-{:b => [:b1,:b2, :c]},
-{:b1 => nil},
-{:b2 => "b"},
-{:c => [:c1,:c2]},
-{:c1 => "dfa"},
-{:c2 => "c"}
-]
-
-co = []
-s.each do |ss|
-    ss.each do |k,v|
-        if ss.has_key?(v)
-        else
-            
-        end
-    end
-end
+require "savon"
+require 'logger'
+require "fileutils"
+require 'zip'
+require './Murakosi'
+require "wasabi"
+require 'active_support'
+require 'active_support/core_ext'
 
 =begin
-f = nil
-h.each do |h2|
-    f = Flatter.flat(h2)
+if File.exist?("log.txt")
+	FileUtils.remove("log.txt")
 end
-f.each do |f2|
-    p f2
-end
+log = Logger.new('log.txt')
 
+c = Savon.client(:wsdl => "tooling.xml")
+r = c.call(:login, :message => {:username => "murakoshi@cse.co.jp", :password=>"s13926cse"})
+r = r.to_hash
+r = r[:login_response]
+r = r[:result]
+
+metadata_server_url = r[:metadata_server_url]
+server_url = r[:server_url]
+session_id = r[:session_id]
+headers = {"tns:SessionHeader" => {"tns:sessionId" => session_id}}
+
+tool = Savon.client(:wsdl => "tooling.xml",
+soap_header: headers,
+endpoint: server_url,
+ssl_version: :TLSv1_2,
+log: true, 
+logger: log, 
+log_level: :debug,
+pretty_print_xml: true,
+convert_request_keys_to: :lower_camelcase
+)
+
+meta = Savon.client(:wsdl => "metadata.xml",
+soap_header: headers,
+endpoint: metadata_server_url,
+ssl_version: :TLSv1_2,
+log: true, 
+logger: log, 
+log_level: :debug,
+pretty_print_xml: true,
+convert_request_keys_to: :lower_camelcase
+)
 =end
 
-=begin
-h.each do |a|
-    if a.has_key?(:fields)
-        a.each do |b|
-            x = Hash[*b]
-            if x.has_key?(:fields)
-                b.each do |c|
-                    p c
-                end
-            end
-        end
-    end
-end
+hash = Hash.from_xml(open('tooling.xml'))
+a = hash["definitions"]["types"]["schema"]
 
-<% content_for :header_tags do %>
-    <%= stylesheet_link_tag 'estimate', :plugin => 'estimate_premise' %>
-    <%= stylesheet_link_tag 'handsontable.full.min', :plugin => 'estimate_premise' %>
-    <%= stylesheet_link_tag 'bootstrap', :plugin => 'estimate_premise' %>
-<% end %>
+b = a.map{|hash| hash["simpleType"]}.compact.flatten
+
+if File.exist?("ws_hash.log")
+	FileUtils.remove("ws_hash.log")
+end
+#file = File.open('ws_hash.log','a')
+#    b.each do |h|
+#        file.puts h
+#    end
+#file.close
+
+c = []
+i = 0
+b.each do |hash|
+    next unless hash.has_key?("restriction") && hash["restriction"].has_key?("enumeration")
+    name = hash["name"]
+    enums = hash["restriction"]["enumeration"].to_a.flatten.map{|hash| hash["value"]}
+    c << {name => enums}
+end
+file = File.open('ws_hash.log','a')
+    c.each do |h|
+        file.puts h
+    end
+file.close
+=begin
+metadata_type = "DeleteConstraint"
+req4 =  {:type => "{urn:metadata.tooling.soap.sforce.com}" + metadata_type.to_s}
+message_hash = req4
+response = meta.call(:describe_value_type) do |locals|
+    locals.message message_hash
+end
 
 =end

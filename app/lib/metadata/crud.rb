@@ -4,11 +4,9 @@ module Metadata
 	module Crud
 
 		All_or_none_error = "ALL_OR_NONE_OPERATION_ROLLED_BACK"
-		Excluding_metadata_types = ["CustomLabels"]
 
 		def get_metadata_types(sforce_session)
 			metadata_types = Service::MetadataClientService.call(sforce_session).describe_metadata_objects()
-			#metadata_types.reject{|type| Excluding_metadata_types.include?(type)}
 		end
 
 		def list_metadata(sforce_session, metadata_type)

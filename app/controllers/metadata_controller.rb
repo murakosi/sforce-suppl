@@ -29,22 +29,34 @@ class MetadataController < ApplicationController
         metadata_type = params[:selected_directory]
 
         begin
-            metadata_list = list_metadata(sforce_session, metadata_type)
-            if metadata_list.nil?
-                raise StandardError.new("No metadata available")
-            else
-                formatted_list = format_metadata_list(metadata_list)
+            if !AppConfig::RefreshEnums
+                Generator::EnumGenerator.generate(true)
             end
-            field_types = get_field_value_types(sforce_session, metadata_type)
-            crud_info = api_crud_info(field_types)
-            parent_tree_nodes = format_parent_tree_nodes(crud_info, formatted_list)            
-            clear_session(metadata_type, field_types)
-            render :json => list_response_json(metadata_type, formatted_list, parent_tree_nodes, field_types, crud_info), :status => 200
+            response = execute_list_metadata(metadata_type)
+            render :json => response, :status => 200
         rescue StandardError => ex
             print_error(ex)
             render :json => {:error => ex.message}, :status => 400
         end
-    end   
+    end
+
+    def execute_list_metadata(metadata_type)
+        metadata_list = list_metadata(sforce_session, metadata_type)
+
+        if metadata_list.nil?
+            raise StandardError.new("No metadata available")
+        else
+            formatted_list = format_metadata_list(metadata_list)
+        end
+
+        field_types = get_field_value_types(sforce_session, metadata_type)
+        formatted_field_types = format_field_type_result(metadata_type, field_types)
+        crud_info = api_crud_info(field_types)
+        parent_tree_nodes = format_parent_tree_nodes(crud_info, formatted_list)            
+        clear_session(metadata_type, formatted_field_types)
+
+        list_response_json(metadata_type, formatted_list, parent_tree_nodes, field_types, crud_info)
+    end
 
     def list_response_json(metadata_type, formatted_list, parent_tree_nodes, field_types, crud_info)
         {
@@ -63,24 +75,13 @@ class MetadataController < ApplicationController
         begin
             raise_when_type_unmached(metadata_type)
             result = read_metadata(sforce_session, metadata_type, full_name)
-            type_info = tree_type_info(current_metadata_field_types)
-            #parsed = format_field_type_result(field_types)
-            tree_data = format_read_result(full_name, result, type_info)
-
-            #tree_data = format_read_result(full_name, result)
+            tree_data = format_read_result(full_name, result, current_metadata_field_types)
             try_save_session(metadata_type, full_name, result)
-            render :json => read_response_json(result, tree_data), :status => 200            
+            render :json => {:tree => tree_data}, :status => 200            
         rescue StandardError => ex
             print_error(ex)
             render :json => {:error => ex.message}, :status => 400
         end
-    end
-
-    def read_response_json(raw_hash, tree_data)
-         {
-            :raw => raw_hash,
-            :tree => tree_data
-        }
     end
 
     def edit

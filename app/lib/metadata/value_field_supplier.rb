@@ -35,7 +35,8 @@ module Metadata
 				if @mapping.keys.include?(hash[:name])
 					value_type_fields << @mapping[hash[:name]].symbolize_keys
 					@mapping.delete(hash[:name])
-				elsif Metadata::FieldType::SoapTypes.include?(hash[:soap_type])
+				#elsif Metadata::FieldType::SoapTypes.include?(hash[:soap_type])
+				else
 					value_type_fields << hash
 				end
 			end
