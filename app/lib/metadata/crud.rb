@@ -32,12 +32,12 @@ module Metadata
 
 		def to_type(text, data_type)
 			begin
-				case data_type.to_s
-				when TrueClass.to_s, FalseClass.to_s
+				case data_type.to_s.downcase
+				when "trueclass", "falseclass"
 					text.to_bool
-				when Integer.to_s
+				when "integer"
 					text.to_i
-				when Float.to_s
+				when "float"
 					text.to_f
 				else
 					text

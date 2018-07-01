@@ -31,6 +31,8 @@ module Metadata
                     types[name] = {:is_picklist => true, :picklist_source => hash[:picklist_values].map{|hash| hash[:value]}}
                 elsif enums.has_key?(name)
                     types[name] = {:is_picklist => true, :picklist_source => enums[name]}
+                elsif enums.has_key?(hash[:soap_type].to_s.camelize)
+                    types[name] = {:is_picklist => true, :picklist_source => enums[hash[:soap_type].to_s.camelize]}
                 else
                     types[name] = {:is_picklist => false}
                 end
@@ -160,7 +162,7 @@ module Metadata
         end
 
         def value_field_name(path)
-            split_path = path.split("/")
+            split_path = path.split(".")
             split_path.reverse.shift
         end
 

@@ -7,12 +7,12 @@ module Metadata
 			@result = []
 			modified_field_types = Metadata::ValueFieldSupplier.add_missing_fields(metadata_type, type_fields)
 			modified_field_types.each{|hash| parse_field_types(nil, hash)}
-			validate_result
+			validate_result			
 		    @result
 		end
 
 		def validate_result
-		    file_name = 'C:\Users\murakosi\rubytestparse.log'
+		    file_name = 'C:\Users\Daiki\rubytestparse.log'
 		    if File.exist?(file_name)
 		    	FileUtils.rm(file_name)
 		    end
