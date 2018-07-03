@@ -49,12 +49,12 @@ module Metadata
 
 		def update_metadata(sforce_session, metadata_type, metadata)
 			save_result = Service::MetadataClientService.call(sforce_session).update(metadata_type, metadata)
-			parse_crud_result(:update, save_result)
+			parse_save_result(:update, save_result)
 		end
 
 		def delete_metadata(sforce_session, metadata_type, full_names)
 			save_result = Service::MetadataClientService.call(sforce_session).delete(metadata_type, full_names)
-			parse_crud_result(:delete, save_result)
+			parse_save_result(:delete, save_result)
 		end
 
 		def create_metadata(sforce_session, metadata_type, tags, values)
@@ -63,10 +63,19 @@ module Metadata
 				merged = [tags, value].transpose
 				metadata << Hash[*merged.flatten]
 			end
-
-			metadata = Metadata::ValueFieldSupplier.rebuild(metadata_type, metadata)
+			
+			metadata = Metadata::ValueFieldSupplier.rebuild(metadata_type, metadata)	
+			#p metadata
+			#fake_response
 			save_result = Service::MetadataClientService.call(sforce_session).create(metadata_type, metadata)
 			parse_save_result(:create, save_result)
+		end
+
+		def fake_response
+			{
+				:message => "metadata succeeded",
+				:refresh_required => false
+			}
 		end
 
 		def parse_save_result(crud_type, crud_result)

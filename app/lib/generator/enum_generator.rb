@@ -3,8 +3,9 @@ require "yaml"
 
 module Generator
 	class EnumGenerator
+		include Generator::GeneratorCore
 
-		def self.generate(create_file = false)
+		def generate(create_file = false)
 			tooling_wsdl = Service::ResourceLocator.call(:tooling_wsdl)
 			enums = extract_enum_types(tooling_wsdl)
 			if create_file
@@ -13,7 +14,7 @@ module Generator
 			enums
 		end
 
-		def self.extract_enum_types(wsdl)
+		def extract_enum_types(wsdl)
 			enums = {}
 
 			hash = Hash.from_xml(open(wsdl))
@@ -30,7 +31,7 @@ module Generator
 			add_missing_enums(enums)
 		end
 
-		def self.create_enums_yaml(enums)
+		def create_enums_yaml(enums)
 			enums_file = Service::ResourceLocator.call(:enums)			
 			enums_yml = enums.to_yaml
 			if File.exist?(enums_file)
@@ -40,7 +41,7 @@ module Generator
 			File.write(enums_file, enums_yml)
 		end
 
-		def self.add_missing_enums(enums)
+		def add_missing_enums(enums)
 			enums["visibility"] = enums["customSettingsVisibility"]
 			enums["type"] = enums["fieldType"]
 			enums

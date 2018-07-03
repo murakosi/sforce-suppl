@@ -3,8 +3,9 @@ require "rubyXL"
 
 module Generator
     class ExcelGenerator
-    include Utils::ExcelUtils            
-
+        include Utils::ExcelUtils            
+        include Generator::GeneratorCore
+        
         def initialize(template, mapping)
             @template = template
             @mapping = load_symbolized_yaml(mapping)

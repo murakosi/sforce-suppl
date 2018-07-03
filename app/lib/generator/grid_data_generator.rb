@@ -1,6 +1,6 @@
 require "yaml"
 
-module Metadata
+module Generator
 	module GridDataGenerator
 
 		def list_grid_column_options(metadata_list)
@@ -14,18 +14,18 @@ module Metadata
 
 		end
 		
-		def create_grid_options(metadata_type, crud_info, result)
+		def create_grid_options(metadata_type, crud_info, type_fields)
 			#min_row = create_grid_min_row(result)
 
 			#if min_row > 0
 			if crud_info[:api_creatable]
-				get_create_grid_options(metadata_type, result)
+				get_create_grid_options(metadata_type, type_fields)
 			else
 				nil_create_grid_options
 			end
 		end
 
-		def get_create_grid_options(metadata_type, result)
+		def get_create_grid_options(metadata_type, type_fields)
 			columns = []
 			column_options = []
 			field_names = []
@@ -38,9 +38,9 @@ module Metadata
 			#	column_options << create_grid_column_option(hash)
 			#end
 			
-			type_fields = result.sort_by{|hash| [create_grid_sort_key(hash), hash.keys]}
+			sorted_type_fields = type_fields.sort_by{|hash| [create_grid_sort_key(hash), hash.keys]}
 			
-			type_fields.each do |hash|
+			sorted_type_fields.each do |hash|
 				hash.each do |k, v|
 					field_names << k
 					columns << create_grid_column(k, v)
@@ -79,22 +79,58 @@ module Metadata
 		end
 =end
 		def create_grid_sort_key(hash)
-			if hash.keys.first.include?(".")
-				return 0
-			end
-
 			value = Hash[*hash.values]
-			key = value[:min_occurs].to_i
+			key = 0 #value[:min_occurs].to_i
+
+			if is_key_field?(value)
+				if hash.keys.first.include?(".")
+					if value.has_key?(:indispensable)
+						key += 1
+					else
+						key -= 1
+					end
+				else
+					key += 1
+				end
+			end
+=begin
 			if value[:is_name_field]
 				key += 1
 			end
+			
+			if value[:name].to_s.camelize(:lower) == "fullName"
+				key += 1
+			end
+
+			if value.has_key?(:indispensable)
+				key += 1
+			end
+=end
 			-key
 		end
 
+		def is_key_field?(hash)
+			if hash[:parent]
+				return false
+			elsif hash[:is_name_field]
+				return true			
+			elsif hash[:name].to_s.camelize(:lower) == "fullName"
+				return true
+			elsif hash[:min_occurs].to_i > 0
+				return true
+			elsif hash.has_key?(:indispensable)
+				return true
+			end	
+
+			return false		
+		end
+
 		def create_grid_column(key, hash)
-		    if hash[:is_name_field] || hash[:min_occurs].to_i > 0
+		    if hash[:parent]
+		    	key
+		    elsif hash[:is_name_field] || hash[:min_occurs].to_i > 0 || hash.has_key?(:indispensable)
 		        "*" + key
-		    else
+		    else		    	
 		         key
 		    end
 		end

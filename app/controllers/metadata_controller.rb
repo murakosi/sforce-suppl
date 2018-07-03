@@ -3,7 +3,7 @@ class MetadataController < ApplicationController
     include Metadata::Formatter
     include Metadata::Crud
     include Metadata::SessionController
-    include Metadata::GridDataGenerator
+    include Generator::GridDataGenerator
 
     before_action :require_sign_in!
 
@@ -29,9 +29,6 @@ class MetadataController < ApplicationController
         metadata_type = params[:selected_directory]
 
         begin
-            if !AppConfig::RefreshEnums
-                Generator::EnumGenerator.generate(true)
-            end
             response = execute_list_metadata(metadata_type)
             render :json => response, :status => 200
         rescue StandardError => ex

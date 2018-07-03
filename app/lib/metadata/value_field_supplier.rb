@@ -5,6 +5,10 @@ module Metadata
 		Build_mapping = "build_mapping"
 		Rebuild_mapping = "rebuild_mapping"
 
+		def write_log(text)
+			File.write('C:\Users\murakosi\rubytest\ws_hash.log', text)
+		end
+
 		def typefield_resource_exists?(type)
 			resouce_file_path = Service::ResourceLocator.call(:valuetypes)
 			@typefield_mapping = YAML.load_file(resouce_file_path)[type]
@@ -25,10 +29,33 @@ module Metadata
 		end
 
 		def add_missing_fields(metadata_type, type_fields)
+			if mapping_exists?(metadata_type, Build_mapping)
+				return @mapping
+			else
+				nil
+			end
+=begin			
 			if !mapping_exists?(metadata_type, Build_mapping)
 				return type_fields
 			end
 
+			value_type_fields = []
+			
+			write_log(type_fields)
+			
+			type_fields.each do |hash|
+				if @mapping.keys.include?(hash[:name])
+					value_type_fields << @mapping[hash[:name]].symbolize_keys.merge(hash)
+					@mapping.delete(hash[:name])
+				else
+					value_type_fields << hash
+				end
+			end
+			@mapping.values.each{|hash| value_type_fields << hash.deep_symbolize_keys}
+			
+			value_type_fields
+=end
+=begin
 			value_type_fields = []
 
 			type_fields.each do |hash|
@@ -43,8 +70,42 @@ module Metadata
 			@mapping.values.each{|hash| value_type_fields << hash.deep_symbolize_keys}
 
 			value_type_fields
+=end
+
 		end
 
+		def rebuild(metadata_type, records)
+			@rebuild_result = {}
+			temp_hash = {}
+			records.each do |hash|
+				hash.each do |k, v|
+					next if v.nil?
+					temp_hash = k.split(".").reverse.inject(encode_content(k,v)) {|mem, item| { item => mem } }
+					merge_nest(temp_hash)
+				end
+			end			
+			@rebuild_result
+		end
+
+		def merge_nest(hash)
+			hash.each do |k, v|
+		        if @rebuild_result.has_key?(k)
+		            @rebuild_result.deep_merge!({k=> v})
+		        else
+		            @rebuild_result.merge!(hash)
+		        end
+			end
+		end
+		
+		def encode_content(key, value)
+			if key.to_s.downcase == "content"
+				Base64.strict_encode64(value)
+			else
+				value
+			end
+		end
+
+=begin
 		def rebuild(metadata_type, records)
 			if !mapping_exists?(metadata_type, Rebuild_mapping)
 				simple_reconstruct(records)
@@ -98,7 +159,7 @@ module Metadata
 				value
 			end
 		end
-
+=end
 	end
 	end
 end
