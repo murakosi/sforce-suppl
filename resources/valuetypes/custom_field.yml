@@ -1,0 +1,4 @@
+type:
+  name: type
+  soap_type: FieldType
+  min_occurs: 1

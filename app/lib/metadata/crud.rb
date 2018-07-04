@@ -65,10 +65,10 @@ module Metadata
 			end
 			
 			metadata = Metadata::ValueFieldSupplier.rebuild(metadata_type, metadata)	
-			#p metadata
-			#fake_response
-			save_result = Service::MetadataClientService.call(sforce_session).create(metadata_type, metadata)
-			parse_save_result(:create, save_result)
+			p metadata
+			fake_response
+			#save_result = Service::MetadataClientService.call(sforce_session).create(metadata_type, metadata)
+			#parse_save_result(:create, save_result)
 		end
 
 		def fake_response

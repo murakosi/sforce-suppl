@@ -78,12 +78,14 @@ module Metadata
 		    else
 		        key = parent
 		    end
+		    parent_min_occurs = hash[:min_occurs]
 		    parse_field_types(key, hash.merge({:parent => true}))
 
 		    if remnant.present?
 		        remnant = Array[remnant].flatten
 		        remnant.each do |hash|
-		            parse_field_types(key + "." + hash[:name], hash)
+		            #parse_field_types(key + "." + hash[:name], hash)		            
+		            parse_field_types(key + "." + hash[:name], hash.merge({:min_occurs => parent_min_occurs}))
 		        end
 		    end
 		end

@@ -29,7 +29,7 @@ module Generator
 			columns = []
 			column_options = []
 			field_names = []
-			@enums = get_enums()
+			@enums = Metadata::EnumProvider.enums
 			#type_fields = Metadata::ValueFieldSupplier.add_missing_fields(metadata_type, result[:value_type_fields])
 
 			#type_fields.each do |hash|
@@ -79,19 +79,20 @@ module Generator
 		end
 =end
 		def create_grid_sort_key(hash)
+			key = hash.keys.first
 			value = Hash[*hash.values]
-			key = 0 #value[:min_occurs].to_i
+			sort_key = 0 #value[:min_occurs].to_i
 
-			if is_key_field?(value)
-				if hash.keys.first.include?(".")
-					if value.has_key?(:indispensable)
-						key += 1
-					else
-						key -= 1
-					end
-				else
-					key += 1
-				end
+			if is_key_field?(key, value)
+				#if hash.keys.first.include?(".")
+				#	if value.has_key?(:indispensable)
+				#		key += 1
+				#	else
+				#		key -= 1
+				#	end
+				#else
+					sort_key += 1
+				#end
 			end
 =begin
 			if value[:is_name_field]
@@ -106,15 +107,13 @@ module Generator
 				key += 1
 			end
 =end
-			-key
+			-sort_key
 		end
 
-		def is_key_field?(hash)
-			if hash[:parent]
-				return false
-			elsif hash[:is_name_field]
-				return true			
-			elsif hash[:name].to_s.camelize(:lower) == "fullName"
+		def is_key_field?(key, hash)
+			#if hash[:parent]
+			#	return false
+			if hash[:name].to_s.camelize(:lower) == "fullName" && !key.include?(".")
 				return true
 			elsif hash[:min_occurs].to_i > 0
 				return true
@@ -126,9 +125,8 @@ module Generator
 		end
 
 		def create_grid_column(key, hash)
-		    if hash[:parent]
-		    	key
-		    elsif hash[:is_name_field] || hash[:min_occurs].to_i > 0 || hash.has_key?(:indispensable)
+		    #if hash[:is_name_field] || hash[:min_occurs].to_i > 0 || hash.has_key?(:indispensable)
+		    if is_key_field?(key, hash)
 		        "*" + key
 		    else		    	
 		         key
@@ -169,11 +167,6 @@ module Generator
 			end
 		end
 
-		def get_enums
-            enums_file = Service::ResourceLocator.call(:enums)
-            YAML.load_file(enums_file)
-		end
-		
 		def create_grid_min_row(type_fields)
 			if type_fields[:api_creatable]
 				1

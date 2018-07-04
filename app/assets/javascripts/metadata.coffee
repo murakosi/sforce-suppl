@@ -6,6 +6,7 @@ coordinates = ->
   selectedNode = null
   fieldNames = null
   selectedCellOnCreateGrid = null
+  del = false
 
   disableButtons = () ->
     $("#createButton").prop("disabled", true)
@@ -261,6 +262,7 @@ coordinates = ->
     contextMenu = getContextMenuOption(json)
     minRow = getMinRow(json)
     allowSort = getAllowSort(elementId)
+    beforeChangeFunc = getBeforeChangeFunc(elementId)
     onClickFunc = getOnClickFunc(elementId, json)
 
     hotSettings = {
@@ -281,23 +283,11 @@ coordinates = ->
         fillHandle: {autoInsertRow: false},
         #contextMenu: contextMenu,
         columnSorting: allowSort,
-        beforeChange: (source, changes) -> detectBeforeEditOnGrid(source, changes),
+        beforeChange: (source, changes) -> beforeChangeFunc(source, changes),
         afterOnCellMouseDown: (event, coords, td) -> onClickFunc(event, coords, td)
     }
 
     grids[elementId] = new Handsontable(hotElement, hotSettings)
-        
-  detectBeforeEditOnGrid = (source, changes) ->
-    if changes != 'edit'
-      return
-
-    rowIndex = source[0][0]
-    checked = source[0][3]
-
-    if checked
-        selectedRecords[rowIndex] = grids["#metadataArea #grid"].getDataAtRow(rowIndex)
-    else
-      delete selectedRecords[rowIndex]
 
   getColumns = (json) ->
     if !json?
@@ -329,20 +319,42 @@ coordinates = ->
     else
       0
 
-  getOnClickFunc = (elementId, json) ->
-    if !json? || elementId != "#metadataArea #createGrid"
-      return (event, coords, td) ->
-  
-    return onCellClick
-
   getAllowSort = (elementId) ->
     if elementId == "#metadataArea #createGrid"
       false
     else
       true
 
+  getBeforeChangeFunc = (elementId) ->
+    if !json? || elementId != "#metadataArea #grid"
+      return (source, changes) ->
+
+    return detectBeforeEditOnGrid
+
+  detectBeforeEditOnGrid = (source, changes) ->
+    if changes != 'edit'
+      return
+
+    rowIndex = source[0][0]
+    checked = source[0][3]
+
+    if checked
+        selectedRecords[rowIndex] = grids["#metadataArea #grid"].getDataAtRow(rowIndex)
+    else
+      delete selectedRecords[rowIndex]
+
+  getOnClickFunc = (elementId, json) ->
+    if !json? || elementId != "#metadataArea #createGrid"
+      return (event, coords, td) ->
+  
+    return onCellClick
+
   onCellClick = (event, coords, td) ->
     selectedCellOnCreateGrid = coords
+
+
+
+
 
   #------------------------------------------------
   # page load actions

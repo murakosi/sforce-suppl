@@ -2,8 +2,6 @@ module Metadata
 	class ValueFieldSupplier
 	class << self
 
-		Build_mapping = "build_mapping"
-		Rebuild_mapping = "rebuild_mapping"
 
 		def write_log(text)
 			File.write('C:\Users\murakosi\rubytest\ws_hash.log', text)
@@ -15,12 +13,12 @@ module Metadata
 			@typefield_mapping.present?
 		end
 
-		def mapping_exists?(metadata_type, mapping_type)
+		def mapping_exists?(metadata_type)
 			if !typefield_resource_exists?(metadata_type)
 				return false
 			end
 
-			mapping_file = Service::ResourceLocator.call(@typefield_mapping[mapping_type])
+			mapping_file = Service::ResourceLocator.call(@typefield_mapping)
 			if mapping_file.present?
 				@mapping = YAML.load_file(mapping_file)
 			end
@@ -29,7 +27,7 @@ module Metadata
 		end
 
 		def add_missing_fields(metadata_type, type_fields)
-			if mapping_exists?(metadata_type, Build_mapping)
+			if mapping_exists?(metadata_type)
 				return @mapping
 			else
 				nil
