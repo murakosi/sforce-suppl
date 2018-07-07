@@ -1,24 +1,18 @@
 module Metadata
     class Client
-        Metadata_namespace = "{http://soap.sforce.com/2006/04/metadata}"
 
         def initialize(options={})
-            @describe_cache = {}
-            @describe_layout_cache = {}
             @headers = {}
 
-            @wsdl = File.expand_path("./resources/metadata.xml")
+            @wsdl = options[:wsdl]
 
-            # If a client_id is provided then it needs to be included
-            # in the header for every request.  This allows ISV Partners
-            # to make SOAP calls in Professional/Group Edition organizations.
+            @headers = { 'tns:LocaleOptions' => { 'tns:language' => 'ja_JP' } }
 
-            client_id = options[:client_id] || Soapforce.configuration.client_id
-            @headers = { 'tns:LocaleOptions' => { 'tns:language' => 'ja' } }
-
-            @version = options[:version] || Soapforce.configuration.version || 41.0#28.0
+            @version = options[:version] || Constants::DefaultApiVersion
 
             @logger = options[:logger] || false
+
+            @log_level = options[:log_level] || :debug
             # Due to SSLv3 POODLE vulnerabilty and disabling of TLSv1, use TLSv1_2
             @ssl_version = options[:ssl_version] || :TLSv1_2
 
@@ -31,26 +25,15 @@ module Metadata
             end
 
             # Override optional Savon attributes
-            savon_options = {}
-            %w(read_timeout open_timeout proxy raise_errors).each do |prop|
+            @savon_options = {}
+            %w(read_timeout open_timeout proxy raise_errors ssl_ca_cert_file).each do |prop|
                 key = prop.to_sym
-                savon_options[key] = options[key] if options.key?(key)
+                @savon_options[key] = options[key] if options.key?(key)
             end
-
-            @client = Savon.client({
-                wsdl: @wsdl,
-                soap_header: @headers,
-                convert_request_keys_to: :none,
-                convert_response_tags_to: @response_tags,
-                pretty_print_xml: true,
-                logger: @logger,
-                log: (@logger != false),
-                ssl_version: @ssl_version # Sets ssl_version for HTTPI adapter
-            }.update(savon_options))
         end
 
         def login(options={})
-            result = nil
+
             if options[:session_id] && options[:metadata_server_url]
                 @session_id = options[:session_id]
                 @server_url = options[:metadata_server_url]
@@ -58,19 +41,20 @@ module Metadata
                 raise ArgumentError.new("Must provide session_id/metadata_server_url.")
             end
 
-            @headers = @headers.merge({"tns:SessionHeader" => {"tns:sessionId" => @session_id}})
+            @headers = @headers.merge({"tns:SessionHeader" => {"tns:sessionId" => @session_id}, "tns:AllOrNoneHeader" => {"tns:allOrNone" => true}})
 
-            @client = Savon.client(
+            @client = Savon.client({
                 wsdl: @wsdl,
                 soap_header: @headers,
-                convert_request_keys_to: :none,
                 convert_response_tags_to: @response_tags,
                 logger: @logger,
                 log: (@logger != false),
+                log_level: @log_level,
                 endpoint: @server_url,
+                pretty_print_xml: true,
+                convert_request_keys_to: :lower_camelcase,
                 ssl_version: @ssl_version # Sets ssl_version for HTTPI adapter
-            )
-
+            }.update(@savon_options))
         end
         alias_method :authenticate, :login
 
@@ -80,21 +64,118 @@ module Metadata
             @client.operations
         end
         
-        def list(*args)
-            queries = args.map(&:to_s).map(&:camelize).map { |t| {:type => t} }
-            call_metadata_api(:list_metadata, {:query => queries})
+        def namespace
+            @client.wsdl.namespace
         end
 
         def describe
             call_metadata_api(:describe_metadata, {:api_version => @version})
         end
-
+        alias :describe_metadata :describe
+        
         def describe_metadata_objects
-            describe[:metadata_objects].collect{|type| type[:xml_name] }.sort
+            result = describe[:metadata_objects]
+            xml_names = result.map{|hash| hash[:xml_name]}
+            children = result.select{|hash| hash.has_key?(:child_xml_names)}.map{|hash| hash[:child_xml_names]}
+            Array[xml_names | children].flatten.sort
         end
 
-        def read(type_name, full_name)
-            call_metadata_api(:read_metadata, {:type_name => type_name, :full_name => full_name})
+        def describe_value_type(metadata_type)
+            request_body = {:type => "{#{namespace}}" + metadata_type.to_s}
+            call_metadata_api(:describe_value_type, request_body)
+        end
+
+        def list(metadata_type)
+            if in_folder?(metadata_type)
+                list_in_folder_metadata(metadata_type)
+            else
+                call_metadata_api(:list_metadata, {:query => {:type => metadata_type}})
+            end
+        end
+        alias :list_metadata :list
+
+        def list_in_folder_metadata(metadata_type)
+            result = call_metadata_api(:list_metadata, :query => {:type => folder_name(metadata_type)})
+            folders = Array[result].compact.flatten.map{|hash| hash[:full_name]}
+            queries = folders.map{|folder| {:folder => folder, :type=> metadata_type}}
+            call_metadata_api(:list_metadata, {:query => queries})
+        end
+
+        def in_folder?(metadata_type)
+            case metadata_type.to_sym
+            when :Report,:Dashboard,:Document,:EmailTemplate
+                true
+            else
+                false
+            end
+        end
+
+        def folder_name(metadata_type)
+            case metadata_type.to_sym
+            when :Report
+                "ReportFolder"
+            when :Dashboard
+                "DashboardFolder"
+            when :Document
+                "DocumentFolder"
+            when :EmailTemplate
+                "EmailFolder"
+            else
+                nil
+            end
+        end
+
+        def read(metadata_type, full_names)
+            request_body = {:metadata_type => metadata_type, :full_names => Array[full_names].compact.flatten }
+            call_metadata_api(:read_metadata, request_body)
+        end
+        alias :read_metadata :read
+
+        def update(metadata_type, metadata)           
+            request_body = {:metadata => prepare_metadata(metadata), :attributes! => { :metadata => { 'xsi:type' => "tns:#{metadata_type}" }}}
+            call_metadata_api(:update_metadata, request_body)
+        end
+        alias :update_metadata :update
+        
+        def delete(metadata_type, full_names)
+            request_body = {:metadata_type => metadata_type, :full_names => Array[full_names].compact.flatten }
+            call_metadata_api(:delete_metadata, request_body)
+        end
+        alias :delete_metadata :delete
+
+        def create(metadata_type, metadata)
+            request_body = {:metadata => metadata, :attributes! => { :metadata => { 'xsi:type' => "tns:#{metadata_type}" }}}
+            call_metadata_api(:create_metadata, request_body)
+        end
+        alias :create_metadata :create
+
+        def retrieve(metadata_type, metadata)
+            request_body = retrieve_request(metadata_type, metadata)
+            call_metadata_api(:retrieve, request_body)
+        end
+
+        def prepare_metadata(metadata)
+            metadata.values.map{|arr| arr.reject{|k, v| k == :"@xsi:type"}}
+        end
+
+        def retrieve_status(id, include_zip)
+            request_body = {:id => id, :include_zip => include_zip}
+            call_metadata_api(:check_retrieve_status, request_body)
+        end
+
+        def retrieve_request(metadata_type, metadata)
+            {
+                :retrieve_request => 
+                {
+                    :api_version=> @version,
+                    :single_package => true,
+                    :unpackaged => package(metadata_type, metadata)
+                }
+            }
+        end
+
+        def package(metadata_type, metadata)
+            {:types => {:members => Array[metadata].compact.flatten, :name => metadata_type}}
         end
 
         def call_metadata_api(method, message_hash={})

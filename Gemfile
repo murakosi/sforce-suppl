@@ -64,3 +64,5 @@ gem 'rubyXL'
 gem "attr_encrypted", "~> 3.0.0"
 
 gem 'activerecord-session_store'
+
+gem 'hashie'

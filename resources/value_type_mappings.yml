@@ -1,0 +1,3 @@
+ApprovalProcess: "./valuetypes/approval_process.yml"
+CustomObject: "./valuetypes/custom_object.yml"
+CustomField: "./valuetypes/custom_field.yml"

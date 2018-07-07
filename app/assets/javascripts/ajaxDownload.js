@@ -1,18 +1,12 @@
-
 (function ($) {
- 
+
     var task = null;
     var settings = null;
 
     $.extend({
 
-        ajaxDownload: function (options) {
-
-            if (task) {
-                return false;
-            }
-
-            settings = $.extend({
+        ajaxDownloadOptions: function (options) {
+            return $.extend({
                 url: null,
                 method: "POST",
                 data: null,
@@ -20,10 +14,30 @@
                 failCallback: function (response, url, error) { },
                 alwaysCallback: function () { }
             }, options);
+        },
+
+        getAjaxDownloadOptions: function (url, method, data, successCallback, failCallback, alwaysCallback) {
+            return $.ajaxDownloadOptions({
+                url: url,
+                method: method,
+                data: data,
+                successCallback: successCallback,
+                failCallback: failCallback,
+                alwaysCallback: alwaysCallback
+            });
+        },
+
+        ajaxDownload: function (options) {
+
+            if (task) {
+                return false;
+            }
+
+            settings = options;
 
             checkDownloadServiceAvailable();
-           
-            function checkDownloadServiceAvailable(){
+
+            function checkDownloadServiceAvailable() {
 
                 task = $.ajax({
                     url: "check",
@@ -33,23 +47,22 @@
                     cache: false
                 });
 
-                task.done( function (data, stat, xhr) {
-                    console.log("download ajax done");
+                task.done(function (data, stat, xhr) {
+                    console.log("Ajax download available");
                     return executeDownload();
                 });
 
-                task.fail( function (xhr, stat, err) {
+                task.fail(function (xhr, stat, err) {
                     task = null;
-                    console.log("download ajax fail");
+                    console.log("Ajax download not available");
                 });
 
-                task.always ( function (res1, stat, res2) {
+                task.always(function (res1, stat, res2) {
                     console.log("download ajax always");
                 });
             }
 
-            function executeDownload(){
-
+            function executeDownload() {
                 task = $.fileDownload(settings.url, {
                     httpMethod: settings.method,
                     data: settings.data
@@ -71,6 +84,6 @@
                 });
             }
         }
-   });
-})(jQuery, this);            
+    });
+})(jQuery, this);
 

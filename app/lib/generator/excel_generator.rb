@@ -3,10 +3,9 @@ require "rubyXL"
 
 module Generator
     class ExcelGenerator
-    include Utils::ExcelUtils            
-
-        Output_file = File.expand_path("./output/output.xlsx", Rails.root)
-
+        include Utils::ExcelUtils            
+        include Generator::GeneratorCore
+        
         def initialize(template, mapping)
             @template = template
             @mapping = load_symbolized_yaml(mapping)
@@ -15,16 +14,16 @@ module Generator
         def generate(data)
             prepare(data)
             begin
-                write_excel
-                write_book
+                edit()
+                write_book()
             rescue => exception
                 raise exception
             ensure
-                remove_book
+                remove_book()
             end
         end
 
-        def write_excel
+        def edit
         end
 
         private
@@ -34,8 +33,9 @@ module Generator
 
             def prepare(data)
                 @data = data
-                FileUtils.cp(@template, Output_file)
-                @workbook = RubyXL::Parser.parse(Output_file)
+                @output_file = allocate_output_file()
+                FileUtils.cp(@template, @output_file)
+                @workbook = RubyXL::Parser.parse(@output_file)
             end
 
             def workbook
@@ -75,12 +75,12 @@ module Generator
             end
 
             def write_book()
-                @workbook.write(Output_file)
+                @workbook.write(@output_file)
                 @workbook.stream.read
             end
 
             def remove_book
-                FileUtils.rm(Output_file)
+                FileUtils.rm(@output_file)
             end
     end
 end

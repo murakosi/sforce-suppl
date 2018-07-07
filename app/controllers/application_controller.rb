@@ -1,12 +1,10 @@
-#require "metadata"
-#require "describe"
+require 'json'
 
 class ApplicationController < ActionController::Base
-    include AjaxRedirectHelper
+    include Common
 
     before_action :current_user
     before_action :require_sign_in!
-    helper_method :signed_in?, :current_user, :sforce_session
 
     Redirect_message = "<b>Redirected due to session/connection error</b>.\n\n"
 
@@ -51,7 +49,7 @@ class ApplicationController < ActionController::Base
 
         def sforce_session_alive?
             begin
-                Service::SoapClientService.call(@sforce_session)
+                Service::SoapSessionService.call(@sforce_session)
                 return true
             rescue StandardError => ex
                 @sforce_session_error = ex.message
@@ -71,7 +69,7 @@ class ApplicationController < ActionController::Base
         def set_flash_message()
             flash.discard(:danger)
             if @sforce_session_error.present?
-                message = Redirect_message + @sforce_session_error.encode("UTF-8", invalid: :replace, undef: :replace)
+                message = Redirect_message + safe_encode(@sforce_session_error)
                 flash[:danger] = message
             end            
         end

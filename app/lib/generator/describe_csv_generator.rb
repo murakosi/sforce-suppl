@@ -1,6 +1,6 @@
 module Generator
 	class DescribeCsvGenerator < CsvGenerator
-
+		
 		def generate(params)
 		    csv_data = CSV.generate(@csv_options) do |csv|
 		      csv_column_names = params[:data].first.keys

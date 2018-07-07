@@ -1,9 +1,9 @@
 DescribeResult: 
-  template_name: "./resources/DescribeResult.xlsx"
-  mapping_name: "./resources/mappings/describe_result_mapping.yml"
+  template_name: "./templates/DescribeResult.xlsx"
+  mapping_name: "./mappings/describe_result_mapping.yml"
 ApprovalProcess: 
-  template_name: "./resources/ApprovalProcess.xlsx"
-  mapping_name: "./resources/mappings/approval_process_mapping.yml"
+  template_name: "./templates/ApprovalProcess.xlsx"
+  mapping_name: "./mappings/approval_process_mapping.yml"
 next_time: 
   template_name: "axd"
   mapping_name: "exporter"

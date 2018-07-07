@@ -11,14 +11,14 @@ module Generator
         end
         
         def load_settings
-            @settings = YAML.load_file("./././resources/excel_export_settings.yml").deep_symbolize_keys
+            resource = Service::ResourceLocator.call(:excel_export_settings)
+            @settings = YAML.load_file(resource).deep_symbolize_keys
         end
 
         private
             def get_generator(key)
-                p key
-                template = File.expand_path(@settings[key][:template_name], Rails.root)
-                mapping = File.expand_path(@settings[key][:mapping_name], Rails.root)
+                template = Service::ResourceLocator.call(@settings[key][:template_name])
+                mapping = Service::ResourceLocator.call(@settings[key][:mapping_name])
                 case key.to_sym
 	                when :ApprovalProcess
 	                    Generator::MetadataExcelGenerator.new(template, mapping)

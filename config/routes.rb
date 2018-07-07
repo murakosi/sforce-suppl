@@ -21,10 +21,15 @@ Rails.application.routes.draw do
   post    'metadata',               to: 'metadata#list'
   get     'metadata/change',        to: 'metadata#change'
   post    'metadata/read',          to: 'metadata#read'
-  post    'metadata/download',      to: 'metadata#download'
+  post    'metadata/edit',          to: 'metadata#edit'
+  post    'metadata/crud',          to: 'metadata#crud'
+  post    'metadata/retrieve',      to: 'metadata#retrieve'
 
   get     'soql',                   to: 'soqlexecuter#show'
   post    'soql',                   to: 'soqlexecuter#execute'
 
+  if Rails.env.production?
+    match "*path" => redirect("/")
+  end
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end

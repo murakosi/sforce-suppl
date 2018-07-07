@@ -41,7 +41,6 @@ mains = ->
     options = getAjaxOptions(action, method, null, defaultDetatype)
 
     $.get action, (result) ->
-      console.log(result)
       loadPartials(result)
   
   loadPartials = (json) ->
@@ -52,7 +51,7 @@ mains = ->
       createErrorDiv(json.error)
 
   changeAnchorClass = (target) ->
-    $(".menus").not(target).removeClass("displayed");
+    $(".menus").not(target).removeClass("displayed")
 
     if $(target).hasClass("displayed")
       $(target).removeClass("displayed")
@@ -60,6 +59,9 @@ mains = ->
       $(target).addClass("displayed")
 
   changeDisplayDiv = (target) ->
+    if $(anchorObject).hasClass("nochange")
+      return
+    
     changeAnchorClass(anchorObject)
     $("div#mainArea").prop("class", target)
     $('.selectlist').select2({

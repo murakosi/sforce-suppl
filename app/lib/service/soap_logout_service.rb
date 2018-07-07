@@ -1,9 +1,9 @@
 module Service
     class SoapLogoutService
-    include Service::ServiceCore
+    	include Service::ServiceCore
     
         def call(params)
-            client = SoapClientService.call(params)
+            client = SoapSessionService.call(params)
             client.logout()
         end
     end

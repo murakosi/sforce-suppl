@@ -1,10 +1,10 @@
 module Service
     class SelectUserService
-    include Service::ServiceCore
+        include Service::ServiceCore
     
         def call(token)
             login_token = User.encrypt_token(token)
-            user ||= User.find_by(user_token: login_token)
+            user ||= User.find_by(:user_token => login_token)
 
             if user.nil?
                 nil_user_info
@@ -19,7 +19,9 @@ module Service
              :sforce_session => {
                                  :session_id => nil,
                                  :server_url => nil,
-                                 :metadata_server_url => nil
+                                 :metadata_server_url => nil,
+                                 :sandbox => nil,
+                                 :api_version => nil
                                  }
             }  
         end
@@ -29,7 +31,9 @@ module Service
              :sforce_session => {
                                  :session_id => user.sforce_session_id,
                                  :server_url => user.sforce_server_url,
-                                 :metadata_server_url => user.sforce_metadata_server_url
+                                 :metadata_server_url => user.sforce_metadata_server_url,
+                                 :sandbox => user.sandbox,
+                                 :api_version => user.api_version
                                  }
             }           
         end

@@ -1,0 +1,10 @@
+rebuild_fields:
+#  nameField:
+#    nameFieldType: type
+#    nameFieldLabel: label
+  nameFieldLabel:
+    nameField:
+      nameFieldLabel: label
+      nameFieldType: type
+skip_fields:
+  - nameFieldType

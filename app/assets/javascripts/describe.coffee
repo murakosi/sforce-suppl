@@ -109,6 +109,11 @@ coordinates = ->
 
   refreshSelectOptions = (result) ->
     $('#sobjectList').html(result)
+    $('.selectlist').select2({
+      dropdownAutoWidth : true,
+      width: 'resolve',
+      containerCssClass: ':all:'
+      })
   
 
   createGrid = (elementId, json = null) ->   

@@ -10,13 +10,13 @@ module Describe
             if session[:global_result]
                 session[:global_result]
             else
-                result = Service::SoapClientService.call(sforce_session).describe_global()
+                result = Service::SoapSessionService.call(sforce_session).describe_global()
                 session[:global_result] = result[:sobjects].map { |sobject| {:name => sobject[:name], :is_custom => sobject[:custom]} }
             end
         end
 
         def describe_field(sforce_session, object_name)
-            Service::SoapClientService.call(sforce_session).describe(object_name)
+            Service::SoapSessionService.call(sforce_session).describe(object_name)
         end
 
         def field_result(object_name)
