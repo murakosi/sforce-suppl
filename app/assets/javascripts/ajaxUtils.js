@@ -16,13 +16,20 @@
             }, options);
         },
 
-        getAjaxOptions: function (action, method, data, datatype, contentType = "application/json") {
+        getAjaxOptions: function (action, method, data, datatype, contentType) {
+            var ajaxContentType = null;
+            if (contentType == null || contentType == undefined) {
+                ajaxContentType = "application/json";
+            } else {
+                ajaxContentType = contentType;
+            }
+
             return $.ajaxOptions({
                 action: action,
                 method: method,
                 data: data,
                 datatype: datatype,
-                contentType: contentType,
+                contentType: ajaxContentType,
             });
         },
 
