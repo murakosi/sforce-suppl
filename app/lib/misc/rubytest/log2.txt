@@ -1,1 +1,0 @@
-# Logfile created on 2018-06-15 10:54:57 +0900 by logger.rb/56815

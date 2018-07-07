@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><soapenv:Body><readMetadataResponse><result><records xsi:type="CustomLabels"><fullName>CustomLabels</fullName><labels><fullName>CNH</fullName><language>ja</language><protected>true</protected><shortDescription>CNH</shortDescription><value>商品リスト（2017/○○以降）&lt;BR&gt;
-1：素敵生活サービスメニュー―関東&lt;BR&gt;
-2：素敵生活サービスメニュー―関西&lt;BR&gt;
-3： ○○○ ○○○ ○○○ ○○○ ○○○&lt;BR&gt;
-4： ××× ××× ××× ××× ×××&lt;BR&gt;</value></labels><labels><fullName>test_label</fullName><categories>category</categories><language>ja</language><protected>true</protected><shortDescription>test label</shortDescription><value>values are here</value></labels></records></result></readMetadataResponse></soapenv:Body></soapenv:Envelope>
