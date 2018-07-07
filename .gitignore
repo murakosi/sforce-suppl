@@ -25,6 +25,8 @@
 /vendor/*
 
 /output/*
+/app/misc/*
+
 !/output/.keep
 
 /config/local_env.yml
