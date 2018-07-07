@@ -28,8 +28,5 @@ Rails.application.routes.draw do
   get     'soql',                   to: 'soqlexecuter#show'
   post    'soql',                   to: 'soqlexecuter#execute'
 
-  if Rails.env.production?
-    get "*path" => redirect("/")
-  end
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end
