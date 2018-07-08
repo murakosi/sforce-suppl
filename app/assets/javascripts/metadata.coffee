@@ -352,10 +352,6 @@ coordinates = ->
   onCellClick = (event, coords, td) ->
     selectedCellOnCreateGrid = coords
 
-
-
-
-
   #------------------------------------------------
   # page load actions
   #------------------------------------------------

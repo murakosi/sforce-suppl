@@ -10,7 +10,7 @@ module Metadata
 			modified_field_types = type_fields
 			modified_field_types.each{|hash| parse_field_types(nil, hash)}
 			add_remaining_fields()
-			validate_result			
+			#validate_result			
 		    @result
 		end
 
