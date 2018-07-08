@@ -287,7 +287,6 @@ coordinates = ->
         afterOnCellMouseDown: (event, coords, td) -> onClickFunc(event, coords, td)
     }
 
-    console.log("start create")
     grids[elementId] = new Handsontable(hotElement, hotSettings)
 
   getColumns = (json) ->
