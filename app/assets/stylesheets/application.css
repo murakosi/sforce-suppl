@@ -15,7 +15,7 @@
  *= require jstree/default/style
  *= require jstree/default/style.min
  *= require bootstrap
- *= require handsontable.full.min
+ * require handsontable.full.min
  *= require select2
  *= require main
  *= require_tree .
