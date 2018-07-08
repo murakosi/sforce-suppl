@@ -66,3 +66,7 @@ gem "attr_encrypted", "~> 3.0.0"
 gem 'activerecord-session_store'
 
 gem 'hashie'
+
+group :production do
+  gem 'rails_12factor'
+end
