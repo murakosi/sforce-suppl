@@ -356,7 +356,9 @@ coordinates = ->
   #------------------------------------------------
   # page load actions
   #------------------------------------------------
+  console.log("ds")
   disableButtons()
+  console.log("tabs")
 
   $("#metadataArea #tabArea").tabs()
 
