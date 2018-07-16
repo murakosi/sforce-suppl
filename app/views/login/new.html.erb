@@ -22,7 +22,7 @@
     border: 0px solid black;
     table-layout: fixed;
     margin: 0 auto;
-    width: 20%;
+    width: 100%;
 }
 
 .block_label{
@@ -34,6 +34,7 @@
     width: 40%;
     text-align: right;
     vertical-align: middle;
+    white-space: nowrap;
 }
 
 .block_element{
@@ -46,19 +47,31 @@
     vertical-align: middle;
 }
 
+.inner_left_block_element{
+    display:table-cell;
+    width:auto;
+}
+
+.inner_right_block_element{
+    display:table-cell;
+    width:auto;
+}
+
 .login-button{
     display:table-cell;
     padding-top: 10px;
     padding-bottom: 2px;
     border: 0px solid black;
     width: 60%;
-    text-align: center;
+    text-align: left;
     vertical-align: middle;
 }
+
 select{
     width: inherit;
     font:inherit;
 }
+
 </style>
 
 <div id="menuList">
@@ -80,23 +93,46 @@ select{
     <div id="formArea">      
         <%= form_for :login_param, url: login_path do |f| %>
             <div class="block">
-                    <div class="block_label"><%= f.label 'User Name:', :class => 'form-label' %></div>
-                    <div class="block_element"><%= f.text_field :name, value: "" %></div>
+                    <div class="block_label">
+                        <%= f.label :user_name, 'User Name:' %>
+                    </div>    
+                    <div class="block_element">
+                        <%= f.text_field :name, value: "" %>
+                    </div>
             </div>
             <div class="block">
-                    <div class="block_label"><%= f.label 'Password:', :class => 'form-label' %></div>
-                    <div class="block_element"><%= f.password_field :password, value: "" %></div>
+                    <div class="block_label">
+                        <%= f.label 'Password:' %>
+                    </div>
+                    <div class="block_element">
+                        <%= f.password_field :password, value: "" %>
+                    </div>
             </div>
             <div class="block">
-                    <div class="block_label"><%= f.label 'Sandbox:', :class => 'form-label' %></div>
-                    <div class="block_element"><%= f.check_box :sandbox %></div>
+                    <div class="block_label">
+                        <%= f.label 'Sandbox:' %>
+                    </div>
+                    <div class="block_element">
+                        <%= f.check_box :sandbox %>
+                    </div> 
             </div>
             <div class="block">
-                    <div class="block_label"><%= f.label :api_version, 'API Version:', :class => 'form-label' %></div>
-                    <div class="block_element"><%= f.select :api_version, api_version_list %></div>
+                    <div class="block_label">
+                        <%= f.label :api_version, 'API Version: ' %>
+                    </div>
+                    <div class="block_element">
+                        <div class="inner_left_block_element">
+                            <%= f.select :api_version, api_version_list %>
+                        </div>
+                        <div class="inner_right_block_element">
+                        </div>
+                    </div>
             </div>
             <div class="block">
-                    <div class="login-button"><%= f.submit 'Login', :class => 'btn btn-primary' %></div>
+                    <div class="block_label"></div>
+                    <div class="login-button">
+                        <%= f.submit 'Login', :class => 'btn btn-primary' %>
+                    </div>
             </div>
         <% end %>
     </div>
