@@ -1304,7 +1304,7 @@ embeddedServiceScenario:
 - Sales
 - Service
 - Basic
-encoding:
+encoding: &3
 - UTF-8
 - ISO-8859-1
 - Shift_JIS
@@ -2769,3 +2769,4 @@ exceptionCode:
 - XML_PARSER_ERROR
 visibility: *1
 type: *2
+encodingKey: *3

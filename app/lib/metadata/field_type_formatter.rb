@@ -10,12 +10,12 @@ module Metadata
 			modified_field_types = type_fields
 			modified_field_types.each{|hash| parse_field_types(nil, hash)}
 			add_remaining_fields()
-			#validate_result			
+			validate_result			
 		    @result
 		end
 
 		def validate_result
-		    file_name = 'C:\Users\murakosi\rubytest\rubytestparse.log'
+		    file_name = 'C:\Users\Daiki\rubytest\rubytestparse.log'
 		    if File.exist?(file_name)
 		    	FileUtils.rm(file_name)
 		    end
@@ -35,7 +35,8 @@ module Metadata
 		                chk[k] = v
 		            end
 		        end
-		    end	
+		    end
+		    chk = {}
 		end
 
 		def parse_field_types(parent, hash)
