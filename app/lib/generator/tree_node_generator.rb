@@ -26,6 +26,11 @@ module Generator
 
         def generate_nodes(full_name, read_result, type_info)
         	@full_name = full_name
+            if @full_name.include?("/")
+                @path_full_name = true
+            else
+                @path_full_name = false
+            end
         	@type_info = tree_type_info(type_info)
         	parse_read_result(read_result, full_name)
         end
@@ -133,6 +138,9 @@ module Generator
         def value_path(id)
             split_path = id.split("/")
             split_path.shift
+            if @path_full_name
+                split_path.shift
+            end
             split_path.join(".")
         end
         
