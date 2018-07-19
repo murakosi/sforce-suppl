@@ -8,17 +8,23 @@ module Metadata
 			#modified_field_types = Metadata::ValueFieldSupplier.add_missing_fields(metadata_type, type_fields)
 			@adding = Metadata::ValueFieldSupplier.add_missing_fields(metadata_type, type_fields)
 			modified_field_types = type_fields
-			modified_field_types.each{|hash| parse_field_types(nil, hash)}
+			modified_field_types.each{|hash| parse_field_types(nil, hash)}			
 			add_remaining_fields()
-			validate_result			
+
+			if !Rails.env.production?
+				validate_result
+			end
+
 		    @result
 		end
 
 		def validate_result
-		    file_name = 'C:\Users\Daiki\rubytest\rubytestparse.log'
-		    if File.exist?(file_name)
+			file_name = File.expand_path("log/" + "field_type_validate.log", Rails.root)
+
+			if File.exist?(file_name)
 		    	FileUtils.rm(file_name)
-		    end
+			end
+			
 		    file = File.open(file_name,'a')
 
 		    @result.each do |h|
