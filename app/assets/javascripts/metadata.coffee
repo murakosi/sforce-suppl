@@ -326,7 +326,7 @@ coordinates = ->
       true
 
   getBeforeChangeFunc = (elementId) ->
-    if !json? || elementId != "#metadataArea #grid"
+    if elementId != "#metadataArea #grid"
       return (source, changes) ->
 
     return detectBeforeEditOnGrid

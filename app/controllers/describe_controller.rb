@@ -40,11 +40,10 @@ class DescribeController < ApplicationController
             field_result = describe_field(sforce_session, sobject)
             sobject_info = get_sobject_info(field_result)
             formatted_result = format_field_result(sobject, field_result[:fields])
-
             result = {:method => sobject_info, :columns => formatted_result.first.keys, :rows => formatted_result.each{ |hash| hash.values}}
-
             render :json => result, :status => 200
         rescue StandardError => ex
+            print_error(ex)
             render :json => {:error => ex.message}, :status => 400
         end
     end
@@ -64,6 +63,7 @@ class DescribeController < ApplicationController
             try_download(params[:dl_format], sobject, formatted_result)
             set_download_success_cookie(response)
         rescue StandardError => ex
+            print_error(ex)
             respond_download_error(ex.message)
         end
     end
@@ -89,7 +89,6 @@ class DescribeController < ApplicationController
     end
 
     def download_csv(sobject, result)
-        #raise StandardError.new("aaaaaaaaa")
         generator = Generator::DescribeCsvGenerator.new(Encoding::SJIS, "\r\n", true)
         send_data(generator.generate(:data => result),
             :disposition => 'attachment',

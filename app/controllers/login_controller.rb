@@ -13,6 +13,7 @@ class LoginController < ApplicationController
           sign_in(login_params)
           redirect_to main_path
         rescue StandardError => ex
+          print_error(ex)
           flash[:danger] = safe_encode(ex.message)
           render 'new'
         end

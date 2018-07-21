@@ -20,6 +20,7 @@ class SoqlexecuterController < ApplicationController
       query_result = execute_query(sforce_session, soql)
       render :json => response_json(soql, query_result), :status => 200
     rescue StandardError => ex
+      print_error(ex)
       render :json => {:error => ex.message}, :status => 400
     end
   end

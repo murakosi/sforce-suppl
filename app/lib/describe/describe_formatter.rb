@@ -16,8 +16,8 @@ module Describe
 
         private
 
-            def get_values(field_result)
-                field_result.each{ |hash| translate_value(hash) }.map{|hash| hash.slice(*Key_order)}
+            def get_values(field_result)                
+                Array[field_result].each{ |hash| translate_value(hash) }.map{|hash| hash.slice(*Key_order)}
                             .map{|hash| hash.reject{|k,v| Exclude_header.include?(k.to_s) } }
             end
 
