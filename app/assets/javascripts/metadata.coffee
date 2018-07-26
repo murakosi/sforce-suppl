@@ -68,6 +68,7 @@ coordinates = ->
     refreshTree(json.tree)
     changeButtonStyles(json.crud_info)
     fieldNames = json.create_grid.field_names
+    fieldTypes = json.create_grid.field_types
     createGrid("#metadataArea #grid", json.list_grid)
     createGrid("#metadataArea #createGrid", json.create_grid)
 
