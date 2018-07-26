@@ -68,6 +68,8 @@ module Metadata
 			else
 				new_value = @adding[key].symbolize_keys.merge(value)
 				@adding.delete(key)
+				p key
+				p new_value
 				return {key => new_value}
 			end
 		end
