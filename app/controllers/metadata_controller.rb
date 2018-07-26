@@ -141,8 +141,9 @@ class MetadataController < ApplicationController
 
     def try_create(metadata_type)
         field_headers = params[:field_headers]
+        field_types = params[:field_types]
         field_values = JSON.parse(params[:field_values])
-        create_metadata(sforce_session, metadata_type, field_headers, field_values)
+        create_metadata(sforce_session, metadata_type, field_headers, field_types, field_values)
     end
 
     def retrieve

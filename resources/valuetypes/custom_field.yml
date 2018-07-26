@@ -15,24 +15,28 @@ globalPicklist:
   name: globalPicklist
   soap_type: string
   min_occurs: 0
-picklist:
-  name: picklist
-  soap_type: picklist
-  parent: true
-  min_occurs: 0
-picklist.controllingField:
-  name: controllingField
-  soap_type: string
-  min_occurs: 0
-picklist.picklistValues:
+picklistValues:
   name: picklistValues
   soap_type: array
   min_occurs: 0
-picklist.restrictedPicklist:
-  name: restrictedPicklist
-  soap_type: boolean
-  min_occurs: 0
-picklist.sorted:
-  name: sorted
-  soap_type: boolean
-  min_occurs: 0
+#picklist:
+#  name: picklist
+#  soap_type: picklist
+#  parent: true
+#  min_occurs: 0
+#picklist.controllingField:
+#  name: controllingField
+#  soap_type: string
+#  min_occurs: 0
+#picklist.picklistValues:
+#  name: picklistValues
+#  soap_type: array
+#  min_occurs: 0
+#picklist.restrictedPicklist:
+#  name: restrictedPicklist
+#  soap_type: boolean
+#  min_occurs: 0
+#picklist.sorted:
+#  name: sorted
+#  soap_type: boolean
+#  min_occurs: 0

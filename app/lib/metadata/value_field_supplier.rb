@@ -72,13 +72,19 @@ module Metadata
 
 		end
 
-		def rebuild(metadata_type, records)
+		def rebuild(metadata_type, value_types, records)
 			@rebuild_result = {}
 			temp_hash = {}
 			records.each do |hash|
 				hash.each do |k, v|
 					next if v.nil?
-					temp_hash = k.split(".").reverse.inject(encode_content(k,v)) {|mem, item| { item => mem } }
+					
+					if value_types[k] == "array"
+					    value = v.split(",").map(&:strip)
+					else
+					    value = v
+					end
+					temp_hash = k.split(".").reverse.inject(encode_content(k,value)) {|mem, item| { item => mem } }
 					merge_nest(temp_hash)
 				end
 			end			

@@ -5,6 +5,7 @@ coordinates = ->
   defaultDataType = ""
   selectedNode = null
   fieldNames = null
+  fieldTypes = null
   selectedCellOnCreateGrid = null
   del = false
 
@@ -55,6 +56,7 @@ coordinates = ->
     selectedRecords = {}
     grids = {}
     fieldNames = null
+    fieldTypes = null
     selectedCellOnCreateGrid = null
 
   processListError = (json) ->
@@ -183,7 +185,13 @@ coordinates = ->
   #------------------------------------------------
   $("#createButton").on "click", (e) ->
     e.preventDefault()
-    val = {crud_type: "create", metadata_type: getSelectedMetadata(), field_headers: fieldNames, field_values: getDataOnCreateGrid()}
+    val = {
+           crud_type: "create",
+           metadata_type: getSelectedMetadata(),
+           field_headers: fieldNames,
+           field_types: fieldTypes,
+           field_values: getDataOnCreateGrid()
+          }
     action = $(".crudForm").attr("action")
     method = $(".crudForm").attr("method")
     options = $.getAjaxOptions(action, method, val, "json")

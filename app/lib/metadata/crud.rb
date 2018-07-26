@@ -57,14 +57,15 @@ module Metadata
 			parse_save_result(:delete, save_result)
 		end
 
-		def create_metadata(sforce_session, metadata_type, tags, values)
+		def create_metadata(sforce_session, metadata_type, headers, types, values)
 			metadata = []
 			values.each do | value |
-				merged = [tags, value].transpose
+				merged = [headers, value].transpose
 				metadata << Hash[*merged.flatten]
 			end
 			
-			metadata = Metadata::ValueFieldSupplier.rebuild(metadata_type, metadata)	
+			value_types = [headers, types].transpose
+			metadata = Metadata::ValueFieldSupplier.rebuild(metadata_type, value_types, metadata)	
 			#p metadata
 			#fake_response
 			save_result = Service::MetadataClientService.call(sforce_session).create(metadata_type, metadata)

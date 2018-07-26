@@ -29,6 +29,7 @@ module Generator
 			columns = []
 			column_options = []
 			field_names = []
+			field_types = []
 			@enums = Metadata::EnumProvider.enums
 			#type_fields = Metadata::ValueFieldSupplier.add_missing_fields(metadata_type, result[:value_type_fields])
 
@@ -43,6 +44,7 @@ module Generator
 			sorted_type_fields.each do |hash|
 				hash.each do |k, v|
 					field_names << k
+					field_types << v[:soap_type]
 					columns << create_grid_column(k, v)
 					column_options << create_grid_column_option(v)
 				end
@@ -52,6 +54,7 @@ module Generator
 				:rows => [Array.new(columns.size)],
 				:columns => columns,
 				:field_names => field_names,
+				:field_types => field_types,
 				:column_options => column_options,
 				:context_menu => true,
 				:min_row => 1,
