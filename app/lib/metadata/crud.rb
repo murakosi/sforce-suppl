@@ -67,7 +67,7 @@ module Metadata
 			value_types = [headers, types].transpose
 			#metadata = Metadata::ValueFieldSupplier.rebuild(metadata_type, value_types, metadata)
 			metadata = [{:full_name => "RB__c.a__c", :type=>"Picklist", :label => "a",
-			 :ValueSet => {:valueSetDefinition => :value => ["ls1"]}}]
+			 :ValueSet => {:valueSetDefinition => {:value => ["ls1"]}}}]
 			#p metadata
 			#fake_response
 			save_result = Service::MetadataClientService.call(sforce_session).create(metadata_type, metadata)
