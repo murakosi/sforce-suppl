@@ -6,6 +6,7 @@ label:
   name: label
   soap_type: string
   min_occurs: 1
+  indispensable: true
 deleteConstraint:
   name: deleteConstraint
   soap_type: deleteConstraint
