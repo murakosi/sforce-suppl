@@ -19,6 +19,7 @@ valueSet.valueSetDefinition.value:
   name: valueSet.valueSetDefinition.value
   soap_type: name_array
   min_occurs: 0
+  replace: true
 #picklist:
 #  name: picklist
 #  soap_type: picklist

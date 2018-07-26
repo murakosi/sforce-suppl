@@ -66,7 +66,12 @@ module Metadata
 			if @adding.nil? || !@adding.has_key?(key)
 				return {key => value}
 			else
-				new_value = @adding[key].symbolize_keys.merge(value)
+			    adding_value = @adding[key].symbolize_keys
+			    if adding_value.has_key?(:replace)
+			        new_value = adding_value
+			    else
+				    new_value = @adding[key].symbolize_keys.merge(value)
+				end
 				@adding.delete(key)
 				p key
 				p new_value
