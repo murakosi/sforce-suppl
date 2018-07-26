@@ -88,6 +88,7 @@ module Metadata
 					    value = v
 					end
 					temp_hash = k.split(".").reverse.inject(encode_content(k,value)) {|mem, item| { item => mem } }
+					p temp_hash
 					merge_nest(temp_hash)
 				end
 			end			
