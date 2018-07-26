@@ -8,7 +8,7 @@ module Metadata
 			#modified_field_types = Metadata::ValueFieldSupplier.add_missing_fields(metadata_type, type_fields)
 			@adding = Metadata::ValueFieldSupplier.add_missing_fields(metadata_type, type_fields)
 			modified_field_types = type_fields
-			modified_field_types.each{|hash| parse_field_types(nil, hash)}			
+			modified_field_types.each{|hash| parse_field_types(nil, hash)}
 			add_remaining_fields()
 
 			if !Rails.env.production?
@@ -55,7 +55,7 @@ module Metadata
                         @result << get_type_field_hash(hash[:name], hash)
                     else
                         #@result << {parent => hash }
-                        @result << get_type_field_hash(parent, hash)
+                         @result << get_type_field_hash(parent, hash)
                     end
                 end
                 break
@@ -64,14 +64,14 @@ module Metadata
 
 		def get_type_field_hash(key, value)
 			if @adding.nil? || !@adding.has_key?(key)
-				{key => value}
+				return {key => value}
 			else
 				new_value = @adding[key].symbolize_keys.merge(value)
 				@adding.delete(key)
-				{key => new_value}
+				return {key => new_value}
 			end
 		end
-
+        
 		def add_remaining_fields
 			if @adding.present?
 				@adding.values.each{|hash| @result << { hash["name"] => hash.deep_symbolize_keys } }

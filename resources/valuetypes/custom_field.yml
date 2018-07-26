@@ -15,8 +15,8 @@ globalPicklist:
   name: globalPicklist
   soap_type: string
   min_occurs: 0
-picklistValues:
-  name: picklistValues
+valueSet.valueSetDefinition.value:
+  name: valueSet.valueSetDefinition.value
   soap_type: array
   min_occurs: 0
 #picklist:
