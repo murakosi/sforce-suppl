@@ -81,6 +81,9 @@ module Metadata
 					
 					if value_types[k] == "array"
 					    value = v.split(",").map(&:strip)
+					elsif value_types[k] == "name_array"
+					    value_array = v.split(",").map(&:strip)
+					    value = value_array.map{|name| {:full_name => name}}
 					else
 					    value = v
 					end
