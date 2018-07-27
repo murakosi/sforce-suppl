@@ -1,29 +1,32 @@
-deploymentStatus:
-  name: deploymentStatus
-  soap_type: string
-  min_occurs: 1
-label:
-  name: label
-  soap_type: string
-  indispensable: true
-nameField.type:
-  name: nameField.type
-  soap_type: string
-  min_occurs: 1
-  picklist_values:
-    - value: Text
-    - value: AutoNumber
-  indispensable: true
-nameField.label:
-  name: nameField.label
-  soap_type: string
-  min_occurs: 1
-  indispensable: true
-sharingModel:
-  name: sharingModel
-  soap_type: string
-  min_occurs: 1
-visibility:
-  name: visibility
-  soap_type: string
-  min_occurs: 0
+adding:
+    deploymentStatus:
+      name: deploymentStatus
+      soap_type: string
+      min_occurs: 1
+    label:
+      name: label
+      soap_type: string
+      indispensable: true
+    nameField.type:
+      name: nameField.type
+      soap_type: string
+      min_occurs: 1
+      picklist_values:
+        - value: Text
+        - value: AutoNumber
+      indispensable: true
+    nameField.label:
+      name: nameField.label
+      soap_type: string
+      min_occurs: 1
+      indispensable: true
+    sharingModel:
+      name: sharingModel
+      soap_type: string
+      min_occurs: 1
+    visibility:
+      name: visibility
+      soap_type: string
+      min_occurs: 0
+removing:
+    -

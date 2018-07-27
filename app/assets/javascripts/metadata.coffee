@@ -13,6 +13,7 @@ coordinates = ->
     $("#createButton").prop("disabled", true)
     $("#addRow").prop("disabled", true)
     $("#removeRow").prop("disabled", true)
+    $("#clearGrid").prop("disabled", true)
     $("#updateButton").prop("disabled", true)
     $("#deleteButton").prop("disabled", true)
     $("#expand").prop("disabled", true)
@@ -76,6 +77,7 @@ coordinates = ->
     $("#createButton").prop("disabled", !json.api_creatable)
     $("#addRow").prop("disabled", !json.api_creatable)
     $("#removeRow").prop("disabled", !json.api_creatable)
+    $("#clearGrid").prop("disabled", !json.api_creatable)
     $("#updateButton").prop("disabled", !json.api_updatable)
     $("#deleteButton").prop("disabled", !json.api_deletable)
     $("#expand").prop("disabled", !json.api_readable)
@@ -198,6 +200,10 @@ coordinates = ->
     options = $.getAjaxOptions(action, method, val, "json")
     callbacks = $.getAjaxCallbacks(saveSuccess, displayError, null)
     $.executeAjax(options, callbacks)
+
+  $("#clearGrid").on "click", (e) ->
+    grid = grids["#metadataArea #createGrid"]
+    grid.clear()
 
   $("#addRow").on "click", (e) ->
     grid = grids["#metadataArea #createGrid"]

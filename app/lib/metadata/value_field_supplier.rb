@@ -12,7 +12,7 @@ module Metadata
 			@typefield_mapping = YAML.load_file(resouce_file_path)[type]
 			@typefield_mapping.present?
 		end
-
+=begin
 		def mapping_exists?(metadata_type)
 			if !typefield_resource_exists?(metadata_type)
 				return false
@@ -25,12 +25,14 @@ module Metadata
 
 			@mapping.present?
 		end
-
+=end
 		def add_missing_fields(metadata_type, type_fields)
-			if mapping_exists?(metadata_type)
-				return @mapping
+			if typefield_resource_exists?(metadata_type)
+				mapping_file = Service::ResourceLocator.call(@typefield_mapping)
+				return YAML.load_file(mapping_file)
 			else
-				nil
+				#nil
+				{"adding" => {}, "removing" => []}
 			end
 =begin			
 			if !mapping_exists?(metadata_type, Build_mapping)
@@ -73,9 +75,13 @@ module Metadata
 		end
 
 		def rebuild(metadata_type, value_types, records)
-			@rebuild_result = {}
-			temp_hash = {}
+			#@rebuild_result = {}
+			@rebuild_result = []
+
 			records.each do |hash|
+
+				@merged_hash = {}
+
 				hash.each do |k, v|
 					next if v.nil?
 					
@@ -88,13 +94,26 @@ module Metadata
 					    value = v
 					end
 					temp_hash = k.split(".").reverse.inject(encode_content(k,value)) {|mem, item| { item => mem } }
-					p temp_hash
-					merge_nest(temp_hash)
+					#p temp_hash
+					merge_hash(temp_hash)
 				end
-			end			
+
+				@rebuild_result << @merged_hash
+			end
+
 			@rebuild_result
 		end
 
+		def merge_hash(hash)
+			hash.each do |k, v|
+		        if @merged_hash.has_key?(k)
+		            @merged_hash.deep_merge!({k=> v})
+		        else
+		            @merged_hash.merge!(hash)
+		        end
+			end
+		end		
+=begin
 		def merge_nest(hash)
 			hash.each do |k, v|
 		        if @rebuild_result.has_key?(k)
@@ -104,7 +123,7 @@ module Metadata
 		        end
 			end
 		end
-		
+=end		
 		def encode_content(key, value)
 			if key.to_s.downcase == "content"
 				Base64.strict_encode64(value)

@@ -1,43 +1,70 @@
-type:
-  name: type
-  soap_type: FieldType
-  min_occurs: 1
-label:
-  name: label
-  soap_type: string
-  min_occurs: 1
-  indispensable: true
-deleteConstraint:
-  name: deleteConstraint
-  soap_type: deleteConstraint
-  min_occurs: 0
-globalPicklist:
-  name: globalPicklist
-  soap_type: string
-  min_occurs: 0
-valueSet.valueSetDefinition.value:
-  name: valueSet.valueSetDefinition.value
-  soap_type: name_array
-  min_occurs: 0
-  replace: true
-#picklist:
-#  name: picklist
-#  soap_type: picklist
-#  parent: true
-#  min_occurs: 0
-#picklist.controllingField:
-#  name: controllingField
-#  soap_type: string
-#  min_occurs: 0
-#picklist.picklistValues:
-#  name: picklistValues
-#  soap_type: array
-#  min_occurs: 0
-#picklist.restrictedPicklist:
-#  name: restrictedPicklist
-#  soap_type: boolean
-#  min_occurs: 0
-#picklist.sorted:
-#  name: sorted
-#  soap_type: boolean
-#  min_occurs: 0
+adding:
+    type:
+      name: type
+      soap_type: FieldType
+      min_occurs: 1
+      prior: true
+    label:
+      name: label
+      soap_type: string
+      min_occurs: 1
+      indispensable: true
+      prior: true  
+    deleteConstraint:
+      name: deleteConstraint
+      soap_type: deleteConstraint
+      min_occurs: 0
+      prior: true
+    valueSet.valueSetName:
+      name: valueSet.valueSetName
+      soap_type: string
+      min_occurs: 0
+      replace: true
+      prior: true
+    valueSet.valueSetDefinition.value:
+      name: valueSet.valueSetDefinition.value
+      soap_type: name_array
+      min_occurs: 0
+      replace: true
+      prior: true
+    defaultValue:
+      prior: true
+    description:
+      prior: true
+    externalId:
+      prior: true
+    formula:
+      prior: true
+    inlineHelpText:
+      prior: true
+    length:
+      prior: true
+    precision:
+      prior: true
+    scale:
+      prior: true
+    referenceTo:
+      prior: true
+    relationshipLabel:
+      prior: true
+    relationshipName:
+      prior: true
+    required:
+      prior: true
+    startingNumber:
+      prior: true
+removing:
+    - valueSet
+    - valueSet.controllingField
+    - valueSet.restricted
+    - valueSet.valueSetDefinition
+    - valueSet.valueSetDefinition.sorted
+    - valueSet.valueSetDefinition.value.fullName
+    - valueSet.valueSetDefinition.value.color
+    - valueSet.valueSetDefinition.value.default
+    - valueSet.valueSetDefinition.value.description
+    - valueSet.valueSetDefinition.value.isActive
+    - valueSet.valueSetDefinition.value.label
+    - valueSet.valueSettings
+    - valueSet.valueSettings.controllingFieldValue
+    - valueSet.valueSettings.valueName

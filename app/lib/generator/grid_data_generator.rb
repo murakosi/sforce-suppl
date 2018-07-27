@@ -97,6 +97,14 @@ module Generator
 					sort_key += 1
 				#end
 			end
+
+			if is_name_field?(key, value)
+				sort_key += 1
+			end
+
+			if value.has_key?(:prior)
+				sort_key += 1
+			end
 =begin
 			if value[:is_name_field]
 				key += 1
@@ -113,18 +121,24 @@ module Generator
 			-sort_key
 		end
 
-		def is_key_field?(key, hash)
-			#if hash[:parent]
-			#	return false
-			if hash[:name].to_s.camelize(:lower) == "fullName" && !key.include?(".")
+		def is_key_field?(key, value)
+			if is_name_field?(key, value)
 				return true
-			elsif hash[:min_occurs].to_i > 0
+			elsif value[:min_occurs].to_i > 0
 				return true
-			elsif hash.has_key?(:indispensable)
-				return true
+			elsif value.has_key?(:indispensable)
+				return true			
 			end	
 
 			return false		
+		end
+
+		def is_name_field?(key, value)
+			if value[:name].to_s.camelize(:lower) == "fullName" && !key.include?(".")
+				return true
+			else
+				return false
+			end
 		end
 
 		def create_grid_column(key, hash)
@@ -160,7 +174,7 @@ module Generator
 			if hash[:parent]
 				type = {:readOnly => true}
 		    elsif hash[:soap_type] == "boolean"
-		        type = {:type => "checkbox", :className => "htCenter htMiddle"}
+		        type = {:type => "checkbox", :className => "htCenter htMiddle", :checkedTemplate => true, :uncheckedTemplate => nil}
 		    elsif hash.has_key?(:picklist_values)
 				type = {:type => "autocomplete", :source => hash[:picklist_values].map{|hash| hash[:value]}}
 			elsif @enums.has_key?(hash[:name])
