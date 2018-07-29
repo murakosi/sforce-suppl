@@ -28,8 +28,8 @@ module Metadata
             generate_parent_nodes(api_crud_info, metadata_list)
         end
 
-        def format_field_type_result(metadata_type, field_type_result)
-            format_field_type(metadata_type, field_type_result[:value_type_fields])
+        def format_field_type_result(sforce_session, metadata_type, field_type_result)
+            format_field_type(sforce_session, metadata_type, field_type_result[:value_type_fields])
         end
 =begin
         def tree_type_info(type_fields)

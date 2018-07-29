@@ -47,7 +47,7 @@ class MetadataController < ApplicationController
         end
 
         field_types = get_field_value_types(sforce_session, metadata_type)
-        formatted_field_types = format_field_type_result(metadata_type, field_types)
+        formatted_field_types = format_field_type_result(sforce_session, metadata_type, field_types)
         crud_info = api_crud_info(field_types)
         parent_tree_nodes = format_parent_tree_nodes(crud_info, formatted_list)            
         clear_session(metadata_type, formatted_field_types)
@@ -109,7 +109,7 @@ class MetadataController < ApplicationController
         begin
             raise_when_type_unmached(metadata_type)
             result = change_metadata(crud_type, metadata_type)
-            render :json => {:message => result[:message], :refresh => result[:refresh_required]}, :status => 200
+            render :json => {:message => result[:message], :refresh_required => result[:refresh_required]}, :status => 200
         rescue StandardError => ex
             print_error(ex)
             render :json => {:error => ex.message}, :status => 400

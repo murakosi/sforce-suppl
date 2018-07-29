@@ -1,11 +1,9 @@
 module Metadata
 	class ValueFieldSupplier
 	class << self
+		include Metadata::Crud
 
-
-		def write_log(text)
-			File.write('C:\Users\murakosi\rubytest\ws_hash.log', text)
-		end
+		Permission_required_types = ["CustomObject", "CustomField"]
 
 		def typefield_resource_exists?(type)
 			resouce_file_path = Service::ResourceLocator.call(:valuetypes)
@@ -26,10 +24,25 @@ module Metadata
 			@mapping.present?
 		end
 =end
-		def add_missing_fields(metadata_type, type_fields)
+		def get_mapping_hash(sforce_session, metadata_type)
+			mapping_file = Service::ResourceLocator.call(@typefield_mapping)
+			mapping_hash = YAML.load_file(mapping_file)
+			
+			if Permission_required_types.include?(metadata_type)
+				metadata_list = list_metadata(sforce_session, "Profile").map{|h| h[:full_name]}
+				metadata_list.each do |h|
+					mapping_hash["adding"][h] = {"name" => "profile." + h, :soap_type => "string", :min_occurs => 0, :picklist_values => [{:value => "Read"},{:value => "Read/Write"}], :prior => true}
+				end
+				mapping_hash["adding"]["profile"] = {"name" => "profile", :soap_type => "string", :min_occurs => 0, :prior => true}
+			end
+			mapping_hash
+		end
+
+		def add_missing_fields(sforce_session, metadata_type, type_fields)
 			if typefield_resource_exists?(metadata_type)
-				mapping_file = Service::ResourceLocator.call(@typefield_mapping)
-				return YAML.load_file(mapping_file)
+				#mapping_file = Service::ResourceLocator.call(@typefield_mapping)
+				#return YAML.load_file(mapping_file)
+				get_mapping_hash(sforce_session, metadata_type)
 			else
 				#nil
 				{"adding" => {}, "removing" => []}

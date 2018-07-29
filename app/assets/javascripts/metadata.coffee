@@ -135,12 +135,13 @@ coordinates = ->
   #------------------------------------------------
   $("#updateButton").on "click", (e) ->
     e.preventDefault()
-    val = {crud_type: "update", metadata_type: getSelectedMetadata()}
-    action = $(".crudForm").attr("action")
-    method = $(".crudForm").attr("method")
-    options = $.getAjaxOptions(action, method, val, defaultDataType)
-    callbacks = $.getAjaxCallbacks(saveSuccess, displayError, null)
-    $.executeAjax(options, callbacks)
+    if window.confirm("Update Metadata?")
+      val = {crud_type: "update", metadata_type: getSelectedMetadata()}
+      action = $(".crudForm").attr("action")
+      method = $(".crudForm").attr("method")
+      options = $.getAjaxOptions(action, method, val, defaultDataType)
+      callbacks = $.getAjaxCallbacks(saveSuccess, displayError, null)
+      $.executeAjax(options, callbacks)
 
   $("#metadataArea #editTree").on 'select_node.jstree', (e, data) ->
     selectedNode = data.node
@@ -233,7 +234,7 @@ coordinates = ->
   #------------------------------------------------
   $("#deleteButton").on "click", (e) ->
     e.preventDefault()
-    if window.confirm("Are you sure to delete Metadata?")
+    if window.confirm("Delete Metadata?")
       val = {crud_type: "delete", metadata_type: getSelectedMetadata(), selected_records: getSelectedRecords()}
       action = $(".crudForm").attr("action")
       method = $(".crudForm").attr("method")
@@ -275,6 +276,8 @@ coordinates = ->
     records = getRows(json)
     columnsOption = getColumnsOption(json)
     contextMenu = getContextMenuOption(json)
+    rowHeaderOption = getRowHeaderOption(elementId, json)
+    rowHeaderWidth = getRowHeaderWidth(elementId, json)
     minRow = getMinRow(json)
     allowSort = getAllowSort(elementId)
     beforeChangeFunc = getBeforeChangeFunc(elementId)
@@ -288,7 +291,9 @@ coordinates = ->
         allowRemoveColumn: false,
         manualRowResize: false,
         manualColumnResize: true,
-        rowHeaders: true,
+        #rowHeaders: true,
+        rowHeaders: rowHeaderOption,
+        rowHeaderWidth: rowHeaderWidth,
         colHeaders: header,
         columns: columnsOption,
         startRows: 0,
@@ -321,6 +326,33 @@ coordinates = ->
       [[]]
     else
       json.column_options
+
+  getRowHeaderOption = (elementId, json) ->
+    if elementId != "#metadataArea #securityGrid"
+      return true
+
+    return json.profiles
+
+  getRowHeaderWidth = (elementId, json) ->
+    if elementId != "#metadataArea #securityGrid"
+      return null
+
+    if !json?
+      return null
+      
+    widths = []
+    for value in json.profiles
+      widths.push(getTextWidth(value, "10pt Verdana,Arial,sans-serif"))
+    Math.max.apply(null, widths)
+
+  getTextWidth = (text, font) ->
+    # if given, use cached canvas for better performance
+    # else, create new canvas
+    canvas = getTextWidth.canvas || (getTextWidth.canvas = document.createElement("canvas"));
+    context = canvas.getContext("2d");
+    context.font = font;
+    metrics = context.measureText(text);
+    return metrics.width;
 
   getContextMenuOption = (json) ->
     if json && json.context_menu
@@ -389,7 +421,7 @@ coordinates = ->
     "plugins": ["dropdown"]
   })
 
-  $("#metadataArea #tabArea").tabs({ active: 1 });
+  $("#metadataArea #tabArea").tabs({ active: 2 });
   #$("#metadataArea #tabArea").tabs();
 
 $(document).ready(coordinates)

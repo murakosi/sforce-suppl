@@ -38,7 +38,6 @@ module Generator
 			#	columns << create_grid_column(hash)
 			#	column_options << create_grid_column_option(hash)
 			#end
-			
 			sorted_type_fields = type_fields.sort_by{|hash| [create_grid_sort_key(hash), hash.keys]}
 			
 			sorted_type_fields.each do |hash|

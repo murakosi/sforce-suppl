@@ -3,11 +3,11 @@ require "fileutils"
 module Metadata
 	module FieldTypeFormatter
 
-		def format_field_type(metadata_type, type_fields)
+		def format_field_type(sforce_session, metadata_type, type_fields)
 			@result = []
 			#modified_field_types = Metadata::ValueFieldSupplier.add_missing_fields(metadata_type, type_fields)
 			#@adding = Metadata::ValueFieldSupplier.add_missing_fields(metadata_type, type_fields)
-			custom_type_fields = Metadata::ValueFieldSupplier.add_missing_fields(metadata_type, type_fields)
+			custom_type_fields = Metadata::ValueFieldSupplier.add_missing_fields(sforce_session, metadata_type, type_fields)
 			@adding = custom_type_fields["adding"]
 			@removing = custom_type_fields["removing"]
 			modified_field_types = type_fields

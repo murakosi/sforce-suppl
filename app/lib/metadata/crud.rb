@@ -49,12 +49,12 @@ module Metadata
 
 		def update_metadata(sforce_session, metadata_type, metadata)
 			save_result = Service::MetadataClientService.call(sforce_session).update(metadata_type, metadata)
-			parse_save_result(:update, save_result)
+			parse_save_result(Metadata::CrudType::Update, save_result)
 		end
 
 		def delete_metadata(sforce_session, metadata_type, full_names)
 			save_result = Service::MetadataClientService.call(sforce_session).delete(metadata_type, full_names)
-			parse_save_result(:delete, save_result)
+			parse_save_result(Metadata::CrudType::Delete, save_result)
 		end
 
 		def create_metadata(sforce_session, metadata_type, headers, types, values)
@@ -71,7 +71,7 @@ module Metadata
 			#p metadata
 			#fake_response
 			save_result = Service::MetadataClientService.call(sforce_session).create(metadata_type, metadata)
-			parse_save_result(:create, save_result)
+			parse_save_result(Metadata::CrudType::Create, save_result)
 		end
 
 		def fake_response
