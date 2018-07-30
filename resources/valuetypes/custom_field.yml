@@ -53,6 +53,11 @@ adding:
       prior: true
     startingNumber:
       prior: true
+    abc:
+      name: abc
+      soap_type: multiselect
+      min_occurs: 0
+      prior: true
 removing:
     - valueSet
     - valueSet.controllingField

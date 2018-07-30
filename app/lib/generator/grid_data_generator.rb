@@ -15,9 +15,6 @@ module Generator
 		end
 		
 		def create_grid_options(metadata_type, crud_info, type_fields)
-			#min_row = create_grid_min_row(result)
-
-			#if min_row > 0
 			if crud_info[:api_creatable]
 				get_create_grid_options(metadata_type, type_fields)
 			else
@@ -31,13 +28,7 @@ module Generator
 			field_names = []
 			field_types = []
 			@enums = Metadata::EnumProvider.enums
-			#type_fields = Metadata::ValueFieldSupplier.add_missing_fields(metadata_type, result[:value_type_fields])
 
-			#type_fields.each do |hash|
-			#	field_names << hash[:name]
-			#	columns << create_grid_column(hash)
-			#	column_options << create_grid_column_option(hash)
-			#end
 			sorted_type_fields = type_fields.sort_by{|hash| [create_grid_sort_key(hash), hash.keys]}
 			
 			sorted_type_fields.each do |hash|
@@ -71,30 +62,13 @@ module Generator
 			}
 		end
 
-=begin	
-		def create_grid_sort_key(hash)
-			key = hash[:min_occurs].to_i
-			if hash[:is_name_field]
-				key += 1
-			end
-			-key
-		end
-=end
 		def create_grid_sort_key(hash)
 			key = hash.keys.first
 			value = Hash[*hash.values]
-			sort_key = 0 #value[:min_occurs].to_i
+			sort_key = 0
 
 			if is_key_field?(key, value)
-				#if hash.keys.first.include?(".")
-				#	if value.has_key?(:indispensable)
-				#		key += 1
-				#	else
-				#		key -= 1
-				#	end
-				#else
-					sort_key += 1
-				#end
+				sort_key += 1
 			end
 
 			if is_name_field?(key, value)
@@ -104,19 +78,7 @@ module Generator
 			if value.has_key?(:prior)
 				sort_key += 1
 			end
-=begin
-			if value[:is_name_field]
-				key += 1
-			end
-			
-			if value[:name].to_s.camelize(:lower) == "fullName"
-				key += 1
-			end
 
-			if value.has_key?(:indispensable)
-				key += 1
-			end
-=end
 			-sort_key
 		end
 
@@ -141,34 +103,13 @@ module Generator
 		end
 
 		def create_grid_column(key, hash)
-		    #if hash[:is_name_field] || hash[:min_occurs].to_i > 0 || hash.has_key?(:indispensable)
 		    if is_key_field?(key, hash)
 		        "*" + key
 		    else		    	
 		         key
 		    end
 		end
-=begin
-		def create_grid_column(hash)
-		    if hash[:is_name_field] || hash[:min_occurs].to_i > 0
-		        "*" + hash[:name]
-		    else
-		         hash[:name]
-		    end
-		end
-=end
 
-=begin
-		def create_grid_column_option(hash)
-		    if hash[:soap_type] == "boolean"
-		        type = {:type => "checkbox", :className => "htCenter htMiddle"}
-		    elsif hash.has_key?(:picklist_values)
-				type = {:type => "autocomplete", :source => hash[:picklist_values].map{|hash| hash[:value]}}
-		    else
-		        type = {:type => "text"}
-			end
-		end
-=end
 		def create_grid_column_option(hash)
 			if hash[:parent]
 				type = {:readOnly => true}
@@ -176,6 +117,14 @@ module Generator
 		        type = {:type => "checkbox", :className => "htCenter htMiddle", :checkedTemplate => true, :uncheckedTemplate => nil}
 		    elsif hash.has_key?(:picklist_values)
 				type = {:type => "autocomplete", :source => hash[:picklist_values].map{|hash| hash[:value]}}
+			elsif hash[:soap_type] == "multiselect"	
+				type = {:renderer => "customDropdownRenderer",
+					:editor => "chosen",
+					:chosenOptions => {
+						:multiple => true,
+						:data => ["editable","readable"]
+					}
+				}
 			elsif @enums.has_key?(hash[:name])
 				type = {:type => "autocomplete", :source => @enums[hash[:name]]}
 		    else

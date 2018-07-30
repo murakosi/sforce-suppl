@@ -399,12 +399,34 @@ coordinates = ->
   onCellClick = (event, coords, td) ->
     selectedCellOnCreateGrid = coords
 
+  customDropdownRenderer = (instance, td, row, col, prop, value, cellProperties) ->
+    selectedId = null
+    optionsList = cellProperties.chosenOptions.data
+    values = (value + '').split(',')
+    value = []
+    index = 0
+
+    while index < optionsList.length
+      if values.indexOf(optionsList[index].id + '') > -1
+        selectedId = optionsList[index].id
+        value.push optionsList[index].label
+      index++
+
+    value = value.join(', ')
+
+    #Handsontable.TextCell.renderer.apply(this, arguments)
+    Handsontable.renderers.BaseRenderer.apply(this, arguments)
+
+    return td
+
   #------------------------------------------------
   # page load actions
   #------------------------------------------------
   disableButtons()
 
   $("#metadataArea #tabArea").tabs()
+
+  Handsontable.renderers.registerRenderer('customDropdownRenderer', customDropdownRenderer);
 
   createGrid("#metadataArea #grid")
   createGrid("#metadataArea #createGrid")

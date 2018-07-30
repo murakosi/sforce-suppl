@@ -69,9 +69,24 @@ module Metadata
 			#metadata = [{:full_name => "RB__c.a__c", :type=>"Picklist", :label => "a",
 			# :ValueSet => {:valueSetDefinition => {:value => [{:full_name => "ls1"},{:full_name => "ls2"}]}}}]			
 			#p metadata
-			#fake_response
-			save_result = Service::MetadataClientService.call(sforce_session).create(metadata_type, metadata)
-			parse_save_result(Metadata::CrudType::Create, save_result)
+			metadata = {"Admin Profile" =>
+				{:full_name => "Admin Profile",
+				 :object_permissions => 
+				 [
+				 	{
+				 		:object => "RB__c",
+				 	 	:allow_create => true,
+				 	 	:allow_delete => true,
+				 	 	:allow_edit => true,
+				 	 	:allow_read => true
+				 	}
+				 ]
+				}
+			}
+			Service::MetadataClientService.call(sforce_session).update("Profile", metadata)
+			fake_response
+			#save_result = Service::MetadataClientService.call(sforce_session).create(metadata_type, metadata)
+			#parse_save_result(Metadata::CrudType::Create, save_result)
 		end
 
 		def fake_response
