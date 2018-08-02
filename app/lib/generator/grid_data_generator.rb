@@ -1,4 +1,5 @@
 require "yaml"
+require "CGI"
 
 module Generator
 	module GridDataGenerator
@@ -7,13 +8,21 @@ module Generator
         	column_options = [{:type => "checkbox", :readOnly => false, :className => "htCenter htMiddle"}]
         	metadata_list.first.keys.size.times{column_options << {type: "text", readOnly: true}}
         	{
-        		:rows => metadata_list.map{|hash| [false] + hash.values},
+        		:rows => metadata_list.map{|hash| [false] + hash.values.map{|value| unescape(value)}},
 	            :column_options => column_options,
 	            :columns => [""] + metadata_list.first.keys
             }
 
 		end
 		
+		def unescape(value)
+			if value.is_a?(Nori::StringWithAttributes) || value.is_a?(String)
+				CGI.unescape(value)
+			else
+				value
+			end
+		end
+
 		def create_grid_options(metadata_type, crud_info, type_fields)
 			if crud_info[:api_creatable]
 				get_create_grid_options(metadata_type, type_fields)
@@ -120,11 +129,8 @@ module Generator
 			elsif hash[:soap_type] == "multiselect"	
 				type = {:renderer => "customDropdownRenderer",
 					:editor => "chosen",
-					:chosenOptions => {
-						:multiple => true,
-						:data => ["editable","readable"]
-					}
-				}
+					:chosenOptions => hash[:options]
+					}				
 			elsif @enums.has_key?(hash[:name])
 				type = {:type => "autocomplete", :source => @enums[hash[:name]]}
 		    else

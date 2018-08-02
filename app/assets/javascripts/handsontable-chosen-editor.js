@@ -18,11 +18,11 @@
     };
 
     ChosenEditor.prototype.createElements = function () {
-        console.log("create")
         this.$body = $(document.body);
 
-        this.TEXTAREA = document.createElement('select');
-        //this.TEXTAREA.setAttribute('type', 'text');
+        // change "select" to "TEXTAREA"
+        //this.TEXTAREA = document.createElement('select');
+        this.TEXTAREA = document.createElement('TEXTAREA');
         this.$textarea = $(this.TEXTAREA);
 
         Handsontable.dom.addClass(this.TEXTAREA, 'handsontableInput');
@@ -41,6 +41,11 @@
         this.textareaParentStyle.width = "200px";
 
         this.TEXTAREA_PARENT.appendChild(this.TEXTAREA);
+        
+        // add "select" for chosen editor
+        this.select = document.createElement('SELECT');
+        this.$select = $(this.select);
+        this.TEXTAREA_PARENT.appendChild(this.select);
 
         this.instance.rootElement.appendChild(this.TEXTAREA_PARENT);
 
@@ -91,7 +96,7 @@
                 if (Handsontable.dom.getCaretPosition(target) !== target.value.length) {
                     event.stopImmediatePropagation();
                 } else {
-                    that.$textarea.trigger("chosen:close");
+                    that.$select.trigger("chosen:close");
                 }
                 break;
 
@@ -99,7 +104,7 @@
                 if (Handsontable.dom.getCaretPosition(target) !== 0) {
                     event.stopImmediatePropagation();
                 } else {
-                    that.$textarea.trigger("chosen:close");
+                    that.$select.trigger("chosen:close");
                 }
                 break;
 
@@ -141,7 +146,7 @@
         this.textareaParentStyle.display = 'block';
         this.instance.addHook('beforeKeyDown', onBeforeKeyDown);
 
-        this.$textarea.css({
+        this.$select.css({
             height: $(this.TD).height() + 4,
             'min-width': $(this.TD).outerWidth() - 4
         });
@@ -158,13 +163,13 @@
         });
 
         if (options.multiple) {
-            this.$textarea.attr("multiple", true);
+            this.$select.attr("multiple", true);
         } else {
-            this.$textarea.attr("multiple", false);
+            this.$select.attr("multiple", false);
         }
 
-        this.$textarea.empty();
-        this.$textarea.append("<option value=''></option>");
+        this.$select.empty();
+        this.$select.append("<option value=''></option>");
         var el = null;
         var originalValue = (this.originalValue + "").split(",");
         if (options.data && options.data.length) {
@@ -177,23 +182,23 @@
                     el.attr("selected", true);
                 }
 
-                this.$textarea.append(el);
+                this.$select.append(el);
             }
         }
 
         if ($(this.TEXTAREA_PARENT).find(".chosen-container").length) {
-            this.$textarea.chosen("destroy");
+            this.$select.chosen("destroy");
         }
 
-        this.$textarea.chosen(options);
+        this.$select.chosen(options);
 
         var self = this;
         setTimeout(function () {
 
-            self.$textarea.on('change', onChosenChanged.bind(self));
-            self.$textarea.on('chosen:hiding_dropdown', onChosenClosed.bind(self));
+            self.$select.on('change', onChosenChanged.bind(self));
+            self.$select.on('chosen:hiding_dropdown', onChosenClosed.bind(self));
 
-            self.$textarea.trigger("chosen:open");
+            self.$select.trigger("chosen:open");
 
             $(self.TEXTAREA_PARENT).find("input").on("keydown", function(e) {
                 if(e.keyCode === Handsontable.helper.KEY_CODES.ENTER /*|| e.keyCode === Handsontable.helper.KEY_CODES.BACKSPACE*/) {
@@ -227,14 +232,14 @@
             });
 
             setTimeout(function () {
-                self.$textarea.trigger("chosen:activate").focus();
+                self.$select.trigger("chosen:activate").focus();
 
                 if (keyboardEvent && keyboardEvent.keyCode && keyboardEvent.keyCode != 113) {
                     var key = keyboardEvent.keyCode;
                     var keyText = (String.fromCharCode((96 <= key && key <= 105) ? key - 48 : key)).toLowerCase();
 
                     $(self.TEXTAREA_PARENT).find("input").val(keyText).trigger("keyup.chosen");
-                    self.$textarea.trigger("chosen:activate");
+                    self.$select.trigger("chosen:activate");
                 }
             }, 1);
         }, 1);
@@ -248,26 +253,23 @@
     ChosenEditor.prototype.close = function () {
         this.instance.listen();
         this.instance.removeHook('beforeKeyDown', onBeforeKeyDown);
-        this.$textarea.off();
-        this.$textarea.hide();
+        this.$select.off();
+        this.$select.hide();
         Handsontable.editors.TextEditor.prototype.close.apply(this, arguments);
     };
 
     ChosenEditor.prototype.getValue = function() {
-       if(!this.$textarea.val()) {
+       if(!this.$select.val()) {
            return "";
        }
-        if(typeof this.$textarea.val() === "object") {
-            return this.$textarea.val().join(",");
+        if(typeof this.$select.val() === "object") {
+            return this.$select.val().join(",");
         }
-        return this.$textarea.val();
+        return this.$select.val();
     };
 
     ChosenEditor.prototype.focus = function () {
-        console.log("editor focus start")
-        this.TEXTAREA = document.createElement('input');
         this.instance.listen();
-        console.log("editor focus end")  
         //this.createElements();
         // DO NOT CALL THE BASE TEXTEDITOR FOCUS METHOD HERE, IT CAN MAKE THIS EDITOR BEHAVE POORLY AND HAS NO PURPOSE WITHIN THE CONTEXT OF THIS EDITOR
         //Handsontable.editors.TextEditor.prototype.focus.apply(this, arguments);

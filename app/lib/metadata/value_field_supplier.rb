@@ -16,13 +16,57 @@ module Metadata
 			mapping_hash = YAML.load_file(mapping_file)
 			
 			if Permission_required_types.include?(metadata_type)
-				metadata_list = list_metadata(sforce_session, "Profile").map{|h| h[:full_name]}
-				metadata_list.each do |h|
-					mapping_hash["adding"][h] = {"name" => "profile." + h, :soap_type => "string", :min_occurs => 0, :picklist_values => [{:value => "Read"},{:value => "Read/Write"}], :prior => true}
+				metadata_list = list_metadata(sforce_session, "Profile").map{|hash| hash[:full_name]}
+				metadata_list.each do |name|
+					mapping_hash["adding"][name] = type_specific_hash(metadata_type, name)
 				end
-				mapping_hash["adding"]["profile"] = {"name" => "profile", :soap_type => "string", :min_occurs => 0, :prior => true}
+				mapping_hash["adding"]["profile"] = {"name" => "profile", :soap_type => "string", :min_occurs => 0, :prior => true, :parent => true}
 			end
 			mapping_hash
+		end
+
+		def type_specific_hash(metadata_type, key)
+			if metadata_type == "CustomObject"
+				custom_object_hash(key)
+			elsif metadata_type == "CustomField"
+				custom_field_hash(key)
+			end
+		end
+
+		def custom_object_hash(key)
+			{
+				"name" => "profile." + key,
+				:soap_type => "multiselect",
+				:min_occurs => 0,
+				:prior => true,
+				:options => {
+					:multiple => true,
+					:data => [
+								{:id => 1, :label => "allowCreate"},
+								{:id => 2, :label => "allowDelete"},
+								{:id => 3, :label => "allowEdit"},
+								{:id => 4, :label => "allowRead"},
+								{:id => 5, :label => "modifyAllRecords"},
+								{:id => 6, :label => "viewAllRecords"}
+							 ]
+							}
+			}
+		end
+
+		def custom_field_hash(key)
+			{
+				"name" => "profile." + key,
+				:soap_type => "multiselect",
+				:min_occurs => 0,
+				:prior => true,
+				:options => {
+					:multiple => true,
+					:data => [
+								{:id => 1, :label => "readable"},
+								{:id => 2, :label => "editable"}
+							 ]
+							}
+			}
 		end
 
 		def add_missing_fields(sforce_session, metadata_type, type_fields)

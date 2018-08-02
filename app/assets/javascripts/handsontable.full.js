@@ -53754,8 +53754,6 @@ var FocusableWrapper = function () {
     key: 'focus',
     value: function focus() {
       // Add an empty space to texarea. It is necessary for safari to enable "copy" command from menu bar.
-      console.log("focus!!");
-      console.log(this.mainElement);
       this.mainElement.value = ' ';
       this.mainElement.select();
     }

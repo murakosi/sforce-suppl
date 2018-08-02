@@ -66,9 +66,8 @@ module Metadata
 			
 			value_types = Hash[*[headers, types].transpose.flatten]
 			metadata = Metadata::ValueFieldSupplier.rebuild(metadata_type, value_types, metadata)
-			#metadata = [{:full_name => "RB__c.a__c", :type=>"Picklist", :label => "a",
-			# :ValueSet => {:valueSetDefinition => {:value => [{:full_name => "ls1"},{:full_name => "ls2"}]}}}]			
-			#p metadata
+			p metadata
+=begin			
 			metadata = {"Admin Profile" =>
 				{:full_name => "Admin Profile",
 				 :object_permissions => 
@@ -84,6 +83,7 @@ module Metadata
 				}
 			}
 			Service::MetadataClientService.call(sforce_session).update("Profile", metadata)
+=end			
 			fake_response
 			#save_result = Service::MetadataClientService.call(sforce_session).create(metadata_type, metadata)
 			#parse_save_result(Metadata::CrudType::Create, save_result)

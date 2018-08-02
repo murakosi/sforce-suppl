@@ -399,9 +399,17 @@ coordinates = ->
   onCellClick = (event, coords, td) ->
     selectedCellOnCreateGrid = coords
 
+  #------------------------------------------------
+  # Custom renderer
+  #------------------------------------------------
   customDropdownRenderer = (instance, td, row, col, prop, value, cellProperties) ->
     selectedId = null
     optionsList = cellProperties.chosenOptions.data
+    
+    if(typeof optionsList == "undefined" || typeof optionsList.length == "undefined" || !optionsList.length)
+      Handsontable.TextCell.renderer(instance, td, row, col, prop, value, cellProperties);
+      return td;
+    
     values = (value + '').split(',')
     value = []
     index = 0
@@ -414,8 +422,7 @@ coordinates = ->
 
     value = value.join(', ')
 
-    #Handsontable.TextCell.renderer.apply(this, arguments)
-    Handsontable.renderers.BaseRenderer.apply(this, arguments)
+    Handsontable.renderers.TextRenderer.apply(this, arguments);
 
     return td
 
