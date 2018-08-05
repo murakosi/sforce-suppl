@@ -4,6 +4,7 @@ module Metadata
 		include Metadata::Crud
 
 		Permission_required_types = ["CustomObject", "CustomField"]
+		Permisson_option_splitter = ", "
 
 		def typefield_resource_exists?(type)
 			resouce_file_path = Service::ResourceLocator.call(:valuetypes)
@@ -38,16 +39,17 @@ module Metadata
 				"name" => "profile." + key,
 				:soap_type => "multiselect",
 				:min_occurs => 0,
-				:prior => true,
+				:priority => 1,
 				:options => {
 					:multiple => true,
+					:splitter => Permisson_option_splitter,
 					:data => [
-								{:id => 1, :label => "allowCreate"},
-								{:id => 2, :label => "allowDelete"},
-								{:id => 3, :label => "allowEdit"},
-								{:id => 4, :label => "allowRead"},
-								{:id => 5, :label => "modifyAllRecords"},
-								{:id => 6, :label => "viewAllRecords"}
+								{:id => "allowCreate", :label => "allowCreate"},
+								{:id => "allowDelete", :label => "allowDelete"},
+								{:id => "allowEdit", :label => "allowEdit"},
+								{:id => "allowRead", :label => "allowRead"},
+								{:id => "modifyAllRecords", :label => "modifyAllRecords"},
+								{:id => "viewAllRecords", :label => "viewAllRecords"}
 							 ]
 							}
 			}
@@ -58,12 +60,13 @@ module Metadata
 				"name" => "profile." + key,
 				:soap_type => "multiselect",
 				:min_occurs => 0,
-				:prior => true,
+				:priority => 1,
 				:options => {
 					:multiple => true,
+					:splitter => Permisson_option_splitter,
 					:data => [
-								{:id => 1, :label => "readable"},
-								{:id => 2, :label => "editable"}
+								{:id => "readable", :label => "readable"},
+								{:id => "editable", :label => "editable"}
 							 ]
 							}
 			}
@@ -80,33 +83,52 @@ module Metadata
 			end
 		end
 
-		def rebuild(metadata_type, value_types, records)
-			@rebuild_result = []
+		def rebuild(metadata_type, value_types, records)			
+			@rebuild_permission_required = false
+
+			@main_hash_array = rebuild_main(metadata_type, value_types, records)
+
+			if @rebuild_permission_required				
+				permission_hash_array = rebuild_permission(metadata_type)
+				rebuild_result = {:metadata => @main_hash_array, :subsequent => permission_hash_array}
+			else
+				rebuild_result = {:metadata => @main_hash_array}
+			end
+			
+			rebuild_result
+		end
+
+		def rebuild_main(metadata_type, value_types, records)
+			main_hash_array = []
 
 			records.each do |hash|
 
 				@merged_hash = {}
 
 				hash.each do |k, v|
-					next if v.nil?
-					
+					next if v.nil? || v == ""
+
+					if k.include?("profile.") && Permission_required_types.include?(metadata_type)
+						@rebuild_permission_required = true
+					end
+
 					if value_types[k] == "array"
 					    value = v.split(",").map(&:strip)
 					elsif value_types[k] == "name_array"
 					    value_array = v.split(",").map(&:strip)
-					    value = value_array.map{|name| {:full_name => name}}
+					    value = value_array.map{|name| {:full_name => name}}					
 					else
 					    value = v
 					end
-					temp_hash = k.split(".").reverse.inject(encode_content(k,value)) {|mem, item| { item => mem } }
-					#p temp_hash
+
+					temp_hash = k.split(".").reverse.inject(encode_content(k,value)) {|mem, item| { item => mem } }					
 					merge_hash(temp_hash)
 				end
 
-				@rebuild_result << @merged_hash
+				main_hash_array << @merged_hash
 			end
 
-			@rebuild_result
+			main_hash_array
 		end
 
 		def merge_hash(hash)
@@ -118,7 +140,52 @@ module Metadata
 		        end
 			end
 		end		
-	
+
+		def rebuild_permission(metadata_type)
+			permission_hash_array = []
+
+			@main_hash_array.each_with_index do |hash, index|
+
+				target_full_name = hash["fullName"]
+				profile_record = hash.delete("profile")
+				@main_hash_array[index] = hash
+
+				profile_record.each do |k, v|
+					value_hash = {}
+
+				    v.split(Permisson_option_splitter).map(&:strip).map{|name| value_hash.merge!({name.to_sym => true})}
+				    permission = {
+				    				:full_name => k,
+				    				permission_key(metadata_type) => 
+				    				[
+				    					{
+				    						permission_object(metadata_type) => target_full_name
+					    				}.merge!(value_hash)
+				    				]	    				
+				    			}
+					
+					permission_hash_array << {:profile => permission}
+				end
+			end
+			permission_hash_array
+		end
+
+		def permission_key(metadata_type)
+			if metadata_type == "CustomObject"
+				:object_permissons
+			elsif metadata_type == "CustomField"
+				:field_permissions
+			end
+		end
+
+		def permission_object(metadata_type)
+			if metadata_type == "CustomObject"
+				:object
+			elsif metadata_type == "CustomField"
+				:field
+			end
+		end
+
 		def encode_content(key, value)
 			if key.to_s.downcase == "content"
 				Base64.strict_encode64(value)

@@ -56,22 +56,19 @@
     };
 
     var onChosenChanged = function () {
-        var options = this.cellProperties.chosenOptions;
-
-        if (!options.multiple) {
+        if (!this.cellProperties.chosenOptions.multiple) {
             this.close();
             this.finishEditing();
         }
     };
+
     var onChosenClosed = function () {
-        var options = this.cellProperties.chosenOptions;
-
-        if (!options.multiple) {
+        if (!this.cellProperties.chosenOptions.multiple) {
             this.close();
             this.finishEditing();
-        } else {
         }
     };
+
     var onBeforeKeyDown = function (event) {
         var instance = this;
         var that = instance.getActiveEditor();
@@ -171,7 +168,9 @@
         this.$select.empty();
         this.$select.append("<option value=''></option>");
         var el = null;
-        var originalValue = (this.originalValue + "").split(",");
+        //var originalValue = (this.originalValue + "").split(",");
+        // add splitter option
+        var originalValue = (this.originalValue + "").split(this.options.splitter);
         if (options.data && options.data.length) {
             for (var i = 0; i < options.data.length; i++) {
                 el = $("<option />");
@@ -255,6 +254,8 @@
         this.instance.removeHook('beforeKeyDown', onBeforeKeyDown);
         this.$select.off();
         this.$select.hide();
+        // add to enable copy
+        this.$textarea.show();
         Handsontable.editors.TextEditor.prototype.close.apply(this, arguments);
     };
 
@@ -263,14 +264,15 @@
            return "";
        }
         if(typeof this.$select.val() === "object") {
-            return this.$select.val().join(",");
+            //return this.$select.val().join(",");
+            // add splitter option
+            return this.$select.val().join(this.options.splitter);
         }
         return this.$select.val();
     };
 
     ChosenEditor.prototype.focus = function () {
         this.instance.listen();
-        //this.createElements();
         // DO NOT CALL THE BASE TEXTEDITOR FOCUS METHOD HERE, IT CAN MAKE THIS EDITOR BEHAVE POORLY AND HAS NO PURPOSE WITHIN THE CONTEXT OF THIS EDITOR
         //Handsontable.editors.TextEditor.prototype.focus.apply(this, arguments);
     };  

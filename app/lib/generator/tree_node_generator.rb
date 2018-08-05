@@ -125,7 +125,8 @@ module Generator
             if index.nil?
                 id = parent.to_s + "/" + current.to_s
             else
-                id = parent.to_s + "/" + current.to_s + "[" + index.to_s + "]"
+                #id = parent.to_s + "/" + current.to_s + "[" + index.to_s + "]"
+                id = parent.to_s + "/" + current.to_s + "/" + index.to_s
             end
         end
 

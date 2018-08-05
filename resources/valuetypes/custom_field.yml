@@ -1,58 +1,63 @@
 adding:
+    fullName:
+      name: fullName
+      soap_type: string
+      min_occurs: 1
+      priority: 5
     type:
       name: type
       soap_type: FieldType
       min_occurs: 1
-      prior: true
+      priority: 5
     label:
       name: label
       soap_type: string
       min_occurs: 1
       indispensable: true
-      prior: true  
+      priority: 5  
     deleteConstraint:
       name: deleteConstraint
       soap_type: deleteConstraint
       min_occurs: 0
-      prior: true
+      priority: 3
     valueSet.valueSetName:
       name: valueSet.valueSetName
       soap_type: string
       min_occurs: 0
       replace: true
-      prior: true
+      priority: 3
     valueSet.valueSetDefinition.value:
       name: valueSet.valueSetDefinition.value
       soap_type: name_array
       min_occurs: 0
       replace: true
-      prior: true
+      priority: 3
     defaultValue:
-      prior: true
+      priority: 3
     description:
-      prior: true
+      priority: 3
     externalId:
-      prior: true
+      priority: 3
     formula:
-      prior: true
+      priority: 3
     inlineHelpText:
-      prior: true
+      priority: 3
     length:
-      prior: true
+      priority: 3
     precision:
-      prior: true
+      priority: 3
     scale:
-      prior: true
+      priority: 3
     referenceTo:
-      prior: true
+      priority: 3
     relationshipLabel:
-      prior: true
+      priority: 3
     relationshipName:
-      prior: true
+      priority: 3
     required:
-      prior: true
+      priority: 3
     startingNumber:
-      prior: true
+      priority: 3
 removing:
     - valueSet
     - valueSet.controllingField

@@ -84,8 +84,8 @@ module Generator
 				sort_key += 1
 			end
 
-			if value.has_key?(:prior)
-				sort_key += 1
+			if value.has_key?(:priority)
+				sort_key += value[:priority].to_i
 			end
 
 			-sort_key
@@ -113,9 +113,9 @@ module Generator
 
 		def create_grid_column(key, hash)
 		    if is_key_field?(key, hash)
-		        "*" + key
-		    else		    	
-		         key
+		        "*" + unescape(key)
+		    else
+		         unescape(key)
 		    end
 		end
 
@@ -125,7 +125,7 @@ module Generator
 		    elsif hash[:soap_type] == "boolean"
 		        type = {:type => "checkbox", :className => "htCenter htMiddle", :checkedTemplate => true, :uncheckedTemplate => nil}
 		    elsif hash.has_key?(:picklist_values)
-				type = {:type => "autocomplete", :source => hash[:picklist_values].map{|hash| hash[:value]}}
+				type = {:type => "autocomplete", :source => hash[:picklist_values].map{|hash| hash[:value]}, :trimDropdown => false}
 			elsif hash[:soap_type] == "multiselect"	
 				type = {:renderer => "customDropdownRenderer",
 					:editor => "chosen",

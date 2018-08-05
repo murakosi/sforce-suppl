@@ -23,11 +23,31 @@ module Metadata
 		end
 
 		def edit_metadata(source, path, new_text, data_type)
+			text = to_type(new_text, data_type)
+			source = source.with_indifferent_access
+			elements = ["source"] + path.split(".").map{|value| get_edit_key(value)}
+			update = elements.join + " = text"
+			eval(update)
+			source.deep_symbolize_keys
+=begin
 			mash = Hashie::Mash.new(source)
 			text = to_type(new_text, data_type)
 			update = "mash." + path + " = text"
 			eval(update)
 			mash.to_hash.deep_symbolize_keys
+=end
+		end
+
+		def get_edit_key(value)
+			if is_integer?(value)
+				"[#{value}]"
+			else
+				"[\"#{value}\"]"
+			end
+		end
+
+		def is_integer?(value)
+			Integer(value) rescue false
 		end
 
 		def to_type(text, data_type)
@@ -58,17 +78,16 @@ module Metadata
 		end
 
 		def create_metadata(sforce_session, metadata_type, headers, types, values)
-			metadata = []
-			values.each do | value |
-				merged = [headers, value].transpose
-				metadata << Hash[*merged.flatten]
+			metadata = prepare_metadata_to_create(metadata_type, headers, types, values)
+			if metadata.has_key?(:subsequent)
+				create_with_permissions(sforce_session, metadata_type, metadata)
+			else
+				create_without_permissions(sforce_session, metadata_type, metadata)
 			end
 			
-			value_types = Hash[*[headers, types].transpose.flatten]
-			metadata = Metadata::ValueFieldSupplier.rebuild(metadata_type, value_types, metadata)
-			p metadata
 =begin			
-			metadata = {"Admin Profile" =>
+			p metadata
+			metadata = {"profile" =>
 				{:full_name => "Admin Profile",
 				 :object_permissions => 
 				 [
@@ -82,11 +101,34 @@ module Metadata
 				 ]
 				}
 			}
-			Service::MetadataClientService.call(sforce_session).update("Profile", metadata)
-=end			
+			Service::MetadataClientService.call(sforce_session).update("Profile", metadata)		
 			fake_response
+=end
 			#save_result = Service::MetadataClientService.call(sforce_session).create(metadata_type, metadata)
 			#parse_save_result(Metadata::CrudType::Create, save_result)
+		end
+
+		def prepare_metadata_to_create(metadata_type, headers, types, values)
+			source = []
+			values.each do | value |
+				merged = [headers, value].transpose
+				source << Hash[*merged.flatten]
+			end
+			
+			value_types = Hash[*[headers, types].transpose.flatten]
+			Metadata::ValueFieldSupplier.rebuild(metadata_type, value_types, source)
+		end
+
+		def create_without_permissions(sforce_session, metadata_type, metadata)
+			save_result = Service::MetadataClientService.call(sforce_session).create(metadata_type, metadata[:metadata])
+			parse_save_result(Metadata::CrudType::Create, save_result)
+		end
+
+		def create_with_permissions(sforce_session, metadata_type, metadata)
+			create_result = create_without_permissions(sforce_session, metadata_type, metadata)
+			update_result = Service::MetadataClientService.call(sforce_session).update("Profile", metadata[:subsequent])
+			parse_save_result(Metadata::CrudType::Update, update_result)
+			create_result			
 		end
 
 		def fake_response

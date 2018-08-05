@@ -3,6 +3,7 @@ coordinates = ->
   selectedRecords = {}
   grids = {}
   defaultDataType = ""
+  selectedFullName = null
   selectedNode = null
   fieldNames = null
   fieldTypes = null
@@ -58,6 +59,8 @@ coordinates = ->
     grids = {}
     fieldNames = null
     fieldTypes = null
+    selectedFullName = null
+    selectedNode = null
     selectedCellOnCreateGrid = null
 
   processListError = (json) ->
@@ -136,7 +139,7 @@ coordinates = ->
   $("#updateButton").on "click", (e) ->
     e.preventDefault()
     if window.confirm("Update Metadata?")
-      val = {crud_type: "update", metadata_type: getSelectedMetadata()}
+      val = {crud_type: "update", metadata_type: getSelectedMetadata(), full_name: selectedFullName}
       action = $(".crudForm").attr("action")
       method = $(".crudForm").attr("method")
       options = $.getAjaxOptions(action, method, val, defaultDataType)
@@ -144,6 +147,7 @@ coordinates = ->
       $.executeAjax(options, callbacks)
 
   $("#metadataArea #editTree").on 'select_node.jstree', (e, data) ->
+    selectedFullName = data.node.li_attr.full_name
     selectedNode = data.node
 
   $("#metadataArea #editTree").on 'rename_node.jstree', (e, data) ->
@@ -403,24 +407,24 @@ coordinates = ->
   # Custom renderer
   #------------------------------------------------
   customDropdownRenderer = (instance, td, row, col, prop, value, cellProperties) ->
-    selectedId = null
     optionsList = cellProperties.chosenOptions.data
+    splitter = cellProperties.chosenOptions.splitter
     
     if(typeof optionsList == "undefined" || typeof optionsList.length == "undefined" || !optionsList.length)
       Handsontable.TextCell.renderer(instance, td, row, col, prop, value, cellProperties);
       return td;
     
-    values = (value + '').split(',')
-    value = []
+    valueArray = (value + '').split(splitter)
+    newValue = []
     index = 0
 
     while index < optionsList.length
-      if values.indexOf(optionsList[index].id + '') > -1
-        selectedId = optionsList[index].id
-        value.push optionsList[index].label
+      if valueArray.indexOf(optionsList[index].id + '') > -1
+        newValue.push optionsList[index].label
       index++
 
-    value = value.join(', ')
+    if newValue.length
+      value = newValue.join(splitter)
 
     Handsontable.renderers.TextRenderer.apply(this, arguments);
 

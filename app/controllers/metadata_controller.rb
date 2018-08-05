@@ -93,7 +93,7 @@ class MetadataController < ApplicationController
         
         begin
             raise_when_type_unmached(metadata_type)
-            edit_result = edit_metadata(session[:read_result][full_name], path, new_text, data_type)
+            edit_result = edit_metadata(read_results[full_name], path, new_text, data_type)
             try_save_session(metadata_type, full_name, edit_result)
             render :json => {:result => "ok"}, :status => 200
         rescue StandardError => ex
@@ -130,7 +130,11 @@ class MetadataController < ApplicationController
     end
 
     def try_update(metadata_type)
-        update_metadata(sforce_session, metadata_type, read_results())
+        full_name = params[:full_name]
+        if full_name.nil?
+            raise StandardError.new("No node is selected")
+        end
+        update_metadata(sforce_session, metadata_type, read_results[full_name])
     end
 
     def try_delete(metadata_type)
