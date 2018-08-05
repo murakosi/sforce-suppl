@@ -1,11 +1,10 @@
 module Metadata
 	class ValueFieldSupplier
 	class << self
+		include Metadata::Crud
 
-
-		def write_log(text)
-			File.write('C:\Users\murakosi\rubytest\ws_hash.log', text)
-		end
+		Permission_required_types = ["CustomObject", "CustomField"]
+		Permisson_option_splitter = ", "
 
 		def typefield_resource_exists?(type)
 			resouce_file_path = Service::ResourceLocator.call(:valuetypes)
@@ -13,141 +12,178 @@ module Metadata
 			@typefield_mapping.present?
 		end
 
-		def mapping_exists?(metadata_type)
-			if !typefield_resource_exists?(metadata_type)
-				return false
-			end
-
+		def get_mapping_hash(sforce_session, metadata_type)
 			mapping_file = Service::ResourceLocator.call(@typefield_mapping)
-			if mapping_file.present?
-				@mapping = YAML.load_file(mapping_file)
+			mapping_hash = YAML.load_file(mapping_file)
+			
+			if Permission_required_types.include?(metadata_type)
+				metadata_list = list_metadata(sforce_session, "Profile").map{|hash| hash[:full_name]}
+				metadata_list.each do |name|
+					mapping_hash["adding"][name] = type_specific_hash(metadata_type, name)
+				end
+				mapping_hash["adding"]["profile"] = {"name" => "profile", :soap_type => "string", :min_occurs => 0, :prior => true, :parent => true}
 			end
-
-			@mapping.present?
+			mapping_hash
 		end
 
-		def add_missing_fields(metadata_type, type_fields)
-			if mapping_exists?(metadata_type)
-				return @mapping
+		def type_specific_hash(metadata_type, key)
+			if metadata_type == "CustomObject"
+				custom_object_hash(key)
+			elsif metadata_type == "CustomField"
+				custom_field_hash(key)
+			end
+		end
+
+		def custom_object_hash(key)
+			{
+				"name" => "profile." + key,
+				:soap_type => "multiselect",
+				:min_occurs => 0,
+				:priority => 1,
+				:options => {
+					:multiple => true,
+					:splitter => Permisson_option_splitter,
+					:data => [
+								{:id => "allowCreate", :label => "allowCreate"},
+								{:id => "allowDelete", :label => "allowDelete"},
+								{:id => "allowEdit", :label => "allowEdit"},
+								{:id => "allowRead", :label => "allowRead"},
+								{:id => "modifyAllRecords", :label => "modifyAllRecords"},
+								{:id => "viewAllRecords", :label => "viewAllRecords"}
+							 ]
+							}
+			}
+		end
+
+		def custom_field_hash(key)
+			{
+				"name" => "profile." + key,
+				:soap_type => "multiselect",
+				:min_occurs => 0,
+				:priority => 1,
+				:options => {
+					:multiple => true,
+					:splitter => Permisson_option_splitter,
+					:data => [
+								{:id => "readable", :label => "readable"},
+								{:id => "editable", :label => "editable"}
+							 ]
+							}
+			}
+		end
+
+		def add_missing_fields(sforce_session, metadata_type, type_fields)
+			if typefield_resource_exists?(metadata_type)
+				#mapping_file = Service::ResourceLocator.call(@typefield_mapping)
+				#return YAML.load_file(mapping_file)
+				get_mapping_hash(sforce_session, metadata_type)
 			else
-				nil
+				#nil
+				{"adding" => {}, "removing" => []}
 			end
-=begin			
-			if !mapping_exists?(metadata_type, Build_mapping)
-				return type_fields
-			end
-
-			value_type_fields = []
-			
-			write_log(type_fields)
-			
-			type_fields.each do |hash|
-				if @mapping.keys.include?(hash[:name])
-					value_type_fields << @mapping[hash[:name]].symbolize_keys.merge(hash)
-					@mapping.delete(hash[:name])
-				else
-					value_type_fields << hash
-				end
-			end
-			@mapping.values.each{|hash| value_type_fields << hash.deep_symbolize_keys}
-			
-			value_type_fields
-=end
-=begin
-			value_type_fields = []
-
-			type_fields.each do |hash|
-				if @mapping.keys.include?(hash[:name])
-					value_type_fields << @mapping[hash[:name]].symbolize_keys
-					@mapping.delete(hash[:name])
-				#elsif Metadata::FieldType::SoapTypes.include?(hash[:soap_type])
-				else
-					value_type_fields << hash
-				end
-			end
-			@mapping.values.each{|hash| value_type_fields << hash.deep_symbolize_keys}
-
-			value_type_fields
-=end
-
 		end
 
-		def rebuild(metadata_type, records)
-			@rebuild_result = {}
-			temp_hash = {}
+		def rebuild(metadata_type, value_types, records)			
+			@rebuild_permission_required = false
+
+			@main_hash_array = rebuild_main(metadata_type, value_types, records)
+
+			if @rebuild_permission_required				
+				permission_hash_array = rebuild_permission(metadata_type)
+				rebuild_result = {:metadata => @main_hash_array, :subsequent => permission_hash_array}
+			else
+				rebuild_result = {:metadata => @main_hash_array}
+			end
+			
+			rebuild_result
+		end
+
+		def rebuild_main(metadata_type, value_types, records)
+			main_hash_array = []
+
 			records.each do |hash|
+
+				@merged_hash = {}
+
 				hash.each do |k, v|
-					next if v.nil?
-					temp_hash = k.split(".").reverse.inject(encode_content(k,v)) {|mem, item| { item => mem } }
-					merge_nest(temp_hash)
+					next if v.nil? || v == ""
+
+					if k.include?("profile.") && Permission_required_types.include?(metadata_type)
+						@rebuild_permission_required = true
+					end
+
+					if value_types[k] == "array"
+					    value = v.split(",").map(&:strip)
+					elsif value_types[k] == "name_array"
+					    value_array = v.split(",").map(&:strip)
+					    value = value_array.map{|name| {:full_name => name}}					
+					else
+					    value = v
+					end
+
+					temp_hash = k.split(".").reverse.inject(encode_content(k,value)) {|mem, item| { item => mem } }					
+					merge_hash(temp_hash)
 				end
-			end			
-			@rebuild_result
+
+				main_hash_array << @merged_hash
+			end
+
+			main_hash_array
 		end
 
-		def merge_nest(hash)
+		def merge_hash(hash)
 			hash.each do |k, v|
-		        if @rebuild_result.has_key?(k)
-		            @rebuild_result.deep_merge!({k=> v})
+		        if @merged_hash.has_key?(k)
+		            @merged_hash.deep_merge!({k=> v})
 		        else
-		            @rebuild_result.merge!(hash)
+		            @merged_hash.merge!(hash)
 		        end
 			end
-		end
-		
-		def encode_content(key, value)
-			if key.to_s.downcase == "content"
-				Base64.strict_encode64(value)
-			else
-				value
-			end
-		end
+		end		
 
-=begin
-		def rebuild(metadata_type, records)
-			if !mapping_exists?(metadata_type, Rebuild_mapping)
-				simple_reconstruct(records)
-				#records
-			else
-				reconstruct(records)
-			end
-		end
+		def rebuild_permission(metadata_type)
+			permission_hash_array = []
 
-		def simple_reconstruct(records)
-			rebuild_result = {}
-			records.each do |record|
-			 	record.each do |k,v|
-			 		rebuild_result.store(k, encode_content(k, v))
-			 	end
-			end
-			rebuild_result
-		end
+			@main_hash_array.each_with_index do |hash, index|
 
-		def reconstruct(records)
-			rebuild_fields = @mapping["rebuild_fields"]
-			skip_fields = @mapping["skip_fields"]
+				target_full_name = hash["fullName"]
+				profile_record = hash.delete("profile")
+				@main_hash_array[index] = hash
 
-			rebuild_result = {}
-			records.each do |record|
-			 	record.each do |k, v|
-			 		next if skip_fields.include?(k)
+				profile_record.each do |k, v|
+					value_hash = {}
 
-					if rebuild_fields.keys.include?(k)						
-						fields = []
-						rebuild_fields[k].each do | field_key, field_hash|
-							field_hash.each do | source_key, rebuild_key |
-								fields << rebuild_key
-								fields << encode_content(rebuild_key, record[source_key])
-							end
-							rebuild_result.store(field_key, Hash[*fields])
-						end						
-					else
-						rebuild_result.store(k, encode_content(k, v))
-					end
+				    v.split(Permisson_option_splitter).map(&:strip).map{|name| value_hash.merge!({name.to_sym => true})}
+				    permission = {
+				    				:full_name => k,
+				    				permission_key(metadata_type) => 
+				    				[
+				    					{
+				    						permission_object(metadata_type) => target_full_name
+					    				}.merge!(value_hash)
+				    				]	    				
+				    			}
+					
+					permission_hash_array << {:profile => permission}
 				end
 			end
+			permission_hash_array
+		end
 
-			rebuild_result
+		def permission_key(metadata_type)
+			if metadata_type == "CustomObject"
+				:object_permissons
+			elsif metadata_type == "CustomField"
+				:field_permissions
+			end
+		end
+
+		def permission_object(metadata_type)
+			if metadata_type == "CustomObject"
+				:object
+			elsif metadata_type == "CustomField"
+				:field
+			end
 		end
 
 		def encode_content(key, value)
@@ -157,7 +193,7 @@ module Metadata
 				value
 			end
 		end
-=end
+
 	end
 	end
 end

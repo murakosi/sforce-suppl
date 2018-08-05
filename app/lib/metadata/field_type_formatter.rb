@@ -3,12 +3,15 @@ require "fileutils"
 module Metadata
 	module FieldTypeFormatter
 
-		def format_field_type(metadata_type, type_fields)
+		def format_field_type(sforce_session, metadata_type, type_fields)
 			@result = []
 			#modified_field_types = Metadata::ValueFieldSupplier.add_missing_fields(metadata_type, type_fields)
-			@adding = Metadata::ValueFieldSupplier.add_missing_fields(metadata_type, type_fields)
+			#@adding = Metadata::ValueFieldSupplier.add_missing_fields(metadata_type, type_fields)
+			custom_type_fields = Metadata::ValueFieldSupplier.add_missing_fields(sforce_session, metadata_type, type_fields)
+			@adding = custom_type_fields["adding"]
+			@removing = custom_type_fields["removing"]
 			modified_field_types = type_fields
-			modified_field_types.each{|hash| parse_field_types(nil, hash)}			
+			modified_field_types.each{|hash| parse_field_types(nil, hash)}
 			add_remaining_fields()
 
 			if !Rails.env.production?
@@ -52,30 +55,47 @@ module Metadata
                 else
                     if parent.nil?
                         #@result << {hash[:name] => hash}
-                        @result << get_type_field_hash(hash[:name], hash)
+                        #@result << get_type_field_hash(hash[:name], hash)
+                        type_field_hash = get_type_field_hash(hash[:name], hash)
                     else
                         #@result << {parent => hash }
-                        @result << get_type_field_hash(parent, hash)
+                        #@result << get_type_field_hash(parent, hash)
+                        type_field_hash = get_type_field_hash(parent, hash)
                     end
+
+                    @result << type_field_hash unless type_field_hash.nil?
                 end
                 break
             end
 		end
 
 		def get_type_field_hash(key, value)
-			if @adding.nil? || !@adding.has_key?(key)
-				{key => value}
+			if @removing.include?(key)
+				return nil
+			end
+
+			#if @adding.nil? || !@adding.has_key?(key)
+			if !@adding.has_key?(key)
+				return {key => value}
+			end
+
+			adding_value = @adding[key].symbolize_keys
+			
+			if adding_value.has_key?(:replace)
+				new_value = adding_value
 			else
 				new_value = @adding[key].symbolize_keys.merge(value)
-				@adding.delete(key)
-				{key => new_value}
 			end
+			
+			@adding.delete(key)
+			
+			return {key => new_value}
 		end
-
+        
 		def add_remaining_fields
-			if @adding.present?
+			#if @adding.present?
 				@adding.values.each{|hash| @result << { hash["name"] => hash.deep_symbolize_keys } }
-			end
+			#end
 		end
 
 		def parse_fields(parent, hash)

@@ -3,8 +3,10 @@ coordinates = ->
   selectedRecords = {}
   grids = {}
   defaultDataType = ""
+  selectedFullName = null
   selectedNode = null
   fieldNames = null
+  fieldTypes = null
   selectedCellOnCreateGrid = null
   del = false
 
@@ -12,6 +14,7 @@ coordinates = ->
     $("#createButton").prop("disabled", true)
     $("#addRow").prop("disabled", true)
     $("#removeRow").prop("disabled", true)
+    $("#clearGrid").prop("disabled", true)
     $("#updateButton").prop("disabled", true)
     $("#deleteButton").prop("disabled", true)
     $("#expand").prop("disabled", true)
@@ -55,6 +58,9 @@ coordinates = ->
     selectedRecords = {}
     grids = {}
     fieldNames = null
+    fieldTypes = null
+    selectedFullName = null
+    selectedNode = null
     selectedCellOnCreateGrid = null
 
   processListError = (json) ->
@@ -66,6 +72,7 @@ coordinates = ->
     refreshTree(json.tree)
     changeButtonStyles(json.crud_info)
     fieldNames = json.create_grid.field_names
+    fieldTypes = json.create_grid.field_types
     createGrid("#metadataArea #grid", json.list_grid)
     createGrid("#metadataArea #createGrid", json.create_grid)
 
@@ -73,6 +80,7 @@ coordinates = ->
     $("#createButton").prop("disabled", !json.api_creatable)
     $("#addRow").prop("disabled", !json.api_creatable)
     $("#removeRow").prop("disabled", !json.api_creatable)
+    $("#clearGrid").prop("disabled", !json.api_creatable)
     $("#updateButton").prop("disabled", !json.api_updatable)
     $("#deleteButton").prop("disabled", !json.api_deletable)
     $("#expand").prop("disabled", !json.api_readable)
@@ -130,14 +138,16 @@ coordinates = ->
   #------------------------------------------------
   $("#updateButton").on "click", (e) ->
     e.preventDefault()
-    val = {crud_type: "update", metadata_type: getSelectedMetadata()}
-    action = $(".crudForm").attr("action")
-    method = $(".crudForm").attr("method")
-    options = $.getAjaxOptions(action, method, val, defaultDataType)
-    callbacks = $.getAjaxCallbacks(saveSuccess, displayError, null)
-    $.executeAjax(options, callbacks)
+    if window.confirm("Update Metadata?")
+      val = {crud_type: "update", metadata_type: getSelectedMetadata(), full_name: selectedFullName}
+      action = $(".crudForm").attr("action")
+      method = $(".crudForm").attr("method")
+      options = $.getAjaxOptions(action, method, val, defaultDataType)
+      callbacks = $.getAjaxCallbacks(saveSuccess, displayError, null)
+      $.executeAjax(options, callbacks)
 
   $("#metadataArea #editTree").on 'select_node.jstree', (e, data) ->
+    selectedFullName = data.node.li_attr.full_name
     selectedNode = data.node
 
   $("#metadataArea #editTree").on 'rename_node.jstree', (e, data) ->
@@ -183,12 +193,22 @@ coordinates = ->
   #------------------------------------------------
   $("#createButton").on "click", (e) ->
     e.preventDefault()
-    val = {crud_type: "create", metadata_type: getSelectedMetadata(), field_headers: fieldNames, field_values: getDataOnCreateGrid()}
+    val = {
+           crud_type: "create",
+           metadata_type: getSelectedMetadata(),
+           field_headers: fieldNames,
+           field_types: fieldTypes,
+           field_values: getDataOnCreateGrid()
+          }
     action = $(".crudForm").attr("action")
     method = $(".crudForm").attr("method")
     options = $.getAjaxOptions(action, method, val, "json")
     callbacks = $.getAjaxCallbacks(saveSuccess, displayError, null)
     $.executeAjax(options, callbacks)
+
+  $("#clearGrid").on "click", (e) ->
+    grid = grids["#metadataArea #createGrid"]
+    grid.clear()
 
   $("#addRow").on "click", (e) ->
     grid = grids["#metadataArea #createGrid"]
@@ -218,7 +238,7 @@ coordinates = ->
   #------------------------------------------------
   $("#deleteButton").on "click", (e) ->
     e.preventDefault()
-    if window.confirm("Are you sure to delete Metadata?")
+    if window.confirm("Delete Metadata?")
       val = {crud_type: "delete", metadata_type: getSelectedMetadata(), selected_records: getSelectedRecords()}
       action = $(".crudForm").attr("action")
       method = $(".crudForm").attr("method")
@@ -260,6 +280,8 @@ coordinates = ->
     records = getRows(json)
     columnsOption = getColumnsOption(json)
     contextMenu = getContextMenuOption(json)
+    rowHeaderOption = getRowHeaderOption(elementId, json)
+    rowHeaderWidth = getRowHeaderWidth(elementId, json)
     minRow = getMinRow(json)
     allowSort = getAllowSort(elementId)
     beforeChangeFunc = getBeforeChangeFunc(elementId)
@@ -273,7 +295,9 @@ coordinates = ->
         allowRemoveColumn: false,
         manualRowResize: false,
         manualColumnResize: true,
-        rowHeaders: true,
+        #rowHeaders: true,
+        rowHeaders: rowHeaderOption,
+        rowHeaderWidth: rowHeaderWidth,
         colHeaders: header,
         columns: columnsOption,
         startRows: 0,
@@ -306,6 +330,33 @@ coordinates = ->
       [[]]
     else
       json.column_options
+
+  getRowHeaderOption = (elementId, json) ->
+    if elementId != "#metadataArea #securityGrid"
+      return true
+
+    return json.profiles
+
+  getRowHeaderWidth = (elementId, json) ->
+    if elementId != "#metadataArea #securityGrid"
+      return null
+
+    if !json?
+      return null
+      
+    widths = []
+    for value in json.profiles
+      widths.push(getTextWidth(value, "10pt Verdana,Arial,sans-serif"))
+    Math.max.apply(null, widths)
+
+  getTextWidth = (text, font) ->
+    # if given, use cached canvas for better performance
+    # else, create new canvas
+    canvas = getTextWidth.canvas || (getTextWidth.canvas = document.createElement("canvas"));
+    context = canvas.getContext("2d");
+    context.font = font;
+    metrics = context.measureText(text);
+    return metrics.width;
 
   getContextMenuOption = (json) ->
     if json && json.context_menu
@@ -353,11 +404,40 @@ coordinates = ->
     selectedCellOnCreateGrid = coords
 
   #------------------------------------------------
+  # Custom renderer
+  #------------------------------------------------
+  customDropdownRenderer = (instance, td, row, col, prop, value, cellProperties) ->
+    optionsList = cellProperties.chosenOptions.data
+    splitter = cellProperties.chosenOptions.splitter
+    
+    if(typeof optionsList == "undefined" || typeof optionsList.length == "undefined" || !optionsList.length)
+      Handsontable.TextCell.renderer(instance, td, row, col, prop, value, cellProperties);
+      return td;
+    
+    valueArray = (value + '').split(splitter)
+    newValue = []
+    index = 0
+
+    while index < optionsList.length
+      if valueArray.indexOf(optionsList[index].id + '') > -1
+        newValue.push optionsList[index].label
+      index++
+
+    if newValue.length
+      value = newValue.join(splitter)
+
+    Handsontable.renderers.TextRenderer.apply(this, arguments);
+
+    return td
+
+  #------------------------------------------------
   # page load actions
   #------------------------------------------------
   disableButtons()
 
   $("#metadataArea #tabArea").tabs()
+
+  Handsontable.renderers.registerRenderer('customDropdownRenderer', customDropdownRenderer);
 
   createGrid("#metadataArea #grid")
   createGrid("#metadataArea #createGrid")
@@ -374,7 +454,7 @@ coordinates = ->
     "plugins": ["dropdown"]
   })
 
-  $("#metadataArea #tabArea").tabs({ active: 1 });
+  $("#metadataArea #tabArea").tabs({ active: 2 });
   #$("#metadataArea #tabArea").tabs();
 
 $(document).ready(coordinates)

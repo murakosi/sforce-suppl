@@ -47,7 +47,7 @@ class MetadataController < ApplicationController
         end
 
         field_types = get_field_value_types(sforce_session, metadata_type)
-        formatted_field_types = format_field_type_result(metadata_type, field_types)
+        formatted_field_types = format_field_type_result(sforce_session, metadata_type, field_types)
         crud_info = api_crud_info(field_types)
         parent_tree_nodes = format_parent_tree_nodes(crud_info, formatted_list)            
         clear_session(metadata_type, formatted_field_types)
@@ -93,7 +93,7 @@ class MetadataController < ApplicationController
         
         begin
             raise_when_type_unmached(metadata_type)
-            edit_result = edit_metadata(session[:read_result][full_name], path, new_text, data_type)
+            edit_result = edit_metadata(read_results[full_name], path, new_text, data_type)
             try_save_session(metadata_type, full_name, edit_result)
             render :json => {:result => "ok"}, :status => 200
         rescue StandardError => ex
@@ -109,7 +109,7 @@ class MetadataController < ApplicationController
         begin
             raise_when_type_unmached(metadata_type)
             result = change_metadata(crud_type, metadata_type)
-            render :json => {:message => result[:message], :refresh => result[:refresh_required]}, :status => 200
+            render :json => {:message => result[:message], :refresh_required => result[:refresh_required]}, :status => 200
         rescue StandardError => ex
             print_error(ex)
             render :json => {:error => ex.message}, :status => 400
@@ -130,7 +130,11 @@ class MetadataController < ApplicationController
     end
 
     def try_update(metadata_type)
-        update_metadata(sforce_session, metadata_type, read_results())
+        full_name = params[:full_name]
+        if full_name.nil?
+            raise StandardError.new("No node is selected")
+        end
+        update_metadata(sforce_session, metadata_type, read_results[full_name])
     end
 
     def try_delete(metadata_type)
@@ -141,8 +145,9 @@ class MetadataController < ApplicationController
 
     def try_create(metadata_type)
         field_headers = params[:field_headers]
+        field_types = params[:field_types]
         field_values = JSON.parse(params[:field_values])
-        create_metadata(sforce_session, metadata_type, field_headers, field_values)
+        create_metadata(sforce_session, metadata_type, field_headers, field_types, field_values)
     end
 
     def retrieve

@@ -131,7 +131,7 @@ module Metadata
         end
         alias :read_metadata :read
 
-        def update(metadata_type, metadata)           
+        def update(metadata_type, metadata)
             request_body = {:metadata => prepare_metadata(metadata), :attributes! => { :metadata => { 'xsi:type' => "tns:#{metadata_type}" }}}
             call_metadata_api(:update_metadata, request_body)
         end
@@ -155,7 +155,8 @@ module Metadata
         end
 
         def prepare_metadata(metadata)
-            metadata.values.map{|arr| arr.reject{|k, v| k == :"@xsi:type"}}
+            #metadata.values.map{|arr| arr.reject{|k, v| k == :"@xsi:type"}}
+            Array[metadata].flatten.map{|hash| hash.values.map{|value| value.reject{|k,v| k == :"@xsi:type"}}}.flatten
         end
 
         def retrieve_status(id, include_zip)

@@ -1,3 +1,5 @@
+require "CGI"
+
 module Generator
 	module TreeNodeGenerator
 
@@ -18,7 +20,7 @@ module Generator
         	{
         		:id => hash[:full_name],
         		:parent => "#",
-        		:text => "<b>" + hash[:full_name].to_s + "<b>",
+        		:text => "<b>" + CGI.unescape(hash[:full_name].to_s) + "<b>",
         		:children => has_children,
         		:li_attr => {:editable => false} 
         	}
@@ -123,7 +125,8 @@ module Generator
             if index.nil?
                 id = parent.to_s + "/" + current.to_s
             else
-                id = parent.to_s + "/" + current.to_s + "[" + index.to_s + "]"
+                #id = parent.to_s + "/" + current.to_s + "[" + index.to_s + "]"
+                id = parent.to_s + "/" + current.to_s + "/" + index.to_s
             end
         end
 
