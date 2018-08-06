@@ -1,4 +1,4 @@
-require "CGI"
+require "cgi"
 
 module Generator
 	module TreeNodeGenerator

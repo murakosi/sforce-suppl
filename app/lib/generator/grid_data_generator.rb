@@ -1,5 +1,5 @@
 require "yaml"
-require "CGI"
+require "cgi"
 
 module Generator
 	module GridDataGenerator
