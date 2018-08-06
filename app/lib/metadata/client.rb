@@ -157,7 +157,7 @@ module Metadata
         def prepare_metadata(metadata)
             #metadata.values.map{|arr| arr.reject{|k, v| k == :"@xsi:type"}}
             #Array[metadata].flatten.map{|hash| hash.values.map{|value| value.reject{|k,v| k == :"@xsi:type"}}}.flatten
-            p Array[metadata].flatten.map{|hash| hash.delete(:"@xsi:type")}.flatten
+            p Array[metadata].flatten.map{|hash| hash.delete(:"@xsi:type")}.flatten 
         end
 
         def retrieve_status(id, include_zip)
