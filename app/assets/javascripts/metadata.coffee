@@ -166,7 +166,7 @@ coordinates = ->
     action = $("#metadataArea #editTree").attr("action")
     method = $("#metadataArea #editTree").attr("method")
     options = $.getAjaxOptions(action, method, val, defaultDataType)
-    callbacks = $.getAjaxCallbacks(((json)->), undoEdit, null)
+    callbacks = $.getAjaxCallbacks(editComplete, undoEdit, null)
     $.executeAjax(options, callbacks)
 
   $("#expand").on "click", (e) ->
@@ -179,6 +179,9 @@ coordinates = ->
       return false
     $("#metadataArea #editTree").jstree(true).close_all(selectedNode)
 
+  editComplete = (json) ->
+    hideMessageArea()
+    
   undoEdit = (json) ->
     node = $("#metadataArea #editTree").jstree(true).get_node(json.node_id)
     $("#metadataArea #editTree").jstree(true).edit(node, json.old_text)
