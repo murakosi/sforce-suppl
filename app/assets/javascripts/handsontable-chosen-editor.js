@@ -170,7 +170,7 @@
         var el = null;
         //var originalValue = (this.originalValue + "").split(",");
         // add splitter option
-        var originalValue = (this.originalValue + "").split(this.options.splitter);
+        var originalValue = $.map((this.originalValue + "").split(this.options.splitter), $.trim);
         if (options.data && options.data.length) {
             for (var i = 0; i < options.data.length; i++) {
                 el = $("<option />");

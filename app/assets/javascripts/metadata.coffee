@@ -417,7 +417,8 @@ coordinates = ->
       Handsontable.TextCell.renderer(instance, td, row, col, prop, value, cellProperties);
       return td;
     
-    valueArray = (value + '').split(splitter)
+    #valueArray = (value + '').split(splitter)
+    valueArray = $.map((value + '').split(splitter), $.trim)
     newValue = []
     index = 0
 
@@ -427,7 +428,7 @@ coordinates = ->
       index++
 
     if newValue.length
-      value = newValue.join(splitter)
+      value = newValue.join(splitter + " ")
 
     Handsontable.renderers.TextRenderer.apply(this, arguments);
 
