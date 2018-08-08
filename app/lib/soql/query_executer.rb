@@ -43,7 +43,7 @@ module Soql
                 nh = {}
                hash.each do |a|
                 a.each do |k,v|
-                    next if Exclude_key_names.include?(k.to_s) || k.to_s == "id" && v.nil?
+                    next if Exclude_key_names.include?(k.to_s) || (k.to_s == "id" && v.nil?)
                     nh.merge!({k=>v})
                 end
                end
