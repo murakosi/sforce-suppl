@@ -10,6 +10,7 @@ module Soql
                raise StandardError.new("No matched records found")
             end
             
+            p query_result
             format_query_result(query_result)
         end
 
