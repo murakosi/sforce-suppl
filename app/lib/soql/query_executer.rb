@@ -40,6 +40,7 @@ module Soql
         
         def simplize(h)
                 hash = h.raw_hash
+                p hash
                 nh = {}
                hash.each do |a|
                 a.each do |k,v|
