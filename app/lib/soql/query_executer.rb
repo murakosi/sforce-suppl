@@ -42,8 +42,8 @@ module Soql
                 hash = h.raw_hash
                 simple = hash.map{ |hash| hash.reject{ |k,v| Exclude_key_names.include?(k.to_s)}
                                              .reject{ |k,v| k.to_s == "id" && v.nil?}
-                                }.compact.flatten
-               Hash[*simple]
+                                }
+               p simple
         end
     end
 end
