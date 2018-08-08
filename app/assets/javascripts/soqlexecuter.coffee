@@ -144,7 +144,8 @@ coordinates = ->
 
   parseSoqlResult = (json) ->
     rawResult = getRows(json)
-    
+    console.log(rawResult)
+    rawResult
     #if rawResult == null
     #  return null
     #console.log(rawResult)
