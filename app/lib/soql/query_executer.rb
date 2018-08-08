@@ -30,7 +30,7 @@ module Soql
         def parse(records)
             records.each do | record|
                 simple = simplize(record)
-                if simple.is_a?(Hash) && simple.values.any?{|a| a.is_a?(Hash)}
+                if simple.values.any?{|a| a.is_a?(Hash)}
                     parse(simple.values)
                 else
                     @ret.merge!(simple)
@@ -42,7 +42,8 @@ module Soql
                 hash = h.to_h
                 simple = hash.map{ |hash| hash.reject{ |k,v| Exclude_key_names.include?(k.to_s)}
                                              .reject{ |k,v| k.to_s == "id" && v.nil?}
-                                }
+                                }.compact.flatten
+               Hash[*simple]
         end
     end
 end
