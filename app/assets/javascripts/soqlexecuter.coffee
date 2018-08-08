@@ -143,7 +143,7 @@ coordinates = ->
       json.columns
 
   parseSoqlResult = (json) ->
-    rawResult = getRow(json)
+    rawResult = getRows(json)
     
     if rawResult == null
       return null
