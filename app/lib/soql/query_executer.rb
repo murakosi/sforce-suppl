@@ -31,7 +31,7 @@ module Soql
             records.each do | record|
                 simple = simplize(record)
                 if simple.values.any?{|a| a.is_a?(Hash)}
-                    parse(simple.values)
+                    parse(Soapforce::SObject.new(simple))
                 else
                     @ret.merge!(simple)
                 end
