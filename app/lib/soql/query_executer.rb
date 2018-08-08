@@ -14,6 +14,11 @@ module Soql
         end
 
         def format_query_result(result)
+            result.records.map{ |record| record.to_h }
+                            .map{ |hash| hash.reject{ |k,v| Exclude_key_names.include?(k.to_s)}
+                                             .reject{ |k,v| k.to_s == "id" && v.nil?}
+                                }
+
 =begin
             result.records.map{ |record| record.to_h }
                             .map{ |hash| hash.reject{ |k,v| Exclude_key_names.include?(k.to_s)}
