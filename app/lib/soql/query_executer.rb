@@ -40,10 +40,15 @@ module Soql
         
         def simplize(h)
                 hash = h.raw_hash
-                simple = hash.map{ |hash| hash.reject{ |k,v| Exclude_key_names.include?(k.to_s)}
-                                             .reject{ |k,v| k.to_s == "id" && v.nil?}
-                                }
-               p simple
+                nh = {}
+               hash.each do |a|
+                a.each do |k,v|
+                    next if Exclude_key_names.include?(k.to_s) || k.to_s == "id" && v.nil?
+                    nh.merge!({k=>v})
+                end
+               end
+               p nh
+               nh
         end
     end
 end
