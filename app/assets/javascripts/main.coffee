@@ -17,17 +17,21 @@ mains = ->
     }
 
   $("#menuList").on "click", "a", (e) ->
-    selectedAnchor = ($(this).prop("id"))
+    clickedAnchor = ($(this).prop("id"))
 
-    if selectedAnchor == "logoutLink"
+    if selectedAnchor == clickedAnchor
+      e.preventDefault
+      return false
+    
+    if clickedAnchor == "logoutLink"
       return
 
     if jqXHR
       e.preventDefault
-      return false;
+      return false
 
     e.stopPropagation()
-
+    selectedAnchor = clickedAnchor
     targetDiv = $(this).attr("loadTarget")
     anchorObject = this
 
