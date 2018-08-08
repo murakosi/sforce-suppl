@@ -29,11 +29,11 @@ module Soql
         
         def parse(records)
             records.each do | record|
-                simple = simplize(record)
-                if simple.values.any?{|a| a.is_a?(Hash)}
-                    parse(simple)
+                #simple = simplize(record)
+                if record.has_key?(:records)
+                    parse(record[:records])
                 else
-                    @ret.merge!(simple)
+                    @ret.merge!(record)
                 end
             end
         end
