@@ -29,7 +29,7 @@ module Soql
         def parse(records)
             records.each do | record|
                 simple = simplize(record)
-                if simple.values.any?{|a| a.is_a?(Hash)}
+                if simple.is_a?(Hash)#simple.values.any?{|a| a.is_a?(Hash)}
                     parse(simple.values)
                 else
                     @rec << simple
