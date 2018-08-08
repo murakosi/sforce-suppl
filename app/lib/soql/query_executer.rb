@@ -14,11 +14,11 @@ module Soql
         end
 
         def format_query_result(result)
-=#begin
+#=begin
             @ret = {}
             parse(result.records)
             @ret
-=#end
+#=end
 =begin
             result.records.map{ |record| record.to_h }
                             .map{ |hash| hash.reject{ |k,v| Exclude_key_names.include?(k.to_s)}
