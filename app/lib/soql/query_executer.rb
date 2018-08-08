@@ -39,7 +39,7 @@ module Soql
         end
         
         def simplize(h)
-                hash = h.to_h
+                hash = h.raw_hash
                 simple = hash.map{ |hash| hash.reject{ |k,v| Exclude_key_names.include?(k.to_s)}
                                              .reject{ |k,v| k.to_s == "id" && v.nil?}
                                 }.compact.flatten
