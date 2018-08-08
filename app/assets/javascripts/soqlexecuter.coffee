@@ -145,15 +145,15 @@ coordinates = ->
   parseSoqlResult = (json) ->
     rawResult = getRows(json)
     
-    if rawResult == null
-      return null
-    console.log(rawResult)
-    if typeof rawResult == "object"
-      value = Object.values(rawResult)
-    else
-      value = rawResult
-    
-    return value
+    #if rawResult == null
+    #  return null
+    #console.log(rawResult)
+    #if typeof rawResult == "object"
+    #  value = Object.values(rawResult)
+    #else
+    #  value = rawResult
+    # 
+    #return value
   
   getRows = (json) ->
     if !json?

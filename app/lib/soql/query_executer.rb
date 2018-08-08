@@ -10,14 +10,20 @@ module Soql
                raise StandardError.new("No matched records found")
             end
             
-            format_query_result(query_result)
+            format_query_result(query_result[:records])
         end
 
         def format_query_result(result)
+            result.records
+                            .map{ |hash| hash.reject{ |k,v| Exclude_key_names.include?(k.to_s)}
+                                             .reject{ |k,v| k.to_s == "id" && v.nil?}
+                                }
+=begin
             result.records.map{ |record| record.to_h }
                             .map{ |hash| hash.reject{ |k,v| Exclude_key_names.include?(k.to_s)}
                                              .reject{ |k,v| k.to_s == "id" && v.nil?}
                                 }
+=end
         end
     end
 end
