@@ -147,7 +147,7 @@ coordinates = ->
     
     if rawResult === null
       return null
-  
+    console.log(rawResult)
     if typeof rawResult == "object"
       value = Object.values(rawResult)
     else
