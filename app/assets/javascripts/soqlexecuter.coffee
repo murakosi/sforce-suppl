@@ -145,7 +145,7 @@ coordinates = ->
   parseSoqlResult = (json) ->
     rawResult = getRow(json)
     
-    if rawResult === null
+    if rawResult == null
       return null
     console.log(rawResult)
     if typeof rawResult == "object"
