@@ -10,31 +10,31 @@ module Soql
                raise StandardError.new("No matched records found")
             end
             
-            p query_result.records
             format_query_result(query_result)
         end
 
         def format_query_result(result)
-=begin
+=#begin
             @ret = {}
             parse(result.records)
             @ret
-=end
+=#end
+=begin
             result.records.map{ |record| record.to_h }
                             .map{ |hash| hash.reject{ |k,v| Exclude_key_names.include?(k.to_s)}
                                              .reject{ |k,v| k.to_s == "id" && v.nil?}
                                 }
+=end
         end
         
         def parse(records)
             records.each do | record|
                 simple = simplize(record)
-                p simple
-                #if simple.is_a?(Hash)#simple.values.any?{|a| a.is_a?(Hash)}
-                #    parse(simple.values)
-                #else
-                #    @ret.store(simple
-                #end
+                if simple.is_a?(Hash) && simple.values.any?{|a| a.is_a?(Hash)}
+                    parse(simple.values)
+                else
+                    @ret.store(simple)
+                end
             end
         end
         
