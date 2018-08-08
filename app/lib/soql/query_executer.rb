@@ -32,7 +32,7 @@ module Soql
                 if simple.is_a?(Hash)#simple.values.any?{|a| a.is_a?(Hash)}
                     parse(simple.values)
                 else
-                    @rec << simple
+                    @ret << simple
                 end
             end
         end
