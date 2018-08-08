@@ -42,11 +42,9 @@ module Soql
                 hash = h.raw_hash
                 p hash
                 nh = {}
-               hash.each do |a|
-                a.each do |k,v|
+               hash.each do |k,v|
                     next if Exclude_key_names.include?(k.to_s) || (k.to_s == "id" && v.nil?)
                     nh.merge!({k=>v})
-                end
                end
                p nh
                nh
