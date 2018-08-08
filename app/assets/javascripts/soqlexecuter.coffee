@@ -116,7 +116,7 @@ coordinates = ->
       table.destroy()
 
     header = getColumns(json)
-    records = getRows(json)
+    records = parseSoqlResult(json)
     columnsOption = getColumnsOption(json)
 
     hotSettings = {
