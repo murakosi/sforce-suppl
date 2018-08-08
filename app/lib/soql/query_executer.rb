@@ -39,12 +39,13 @@ module Soql
         end
         
         def simplize(h)
+                p "this"
+                p h
                 if h.is_a?(Hash)
                     hash = h
                 else
                     hash = h.raw_hash
                 end
-                p hash
                 nh = {}
                hash.each do |k,v|
                     next if Exclude_key_names.include?(k.to_s) || (k.to_s == "id" && v.nil?)
