@@ -14,7 +14,7 @@ module Soql
         end
 
         def format_query_result(result)
-            @ret = []
+            @ret = {}
             parse(result.records)
             @ret
 
@@ -29,11 +29,12 @@ module Soql
         def parse(records)
             records.each do | record|
                 simple = simplize(record)
-                if simple.is_a?(Hash)#simple.values.any?{|a| a.is_a?(Hash)}
-                    parse(simple.values)
-                else
-                    @ret << simple
-                end
+                p simple
+                #if simple.is_a?(Hash)#simple.values.any?{|a| a.is_a?(Hash)}
+                #    parse(simple.values)
+                #else
+                #    @ret.store(simple
+                #end
             end
         end
         
