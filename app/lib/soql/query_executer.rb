@@ -39,20 +39,13 @@ module Soql
         end
         
         def simplize(h)
-                p "this"
-                p h
-                if h.is_a?(Hash)
-                    hash = h
-                else
-                    hash = h.raw_hash
-                end
-                nh = {}
-               hash.each do |k,v|
-                    next if Exclude_key_names.include?(k.to_s) || (k.to_s == "id" && v.nil?)
-                    nh.merge!({k=>v})
-               end
-               p nh
-               nh
+        p h
+=begin        
+            h.map{ |record| record.to_h }
+                            .map{ |hash| hash.reject{ |k,v| Exclude_key_names.include?(k.to_s)}
+                                             .reject{ |k,v| k.to_s == "id" && v.nil?}
+                                }
+=end                                
         end
     end
 end
