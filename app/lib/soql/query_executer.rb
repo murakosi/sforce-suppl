@@ -33,7 +33,7 @@ module Soql
                 if simple.is_a?(Hash) && simple.values.any?{|a| a.is_a?(Hash)}
                     parse(simple.values)
                 else
-                    @ret.store(simple)
+                    @ret.merge!(simple)
                 end
             end
         end
