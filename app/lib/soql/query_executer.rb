@@ -16,7 +16,7 @@ module Soql
         def format_query_result(result)
 #=begin
             @ret = {}
-            parse(result)
+            parse(result.records)
             @ret
 #=end
 =begin
@@ -29,10 +29,9 @@ module Soql
         
         def parse(records)
             p records
-            records.each do | hash|
                 p hash
                 #simple = simplize(record)
-                hash.each do |k,v|
+                records.each do |k,v|
                     if v.is_a?(Hash)
                         parse(v)
                     else
