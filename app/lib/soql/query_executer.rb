@@ -28,35 +28,28 @@ module Soql
         end
         
         def parse(records)
-            p records
-                p hash
-                #simple = simplize(record)
-                records.each do |k,v|
-                    if v.is_a?(Hash)
-                        parse(v)
-                    else
-                        simple = simplize(k,v)
-                        @ret.merge!(simple) unless simple.nil?
-                    end
+            #simple = simplize(record)
+            if records.is_a?(Soapforce::SObject)
+                records = records.raw_hash
+            end
+            records.each do |k,v|
+                if v.is_a?(Hash)
+                    parse(v)
+                else
+                    simple = simplize(k,v)
+                    @ret.merge!(simple) unless simple.nil?
                 end
+            end
         end
         
         def simplize(k,v)
-        p k
-        p v
-        if Exclude_key_names.include?(k.to_s)
-            nil
-        elsif k.to_s == "id" && v.nil?
-            nil
-        else
-           {k => v}
-        end
-=begin        
-            h
-                            .map{ |hash| hash.reject{ |k,v| Exclude_key_names.include?(k.to_s)}
-                                             .reject{ |k,v| k.to_s == "id" && v.nil?}
-                                }
-=end                                
+            if Exclude_key_names.include?(k.to_s)
+                nil
+            elsif k.to_s == "id" && v.nil?
+                nil
+            else
+               {k => v}
+            end
         end
     end
 end
