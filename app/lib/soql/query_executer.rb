@@ -33,7 +33,7 @@ module Soql
                 if record.has_key?(:records)
                     parse(record[:records])
                 else
-                    @ret.merge!(record)
+                    @ret.merge!(simplize(record))
                 end
             end
         end
