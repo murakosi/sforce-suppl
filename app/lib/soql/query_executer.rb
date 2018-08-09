@@ -17,7 +17,8 @@ module Soql
 #=begin
             @ret = {}
             #parse(result.records.to_h)
-            result.records.each{|a| p a}
+            a = result.records
+            a.each{|a| p a}
             @ret
 #=end
 =begin
