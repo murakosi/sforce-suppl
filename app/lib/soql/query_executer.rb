@@ -28,18 +28,26 @@ module Soql
         end
         
         def parse(records)
-            records.each do | record|
+            records.each do | k, v||
                 #simple = simplize(record)
-                if record.has_key?(:records)
-                    parse(record[:records])
+                if v.is_a?(Hash)
+                    parse(v)
                 else
-                    @ret.merge!(simplize(record))
+                    @ret.merge!(simplize(k,v))
                 end
             end
         end
         
-        def simplize(h)
-        p h
+        def simplize(k,v)
+        p k
+        p v
+        if Exclude_key_names.include?(k.to_s)
+            nil
+        elsif k.to_s == "id" && v.nil?
+            nil
+        else
+           {k => v}
+        end
 =begin        
             h
                             .map{ |hash| hash.reject{ |k,v| Exclude_key_names.include?(k.to_s)}
