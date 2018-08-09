@@ -28,13 +28,15 @@ module Soql
         end
         
         def parse(records)
-            records.each do | k, v|
+            records.each do | hash|
                 #simple = simplize(record)
-                if v.is_a?(Hash)
-                    parse(v)
-                else
-                    simple = simplize(k,v)
-                    @ret.merge!(simple) unless simple.nil?
+                hash.each do |k,v|
+                    if v.is_a?(Hash)
+                        parse(v)
+                    else
+                        simple = simplize(k,v)
+                        @ret.merge!(simple) unless simple.nil?
+                    end
                 end
             end
         end
