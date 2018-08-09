@@ -16,7 +16,7 @@ module Soql
         def format_query_result(result)
 #=begin
             @ret = {}
-            parse(result.records)
+            parse(result.raw_result)
             @ret
 #=end
 =begin
@@ -41,7 +41,7 @@ module Soql
         def simplize(h)
         p h
 =begin        
-            h.map{ |record| record.to_h }
+            h
                             .map{ |hash| hash.reject{ |k,v| Exclude_key_names.include?(k.to_s)}
                                              .reject{ |k,v| k.to_s == "id" && v.nil?}
                                 }
