@@ -33,7 +33,8 @@ module Soql
                 if v.is_a?(Hash)
                     parse(v)
                 else
-                    @ret.merge!(simple) unless simplize(k,v).nil?
+                    simple = simplize(k,v)
+                    @ret.merge!(simple) unless simple.nil?
                 end
             end
         end
