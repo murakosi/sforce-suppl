@@ -28,7 +28,9 @@ module Soql
         end
         
         def parse(records)
+            p records
             records.each do | hash|
+                p hash
                 #simple = simplize(record)
                 hash.each do |k,v|
                     if v.is_a?(Hash)
