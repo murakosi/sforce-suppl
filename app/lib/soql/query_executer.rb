@@ -16,7 +16,8 @@ module Soql
         def format_query_result(result)
 #=begin
             @ret = {}
-            parse(result.records.to_h)
+            #parse(result.records.to_h)
+            result.records.each{|a| p a}
             @ret
 #=end
 =begin
