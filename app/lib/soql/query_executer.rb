@@ -17,6 +17,7 @@ module Soql
 #=begin
             @ret = {}
             parse(result.records)
+            p @ret
             @ret
 #=end
 =begin
@@ -34,9 +35,13 @@ module Soql
             end
             records.each do |k,v|
                 if v.is_a?(Hash)
+                    p "hash"
+                    p v
                     parse(v)
                 else
                     simple = simplize(k,v)
+                    p "simple"
+                    p simple
                     @ret.merge!(simple) unless simple.nil?
                 end
             end
