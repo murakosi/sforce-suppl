@@ -17,6 +17,7 @@ module Soql
 #=begin
             @ret = {}
             parse(result.records)
+            p "result"
             p @ret
             @ret
 #=end
@@ -30,10 +31,13 @@ module Soql
         
         def parse(records)
             #simple = simplize(record)
+            p "rec class"
+            p records.class
             if records.is_a?(Soapforce::SObject)
                 records = records.raw_hash
             end
             records.each do |k,v|
+                p v.class
                 if v.is_a?(Hash)
                     p "hash"
                     p v
