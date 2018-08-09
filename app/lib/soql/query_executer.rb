@@ -39,7 +39,6 @@ module Soql
                         @ret.merge!(simple) unless simple.nil?
                     end
                 end
-            end
         end
         
         def simplize(k,v)
