@@ -29,7 +29,7 @@ module Soql
 =end
         end
         
-        def parse(record)
+        def parse(records)
             if records.is_a?(Soapforce::SObject)
                 records = records.raw_hash
             end
