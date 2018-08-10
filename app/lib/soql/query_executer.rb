@@ -16,7 +16,7 @@ module Soql
         def format_query_result(result)
 #=begin
             @ret = {}
-            parse(result)
+            result.records.each{|item| parse(item)
             p "result"
             p @ret
             @ret
@@ -29,10 +29,7 @@ module Soql
 =end
         end
         
-        def parse(records)
-            #simple = simplize(record)
-            p "rec class"
-            p records.class
+        def parse(record)
             if records.is_a?(Soapforce::SObject)
                 records = records.raw_hash
             end
