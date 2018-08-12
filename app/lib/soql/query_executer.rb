@@ -1,3 +1,5 @@
+require "json"
+
 module Soql
     module QueryExecuter
         
@@ -10,52 +12,59 @@ module Soql
                raise StandardError.new("No matched records found")
             end
             
-            format_query_result(query_result)
+            parse_query_result(query_result)
         end
 
-        def format_query_result(result)
-#=begin
-            @ret = {}
-            result.records.each{|item| parse(item)}
-            p "result"
-            p @ret
-            @ret
-#=end
 =begin
+        def format_query_result(result)
+
             result.records.map{ |record| record.to_h }
                             .map{ |hash| hash.reject{ |k,v| Exclude_key_names.include?(k.to_s)}
                                              .reject{ |k,v| k.to_s == "id" && v.nil?}
                                 }
-=end
+        end
+=end        
+        def parse_query_result(query_result)
+            results = get_results(query_result.raw_result)
+            records = []
+            results.each do |result|
+                record = extract(result[:records])
+                record.each do |k,v|
+                    if v.is_a?(Hash) && (v.has_key?(:records) || v.has_key?("records"))
+                        record.merge!(parse_child(k, v))
+                    end
+                end
+                records << record
+            end
+            records
         end
         
-        def parse(records)
-            if records.is_a?(Soapforce::SObject)
-                records = records.raw_hash
+        def parse_child(key,value)
+            records = value[:records]
+            child_records = Array[records].flatten.map{|record| extract(record)}
+            {key => JSON.generate(child_records)}
+        end
+
+        def extract(record)
+            result = {}
+            record.each do |k,v|
+                next if Exclude_key_names.include?(k.to_s.downcase) || (k.to_s.downcase == "id" && v.nil?)
+                result.merge!({k => v})
             end
-            records.each do |k,v|
-                p v.class
-                if v.is_a?(Hash)
-                    p "hash"
-                    p v
-                    parse(v)
+            result
+        end
+
+        def get_results(hash)
+            results = []
+            records = Array[hash[:records]].flatten
+            records.each do |record|
+                if record.is_a?(Soapforce::SObject)
+                    results << {:records => record.raw_hash}
                 else
-                    simple = simplize(k,v)
-                    p "simple"
-                    p simple
-                    @ret.merge!(simple) unless simple.nil?
+                    results << {:records => record}
                 end
             end
-        end
-        
-        def simplize(k,v)
-            if Exclude_key_names.include?(k.to_s)
-                nil
-            elsif k.to_s == "id" && v.nil?
-                nil
-            else
-               {k => v}
-            end
+            results
         end
     end
 end

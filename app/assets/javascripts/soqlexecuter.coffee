@@ -116,7 +116,7 @@ coordinates = ->
       table.destroy()
 
     header = getColumns(json)
-    records = parseSoqlResult(json)
+    records = getRows(json)
     columnsOption = getColumnsOption(json)
 
     hotSettings = {
@@ -141,20 +141,6 @@ coordinates = ->
       null
     else
       json.columns
-
-  parseSoqlResult = (json) ->
-    rawResult = getRows(json)
-    console.log(rawResult)
-    rawResult
-    #if rawResult == null
-    #  return null
-    #console.log(rawResult)
-    #if typeof rawResult == "object"
-    #  value = Object.values(rawResult)
-    #else
-    #  value = rawResult
-    # 
-    #return value
   
   getRows = (json) ->
     if !json?
