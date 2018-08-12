@@ -108,8 +108,8 @@ mains = ->
       jqXHR = null
       console.log { always: stat, res1: res1, res2: res2 }
 
-  options = getAjaxOptions("main", "POST", "describe", "TEXT")
-  executeAjax(options, autoClickAnchor)
+  #options = getAjaxOptions("main", "POST", "describe", "TEXT")
+  #executeAjax(options, autoClickAnchor)
 
 $(document).ready(mains)
 $(document).on('page:load', mains)
