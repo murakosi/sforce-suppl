@@ -458,8 +458,8 @@ coordinates = ->
     "plugins": ["dropdown"]
   })
 
-  $("#metadataArea #tabArea").tabs({ active: 2 });
-  #$("#metadataArea #tabArea").tabs();
+  #$("#metadataArea #tabArea").tabs({ active: 2 });
+  $("#metadataArea #tabArea").tabs();
 
 $(document).ready(coordinates)
 $(document).on('page:load', coordinates)
