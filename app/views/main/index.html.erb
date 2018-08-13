@@ -17,12 +17,11 @@
 %>
 <div id="mainArea">
 
-    <div id="userInfo" style="text-align:right; padding-right:10px;margin:0;">
-            
+    <div id="userInfo" style="text-align:right; padding-right:10px;margin:0;border:1px solid black;">
+            <div id="currentUserId"></div>
     </div>
     
     <div id="menuList">
-    <div id="currentUserId"></div>
         <ul>
     		<li><%= link_to "Logout", logout_path, method: :delete, id: "logoutLink" %></li>
             <li><a id="soqlexecuter" href="#" class="menus" method="GET" loadTarget="#soqlexecuterContent" action="">SOQL</a></li>
