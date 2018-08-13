@@ -18,7 +18,7 @@ coordinates = ->
   # Shortcut keys
   #------------------------------------------------
   $(window).on 'keydown', (e) ->
-    if e.ctrlKey && e.key == 'c'
+    if e.ctrlKey && e.key == 'r'
       e.preventDefault()
       executeSoql()
   

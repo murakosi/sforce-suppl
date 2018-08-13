@@ -17,6 +17,10 @@
 %>
 <div id="mainArea">
 
+    <div id="userInfo" style="align:right; padding-right:10px">
+            <div id="currentUserId"></div>
+    </div>
+    
     <div id="menuList">
         <ul>
     		<li><%= link_to "Logout", logout_path, method: :delete, id: "logoutLink" %></li>

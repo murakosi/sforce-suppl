@@ -78,9 +78,12 @@ mains = ->
     html = "<div style='text-align:center; white-space: pre; color:red; font-weight:bold;'>" + message  + "</div>"
     $(targetDiv).html(html)
 
-  autoClickAnchor = (target) ->
-    $("#" + target)[0].click()
-
+  #autoClickAnchor = (target) ->
+  #  $("#" + target)[0].click()
+  
+  displayUserId = (id) ->
+    $("#currentUserId").html("ID: " + id)
+    
   executeAjax = (options, callback) ->
 
     if jqXHR
@@ -108,8 +111,9 @@ mains = ->
       jqXHR = null
       console.log { always: stat, res1: res1, res2: res2 }
 
-  #options = getAjaxOptions("main", "POST", "describe", "TEXT")
+  options = getAjaxOptions("main", "POST", "describe", "TEXT")
   #executeAjax(options, autoClickAnchor)
+  executeAjax(options, displayUserId)
 
 $(document).ready(mains)
 $(document).on('page:load', mains)
