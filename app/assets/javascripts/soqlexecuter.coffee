@@ -18,22 +18,21 @@ coordinates = ->
   # Shortcut keys
   #------------------------------------------------
   $(window).on 'keydown', (e) ->
-    const keyName = e.key
-    if e.ctrlKey
-      alert(`Key pressed ${keyName}`);
-  
+    if e.ctrlKey && e.key == 'c'
+      e.preventDefault()
+      executeSoql()
   
   #------------------------------------------------
   # Execute SOQL
   #------------------------------------------------
   $('#soqlArea .execute-soql').on 'click', (e) ->
-    if jqXHR
-      return false
-    
     e.preventDefault()
     executeSoql()
     
   executeSoql = () ->
+    if jqXHR
+      return false
+    
     selectedTabId = $("#soqlArea #tabArea .ui-tabs-panel:visible").attr("tabId");
     val = {soql: $('#soqlArea #input_soql').val()}
     action = $('#soqlArea .execute-form').attr('action')
