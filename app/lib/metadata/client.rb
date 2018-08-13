@@ -1,3 +1,5 @@
+require "savon"
+
 module Metadata
     class Client
 

@@ -164,7 +164,8 @@ module Metadata
 				    				]	    				
 				    			}
 					
-					permission_hash_array << {:profile => permission}
+					#permission_hash_array << {:profile => permission}
+					permission_hash_array << permission
 				end
 			end
 			permission_hash_array

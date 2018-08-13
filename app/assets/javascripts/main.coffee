@@ -17,17 +17,21 @@ mains = ->
     }
 
   $("#menuList").on "click", "a", (e) ->
-    selectedAnchor = ($(this).prop("id"))
+    clickedAnchor = ($(this).prop("id"))
 
-    if selectedAnchor == "logoutLink"
+    if selectedAnchor == clickedAnchor
+      e.preventDefault
+      return false
+    
+    if clickedAnchor == "logoutLink"
       return
 
     if jqXHR
       e.preventDefault
-      return false;
+      return false
 
     e.stopPropagation()
-
+    selectedAnchor = clickedAnchor
     targetDiv = $(this).attr("loadTarget")
     anchorObject = this
 
@@ -104,8 +108,8 @@ mains = ->
       jqXHR = null
       console.log { always: stat, res1: res1, res2: res2 }
 
-  options = getAjaxOptions("main", "POST", "describe", "TEXT")
-  executeAjax(options, autoClickAnchor)
+  #options = getAjaxOptions("main", "POST", "describe", "TEXT")
+  #executeAjax(options, autoClickAnchor)
 
 $(document).ready(mains)
 $(document).on('page:load', mains)

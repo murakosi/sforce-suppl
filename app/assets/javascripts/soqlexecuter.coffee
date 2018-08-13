@@ -13,7 +13,10 @@ coordinates = ->
       "data": data,
       "datatype": datatype
     }
-
+    
+  #------------------------------------------------
+  # Execute SOQL
+  #------------------------------------------------
   $('#soqlArea .execute-soql').on 'click', (e) ->
     if jqXHR
       return
@@ -25,7 +28,15 @@ coordinates = ->
     method = $('#soqlArea .execute-form').attr('method')
     options = getAjaxOptions(action, method, val, defaultDataType)
     executeAjax(options, processSuccessResult, displayError)
-
+  
+  processSuccessResult = (json) ->
+    $("#soqlArea #soql" + selectedTabId).html(getExecutedSoql(json))
+    elementId = "#soqlArea #grid" + selectedTabId
+    createGrid(elementId, json)
+    
+  #------------------------------------------------
+  # Tab events
+  #------------------------------------------------
   $(document).on 'click', 'span', (e) ->
     e.preventDefault()
     tabContainerDiv=$(this).closest("#soqlArea .ui-tabs").attr("id")
@@ -64,7 +75,10 @@ coordinates = ->
     newTabIndex = $("#soqlArea #tabArea ul li").length - 1
     selectedTabId = newTabIndex
     $("#soqlArea #tabArea").tabs({ active: newTabIndex });
-
+    
+  #------------------------------------------------
+  # Execute ajax
+  #------------------------------------------------
   executeAjax = (options, doneCallback, errorCallback, params = null) ->
 
     if jqXHR
@@ -80,9 +94,7 @@ coordinates = ->
 
     jqXHR.done (data, stat, xhr) ->
       jqXHR = null
-      console.log { done: stat, data: data, xhr: xhr }
-      $("#soqlArea #messageArea").empty()
-      $("#soqlArea #messageArea").hide()
+      hideMessageArea()
       doneCallback($.parseJSON(xhr.responseText), params)
 
     jqXHR.fail (xhr, stat, err) ->
@@ -92,17 +104,10 @@ coordinates = ->
 
     jqXHR.always (res1, stat, res2) ->
       jqXHR = null
-      console.log { always: stat, res1: res1, res2: res2 }
       
-  processSuccessResult = (json) ->
-    $("#soqlArea #soql" + selectedTabId).html(getExecutedSoql(json))
-    elementId = "#soqlArea #grid" + selectedTabId
-    createGrid(elementId, json)
-
-  displayError = (json) ->
-    $("#soqlArea #messageArea").html(json.error)
-    $("#soqlArea #messageArea").show()
-
+  #------------------------------------------------
+  # Create grid
+  #------------------------------------------------
   createGrid = (elementId, json = null) ->   
     hotElement = document.querySelector(elementId)
 
@@ -136,7 +141,7 @@ coordinates = ->
       null
     else
       json.columns
-
+  
   getRows = (json) ->
     if !json?
       null
@@ -154,7 +159,21 @@ coordinates = ->
       [[]]
     else
       null
-
+      
+  #------------------------------------------------
+  # message
+  #------------------------------------------------
+  displayError = (json) ->
+    $("#soqlArea #messageArea").html(json.error)
+    $("#soqlArea #messageArea").show()
+  
+  hideMessageArea = () ->
+    $("#soqlArea #messageArea").empty()
+    $("#soqlArea #messageArea").hide()
+    
+  #------------------------------------------------
+  # page load actions
+  #------------------------------------------------
   selectedTabId = 1
   createGrid("#soqlArea #grid" + selectedTabId)
 
