@@ -79,10 +79,6 @@ module Metadata
 
 		def create_metadata(sforce_session, metadata_type, headers, types, values)
 			metadata = prepare_metadata_to_create(metadata_type, headers, types, values)
-			p metadata
-			#p Array[metadata[:subsequent]].flatten.map{|hash| hash.reject{|k,v| k == :"@xsi:type"}}.flatten
-            metadata[:subsequent] = 
-            [{:full_name=>"Admin Profile", :field_permissions=>[{:field=>"RB__c.a__c", :readable=>true},{:field=>"RB__c.b__c", :readable=>true}]}]
 			if metadata.has_key?(:subsequent)
 				create_with_permissions(sforce_session, metadata_type, metadata)
 			else
