@@ -81,14 +81,14 @@ module Metadata
 			metadata = prepare_metadata_to_create(metadata_type, headers, types, values)
 			p metadata
 			p Array[metadata[:subsequent]].flatten.map{|hash| hash.reject{|k,v| k == :"@xsi:type"}}.flatten
-			fake_response
-=begin
+			#fake_response
+#=begin
 			if metadata.has_key?(:subsequent)
 				create_with_permissions(sforce_session, metadata_type, metadata)
 			else
 				create_without_permissions(sforce_session, metadata_type, metadata)
 			end
-=end			
+#=end			
 =begin			
 			p metadata
 			metadata = {"profile" =>
