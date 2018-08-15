@@ -82,7 +82,7 @@ module Metadata
 			p metadata
 			#p Array[metadata[:subsequent]].flatten.map{|hash| hash.reject{|k,v| k == :"@xsi:type"}}.flatten
             metadata[:subsequent] = 
-            [{:full_name=>"Admin Profile", :field_permissions=>{:field=>"RB__c.a__c", :readable=>true}}, {:full_name=>"Admin Profile", :field_permissions=>{:field=>"RB__c.b__c", :readable=>true}}]
+            [{:full_name=>"Admin Profile", :field_permissions=>[{:field=>"RB__c.a__c", :readable=>true}]}, {:full_name=>"Admin Profile", :field_permissions=>[{:field=>"RB__c.b__c", :readable=>true}]}]
 			if metadata.has_key?(:subsequent)
 				create_with_permissions(sforce_session, metadata_type, metadata)
 			else

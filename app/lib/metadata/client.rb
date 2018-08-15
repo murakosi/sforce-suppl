@@ -188,7 +188,7 @@ module Metadata
 
             # Convert SOAP XML to Hash
             response = response.to_hash
-
+p response
             # Get Response Body
             key = key_name("#{method}Response")
             response_body = response[key]
