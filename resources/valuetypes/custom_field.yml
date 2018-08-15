@@ -58,6 +58,8 @@ adding:
       priority: 3
     startingNumber:
       priority: 3
+    visibleLines:
+      priority: 3
 removing:
     - valueSet
     - valueSet.controllingField
