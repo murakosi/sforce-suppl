@@ -168,9 +168,24 @@ module Metadata
 					permission_hash_array << permission
 				end
 			end
-			permission_hash_array
+			#permission_hash_array
+			group_by_profile(metadata_type, permission_hash_array)
 		end
 
+		def group_by_profile(metadata_type, source)
+			#result = []
+			
+			groups = source.group_by{|hash| hash[:full_name]}
+			
+			groups.each_with_object([]) do |(k, v), result|
+			    full_name = {:full_name => k}
+			    permissions = v.map{|hash| hash[permission_key(metadata_type)]}.flatten
+				result << full_name.merge({permission_key(metadata_type) => permissions})
+			end
+			
+			#result
+		end
+		
 		def permission_key(metadata_type)
 			if metadata_type == "CustomObject"
 				:object_permissons

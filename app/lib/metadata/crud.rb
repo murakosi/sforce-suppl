@@ -79,6 +79,9 @@ module Metadata
 
 		def create_metadata(sforce_session, metadata_type, headers, types, values)
 			metadata = prepare_metadata_to_create(metadata_type, headers, types, values)
+			p metadata[:metadata]
+			fake_response
+			return
 			if metadata.has_key?(:subsequent)
 				create_with_permissions(sforce_session, metadata_type, metadata)
 			else
