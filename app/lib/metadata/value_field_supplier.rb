@@ -103,7 +103,7 @@ module Metadata
 
         def extract_profiles(records)
             records.first.keys.select{|item| item.to_s.start_with?("profile.")}.map{|item| item.split(".").last}
-            a = records.reject{|item| item.to_s.end_with?(Permission_for_all)}.slice(5).to_a
+            a = records.reject{|item| item.to_s.end_with?(Permission_for_all)}.each_slice(5).to_a
             p a
             a
         end
