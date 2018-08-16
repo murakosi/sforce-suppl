@@ -186,7 +186,7 @@ module Metadata
 				end
 			end
 
-			group_by_profile(metadata_type, permission_hash_array)
+			group_by_profile(metadata_type, permission_hash_array).each_slice(10).to_a
 		end
 		
 		def get_each_permissino(metadata_type, target_full_name, key, value)
