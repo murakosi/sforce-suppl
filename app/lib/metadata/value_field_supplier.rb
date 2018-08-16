@@ -20,7 +20,6 @@ module Metadata
 			
 			if Permission_required_types.include?(metadata_type)
 				metadata_list = list_metadata(sforce_session, "Profile").map{|hash| hash[:full_name]}
-				set_profile_list(metadata_list)
 				mapping_hash["adding"][Permission_for_all] = type_specific_hash(metadata_type, Permission_for_all)
 				metadata_list.each do |name|
 					mapping_hash["adding"][name] = type_specific_hash(metadata_type, name)
@@ -89,12 +88,11 @@ module Metadata
 
 		def rebuild(metadata_type, value_types, records)			
 			@rebuild_permission_required = false
-            test = profile_list
 			@main_hash_array = rebuild_main(metadata_type, value_types, records)
 
 			if @rebuild_permission_required
-			    profile_list = records.select{|hash| hash.keys.include?("profile.")}.map{|hash| hash.keys}.flatten
-				permission_hash_array = rebuild_permission(metadata_type)
+			    profile_list = records.select{|hash| hash.keys.include?("profile.")}.map{|hash| hash.keys.split(".").last}.flatten
+				permission_hash_array = rebuild_permission(metadata_type, profile_list)
 				rebuild_result = {:metadata => @main_hash_array, :subsequent => permission_hash_array}
 			else
 				rebuild_result = {:metadata => @main_hash_array}
@@ -146,20 +144,19 @@ module Metadata
 			end
 		end		
 
-		def rebuild_permission(metadata_type)
+		def rebuild_permission(metadata_type, profile_list)
 			permission_hash_array = []
 
 			@main_hash_array.each_with_index do |hash, index|
 
 				target_full_name = hash["fullName"]
 				profile_record = hash.delete("profile")
-				profile_names = profile_record.keys
 				@main_hash_array[index] = hash
 
 				profile_record.each do |k, v|
 				    
 				    if k == Permission_for_all
-				        permission_hash_array << get_all_permission(metadata_type, target_full_name, profile_names, v)
+				        permission_hash_array << get_all_permission(metadata_type, target_full_name, profile_list, v)
 				        permission_hash_array = permission_hash_array.flatten
 				    else
 				        permission_hash_array << get_each_permissino(metadata_type, target_full_name, k, v)
@@ -200,11 +197,11 @@ module Metadata
 		    			}
 	    end
 	    
-		def get_all_permission(metadata_type, target_full_name, profile_names, value)
+		def get_all_permission(metadata_type, target_full_name, profile_list, value)
 		    permission_array = []
 		    value_hash = permission_setting(value)
 		    
-		    profile_names.each do |profile|
+		    profile_list.each do |profile|
 				    permission = {
 				    				:full_name => profile,
 				    				permission_key(metadata_type) => 
