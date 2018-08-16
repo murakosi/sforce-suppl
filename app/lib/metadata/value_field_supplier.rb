@@ -153,7 +153,7 @@ module Metadata
 			permission_hash_array = []
 
 			@main_hash_array.each_with_index do |hash, index|
-
+p "start"
 				target_full_name = hash["fullName"]
 				profile_record = hash.delete("profile")
 				@main_hash_array[index] = hash
@@ -163,8 +163,10 @@ module Metadata
 				    if k == Permission_for_all
 				        permission_hash_array << get_all_permission(metadata_type, target_full_name, profile_list, v)
 				        permission_hash_array = permission_hash_array.flatten
+				        p "break"
 				        break
 				    else
+				        p "each"
 				        permission_hash_array << get_each_permissino(metadata_type, target_full_name, k, v)
 				    end
 =begin
