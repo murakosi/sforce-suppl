@@ -6,7 +6,7 @@ module Metadata
 
 		Permission_required_types = ["CustomObject", "CustomField"]
 		Permisson_option_splitter = ", "
-		Permission_for_all = "All"
+		Permission_for_all = "*"
 
 		def typefield_resource_exists?(type)
 			resouce_file_path = Service::ResourceLocator.call(:valuetypes)
