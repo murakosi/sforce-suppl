@@ -91,6 +91,7 @@ module Metadata
 			@main_hash_array = rebuild_main(metadata_type, value_types, records)
 
 			if @rebuild_permission_required
+			p records
 			    profile_list = records.select{|hash| hash.keys.include?("profile.")}.map{|hash| hash.keys.split(".").last}.flatten
 				permission_hash_array = rebuild_permission(metadata_type, profile_list)
 				rebuild_result = {:metadata => @main_hash_array, :subsequent => permission_hash_array}
