@@ -92,7 +92,10 @@ module Metadata
 
 			if @rebuild_permission_required
 			records.each{|a| p a.keys}
-			    profile_list = records.select{|hash| hash.keys.include?("profile.")}.map{|hash| hash.keys.split(".").last}.flatten
+			    profile_list = records.select{|hash| hash.keys.include?("profile.")}
+			    p profile_list
+			    profile_list = profile_list.map{|hash| hash.keys.split(".").last}.flatten
+			    p profile_list
 				permission_hash_array = rebuild_permission(metadata_type, profile_list)
 				rebuild_result = {:metadata => @main_hash_array, :subsequent => permission_hash_array}
 			else
@@ -214,7 +217,7 @@ module Metadata
 				    			}
 				    permission_array << permission
 			end
-			p permission_array
+
 			permission_array
 		end
 
