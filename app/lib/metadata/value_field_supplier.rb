@@ -102,8 +102,7 @@ module Metadata
 		end
 
         def extract_profiles(records)
-            keys = records.map{|hash| hash.keys}.flatten
-            keys.select{|item| item.to_s.start_with?("profile.")}.map{|item| item.split(".").last}
+            records.first.keys.select{|item| item.to_s.start_with?("profile.")}.map{|item| item.split(".").last}
         end
         
 		def rebuild_main(metadata_type, value_types, records)
@@ -204,7 +203,6 @@ module Metadata
 	    end
 	    
 		def get_all_permission(metadata_type, target_full_name, profile_list, value)
-		p target_full_name
 		    permission_array = []
 		    value_hash = permission_setting(value)
 		    
