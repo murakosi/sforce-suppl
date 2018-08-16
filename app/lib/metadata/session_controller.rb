@@ -29,5 +29,9 @@ module Metadata
         def read_results
         	session[:read_result]
     	end
+    	
+    	def profile_list
+    	    session[:profiles]
+    	end
 	end
 end

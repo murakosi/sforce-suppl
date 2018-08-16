@@ -2,9 +2,11 @@ module Metadata
 	class ValueFieldSupplier
 	class << self
 		include Metadata::Crud
+		include Metadata::SessionController
 
 		Permission_required_types = ["CustomObject", "CustomField"]
 		Permisson_option_splitter = ", "
+		Permission_for_all = "All"
 
 		def typefield_resource_exists?(type)
 			resouce_file_path = Service::ResourceLocator.call(:valuetypes)
@@ -18,6 +20,8 @@ module Metadata
 			
 			if Permission_required_types.include?(metadata_type)
 				metadata_list = list_metadata(sforce_session, "Profile").map{|hash| hash[:full_name]}
+				profile_list = metadata_list
+				mapping_hash["adding"][Permission_for_all] = type_specific_hash(metadata_type, Permission_for_all)
 				metadata_list.each do |name|
 					mapping_hash["adding"][name] = type_specific_hash(metadata_type, name)
 				end
@@ -151,6 +155,14 @@ module Metadata
 				@main_hash_array[index] = hash
 
 				profile_record.each do |k, v|
+				    
+				    if k == Permission_for_all
+				        permission_hash_array << get_all_permission(metadata_type, target_full_name, v)
+				        permission_hash_array = permission_hash_array.flatten
+				    else
+				        permission_hash_array << get_each_permissino(metadata_type, target_full_name, k, v)
+				    end
+=begin
 					value_hash = {}
 
 				    v.split(Permisson_option_splitter).map(&:strip).map{|name| value_hash.merge!({name.to_sym => true})}
@@ -167,9 +179,53 @@ module Metadata
 					#permission_hash_array << {:profile => permission}
 					permission_hash_array << permission
 				end
+=ed				
 			end
-			#permission_hash_array
+
 			group_by_profile(metadata_type, permission_hash_array)
+		end
+		
+		def get_each_permissino(metadata_type, target_full_name, key, value)
+			value_hash = {}
+
+		    value.split(Permisson_option_splitter).map(&:strip).map{|name| value_hash.merge!({name.to_sym => true})}
+		    permission = {
+		    				:full_name => key,
+		    				permission_key(metadata_type) => 
+		    				[
+		    					{
+		    						permission_object(metadata_type) => target_full_name
+			    				}.merge!(value_hash)
+		    				]	    				
+		    			}
+	    end
+	    
+		def get_all_permission(metadata_type, target_full_name, value)
+		    permission_array = []
+		    
+		    profiles = profile_list
+		    if profiles.nil?
+		        raise StandardError.new("Failed to get profiles. List metadata again.")
+		    end
+		    
+		    value_hash = {}
+		    value.each do |k, v|
+		        v.split(Permisson_option_splitter).map(&:strip).map{|name| value_hash.merge!({name.to_sym => true})}
+		    end
+		    
+		    profiles.each do |profile|
+				    permission = {
+				    				:full_name => profile,
+				    				permission_key(metadata_type) => 
+				    				[
+				    					{
+				    						permission_object(metadata_type) => target_full_name
+					    				}.merge!(value_hash)
+				    				]	    				
+				    			}
+				    permission_array << permission
+			end
+			permission_array
 		end
 
 		def group_by_profile(metadata_type, source)
