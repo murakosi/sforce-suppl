@@ -102,7 +102,7 @@ module Metadata
 		end
 
         def extract_profiles(records)
-            keys = h.map{|a| a.keys}.flatten
+            keys = records.map{|hash| hash.keys}.flatten
             keys.select{|item| item.to_s.start_with?("profile.")}.map{|item| item.split(".").last}
         end
         
