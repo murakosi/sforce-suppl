@@ -89,10 +89,11 @@ module Metadata
 
 		def rebuild(metadata_type, value_types, records)			
 			@rebuild_permission_required = false
-
+            test = profile_list
 			@main_hash_array = rebuild_main(metadata_type, value_types, records)
 
-			if @rebuild_permission_required				
+			if @rebuild_permission_required
+			    profile_list = records.select{|hash| hash.keys.include?("profile.")}.map{|hash| hash.keys}.flatten
 				permission_hash_array = rebuild_permission(metadata_type)
 				rebuild_result = {:metadata => @main_hash_array, :subsequent => permission_hash_array}
 			else
@@ -187,9 +188,7 @@ module Metadata
 		end
 		
 		def get_each_permissino(metadata_type, target_full_name, key, value)
-			value_hash = {}
-
-		    value.split(Permisson_option_splitter).map(&:strip).map{|name| value_hash.merge!({name.to_sym => true})}
+		    value_hash = permission_setting(value)
 		    permission = {
 		    				:full_name => key,
 		    				permission_key(metadata_type) => 
@@ -203,9 +202,7 @@ module Metadata
 	    
 		def get_all_permission(metadata_type, target_full_name, profile_names, value)
 		    permission_array = []
-		    
-		    value_hash = {}
-		    value.split(Permisson_option_splitter).map(&:strip).map{|name| value_hash.merge!({name.to_sym => true})}
+		    value_hash = permission_setting(value)
 		    
 		    profile_names.each do |profile|
 				    permission = {
@@ -252,6 +249,12 @@ module Metadata
 			end
 		end
 
+        def permission_setting(array)
+            permission_hash = {}
+        	array.split(Permisson_option_splitter).map(&:strip).map{|name| permission_hash.merge!({name.to_sym => true})}
+        	permission_hash
+        end
+        
 		def encode_content(key, value)
 			if key.to_s.downcase == "content"
 				Base64.strict_encode64(value)
