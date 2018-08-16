@@ -178,8 +178,8 @@ module Metadata
 					
 					#permission_hash_array << {:profile => permission}
 					permission_hash_array << permission
-				end
 =end				
+				end
 			end
 
 			group_by_profile(metadata_type, permission_hash_array)
