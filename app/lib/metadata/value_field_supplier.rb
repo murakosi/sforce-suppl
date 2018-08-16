@@ -213,6 +213,7 @@ module Metadata
 				    			}
 				    permission_array << permission
 			end
+			p permission_array
 			permission_array
 		end
 
