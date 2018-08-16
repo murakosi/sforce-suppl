@@ -103,7 +103,7 @@ module Metadata
 
         def extract_profiles(records)
             records.first.keys.select{|item| item.to_s.start_with?("profile.")}.map{|item| item.split(".").last}
-            records.reject{|item| item.to_s.end_with?(Permission_for_all)}
+            records.reject{|item| item.to_s.end_with?(Permission_for_all)}.slice(5).to_a.first
         end
         
 		def rebuild_main(metadata_type, value_types, records)
@@ -224,8 +224,6 @@ module Metadata
 		end
 
 		def group_by_profile(metadata_type, source)
-			#result = []
-			
 			groups = source.group_by{|hash| hash[:full_name]}
 			
 			groups.each_with_object([]) do |(k, v), result|
@@ -233,8 +231,6 @@ module Metadata
 			    permissions = v.map{|hash| hash[permission_key(metadata_type)]}.flatten
 				result << full_name.merge({permission_key(metadata_type) => permissions})
 			end
-			
-			#result
 		end
 		
 		def permission_key(metadata_type)

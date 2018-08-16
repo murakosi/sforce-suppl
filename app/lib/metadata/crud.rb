@@ -78,7 +78,9 @@ module Metadata
 		end
 
 		def create_metadata(sforce_session, metadata_type, headers, types, values)
-			metadata = prepare_metadata_to_create(metadata_type, headers, types, values)			
+			metadata = prepare_metadata_to_create(metadata_type, headers, types, values)
+			p metadata[:subsequent]
+			return fake_response
 			if metadata.has_key?(:subsequent)
 				create_with_permissions(sforce_session, metadata_type, metadata)
 			else
@@ -128,7 +130,6 @@ module Metadata
 			create_result = create_without_permissions(sforce_session, metadata_type, metadata)
 			
 			metadata[:subsequent].each do |permission|
-			    p permission
     			update_result = Service::MetadataClientService.call(sforce_session).update("Profile", permission)
     			parse_save_result(Metadata::CrudType::Update, update_result)
 			end
