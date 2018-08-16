@@ -152,12 +152,13 @@ module Metadata
 
 				target_full_name = hash["fullName"]
 				profile_record = hash.delete("profile")
+				profile_names = profile_record.keys
 				@main_hash_array[index] = hash
 
 				profile_record.each do |k, v|
 				    
 				    if k == Permission_for_all
-				        permission_hash_array << get_all_permission(metadata_type, target_full_name, v)
+				        permission_hash_array << get_all_permission(metadata_type, target_full_name, profile_names, v)
 				        permission_hash_array = permission_hash_array.flatten
 				    else
 				        permission_hash_array << get_each_permissino(metadata_type, target_full_name, k, v)
@@ -200,20 +201,15 @@ module Metadata
 		    			}
 	    end
 	    
-		def get_all_permission(metadata_type, target_full_name, value)
+		def get_all_permission(metadata_type, target_full_name, profile_names, value)
 		    permission_array = []
-		    
-		    profiles = profile_list
-		    if profiles.nil?
-		        raise StandardError.new("Failed to get profiles. List metadata again.")
-		    end
 		    
 		    value_hash = {}
 		    value.each do |k, v|
 		        v.split(Permisson_option_splitter).map(&:strip).map{|name| value_hash.merge!({name.to_sym => true})}
 		    end
 		    
-		    profiles.each do |profile|
+		    profile_names.each do |profile|
 				    permission = {
 				    				:full_name => profile,
 				    				permission_key(metadata_type) => 

@@ -30,8 +30,5 @@ module Metadata
         	session[:read_result]
     	end
     	
-    	def profile_list
-    	    session[:profiles]
-    	end
 	end
 end
