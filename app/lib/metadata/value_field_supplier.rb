@@ -20,7 +20,7 @@ module Metadata
 			
 			if Permission_required_types.include?(metadata_type)
 				metadata_list = list_metadata(sforce_session, "Profile").map{|hash| hash[:full_name]}
-				profile_list = metadata_list
+				set_profile_list(metadata_list)
 				mapping_hash["adding"][Permission_for_all] = type_specific_hash(metadata_type, Permission_for_all)
 				metadata_list.each do |name|
 					mapping_hash["adding"][name] = type_specific_hash(metadata_type, name)
