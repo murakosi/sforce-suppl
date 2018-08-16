@@ -205,9 +205,7 @@ module Metadata
 		    permission_array = []
 		    
 		    value_hash = {}
-		    value.each do |k, v|
-		        v.split(Permisson_option_splitter).map(&:strip).map{|name| value_hash.merge!({name.to_sym => true})}
-		    end
+		    value.split(Permisson_option_splitter).map(&:strip).map{|name| value_hash.merge!({name.to_sym => true})}
 		    
 		    profile_names.each do |profile|
 				    permission = {
