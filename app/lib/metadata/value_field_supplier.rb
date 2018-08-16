@@ -163,6 +163,7 @@ module Metadata
 				    if k == Permission_for_all
 				        permission_hash_array << get_all_permission(metadata_type, target_full_name, profile_list, v)
 				        permission_hash_array = permission_hash_array.flatten
+				        break
 				    else
 				        permission_hash_array << get_each_permissino(metadata_type, target_full_name, k, v)
 				    end
@@ -219,7 +220,7 @@ module Metadata
 				    permission_array << permission
 			end
 
-			permission_array
+			group_by_profile(metadata_type, permission_array)
 		end
 
 		def group_by_profile(metadata_type, source)
