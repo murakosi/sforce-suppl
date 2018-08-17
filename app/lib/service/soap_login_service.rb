@@ -4,7 +4,7 @@ module Service
 
         def call(params)
             client = Service::SoapClientService.call(params)
-            client.authenticate(:username => params[:name], :password => params[:password])
+            p client.authenticate(:username => params[:name], :password => params[:password])
         end
     end
 end
