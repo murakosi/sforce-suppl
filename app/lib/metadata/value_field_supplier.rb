@@ -7,6 +7,7 @@ module Metadata
 		Permission_required_types = ["CustomObject", "CustomField"]
 		Permisson_option_splitter = ", "
 		Permission_for_all = "*"
+		Permission_update_limit = 10
 
 		def typefield_resource_exists?(type)
 			resouce_file_path = Service::ResourceLocator.call(:valuetypes)
@@ -187,7 +188,7 @@ module Metadata
 				end
 			end
 
-			group_by_profile(metadata_type, permission_hash_array).each_slice(10).to_a
+			group_by_profile(metadata_type, permission_hash_array).each_slice(Permission_update_limit).to_a
 		end
 		
 		def get_each_permissino(metadata_type, target_full_name, key, value)
