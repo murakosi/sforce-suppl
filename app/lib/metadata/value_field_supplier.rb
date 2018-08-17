@@ -92,7 +92,7 @@ module Metadata
 			@main_hash_array = rebuild_main(metadata_type, value_types, records)
 
 			if @rebuild_permission_required
-				permission_hash_array = rebuild_permission(metadata_type, profile_list)
+				permission_hash_array = rebuild_permission(metadata_type)
 				rebuild_result = {:metadata => @main_hash_array, :subsequent => permission_hash_array}
 			else
 				rebuild_result = {:metadata => @main_hash_array}
@@ -144,7 +144,7 @@ module Metadata
 			end
 		end		
 
-		def rebuild_permission(metadata_type, profile_list)
+		def rebuild_permission(metadata_type)
 			permission_hash_array = []
 
 			@main_hash_array.each_with_index do |hash, index|
