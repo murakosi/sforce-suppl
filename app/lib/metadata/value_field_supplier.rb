@@ -144,7 +144,7 @@ module Metadata
 		def rebuild_permission(metadata_type)
 			permission_hash_array = []
 
-			@main_hash_array.eac do |hash|
+			@main_hash_array.each do |hash|
 				target_full_name = hash["fullName"]
 				profile_record = hash.delete("profile")
 				@main_hash_array[index] = hash
