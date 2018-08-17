@@ -144,20 +144,23 @@ module Metadata
 		def rebuild_permission(metadata_type)
 			permission_hash_array = []
 
-			@main_hash_array.each_with_index do |hash, index|
+			@main_hash_array.eac do |hash|
 				target_full_name = hash["fullName"]
 				profile_record = hash.delete("profile")
 				@main_hash_array[index] = hash
 
 				profile_record.each do |k, v|
-				    permission_hash_array << get_each_permissino(metadata_type, target_full_name, k, v)
+				    permission_hash_array << get_each_permission(metadata_type, target_full_name, k, v)
 				end
 			end
 
 			group_by_profile(metadata_type, permission_hash_array).each_slice(Permission_update_limit).to_a
 		end
 		
-		def get_each_permissino(metadata_type, target_full_name, key, value)
+		def rebuild_minimum_permission(metadata_type)
+		end
+		
+		def get_each_permission(metadata_type, target_full_name, key, value)
 		    value_hash = permission_setting(value)
 		    permission = {
 		    				:full_name => key,
