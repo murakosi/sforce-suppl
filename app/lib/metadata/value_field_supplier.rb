@@ -92,7 +92,6 @@ module Metadata
 			@main_hash_array = rebuild_main(metadata_type, value_types, records)
 
 			if @rebuild_permission_required
-			    profile_list = extract_profiles(records)
 				permission_hash_array = rebuild_permission(metadata_type, profile_list)
 				rebuild_result = {:metadata => @main_hash_array, :subsequent => permission_hash_array}
 			else
@@ -101,11 +100,6 @@ module Metadata
 			
 			rebuild_result
 		end
-
-        def extract_profiles(records)
-            profiles = records.first.keys.select{|item| item.to_s.start_with?("profile.")}.map{|item| item.split(".").last}
-            profiles.reject{|item| item.to_s.end_with?(Permission_for_all)}
-        end
         
 		def rebuild_main(metadata_type, value_types, records)
 			main_hash_array = []
@@ -159,32 +153,7 @@ module Metadata
 				@main_hash_array[index] = hash
 
 				profile_record.each do |k, v|
-				    
-				    if k == Permission_for_all
-				        permission_hash_array << get_all_permission(metadata_type, target_full_name, profile_list, v)
-				        permission_hash_array = permission_hash_array.flatten
-				        break
-				    else
-				        p "each"
-				        permission_hash_array << get_each_permissino(metadata_type, target_full_name, k, v)
-				    end
-=begin
-					value_hash = {}
-
-				    v.split(Permisson_option_splitter).map(&:strip).map{|name| value_hash.merge!({name.to_sym => true})}
-				    permission = {
-				    				:full_name => k,
-				    				permission_key(metadata_type) => 
-				    				[
-				    					{
-				    						permission_object(metadata_type) => target_full_name
-					    				}.merge!(value_hash)
-				    				]	    				
-				    			}
-					
-					#permission_hash_array << {:profile => permission}
-					permission_hash_array << permission
-=end				
+				    permission_hash_array << get_each_permissino(metadata_type, target_full_name, k, v)
 				end
 			end
 
@@ -203,26 +172,6 @@ module Metadata
 		    				]	    				
 		    			}
 	    end
-	    
-		def get_all_permission(metadata_type, target_full_name, profile_list, value)
-		    permission_array = []
-		    value_hash = permission_setting(value)
-		    
-		    profile_list.each do |profile|
-				    permission = {
-				    				:full_name => profile,
-				    				permission_key(metadata_type) => 
-				    				[
-				    					{
-				    						permission_object(metadata_type) => target_full_name
-					    				}.merge!(value_hash)
-				    				]	    				
-				    			}
-				    permission_array << permission
-			end
-
-			group_by_profile(metadata_type, permission_array)
-		end
 
 		def group_by_profile(metadata_type, source)
 			groups = source.group_by{|hash| hash[:full_name]}
