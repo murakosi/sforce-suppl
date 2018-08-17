@@ -103,10 +103,7 @@ module Metadata
 
         def extract_profiles(records)
             profiles = records.first.keys.select{|item| item.to_s.start_with?("profile.")}.map{|item| item.split(".").last}
-            a = profiles.reject{|item| item.to_s.end_with?(Permission_for_all)}.each_slice(5).to_a.first
-            p "profile!!!!!!!!!!!!!"
-            p a
-            a
+            profiles.reject{|item| item.to_s.end_with?(Permission_for_all)}.each_slice(5).to_a.first
         end
         
 		def rebuild_main(metadata_type, value_types, records)
