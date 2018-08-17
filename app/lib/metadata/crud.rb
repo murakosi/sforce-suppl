@@ -132,7 +132,7 @@ module Metadata
     			update_result = Service::MetadataClientService.call(sforce_session).update("Profile", permission)
     			parse_save_result(Metadata::CrudType::Update, update_result)
 			end
-			create_result			
+			create_result
 		end
 
 		def fake_response
