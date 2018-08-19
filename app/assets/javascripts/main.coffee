@@ -18,18 +18,19 @@ mains = ->
 
   $("#menuList").on "click", "a", (e) ->
     clickedAnchor = ($(this).prop("id"))
-
-    if selectedAnchor == clickedAnchor
-      e.preventDefault
-      return false
     
     if clickedAnchor == "logoutLink"
       return
 
-    if jqXHR
-      e.preventDefault
+    if selectedAnchor == clickedAnchor
+      e.preventDefault()
       return false
 
+    if jqXHR
+      e.preventDefault()
+      return false
+
+    e.preventDefault()
     e.stopPropagation()
     selectedAnchor = clickedAnchor
     targetDiv = $(this).attr("loadTarget")
@@ -77,9 +78,6 @@ mains = ->
   createErrorDiv = (message) ->
     html = "<div style='text-align:center; white-space: pre; color:red; font-weight:bold;'>" + message  + "</div>"
     $(targetDiv).html(html)
-
-  #autoClickAnchor = (target) ->
-  #  $("#" + target)[0].click()
   
   displayUserId = (id) ->
     $("#currentUserId").html("ID: " + id)
@@ -99,7 +97,6 @@ mains = ->
 
     jqXHR.done (data, stat, xhr) ->
       jqXHR = null
-      console.log { done: stat, data: data, xhr: xhr }
       callback(data)
 
     jqXHR.fail (xhr, stat, err) ->
@@ -109,10 +106,8 @@ mains = ->
 
     jqXHR.always (res1, stat, res2) ->
       jqXHR = null
-      console.log { always: stat, res1: res1, res2: res2 }
 
   options = getAjaxOptions("main", "POST", "describe", "TEXT")
-  #executeAjax(options, autoClickAnchor)
   executeAjax(options, displayUserId)
 
 $(document).ready(mains)
