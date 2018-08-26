@@ -3,7 +3,7 @@ coordinates = ->
   selectedRecords = {}
   grids = {}
   defaultDataType = ""
-  selectedFullName = null
+  selectedFullNames = {}
   selectedNode = null
   fieldNames = null
   fieldTypes = null
@@ -26,6 +26,9 @@ coordinates = ->
 
   getSelectedRecords = () ->
     JSON.stringify(Object.values(selectedRecords))
+
+  getSelectedFullNames = () ->
+    JSON.stringify(Object.keys(selectedFullNames))
 
   getDataOnCreateGrid = () ->
     JSON.stringify(grids["#metadataArea #createGrid"].getData())
@@ -59,7 +62,7 @@ coordinates = ->
     grids = {}
     fieldNames = null
     fieldTypes = null
-    selectedFullName = null
+    selectedFullNames = {}
     selectedNode = null
     selectedCellOnCreateGrid = null
 
@@ -139,7 +142,7 @@ coordinates = ->
   $("#updateButton").on "click", (e) ->
     e.preventDefault()
     if window.confirm("Update Metadata?")
-      val = {crud_type: "update", metadata_type: getSelectedMetadata(), full_name: selectedFullName}
+      val = {crud_type: "update", metadata_type: getSelectedMetadata(), full_names: getSelectedFullNames()}
       action = $(".crudForm").attr("action")
       method = $(".crudForm").attr("method")
       options = $.getAjaxOptions(action, method, val, defaultDataType)
@@ -147,7 +150,8 @@ coordinates = ->
       $.executeAjax(options, callbacks)
 
   $("#metadataArea #editTree").on 'select_node.jstree', (e, data) ->
-    selectedFullName = data.node.li_attr.full_name
+    #fullName = data.node.li_attr.full_name
+    #selectedFullNames[fullName] = fullName
     selectedNode = data.node
 
   $("#metadataArea #editTree").on 'rename_node.jstree', (e, data) ->
@@ -180,6 +184,8 @@ coordinates = ->
     $("#metadataArea #editTree").jstree(true).close_all(selectedNode)
 
   editComplete = (json) ->
+    fullName = json.full_name
+    selectedFullNames[fullName] = fullName
     hideMessageArea()
     
   undoEdit = (json) ->

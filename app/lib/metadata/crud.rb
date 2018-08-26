@@ -1,4 +1,3 @@
-require "hashie"
 
 module Metadata
 	module Crud
@@ -29,13 +28,6 @@ module Metadata
 			update = elements.join + " = text"
 			eval(update)
 			source.deep_symbolize_keys
-=begin
-			mash = Hashie::Mash.new(source)
-			text = to_type(new_text, data_type)
-			update = "mash." + path + " = text"
-			eval(update)
-			mash.to_hash.deep_symbolize_keys
-=end
 		end
 
 		def get_edit_key(value)
@@ -67,7 +59,13 @@ module Metadata
 			end
 		end
 
-		def update_metadata(sforce_session, metadata_type, metadata)
+		def update_metadata(sforce_session, metadata_type, read_results, full_names)
+			
+			metadata = read_results.select{|k, v| full_names.include?(k)}.flatten
+			if metadata.empty?
+				raise StandardError.new("No metadata to update")
+			end
+
 			save_result = Service::MetadataClientService.call(sforce_session).update(metadata_type, metadata)
 			parse_save_result(Metadata::CrudType::Update, save_result)
 		end
@@ -80,33 +78,15 @@ module Metadata
 		def create_metadata(sforce_session, metadata_type, headers, types, values)
 			metadata = prepare_metadata_to_create(metadata_type, headers, types, values)
 
+			if metadata[:metadata].first.empty?
+				raise StandardError.new("No metadata to create")
+			end
 			if metadata.has_key?(:subsequent)
 				create_with_permissions(sforce_session, metadata_type, metadata)
 			else
 				create_without_permissions(sforce_session, metadata_type, metadata)
 			end
 
-=begin			
-			p metadata
-			metadata = {"profile" =>
-				{:full_name => "Admin Profile",
-				 :object_permissions => 
-				 [
-				 	{
-				 		:object => "RB__c",
-				 	 	:allow_create => true,
-				 	 	:allow_delete => true,
-				 	 	:allow_edit => true,
-				 	 	:allow_read => true
-				 	}
-				 ]
-				}
-			}
-			Service::MetadataClientService.call(sforce_session).update("Profile", metadata)		
-			fake_response
-=end
-			#save_result = Service::MetadataClientService.call(sforce_session).create(metadata_type, metadata)
-			#parse_save_result(Metadata::CrudType::Create, save_result)
 		end
 
 		def prepare_metadata_to_create(metadata_type, headers, types, values)
