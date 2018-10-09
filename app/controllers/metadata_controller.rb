@@ -22,7 +22,7 @@ class MetadataController < ApplicationController
         rescue StandardError => ex
             html_content = render_to_string :partial => 'metadatalist', :locals => {:data_source => []}
             render :json => {:target => "#metadata_list", :content => html_content, :error => ex.message, :status => 400}
-        end
+        end        
     end
 
     def list
