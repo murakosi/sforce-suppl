@@ -1,0 +1,21 @@
+id:
+ label: "ID"
+ type: "string"
+anytype:
+ label: "AnyType"
+ type: "string"
+base64:
+ label: "Base64"
+ type: "string"
+email:
+ label: "電子メール"
+ type: "string"
+phone:
+ label: "電話"
+ type: "string"
+combobox:
+ label: "テキスト（＋選択リスト）"
+ type: "string"
+encryptedstring:
+ label: "パスワード"
+ type: "string"
