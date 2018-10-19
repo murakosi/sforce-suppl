@@ -2,7 +2,7 @@ module Generator
 	class DescribeCsvGenerator < CsvGenerator
 		
 		def generate(params)
-			get_header(nil)
+			get_header(params[:data].first.keys)
 		    csv_data = CSV.generate(@csv_options) do |csv|
 		      csv_column_names = params[:data].first.keys
 		      csv << csv_column_names
@@ -13,8 +13,13 @@ module Generator
 		end
 
 		def get_header(raw_header)
-			translations = Translations::TranslationLocator[:describe_csv_header]
-			p translations
+			if raw_header.nil?
+				return raw_header
+			end
+			
+			translation = Translations::TranslationLocator.instance[:describe_csv_header]
+
+			p translation
 		end
 	end
 end
