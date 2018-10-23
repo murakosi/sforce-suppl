@@ -10,6 +10,7 @@ class LoginController < ApplicationController
 
     def create
         begin
+          flash[:danger] = nil
           sign_in(login_params)
           redirect_to main_path
         rescue StandardError => ex

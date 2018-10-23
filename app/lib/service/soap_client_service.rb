@@ -16,15 +16,13 @@ module Service
                     :version => params[:api_version] || Constants::DefaultApiVersion,
                     :host => Utils::SforceApiUtils.sforce_host(params),
                     :ssl_version => Constants::SSLVersion,
-                    :ssl_ca_cert_file => Utils::SforceApiUtils.ssl_certificate
-                    #:proxy => proxy
+                    :ssl_ca_cert_file => Utils::SforceApiUtils.ssl_certificate,
+                    :proxy => proxy
                     #:logger => Logger.new(STDOUT)
                 }                
             end
 
             def proxy
-
-                return nil 
                 if ENV["http_proxy"]
                     ENV["http_proxy"]
                 elsif ENV["https_proxy"]

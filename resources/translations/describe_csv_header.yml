@@ -1,21 +1,12 @@
-id:
- label: "ID"
- type: "string"
-anytype:
- label: "AnyType"
- type: "string"
-base64:
- label: "Base64"
- type: "string"
-email:
- label: "電子メール"
- type: "string"
-phone:
- label: "電話"
- type: "string"
-combobox:
- label: "テキスト（＋選択リスト）"
- type: "string"
-encryptedstring:
- label: "パスワード"
- type: "string"
+label: "表示ラベル"
+name: "API参照名"
+type: "データ型"
+calculated_formula: "数式"
+length: "文字数"
+picklist_values: "選択リスト"
+custom: "カスタム"
+unique: "ユニーク"
+case_sensitive: "大文字小文字を区別"
+nillable: "必須"
+inline_help_text: "ヘルプテキスト"
+default_value_formula: "デフォルト"

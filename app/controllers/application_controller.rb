@@ -31,6 +31,7 @@ class ApplicationController < ActionController::Base
     end
 
     private
+
         def initialize_session(login_token)
             Session.sweep
             reset_session
