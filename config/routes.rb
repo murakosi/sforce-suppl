@@ -13,8 +13,8 @@ Rails.application.routes.draw do
   delete  'logout',                 to: 'login#destroy'
 
   get     'describe',               to: 'describe#show'
-  post    'describe',               to: 'describe#execute'
-  get     'describe/changelist',    to: 'describe#change'
+  post    'describe',               to: 'describe#describe'
+  post    'describe/changelist',    to: 'describe#change'
   post    'describe/download',      to: 'describe#download'
 
   get     'metadata',               to: 'metadata#show'

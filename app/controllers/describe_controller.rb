@@ -4,7 +4,7 @@ class DescribeController < ApplicationController
   
     before_action :require_sign_in!
 
-    protect_from_forgery :except => [:execute, :download]
+    protect_from_forgery :except => [:change, :describe, :download]
 
     def show
         begin
@@ -33,33 +33,39 @@ class DescribeController < ApplicationController
         render :partial => 'sobjectlist', :locals => {:data_source => sobjects}
     end
 
-    def execute
+    def describe
         sobject = params[:selected_sobject]
 
         begin
-            field_result = describe_field(sforce_session, sobject)
-            sobject_info = get_sobject_info(field_result)
-            formatted_result = format_field_result(sobject, field_result[:fields])
-            result = {:method => sobject_info, :columns => formatted_result.first.keys, :rows => formatted_result.each{ |hash| hash.values}}
-            render :json => result, :status => 200
+            describe_result = describe_field(sforce_session, sobject)
+            formatted_result = format_field_result(sobject, describe_result[:fields])
+            render :json => response_json(describe_result, formatted_result), :status => 200
         rescue StandardError => ex
             print_error(ex)
             render :json => {:error => ex.message}, :status => 400
         end
     end
 
-    def get_sobject_info(field_result)
-        info = "表示ラベル：" + field_result[:label] + "\n" +
-              "API参照名：" + field_result[:name] + "\n" +
-              "プレフィックス：" + field_result[:key_prefix]
+    def response_json(describe_result, formatted_result)
+        {
+            :method => get_sobject_info(describe_result),
+            :columns => formatted_result.first.keys,
+            :rows => formatted_result.each{ |hash| hash.values}
+        }
+    end
+
+    def get_sobject_info(describe_result)
+        info = "表示ラベル：" + describe_result[:label] + "\n" +
+              "API参照名：" + describe_result[:name] + "\n" +
+              "プレフィックス：" + describe_result[:key_prefix]
     end
   
     def download
         sobject = params[:selected_sobject]
 
         begin
-            field_result = describe_field(sforce_session, sobject)
-            formatted_result = format_field_result(sobject, field_result[:fields])
+            describe_result = describe_field(sforce_session, sobject)
+            formatted_result = format_field_result(sobject, describe_result[:fields])
             try_download(params[:dl_format], sobject, formatted_result)
             set_download_success_cookie(response)
         rescue StandardError => ex

@@ -67,7 +67,7 @@
             }
         },
 
-        executeAjax: function (options, callbacks) {
+        executeAjax: function (options, callbacks, raw = false) {
 
             if (jqXHR) {
                 return;
@@ -85,13 +85,21 @@
             jqXHR.done(function (data, stat, xhr) {
                 jqXHR = null;
                 console.log({ done: stat, data: data, xhr: xhr });
-                return callbacks.doneCallback($.parseJSON(xhr.responseText), callbacks.doneCallbackParams);
+                if (raw){
+                    return callbacks.doneCallback(xhr.responseText, callbacks.doneCallbackParams);
+                }else{
+                    return callbacks.doneCallback($.parseJSON(xhr.responseText), callbacks.doneCallbackParams);
+                }
             });
 
             jqXHR.fail(function (xhr, stat, err) {
                 jqXHR = null;
                 console.log({ fail: stat, error: err, xhr: xhr });
-                return callbacks.failCallback($.parseJSON(xhr.responseText), callbacks.failCallbackParams);
+                if (raw){
+                    return callbacks.failCallback(xhr.responseText, callbacks.failCallbackParams);
+                }else{
+                    return callbacks.doneCallback($.parseJSON(xhr.responseText), callbacks.doneCallbackParams);
+                }
             });
 
             jqXHR.always(function (res1, stat, res2) {
