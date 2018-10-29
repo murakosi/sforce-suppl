@@ -98,7 +98,7 @@
                 if (raw){
                     return callbacks.failCallback(xhr.responseText, callbacks.failCallbackParams);
                 }else{
-                    return callbacks.doneCallback($.parseJSON(xhr.responseText), callbacks.doneCallbackParams);
+                    return callbacks.failCallback($.parseJSON(xhr.responseText), callbacks.failCallbackParams);
                 }
             });
 

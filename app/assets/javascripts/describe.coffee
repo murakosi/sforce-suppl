@@ -62,6 +62,7 @@ coordinates = ->
     $("#describeArea #messageArea").hide()
 
   processSuccessResult = (json) ->
+    hideMessageArea()
     $("#describeArea #method").html(getExecutedMethod(json))
     createGrid("#describeArea #grid", json)
 
