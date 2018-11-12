@@ -6,12 +6,16 @@ module Soql
         Exclude_key_names = ["@xsi:type", "type"]
         
         def execute_query(sforce_session, soql)
+            if soql.end_with?(";")
+                soql = soql
+            end
+
             query_result = Service::SoapSessionService.call(sforce_session).query(soql)
 
             if query_result.empty?
                raise StandardError.new("No matched records found")
             end
-            
+
             parse_query_result(query_result)
         end
  
@@ -19,17 +23,33 @@ module Soql
             results = get_results(query_result.raw_result)
             records = []
             results.each do |result|
+                reference_record = {}
                 record = extract(result[:records])
                 record.each do |k,v|
+                    
+                    if v.is_a?(Hash) && v.size > 1
+                        reference_record = resolve_reference(k, v)
+                        record.delete(k)
+                    end
+
                     if v.is_a?(Hash) && (v.has_key?(:records) || v.has_key?("records"))
                         record.merge!(parse_child(k, v))
                     end
                 end
+                record.merge!(reference_record)
                 records << record
             end
             records
         end
         
+        def resolve_reference(key, value)
+            result = {}
+            extract(value).each do | k, v|
+                result.merge!(key.to_s + "." + k.to_s => v)
+            end
+            result
+        end
+
         def parse_child(key,value)
             records = value[:records]
             child_records = Array[records].flatten.map{|record| extract(record)}
