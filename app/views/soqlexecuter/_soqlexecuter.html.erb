@@ -1,7 +1,7 @@
 <div id="soqlArea">
 	<div id="formArea">
 		<%= form_tag soql_path(), :method => :post, :class => "execute-form" do %>
-		<%= text_area_tag :input_soql, "select id,name from procure__c", :size => "120x5" %>
+		<%= text_area_tag :input_soql,"", :size => "120x5" %>
 		<br>
 		<%= submit_tag "Execute", :class => "btn btn-primary execute-soql" %>
 		<% end %>
