@@ -6,8 +6,8 @@ module Soql
         Exclude_key_names = ["@xsi:type", "type"]
         
         def execute_query(sforce_session, soql)
-            if soql.end_with?(";")
-                soql = soql
+            if soql.strip.end_with?(";")
+                soql.delete!(";");
             end
 
             query_result = Service::SoapSessionService.call(sforce_session).query(soql)
@@ -22,26 +22,44 @@ module Soql
         def parse_query_result(query_result)
             results = get_results(query_result.raw_result)
             records = []
-            results.each do |result|
-                reference_record = {}
+            results.each do |result|                
+                new_record = {}
                 record = extract(result[:records])
+
                 record.each do |k,v|
                     
-                    if v.is_a?(Hash) && v.size > 1
-                        reference_record = resolve_reference(k, v)
-                        record.delete(k)
+                    if is_reference?(v)
+                        new_record.merge!(resolve_reference(k, v))
+                    elsif is_child?(v)
+                        new_record.merge!(parse_child(k, v))
+                    else
+                        new_record.merge!({k => v})
                     end
 
-                    if v.is_a?(Hash) && (v.has_key?(:records) || v.has_key?("records"))
-                        record.merge!(parse_child(k, v))
-                    end
                 end
-                record.merge!(reference_record)
-                records << record
+                records << new_record
             end
             records
         end
         
+        def is_reference?(value)
+            if is_child?(value)
+                false
+            elsif value.is_a?(Hash) && value.size > 1
+                true
+            else
+                false
+            end
+        end
+
+        def is_child?(value)
+            if value.is_a?(Hash) && (value.has_key?(:records) || value.has_key?("records"))
+                true
+            else
+                false
+            end
+        end
+
         def resolve_reference(key, value)
             result = {}
             extract(value).each do | k, v|
