@@ -67,6 +67,8 @@ gem 'activerecord-session_store'
 
 gem 'hashie'
 
+gem "rack", ">= 2.0.6"
+
 group :production do
   gem 'rails_12factor'
 end
