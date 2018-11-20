@@ -77,10 +77,30 @@ module Soql
         def extract(record)
             result = {}
             record.each do |k,v|
-                next if Exclude_key_names.include?(k.to_s.downcase) || (k.to_s.downcase == "id" && v.nil?)
-                result.merge!({k => v})
+                next if skip?(k, v)
+                result.merge!(remove_duplicate_id(k, v))
             end
             result
+        end
+
+        def skip?(key, value)
+            if Exclude_key_names.include?(key.to_s.downcase)
+                return true
+            end
+
+            if key.to_s.downcase == "id" && value.nil?
+                return true
+            end
+
+            return false
+        end
+
+        def remove_duplicate_id(key, value)            
+            if key.to_s.downcase == "id" && value.is_a?(Array)
+                {key => value.first}
+            else
+                {key => value}
+            end
         end
 
         def get_results(hash)
