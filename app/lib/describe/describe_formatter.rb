@@ -16,7 +16,7 @@ module Describe
 
         private
 
-            def get_values(field_result)                
+            def get_values(field_result)
                 Array[field_result].flatten.each{ |hash| translate_value(hash) }.map{|hash| hash.slice(*Key_order)}
                             .map{|hash| hash.reject{|k,v| Exclude_header.include?(k.to_s) } }
             end

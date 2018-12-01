@@ -22,7 +22,7 @@ class MetadataController < ApplicationController
         rescue StandardError => ex
             html_content = render_to_string :partial => 'metadatalist', :locals => {:data_source => []}
             render :json => {:target => "#metadata_list", :content => html_content, :error => ex.message, :status => 400}
-        end
+        end        
     end
 
     def list
@@ -95,7 +95,7 @@ class MetadataController < ApplicationController
             raise_when_type_unmached(metadata_type)
             edit_result = edit_metadata(read_results[full_name], path, new_text, data_type)
             try_save_session(metadata_type, full_name, edit_result)
-            render :json => {:result => "ok"}, :status => 200
+            render :json => {:full_name => full_name}, :status => 200
         rescue StandardError => ex
             print_error(ex)
             render :json => {:node_id => node_id, :old_text => old_text, :error => ex.message}, :status => 400
@@ -130,11 +130,12 @@ class MetadataController < ApplicationController
     end
 
     def try_update(metadata_type)
-        full_name = params[:full_name]
-        if full_name.nil?
+        full_names = params[:full_names]
+        if full_names.nil?
             raise StandardError.new("No node is selected")
         end
-        update_metadata(sforce_session, metadata_type, read_results[full_name])
+
+        update_metadata(sforce_session, metadata_type, read_results, full_names)
     end
 
     def try_delete(metadata_type)

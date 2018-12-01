@@ -1,31 +1,15 @@
 
 coordinates = ->
   
-  jqXHR = null
   defaultDataType = ""  
 
-  getAjaxOptions = (action, method, data, datatype) ->
-    {
-      "action": action,
-      "method": method,
-      "data": data,
-      "datatype": datatype
-    }
-
-  downloadOptions = (url, method, data, successCallback, failCallback, alwaysCallback) ->
-    {
-      "url": url,
-      "method": method,
-      "data": data,
-      "successCallback": successCallback,
-      "failCallback": failCallback,
-      "alwaysCallback": alwaysCallback
-    }
-
+  #------------------------------------------------
+  # change custom/standard
+  #------------------------------------------------
   $('.sobjectTypeCheckBox').on 'click', (e) ->
-      if jqXHR
-        e.preventDefault
-        return false
+    if $.isAjaxBusy()
+      e.preventDefault
+      return false
   
   $('.sobjectTypeCheckBox').on 'change', (e) ->
     e.stopPropagation()
@@ -34,18 +18,25 @@ coordinates = ->
     val = {object_type: e.target.value}
     action = $('#filterSObjectList').attr('action')
     method = $('#filterSObjectList').attr('method')
-    options = getAjaxOptions(action, method, val, defaultDataType)
-    executeAjax(options, refreshSelectOptions, displayError)
+    options = $.getAjaxOptions(action, method, val, defaultDataType)
+    callbacks = $.getAjaxCallbacks(refreshSelectOptions, displayError, null)
+    $.executeAjax(options, callbacks, true)
 
+  #------------------------------------------------
+  # describe
+  #------------------------------------------------
   $('#executeDescribe').on 'click', (e) ->
     e.preventDefault()
     val = {selected_sobject: $('#describeArea #selected_sobject').val()}
     action = $('#executeDescribe').attr('action')
     method = $('#executeDescribe').attr('method')
-    options = getAjaxOptions(action, method, val, defaultDataType)
-    executeAjax(options, processSuccessResult, displayError)
+    options = $.getAjaxOptions(action, method, val, defaultDataType)
+    callbacks = $.getAjaxCallbacks(processSuccessResult, displayError, null)
+    $.executeAjax(options, callbacks)
 
-
+  #------------------------------------------------
+  # export
+  #------------------------------------------------
   $("#describeArea .exp-btn").on "click", (e) ->
     e.preventDefault()
     options = getDownloadOptions(this)
@@ -54,47 +45,15 @@ coordinates = ->
   getDownloadOptions = (target) ->
     url = $("#describeArea #exportForm").attr('action')
     method = $("#describeArea #exportForm").attr('method')
-    dl_format = $(target).attr("dl_format")
     selected_sobject = $('#describeArea #selected_sobject').val()
+    dl_format = $(target).attr('dl_format')
     data = {dl_format: dl_format, selected_sobject: selected_sobject}
-    downloadOptions(url, method, data, downloadDone, downloadFail, ->)
+    $.getAjaxDownloadOptions(url, method, data, downloadDone, downloadFail, ->)
 
-  downloadDone = (url) ->
-    hideMessageArea()
-  
-  downloadFail = (response, url, error) ->
-    displayError(response)
-
-  executeAjax = (options, doneCallback, errorCallback) ->
-
-    if jqXHR
-      return
-
-    jqXHR = $.ajax({
-      url: options.action
-      type: options.method
-      data: options.data
-      dataType: options.datatype
-      cache: false
-    })
-
-    jqXHR.done (data, stat, xhr) ->
-      jqXHR = null
-      console.log { done: stat, data: data, xhr: xhr }
-      hideMessageArea()
-      doneCallback(xhr.responseText)
-
-    jqXHR.fail (xhr, stat, err) ->
-      jqXHR = null
-      console.log { fail: stat, error: err, xhr: xhr }
-      errorCallback(xhr.responseText)
-
-    jqXHR.always (res1, stat, res2) ->
-      jqXHR = null
-      console.log { always: stat, res1: res1, res2: res2 }
-
-  displayError = (result) ->
-    json = $.parseJSON(result)
+  #------------------------------------------------
+  # callbacks
+  #------------------------------------------------  
+  displayError = (json) ->
     $("#describeArea #messageArea").html(json.error)
     $("#describeArea #messageArea").show()
   
@@ -102,8 +61,8 @@ coordinates = ->
     $("#describeArea #messageArea").empty()
     $("#describeArea #messageArea").hide()
 
-  processSuccessResult = (result) ->
-    json = $.parseJSON(result)
+  processSuccessResult = (json) ->
+    hideMessageArea()
     $("#describeArea #method").html(getExecutedMethod(json))
     createGrid("#describeArea #grid", json)
 
@@ -114,8 +73,16 @@ coordinates = ->
       width: 'resolve',
       containerCssClass: ':all:'
       })
-  
 
+  downloadDone = (url) ->
+    hideMessageArea()
+  
+  downloadFail = (response, url, error) ->
+    displayError(response)
+
+  #------------------------------------------------
+  # grid
+  #------------------------------------------------ 
   createGrid = (elementId, json = null) ->   
     hotElement = document.querySelector(elementId)
 

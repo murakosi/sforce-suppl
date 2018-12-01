@@ -6,7 +6,7 @@ class SoqlexecuterController < ApplicationController
   
   protect_from_forgery :except => [:execute]
   
-  Time_format = "%Y/%m/%d %H:%M"
+  Time_format = "%Y/%m/%d %H:%M:%S"
 
   def show
   end
@@ -30,7 +30,7 @@ class SoqlexecuterController < ApplicationController
   end
 
   def soql_info(soql)
-    soql + " @" + Time.now.strftime(Time_format)
+    " @" + Time.now.strftime(Time_format) + "\r\n" + soql
   end
 
 end

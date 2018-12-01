@@ -15,7 +15,12 @@ module Utils
 	        end
 
 	        def ssl_certificate
-	            cert_file = File.expand_path("./lib/corp_cacert.cer", Rails.root)
+	        	if Rails.env.production?
+	        		return nil
+	        	end
+	        	
+	            cert_file = File.expand_path("./lib/cacert.cer", Rails.root)
+
 	            if File.exist?(cert_file)
 	                cert_file
 	            else

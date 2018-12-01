@@ -2,9 +2,11 @@ module Metadata
 	class ValueFieldSupplier
 	class << self
 		include Metadata::Crud
+		include Metadata::SessionController
 
 		Permission_required_types = ["CustomObject", "CustomField"]
 		Permisson_option_splitter = ", "
+		Permission_update_limit = 10
 
 		def typefield_resource_exists?(type)
 			resouce_file_path = Service::ResourceLocator.call(:valuetypes)
@@ -85,10 +87,9 @@ module Metadata
 
 		def rebuild(metadata_type, value_types, records)			
 			@rebuild_permission_required = false
-
 			@main_hash_array = rebuild_main(metadata_type, value_types, records)
 
-			if @rebuild_permission_required				
+			if @rebuild_permission_required
 				permission_hash_array = rebuild_permission(metadata_type)
 				rebuild_result = {:metadata => @main_hash_array, :subsequent => permission_hash_array}
 			else
@@ -97,7 +98,7 @@ module Metadata
 			
 			rebuild_result
 		end
-
+        
 		def rebuild_main(metadata_type, value_types, records)
 			main_hash_array = []
 
@@ -145,32 +146,44 @@ module Metadata
 			permission_hash_array = []
 
 			@main_hash_array.each_with_index do |hash, index|
-
 				target_full_name = hash["fullName"]
 				profile_record = hash.delete("profile")
 				@main_hash_array[index] = hash
 
 				profile_record.each do |k, v|
-					value_hash = {}
-
-				    v.split(Permisson_option_splitter).map(&:strip).map{|name| value_hash.merge!({name.to_sym => true})}
-				    permission = {
-				    				:full_name => k,
-				    				permission_key(metadata_type) => 
-				    				[
-				    					{
-				    						permission_object(metadata_type) => target_full_name
-					    				}.merge!(value_hash)
-				    				]	    				
-				    			}
-					
-					#permission_hash_array << {:profile => permission}
-					permission_hash_array << permission
+				    permission_hash_array << get_each_permission(metadata_type, target_full_name, k, v)
 				end
 			end
-			permission_hash_array
-		end
 
+			group_by_profile(metadata_type, permission_hash_array).each_slice(Permission_update_limit).to_a
+		end
+		
+		def rebuild_minimum_permission(metadata_type)
+		end
+		
+		def get_each_permission(metadata_type, target_full_name, key, value)
+		    value_hash = permission_setting(value)
+		    permission = {
+		    				:full_name => key,
+		    				permission_key(metadata_type) => 
+		    				[
+		    					{
+		    						permission_object(metadata_type) => target_full_name
+			    				}.merge!(value_hash)
+		    				]	    				
+		    			}
+	    end
+
+		def group_by_profile(metadata_type, source)
+			groups = source.group_by{|hash| hash[:full_name]}
+			
+			groups.each_with_object([]) do |(k, v), result|
+			    full_name = {:full_name => k}
+			    permissions = v.map{|hash| hash[permission_key(metadata_type)]}.flatten
+				result << full_name.merge({permission_key(metadata_type) => permissions})
+			end
+		end
+		
 		def permission_key(metadata_type)
 			if metadata_type == "CustomObject"
 				:object_permissons
@@ -187,6 +200,12 @@ module Metadata
 			end
 		end
 
+        def permission_setting(array)
+            permission_hash = {}
+        	array.split(Permisson_option_splitter).map(&:strip).map{|name| permission_hash.merge!({name.to_sym => true})}
+        	permission_hash
+        end
+        
 		def encode_content(key, value)
 			if key.to_s.downcase == "content"
 				Base64.strict_encode64(value)

@@ -29,5 +29,6 @@ module Metadata
         def read_results
         	session[:read_result]
     	end
+    	
 	end
 end

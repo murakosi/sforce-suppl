@@ -25,6 +25,7 @@ module Service
                 :sforce_query_locator => sforce_result[:query_locator],
                 :sforce_metadata_server_url => sforce_result[:metadata_server_url],
                 :sandbox => login_params[:sandbox],
+                #:profile_id => sforce_result[:profile_id]
                 :api_version => login_params[:api_version]
             }
         end        

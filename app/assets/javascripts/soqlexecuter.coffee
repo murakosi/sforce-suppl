@@ -13,15 +13,26 @@ coordinates = ->
       "data": data,
       "datatype": datatype
     }
-    
+
+  #------------------------------------------------
+  # Shortcut keys
+  #------------------------------------------------
+  $(window).on 'keydown', (e) ->
+    if e.ctrlKey && e.key == 'r'
+      e.preventDefault()
+      executeSoql()
+  
   #------------------------------------------------
   # Execute SOQL
   #------------------------------------------------
   $('#soqlArea .execute-soql').on 'click', (e) ->
-    if jqXHR
-      return
-    
     e.preventDefault()
+    executeSoql()
+    
+  executeSoql = () ->
+    if jqXHR
+      return false
+    
     selectedTabId = $("#soqlArea #tabArea .ui-tabs-panel:visible").attr("tabId");
     val = {soql: $('#soqlArea #input_soql').val()}
     action = $('#soqlArea .execute-form').attr('action')

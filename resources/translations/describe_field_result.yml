@@ -1,6 +1,9 @@
 id:
  label: "ID"
  type: "string"
+address:
+ label: "住所"
+ type: "string"
 anytype:
  label: "AnyType"
  type: "string"
