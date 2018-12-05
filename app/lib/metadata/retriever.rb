@@ -22,6 +22,7 @@ module Metadata
 			@service = Service::MetadataClientService.call(sforce_session)
 			response = @service.retrieve(metadata_type, metadata)
 			@id = response[:id]
+			@metadata_type = metadata_type
 		end
 
 		def execute_retrieve
@@ -64,7 +65,7 @@ module Metadata
 			response = @service.retrieve_status(@id, true)
 			{
 				:zip_file => decode(response[:zip_file]),
-				:id => response[:id]
+				:id => @metadata_type
 			}
 		end
 
