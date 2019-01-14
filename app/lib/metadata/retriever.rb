@@ -77,7 +77,6 @@ module Metadata
 		def decode(zip_file)
 			Base64.decode64(zip_file)
 		end
-
 	end
 	end
 end

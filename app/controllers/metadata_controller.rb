@@ -7,7 +7,7 @@ class MetadataController < ApplicationController
 
     before_action :require_sign_in!
 
-    protect_from_forgery :except => [:list, :read, :prepare, :edit, :crud, :retrieve]
+    protect_from_forgery :except => [:list, :read, :prepare, :edit, :crud, :retrieve, :deploy, :deploy_status]
 
     Full_name_index = 4
     
@@ -15,6 +15,7 @@ class MetadataController < ApplicationController
     # Responses select options of metadata types
     #----------------------------------
     def show
+        @gradtest = ["a","b","check"]
         begin
             metadata_types = get_metadata_types(sforce_session)
             html_content = render_to_string :partial => 'metadatalist', :locals => {:data_source => metadata_types}
@@ -174,6 +175,14 @@ class MetadataController < ApplicationController
           :filename => result[:id] + '.zip',
           :status => 200
         )        
+    end
+
+    def deploy
+        render :json => {:id => "ok"}, :status => 200
+    end
+
+    def deploy_status
+        render :json => {:message => "ok"}, :status => 200
     end
 
     def extract_full_names(selected_records)

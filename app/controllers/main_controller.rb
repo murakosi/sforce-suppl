@@ -4,6 +4,7 @@ class MainController < ApplicationController
   protect_from_forgery except: [:switch, :check]
 
   def index
+    @deploy_metadata_options = Metadata::Deployer.deploy_options
   end
 
   def switch

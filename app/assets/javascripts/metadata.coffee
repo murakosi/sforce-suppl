@@ -137,6 +137,31 @@ coordinates = ->
     displayError($.parseJSON(response))
 
   #------------------------------------------------
+  # deploy
+  #------------------------------------------------
+  $("#metadataArea #deployButton").on "click", (e) ->
+    e.preventDefault()
+    deploy_options = {}
+    $("#metadataArea #deployOptions input[type=checkbox]").each ->
+      key = $(this).val()
+      value = $(this).prop("checked")
+      deploy_options[key] = value
+      console.log(deploy_options)
+      
+    val = {options: deploy_options}
+    action = $("#metadataArea #deployForm").attr('action')
+    method = $("#metadataArea #deployForm").attr('method')
+    options = $.getAjaxOptions(action, method, val, defaultDataType)
+    callbacks = $.getAjaxCallbacks(checkDeployStatus, displayError, null)
+    $.executeAjax(options, callbacks)
+
+  checkDeployStatus = (id) ->
+    alert(id.id)
+
+  deployDone = (url) ->
+    hideMessageArea()
+
+  #------------------------------------------------
   # edit/update
   #------------------------------------------------
   $("#updateButton").on "click", (e) ->

@@ -63,6 +63,7 @@
 			<li class="noselect" id="list"><a href="#list-tab">List</a></li>
 			<li class="noselect" id="edit"><a href="#edit-tab">Edit</a></li>
 			<li class="noselect" id="create"><a href="#create-tab">Create</a></li>
+			<li class="noselect" id="deploy"><a href="#deploy-tab">Deploy</a></li>
 		</ul>
 
 		<div id="list-tab" class="resultTab">
@@ -98,6 +99,24 @@
 				<input type="button" value="Clear" id="clearGrid" class="btn btn-info" />
 			</div>
 			<div id="createGrid" class="resultGrid"></div>
+		</div>
+
+		<div id="deploy-tab" class="resultTab">
+			<div id="createGrid" class="inButtonArea">
+				<%= form_tag metadata_deploy_path(), :id => "deployForm", :method => :post, :class => "crudForm" do %>
+					<div id="createGrid" class="resultGrid">
+						<%= button_tag "Deploy", :id => "deployButton", :class => "btn btn-warning ex-small-btn" %>
+					</div>
+					<div style="font-size: 9pt; font-family:Arial;" id="deployOptions">
+						   <% @deploy_metadata_options.each do |k, v| %>
+						    <label>
+						      <%= check_box_tag k, k,v,id:k %>
+						      <%= k %>
+						    </label><br>
+						    <% end %>
+					</div>
+				<% end %>
+			</div>			
 		</div>
 
 	</div>
