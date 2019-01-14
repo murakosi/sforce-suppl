@@ -19,8 +19,8 @@ module Metadata
 		def start_retrieve(sforce_session, metadata_type, metadata)
 			@status = nil
 			@retrieve_result = nil
-			@service = Service::MetadataClientService.call(sforce_session)
-			response = @service.retrieve(metadata_type, metadata)
+			@client = Service::MetadataClientService.call(sforce_session)
+			response = @client.retrieve(metadata_type, metadata)
 			@id = response[:id]
 			@metadata_type = metadata_type
 		end
@@ -40,7 +40,7 @@ module Metadata
 		end
 
 		def check_status
-			response = @service.retrieve_status(@id, false)
+			response = @client.retrieve_status(@id, false)
 			@status = response[:status]
 			response
 		end
@@ -62,7 +62,7 @@ module Metadata
 		end
 
 		def succeeded_result
-			response = @service.retrieve_status(@id, true)
+			response = @client.retrieve_status(@id, true)
 			{
 				:zip_file => decode(response[:zip_file]),
 				:id => @metadata_type
@@ -70,7 +70,7 @@ module Metadata
 		end
 
 		def failed_result
-			response = @service.retrieve_status(@id, false)
+			response = @client.retrieve_status(@id, false)
 			response[:error_message]
 		end
 
