@@ -112,11 +112,15 @@
 						    <label>
 						      <%= check_box_tag k, k,v,id:k %>
 						      <%= k %>
-						    </label><br>
+						    </label>
 						    <% end %>
 					</div>
 				<% end %>
-			</div>			
+			</div>		
+			<div id="deployResult" style="border: 1px solid lightgray;">
+				<div style="display:none;"><img src="/assets/jstree/default/throbber.gif"/></div>
+				<span>Deploying....</span>
+			</div>	
 		</div>
 
 	</div>
