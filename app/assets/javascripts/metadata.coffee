@@ -142,13 +142,13 @@ coordinates = ->
   $("#metadataArea #deployButton").on "click", (e) ->
     e.preventDefault()
     deploy_options = {}
+
     $("#metadataArea #deployOptions input[type=checkbox]").each ->
       key = $(this).val()
       value = $(this).prop("checked")
       deploy_options[key] = value
-      console.log(deploy_options)
-      
-    val = {options: deploy_options}
+    
+    val = {options: deploy_options, zipFile: btoa($('#zipFile')[0].files[0])}
     action = $("#metadataArea #deployForm").attr('action')
     method = $("#metadataArea #deployForm").attr('method')
     options = $.getAjaxOptions(action, method, val, defaultDataType)
