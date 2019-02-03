@@ -108,7 +108,7 @@
 						<%= button_tag "Deploy", :id => "deployButton", :class => "btn btn-warning ex-small-btn" %>
 					</div>
 					<div style="font-size: 9pt; font-family:Arial;" id="deployOptions">
-							<label for="image">画像をアップロード</label><%= file_field_tag :zipFile, :class => "btn ex-small-btn"  %>
+							<label for="image">Zip File</label><%= file_field_tag :zipFile, :class => "btn ex-small-btn"  %>
 						   	<% @deploy_metadata_options.each do |k, v| %>
 						    	<label>
 						      		<%= check_box_tag k, k,v,id:k %>
