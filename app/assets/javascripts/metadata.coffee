@@ -8,7 +8,9 @@ coordinates = ->
   fieldNames = null
   fieldTypes = null
   selectedCellOnCreateGrid = null
-  del = false
+  deployId = null
+  checkInterval = 2000
+  checkCount = 0;
 
   disableButtons = () ->
     $("#createButton").prop("disabled", true)
@@ -140,25 +142,72 @@ coordinates = ->
   # deploy
   #------------------------------------------------
   $("#metadataArea #deployButton").on "click", (e) ->
+    if deployId
+      return false
+
     e.preventDefault()
+    
+    file = $('#zipFile')[0].files[0]
+    getBase64(file)
+
+
+  getBase64 = (file) ->
+    reader = new FileReader()
+    reader.readAsDataURL(file)
+    reader.onload = () ->
+     uploadFile(reader.result.replace(new RegExp("data:.*/.*;base64,","g"), ""))
+    #return reader.result
+
+  uploadFile = (file) ->
+
+    checkCount = 0
     deploy_options = {}
 
     $("#metadataArea #deployOptions input[type=checkbox]").each ->
       key = $(this).val()
       value = $(this).prop("checked")
       deploy_options[key] = value
-    
-    val = {options: deploy_options, zipFile: btoa($('#zipFile')[0].files[0])}
+
+    val = {options: JSON.stringify(deploy_options), zip_file: file}
     action = $("#metadataArea #deployForm").attr('action')
     method = $("#metadataArea #deployForm").attr('method')
-    options = $.getAjaxOptions(action, method, val, defaultDataType)
+    options = $.getAjaxOptions(action, method, val, defaultDataType, "file")
+    options = {
+                action: action,
+                method: method,
+                data: val,
+                datatype: "",
+                #processData: false,
+                contentType: "multipart/form-data",
+                parseJSON: false
+            }
     callbacks = $.getAjaxCallbacks(checkDeployStatus, displayError, null)
     $.executeAjax(options, callbacks)
 
-  checkDeployStatus = (id) ->
-    alert(id.id)
+  checkDeployStatus = (json) ->
+    if json.done
+      deployDone(json)
+    else
+      checkCount++
+      sleep(checkInterval * checkCount);
+      deployId = json.id
+      val = {id: deployId}
+      action = "metadata/deploy_check"
+      method = "post"
+      options = $.getAjaxOptions(action, method, val, defaultDataType)
+      callbacks = $.getAjaxCallbacks(checkDeployStatus, displayError, null)
+      $.executeAjax(options, callbacks)
 
-  deployDone = (url) ->
+  sleep = (waitMsec) ->
+    startMsec = new Date()
+    #指定ミリ秒間だけループさせる（CPUは常にビジー状態）
+    while new Date - startMsec < waitMsec
+      return
+
+  deployDone = (json) ->
+    console.log(json.results)
+    deployId = null
+    createGrid("#metadataArea #deployResultGrid", json.results)
     hideMessageArea()
 
   #------------------------------------------------
@@ -366,15 +415,9 @@ coordinates = ->
       json.column_options
 
   getRowHeaderOption = (elementId, json) ->
-    if elementId != "#metadataArea #securityGrid"
-      return true
-
     return json.profiles
 
   getRowHeaderWidth = (elementId, json) ->
-    if elementId != "#metadataArea #securityGrid"
-      return null
-
     if !json?
       return null
       
@@ -476,6 +519,7 @@ coordinates = ->
 
   createGrid("#metadataArea #grid")
   createGrid("#metadataArea #createGrid")
+  createGrid("#metadataArea #deployResultGrid")
 
   $('#metadataArea #editTree').jstree({
     

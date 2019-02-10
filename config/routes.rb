@@ -25,6 +25,7 @@ Rails.application.routes.draw do
   post    'metadata/crud',          to: 'metadata#crud'
   post    'metadata/retrieve',      to: 'metadata#retrieve'
   post    'metadata/deploy',        to: 'metadata#deploy'
+  post    'metadata/deploy_check',  to: 'metadata#check_deploy_status'
 
   get     'soql',                   to: 'soqlexecuter#show'
   post    'soql',                   to: 'soqlexecuter#execute'

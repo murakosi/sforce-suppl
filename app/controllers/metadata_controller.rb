@@ -7,7 +7,7 @@ class MetadataController < ApplicationController
 
     before_action :require_sign_in!
 
-    protect_from_forgery :except => [:list, :read, :prepare, :edit, :crud, :retrieve, :deploy, :deploy_status]
+    protect_from_forgery :except => [:list, :read, :prepare, :edit, :crud, :retrieve, :deploy, :check_deploy_status]
 
     Full_name_index = 4
     
@@ -178,11 +178,28 @@ class MetadataController < ApplicationController
     end
 
     def deploy
-        render :json => {:id => "ok"}, :status => 200
+        zip_file = params[:zip_file]
+        options = JSON.parse(params[:options])
+
+        begin
+            async_result = Metadata::Deployer.deploy(sforce_session, zip_file, options)
+            render :json => {:id => async_result[:id], :done => async_result[:done]}, :status => 200
+        rescue StandardError => ex
+            print_error(ex)
+            render :json => {:error => ex.message}, :status => 400
+        end
     end
 
-    def deploy_status
-        render :json => {:message => "ok"}, :status => 200
+    def check_deploy_status
+        id = params[:id]
+
+        begin
+            deploy_result = Metadata::Deployer.check_deploy_status(sforce_session, id, true)
+            render :json => {:id => deploy_result[:id], :done => deploy_result[:done], :results => deploy_result}, :status => 200
+        rescue StandardError => ex
+            print_error(ex)
+            render :json => {:error => ex.message}, :status => 400
+        end
     end
 
     def extract_full_names(selected_records)

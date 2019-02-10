@@ -106,9 +106,10 @@
 				<%= form_tag metadata_deploy_path(), :id => "deployForm", :method => :post, :multipart => true, :class => "crudForm" do %>
 					<div id="createGrid" class="resultGrid">
 						<%= button_tag "Deploy", :id => "deployButton", :class => "btn btn-warning ex-small-btn" %>
+						<%= file_field_tag :zipFile, :class => "btn ex-small-btn"  %>
 					</div>
 					<div style="font-size: 9pt; font-family:Arial;" id="deployOptions">
-							<label for="image">Zip File</label><%= file_field_tag :zipFile, :class => "btn ex-small-btn"  %>
+							
 						   	<% @deploy_metadata_options.each do |k, v| %>
 						    	<label>
 						      		<%= check_box_tag k, k,v,id:k %>
@@ -118,7 +119,7 @@
 					</div>
 				<% end %>
 			</div>		
-			<div id="deployResult" style="border: 1px solid lightgray;">
+			<div id="deployResultGrid">
 				<div style="display:none;"><img src="/assets/jstree/default/throbber.gif"/></div>
 				<!--<span>Deploying....</span>-->
 			</div>	

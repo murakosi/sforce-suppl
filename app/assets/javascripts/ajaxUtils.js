@@ -8,28 +8,37 @@
         ajaxOptions: function (options) {
             return $.extend({
                 action: null,
-                method: "GET",
+                method: null,
                 data: null,
                 datatype: "",
-                contentType: "application/json",
+                processData: true,
+                contentType: null,
                 parseJSON: false
             }, options);
         },
 
         getAjaxOptions: function (action, method, data, datatype, contentType) {
-            var ajaxContentType = null;
+            var ajaxContentType = contentType;
+            var ajaxProcessData = true;
+            var ajaxData = data;
+
             if (contentType == null || contentType == undefined) {
                 ajaxContentType = "application/json";
-            } else {
-                ajaxContentType = contentType;
+                ajaxData = JSON.stringify(data);
+            } else if(contentType == "file"){
+                ajaxContentType = "multipart/form-data";
+                //ajaxContentType = false;
+                ajaxData = JSON.stringify(data);
+                ajaxProcessData = false;
             }
 
             return $.ajaxOptions({
                 action: action,
                 method: method,
-                data: data,
+                data: ajaxData,
                 datatype: datatype,
-                contentType: ajaxContentType,
+                processData: ajaxProcessData,
+                contentType: ajaxContentType
             });
         },
 
@@ -77,8 +86,9 @@
                 url: options.action,
                 type: options.method,
                 dataType: options.datatype,
+                processData: options.processData,
                 contentType: options.contentType,
-                data: JSON.stringify(options.data),
+                data: options.data,
                 cache: false
             });
 

@@ -2,9 +2,13 @@ module Metadata
 	class Deployer
 	class << self
 
-		def deploy(zip_file, options)
+		def deploy(sforce_session, zip_file, options)
+			Service::MetadataClientService.call(sforce_session).deploy(zip_file, options)
 		end
-		#checkDeployStatus(ID id, includeDetails boolean);
+
+		def check_deploy_status(sforce_session, id, include_details)
+			Service::MetadataClientService.call(sforce_session).check_deploy_status(id, include_details)
+		end
 
 		def deploy_options
 			{
@@ -14,10 +18,6 @@ module Metadata
 				:rollbackOnError => false,
 				:singlePackage => false
 			}
-		end
-
-		def check_deploy_status(id, include_details)
-
 		end
 	end
 	end
