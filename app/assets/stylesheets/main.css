@@ -135,7 +135,7 @@
     margin: 0 auto;   
 }
 
-#tree, #editTree{
+#tree, .treeView{
     font-size:12px;
     font-family: Verdana;
     height:500px;

@@ -2,6 +2,7 @@ require "cgi"
 
 module Generator
 	module TreeNodeGenerator
+        include Utils::FormatUtils
 
         def generate_parent_nodes(api_crud_info, metadata_list)
             if api_crud_info[:api_readable]
@@ -159,6 +160,10 @@ module Generator
         end
 
         def picklist_info(field)
+            if @type_info.nil?
+                return {}
+            end
+            
             picklist = @type_info[field]
             if picklist.nil?
                 {}

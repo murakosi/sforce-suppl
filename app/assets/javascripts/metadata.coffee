@@ -196,7 +196,9 @@ coordinates = ->
   deployDone = (json) ->
     console.log(json.result)
     deployId = null
-    createGrid("#metadataArea #deployResultGrid", json.result)
+    #createGrid("#metadataArea #deployResultGrid", json.result)
+    $('#metadataArea #deployResultGrid').jstree(true).settings.core.data = json.result
+    $('#metadataArea #deployResultGrid').jstree(true).refresh()
     hideMessageArea()
 
   #------------------------------------------------
@@ -331,6 +333,7 @@ coordinates = ->
   # message
   #------------------------------------------------
   displayError = (json) ->
+    deployId = null
     $("#metadataArea #messageArea").html(json.error)
     $("#metadataArea #messageArea").show()
   
@@ -523,6 +526,16 @@ coordinates = ->
       "themes": {"icons":false}
     },
     "plugins": ["dropdown"]
+  })
+
+  $('#metadataArea #deployResultGrid').jstree({
+    
+    'core' : {
+      'data' : [],
+      "multiple": false,
+      "animation":false,
+      "themes": {"icons":false}
+    }
   })
 
   #$("#metadataArea #tabArea").tabs({ active: 2 });
