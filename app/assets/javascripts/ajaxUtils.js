@@ -25,11 +25,6 @@
             if (contentType == null || contentType == undefined) {
                 ajaxContentType = "application/json";
                 ajaxData = JSON.stringify(data);
-            } else if(contentType == "file"){
-                ajaxContentType = "multipart/form-data";
-                //ajaxContentType = false;
-                ajaxData = JSON.stringify(data);
-                ajaxProcessData = false;
             }
 
             return $.ajaxOptions({

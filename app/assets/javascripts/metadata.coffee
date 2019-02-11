@@ -156,7 +156,6 @@ coordinates = ->
     reader.readAsDataURL(file)
     reader.onload = () ->
      uploadFile(reader.result.replace(new RegExp("data:.*/.*;base64,","g"), ""))
-    #return reader.result
 
   uploadFile = (file) ->
 
@@ -171,16 +170,7 @@ coordinates = ->
     val = {options: JSON.stringify(deploy_options), zip_file: file}
     action = $("#metadataArea #deployForm").attr('action')
     method = $("#metadataArea #deployForm").attr('method')
-    options = $.getAjaxOptions(action, method, val, defaultDataType, "file")
-    options = {
-                action: action,
-                method: method,
-                data: val,
-                datatype: "",
-                #processData: false,
-                contentType: "multipart/form-data",
-                parseJSON: false
-            }
+    options = $.getAjaxOptions(action, method, val, defaultDataType)
     callbacks = $.getAjaxCallbacks(checkDeployStatus, displayError, null)
     $.executeAjax(options, callbacks)
 
