@@ -195,7 +195,7 @@ class MetadataController < ApplicationController
 
         begin
             deploy_result = Metadata::Deployer.check_deploy_status(sforce_session, id, true)
-            render :json => {:id => deploy_result[:id], :done => deploy_result[:done], :results => deploy_result}, :status => 200
+            render :json => {:id => deploy_result[:id], :done => deploy_result[:done], :result => deploy_result[:result], :details => deploy_result[:details]}, :status => 200
         rescue StandardError => ex
             print_error(ex)
             render :json => {:error => ex.message}, :status => 400

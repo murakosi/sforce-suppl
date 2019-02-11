@@ -200,14 +200,13 @@ coordinates = ->
 
   sleep = (waitMsec) ->
     startMsec = new Date()
-    #指定ミリ秒間だけループさせる（CPUは常にビジー状態）
     while new Date - startMsec < waitMsec
       return
 
   deployDone = (json) ->
-    console.log(json.results)
+    console.log(json.result)
     deployId = null
-    createGrid("#metadataArea #deployResultGrid", json.results)
+    createGrid("#metadataArea #deployResultGrid", json.result)
     hideMessageArea()
 
   #------------------------------------------------
@@ -397,28 +396,33 @@ coordinates = ->
     grids[elementId] = new Handsontable(hotElement, hotSettings)
 
   getColumns = (json) ->
-    if !json?
+    if !json
       null
     else
       json.columns
 
   getRows = (json) ->
-    if !json?
+    if !json
       null
     else
       json.rows
 
   getColumnsOption = (json) ->
-    if !json?
+    if !json
       [[]]
-    else
+    else if json.column_options
       json.column_options
+    else 
+      null
 
   getRowHeaderOption = (elementId, json) ->
-    return json.profiles
+    if json && json.profiles
+      json.profiles
+    else
+      null
 
   getRowHeaderWidth = (elementId, json) ->
-    if !json?
+    if !json || !json.profiles
       return null
       
     widths = []
@@ -427,8 +431,6 @@ coordinates = ->
     Math.max.apply(null, widths)
 
   getTextWidth = (text, font) ->
-    # if given, use cached canvas for better performance
-    # else, create new canvas
     canvas = getTextWidth.canvas || (getTextWidth.canvas = document.createElement("canvas"));
     context = canvas.getContext("2d");
     context.font = font;
