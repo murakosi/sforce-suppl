@@ -16,7 +16,7 @@ module Metadata
 				:id => deploy_result[:id],
 				:done => deploy_result[:done],
 				#:result => {:columns => result.keys.map{|key| key.to_s}, :rows => [result.values.map{|val| val.to_s}], :column_options => column_options},
-				:result => parse_read_result(deploy_result, "#")
+				:result => generate_nodes(deploy_result, "#")
 				#:details => deploy_result[:details]				
 			}			
 

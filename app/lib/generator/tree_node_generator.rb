@@ -38,6 +38,13 @@ module Generator
         	parse_read_result(read_result, full_name)
         end
 
+        def generate_nodes(hashes, parent)
+            @full_name = "full_name"
+            @path_full_name = false
+            @type_info = {}
+            parse_read_result(read_result, parent)
+        end
+
         def tree_type_info(type_fields)
             types = {}
             enums = Metadata::EnumProvider.enums
@@ -159,11 +166,7 @@ module Generator
             split_path.map{|str| str.gsub(/[\[[0-9]\]]/,"").camelize(:lower)}.join(".")
         end
 
-        def picklist_info(field)
-            if @type_info.nil?
-                return {}
-            end
-            
+        def picklist_info(field)            
             picklist = @type_info[field]
             if picklist.nil?
                 {}
