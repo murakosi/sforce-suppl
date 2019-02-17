@@ -148,7 +148,13 @@ coordinates = ->
     e.preventDefault()
     
     file = $('#zipFile')[0].files[0]
-    getBase64(file)
+
+    if file instanceof Blob
+      $('#metadataArea #deployResultGrid').jstree(true).settings.core.data = null
+      $('#metadataArea #deployResultGrid').jstree(true).refresh()
+      getBase64(file)
+    else
+      displayError( {error: "Select file to deploy"} )
 
 
   getBase64 = (file) ->
