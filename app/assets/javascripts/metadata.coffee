@@ -184,9 +184,9 @@ coordinates = ->
     if json.done
       deployDone(json)
     else
-      checkCount++
-      sleep(checkInterval * checkCount);
       deployId = json.id
+      checkCount++
+      sleep(checkInterval * checkCount);      
       val = {id: deployId}
       action = "metadata/deploy_check"
       method = "post"
