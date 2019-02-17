@@ -520,7 +520,6 @@ coordinates = ->
 
   createGrid("#metadataArea #grid")
   createGrid("#metadataArea #createGrid")
-  createGrid("#metadataArea #deployResultGrid")
 
   $('#metadataArea #editTree').jstree({
     
