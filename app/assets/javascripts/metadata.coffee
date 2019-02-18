@@ -12,6 +12,14 @@ coordinates = ->
   checkInterval = 2000
   checkCount = 0;
 
+  showProgress = () ->
+    #$("#progress-line").addClass("progress-line")
+    #$("#progress").css("visibility","visible")
+
+  hideProgress = () ->
+    #$("#progress-line").removeClass("progress-line")
+    #$("#progress").css("visibility","hidden")
+
   disableButtons = () ->
     $("#createButton").prop("disabled", true)
     $("#addRow").prop("disabled", true)
@@ -43,6 +51,7 @@ coordinates = ->
     listMetadate()
 
   listMetadate = () ->
+    showProgress()
     hideMessageArea()
     clearResults()
     val = {selected_directory: getSelectedMetadata()}
@@ -73,6 +82,7 @@ coordinates = ->
     displayError(json)
 
   processListSuccessResult = (json) ->
+    hideProgress()
     hideMessageArea()
     refreshTree(json.tree)
     changeButtonStyles(json.crud_info)
@@ -492,7 +502,6 @@ coordinates = ->
       Handsontable.TextCell.renderer(instance, td, row, col, prop, value, cellProperties);
       return td;
     
-    #valueArray = (value + '').split(splitter)
     valueArray = $.map((value + '').split(splitter), $.trim)
     newValue = []
     index = 0

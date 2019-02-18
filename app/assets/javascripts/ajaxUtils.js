@@ -71,11 +71,24 @@
             }
         },
 
+
+
         executeAjax: function (options, callbacks, raw = false) {
+            function showProgress() {
+                $("#progress-line").addClass("progress-line");
+                $("#progress").css("visibility","visible");
+            };
+
+            function hideProgress() {
+                $("#progress-line").removeClass("progress-line");
+                $("#progress").css("visibility","hidden");            
+            };
 
             if (jqXHR) {
                 return;
             }
+
+            showProgress();
 
             jqXHR = $.ajax({
                 url: options.action,
@@ -110,9 +123,11 @@
             jqXHR.always(function (res1, stat, res2) {
                 jqXHR = null;
                 console.log({ always: stat, res1: res1, res2: res2 });
+                hideProgress();
                 return callbacks.alwaysCallback(callbacks.alwaysCallbackParams)
             });
         }
+
     });
 })(jQuery, this);
 
