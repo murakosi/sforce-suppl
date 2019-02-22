@@ -12,14 +12,6 @@ coordinates = ->
   checkInterval = 2000
   checkCount = 0;
 
-  showProgress = () ->
-    #$("#progress-line").addClass("progress-line")
-    #$("#progress").css("visibility","visible")
-
-  hideProgress = () ->
-    #$("#progress-line").removeClass("progress-line")
-    #$("#progress").css("visibility","hidden")
-
   disableButtons = () ->
     $("#createButton").prop("disabled", true)
     $("#addRow").prop("disabled", true)
@@ -51,7 +43,6 @@ coordinates = ->
     listMetadate()
 
   listMetadate = () ->
-    showProgress()
     hideMessageArea()
     clearResults()
     val = {selected_directory: getSelectedMetadata()}
@@ -82,7 +73,6 @@ coordinates = ->
     displayError(json)
 
   processListSuccessResult = (json) ->
-    hideProgress()
     hideMessageArea()
     refreshTree(json.tree)
     changeButtonStyles(json.crud_info)
