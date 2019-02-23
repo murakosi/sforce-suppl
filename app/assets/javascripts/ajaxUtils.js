@@ -13,11 +13,12 @@
                 datatype: "",
                 processData: true,
                 contentType: null,
-                parseJSON: false
+                showProgress: true
+                //parseJSON: false
             }, options);
         },
 
-        getAjaxOptions: function (action, method, data, datatype, contentType) {
+        getAjaxOptions: function (action, method, data, datatype, contentType, showProgress = true) {
             var ajaxContentType = contentType;
             var ajaxProcessData = true;
             var ajaxData = data;
@@ -33,7 +34,8 @@
                 data: ajaxData,
                 datatype: datatype,
                 processData: ajaxProcessData,
-                contentType: ajaxContentType
+                contentType: ajaxContentType,
+                showProgress: showProgress
             });
         },
 
@@ -88,7 +90,9 @@
                 return;
             }
 
-            showProgress();
+            if(options.showProgress){
+                showProgress();
+            }
 
             jqXHR = $.ajax({
                 url: options.action,
@@ -123,7 +127,9 @@
             jqXHR.always(function (res1, stat, res2) {
                 jqXHR = null;
                 console.log({ always: stat, res1: res1, res2: res2 });
-                hideProgress();
+                if(options.showProgress){
+                    hideProgress();
+                }
                 return callbacks.alwaysCallback(callbacks.alwaysCallbackParams)
             });
         }

@@ -5,6 +5,7 @@ coordinates = ->
   grids = {}
   jqXHR = null
   defaultDataType = ""
+  defaultContentType = null
 
   getAjaxOptions = (action, method, data, datatype) ->
     {
@@ -37,8 +38,9 @@ coordinates = ->
     val = {soql: $('#soqlArea #input_soql').val()}
     action = $('#soqlArea .execute-form').attr('action')
     method = $('#soqlArea .execute-form').attr('method')
-    options = getAjaxOptions(action, method, val, defaultDataType)
-    executeAjax(options, processSuccessResult, displayError)
+    options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
+    callbacks = $.getAjaxCallbacks(processSuccessResult, displayError, null)
+    $.executeAjax(options, callbacks)
   
   processSuccessResult = (json) ->
     $("#soqlArea #soql" + selectedTabId).html(getExecutedSoql(json))
@@ -86,35 +88,6 @@ coordinates = ->
     newTabIndex = $("#soqlArea #tabArea ul li").length - 1
     selectedTabId = newTabIndex
     $("#soqlArea #tabArea").tabs({ active: newTabIndex });
-    
-  #------------------------------------------------
-  # Execute ajax
-  #------------------------------------------------
-  executeAjax = (options, doneCallback, errorCallback, params = null) ->
-
-    if jqXHR
-      return
-
-    jqXHR = $.ajax({
-      url: options.action
-      type: options.method
-      data: options.data
-      dataType: options.datatype
-      cache: false
-    })
-
-    jqXHR.done (data, stat, xhr) ->
-      jqXHR = null
-      hideMessageArea()
-      doneCallback($.parseJSON(xhr.responseText), params)
-
-    jqXHR.fail (xhr, stat, err) ->
-      jqXHR = null
-      console.log { fail: stat, error: err, xhr: xhr }
-      errorCallback($.parseJSON(xhr.responseText))
-
-    jqXHR.always (res1, stat, res2) ->
-      jqXHR = null
       
   #------------------------------------------------
   # Create grid

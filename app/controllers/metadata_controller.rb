@@ -15,7 +15,6 @@ class MetadataController < ApplicationController
     # Responses select options of metadata types
     #----------------------------------
     def show
-        @gradtest = ["a","b","check"]
         begin
             metadata_types = get_metadata_types(sforce_session)
             html_content = render_to_string :partial => 'metadatalist', :locals => {:data_source => metadata_types}
@@ -53,7 +52,6 @@ class MetadataController < ApplicationController
         parent_tree_nodes = format_parent_tree_nodes(crud_info, formatted_list)            
         clear_session(metadata_type, formatted_field_types)
 
-        #list_response_json(metadata_type, formatted_list, parent_tree_nodes, field_types, crud_info)
         list_response_json(metadata_type, formatted_list, parent_tree_nodes, formatted_field_types, crud_info)
     end
 

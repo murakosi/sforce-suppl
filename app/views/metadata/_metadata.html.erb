@@ -17,22 +17,13 @@
     font-family:Arial;
 }
 
-.rawResult{
-	border: 1px solid lightgray;
-    width: inherit;
-    height: 500px;
-    overflow: auto;
-    white-space: pre-wrap;
-    padding: 5px;
-}
-
 .crudForm{
 	float:left;
 	margin-right:5px;
 }
 
-#securityGrid table.htCore > tbody th{
-  text-align: left;
+#deployOptions{
+	font-size: 9pt; font-family:Arial;
 }
 
 </style>
@@ -108,7 +99,7 @@
 						<%= button_tag "Deploy", :id => "deployButton", :class => "btn btn-warning ex-small-btn" %>
 						<%= file_field_tag :zipFile, :class => "btn ex-small-btn"  %>
 					</div>
-					<div style="font-size: 9pt; font-family:Arial;" id="deployOptions">
+					<div id="deployOptions">
 							
 						   	<% @deploy_metadata_options.each do |k, v| %>
 						    	<label>
@@ -119,10 +110,7 @@
 					</div>
 				<% end %>
 			</div>		
-			<div id="deployResultGrid" class="treeView">
-				<!--<div style="display:none;"><img src="/assets/jstree/default/throbber.gif"/></div>-->
-				<!--<span>Deploying....</span>-->
-			</div>	
+			<div id="deployResultGrid" class="treeView"></div>	
 		</div>
 
 	</div>

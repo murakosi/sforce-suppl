@@ -16,14 +16,15 @@
             }, options);
         },
 
-        getAjaxDownloadOptions: function (url, method, data, successCallback, failCallback, alwaysCallback) {
+        getAjaxDownloadOptions: function (url, method, data, successCallback, failCallback, alwaysCallback, showProgress = true) {
             return $.ajaxDownloadOptions({
                 url: url,
                 method: method,
                 data: data,
                 successCallback: successCallback,
                 failCallback: failCallback,
-                alwaysCallback: alwaysCallback
+                alwaysCallback: alwaysCallback,
+                showProgress: showProgress
             });
         },
 
@@ -33,7 +34,9 @@
                 return false;
             }
 
-            settings = options;
+            if(options.showProgress){
+                showProgress();
+            }
 
             checkDownloadServiceAvailable();
 
@@ -54,6 +57,9 @@
 
                 task.fail(function (xhr, stat, err) {
                     task = null;
+                    if(options.showProgress){
+                        hideProgress();
+                    }
                     console.log("Ajax download not available");
                 });
 
@@ -63,26 +69,40 @@
             }
 
             function executeDownload() {
-                task = $.fileDownload(settings.url, {
-                    httpMethod: settings.method,
-                    data: settings.data
+ 
+                task = $.fileDownload(options.url, {
+                    httpMethod: options.method,
+                    data: options.data
                 });
 
                 task.done(function (url) {
                     task = null;
-                    return settings.successCallback(url);
+                    return options.successCallback(url);
                 });
 
                 task.fail(function (response, url, error) {
                     task = null;
-                    return settings.failCallback(response, url, error);
+                    return options.failCallback(response, url, error);
                 });
 
                 task.always(function () {
                     task = null;
-                    return settings.alwaysCallback();
+                    if(options.showProgress){
+                        hideProgress();
+                    }
+                    return options.alwaysCallback();
                 });
             }
+
+            function showProgress() {
+                $("#progress-line").addClass("progress-line");
+                $("#progress").css("visibility","visible");
+            };
+
+            function hideProgress() {
+                $("#progress-line").removeClass("progress-line");
+                $("#progress").css("visibility","hidden");            
+            };
         }
     });
 })(jQuery, this);

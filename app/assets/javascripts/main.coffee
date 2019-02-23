@@ -6,6 +6,7 @@ mains = ->
   loadedPartials = {}
   targetDiv = null
   defaultDetatype = ""
+  defaultContentType = null
   anchorObject = null
 
   getAjaxOptions = (action, method, data, datatype) ->
@@ -43,7 +44,7 @@ mains = ->
       changeDisplayDiv(selectedAnchor)      
       return
     
-    options = getAjaxOptions(action, method, null, defaultDetatype)
+    options = getAjaxOptions(action, method, null, defaultDetatype, defaultContentType, false)
 
     $.get action, (result) ->
       loadPartials(result)
@@ -107,7 +108,7 @@ mains = ->
     jqXHR.always (res1, stat, res2) ->
       jqXHR = null
 
-  options = getAjaxOptions("main", "POST", "describe", "TEXT")
+  options = getAjaxOptions("main", "POST", "describe", "TEXT", defaultContentType, false)
   executeAjax(options, displayUserId)
 
 $(document).ready(mains)

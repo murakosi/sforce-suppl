@@ -3,6 +3,7 @@ coordinates = ->
   selectedRecords = {}
   grids = {}
   defaultDataType = ""
+  defaultContentType = null
   selectedFullNames = {}
   selectedNode = null
   fieldNames = null
@@ -48,7 +49,7 @@ coordinates = ->
     val = {selected_directory: getSelectedMetadata()}
     action = $('#metadataArea .metadata-form').attr('action')
     method = $('#metadataArea .metadata-form').attr('method')
-    options = $.getAjaxOptions(action, method, val, defaultDataType)
+    options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
     callbacks = $.getAjaxCallbacks(processListSuccessResult, processListError, null)
     $.executeAjax(options, callbacks)
 
@@ -104,7 +105,7 @@ coordinates = ->
     val = {metadata_type: getSelectedMetadata(), name: node.id}
     action = $("#edit-tab").attr("action")
     method = $("#edit-tab").attr("method")
-    options = $.getAjaxOptions(action, method, val, defaultDataType)
+    options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType, false)
     callbacks = $.getAjaxCallbacks(processReadSuccess, processReadError, callback)
     $.executeAjax(options, callbacks)
 
@@ -176,7 +177,7 @@ coordinates = ->
     val = {options: JSON.stringify(deploy_options), zip_file: file}
     action = $("#metadataArea #deployForm").attr('action')
     method = $("#metadataArea #deployForm").attr('method')
-    options = $.getAjaxOptions(action, method, val, defaultDataType)
+    options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
     callbacks = $.getAjaxCallbacks(checkDeployStatus, displayError, null)
     $.executeAjax(options, callbacks)
 
@@ -190,7 +191,7 @@ coordinates = ->
       val = {id: deployId}
       action = "metadata/deploy_check"
       method = "post"
-      options = $.getAjaxOptions(action, method, val, defaultDataType)
+      options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
       callbacks = $.getAjaxCallbacks(checkDeployStatus, displayError, null)
       $.executeAjax(options, callbacks)
 
@@ -216,13 +217,11 @@ coordinates = ->
       val = {crud_type: "update", metadata_type: getSelectedMetadata(), full_names: getSelectedFullNames()}
       action = $(".crudForm").attr("action")
       method = $(".crudForm").attr("method")
-      options = $.getAjaxOptions(action, method, val, defaultDataType)
+      options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
       callbacks = $.getAjaxCallbacks(saveSuccess, displayError, null)
       $.executeAjax(options, callbacks)
 
   $("#metadataArea #editTree").on 'select_node.jstree', (e, data) ->
-    #fullName = data.node.li_attr.full_name
-    #selectedFullNames[fullName] = fullName
     selectedNode = data.node
 
   $("#metadataArea #editTree").on 'rename_node.jstree', (e, data) ->
@@ -240,7 +239,7 @@ coordinates = ->
           }
     action = $("#metadataArea #editTree").attr("action")
     method = $("#metadataArea #editTree").attr("method")
-    options = $.getAjaxOptions(action, method, val, defaultDataType)
+    options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType, false)
     callbacks = $.getAjaxCallbacks(editComplete, undoEdit, null)
     $.executeAjax(options, callbacks)
 
@@ -282,7 +281,7 @@ coordinates = ->
           }
     action = $(".crudForm").attr("action")
     method = $(".crudForm").attr("method")
-    options = $.getAjaxOptions(action, method, val, "json")
+    options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
     callbacks = $.getAjaxCallbacks(saveSuccess, displayError, null)
     $.executeAjax(options, callbacks)
 
@@ -322,7 +321,7 @@ coordinates = ->
       val = {crud_type: "delete", metadata_type: getSelectedMetadata(), selected_records: getSelectedRecords()}
       action = $(".crudForm").attr("action")
       method = $(".crudForm").attr("method")
-      options = $.getAjaxOptions(action, method, val, defaultDataType)
+      options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
       callbacks = $.getAjaxCallbacks(saveSuccess, displayError, null)
       $.executeAjax(options, callbacks)
 
