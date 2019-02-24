@@ -12,11 +12,12 @@ class SoqlexecuterController < ApplicationController
   end
 
   def execute
-    execute_soql(params[:soql]) if params[:soql].present?
+    execute_soql(params[:soql])
   end
 
   def execute_soql(soql)
     begin
+      #p Service::ToolingClientService.call(sforce_session).execute_anonymous("String x = 'b';system.debug(x);")
       query_result = execute_query(sforce_session, soql)
       render :json => response_json(soql, query_result), :status => 200
     rescue StandardError => ex
