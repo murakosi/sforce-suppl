@@ -39,7 +39,8 @@ module Tooling
 
             if options[:session_id] && options[:server_url]
                 @session_id = options[:session_id]
-                @server_url = options[:server_url]
+                @server_url = options[:server_url].gsub("/Soap/u/", "/Soap/s/")
+                p @server_url
             else
                 raise ArgumentError.new("Must provide session_id/server_url.")
             end
@@ -73,8 +74,9 @@ module Tooling
         end
 
         def execute_anonymous(code)
-            call_tooling_api(:execute_anonymous, {:executeAnonymousRequest => Base64.urlsafe_encode64(code)})
+            #call_tooling_api(:execute_anonymous, {:executeAnonymousRequest => { :string => Base64.urlsafe_encode64(code)} })
             #@client.call(:execute_anonymous)
+            call_tooling_api(:execute_anonymous, {})
         end
 
         def call_tooling_api(method, message_hash={})

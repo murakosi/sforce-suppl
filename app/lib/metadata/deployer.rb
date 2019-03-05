@@ -7,11 +7,15 @@ module Metadata
 		Exclude_header = %i[canceled_by canceld_by_name state_detail run_tests_enabled number_test_errors number_tests_completed number_tests_total]
 
 		def deploy(sforce_session, zip_file, options)
-			Service::MetadataClientService.call(sforce_session).deploy(zip_file, options)
+			@client = Service::MetadataClientService.call(sforce_session)
+			async_result = @client.deploy(zip_file, options)
+			@id = async_result[:id]
+			async_result
 		end
 
 		def check_deploy_status(sforce_session, id, include_details)
-			deploy_result = Service::MetadataClientService.call(sforce_session).check_deploy_status(id, include_details)
+			#deploy_result = Service::MetadataClientService.call(sforce_session).check_deploy_status(id, include_details)
+			deploy_result = @client.check_deploy_status(@id, include_details)
 			result = deploy_result.except(*Exclude_header).slice(*Key_order)
 			
 			{

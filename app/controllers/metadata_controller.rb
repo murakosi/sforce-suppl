@@ -7,7 +7,7 @@ class MetadataController < ApplicationController
 
     before_action :require_sign_in!
 
-    protect_from_forgery :except => [:list, :read, :prepare, :edit, :crud, :retrieve, :deploy, :check_deploy_status]
+    protect_from_forgery :except => [:list, :read, :prepare, :edit, :crud, :retrieve, :check_retrieve_status, :retrieve_result, :deploy, :check_deploy_status]
 
     Full_name_index = 4
     
@@ -157,6 +157,43 @@ class MetadataController < ApplicationController
         begin
             full_names = extract_full_names(selected_records)
             raise_when_type_unmached(metadata_type)
+            async_result = Metadata::Retriever.retrieve(sforce_session, metadata_type, full_names)
+            render :json => {:id => async_result[:id], :done => async_result[:done]}, :status => 200
+        rescue StandardError => ex
+            print_error(ex)
+            render :json => {:error => ex.message}, :status => 400
+        end
+    end
+    
+    def check_retrieve_status
+        status = Metadata::Retriever.retrieve_status
+        render :json => {:id => status[:id], :done => status[:done]}, :status => 200
+    end
+    
+    def retrieve_result
+        begin
+            result = Metadata::Retriever.retrieve_result
+            send_data(result[:zip_file],
+              :disposition => 'attachment',
+              :type => 'application/x-compress',
+              :filename => result[:id] + '.zip',
+              :status => 200
+            )        
+            set_download_success_cookie(response)
+        rescue StandardError => ex
+            print_error(ex)
+            respond_download_error(ex.message)
+        end
+    end
+    
+=begin
+    def retrieve
+        metadata_type = params[:selected_type]
+        selected_records = JSON.parse(params[:selected_records])
+        
+        begin
+            full_names = extract_full_names(selected_records)
+            raise_when_type_unmached(metadata_type)
             try_retrieve(metadata_type, full_names)
             set_download_success_cookie(response)
         rescue StandardError => ex
@@ -164,6 +201,7 @@ class MetadataController < ApplicationController
             respond_download_error(ex.message)
         end
     end
+=end
 
     def try_retrieve(metadata_type, full_names)
         result = Metadata::Retriever.retrieve(sforce_session, metadata_type, full_names)

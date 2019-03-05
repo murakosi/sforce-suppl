@@ -9,20 +9,20 @@ module Metadata
 		def retrieve(sforce_session, metadata_type, metadata)
 			start_retrieve(sforce_session, metadata_type, metadata)
 			
-			task = Thread.new(&execute_retrieve)
+			#task = Thread.new(&execute_retrieve)
 
-			task.join
+			#task.join
 
-			retrieve_result
+			#retrieve_result
 		end
 
 		def start_retrieve(sforce_session, metadata_type, metadata)
 			@status = nil
-			@retrieve_result = nil
 			@client = Service::MetadataClientService.call(sforce_session)
 			response = @client.retrieve(metadata_type, metadata)
 			@id = response[:id]
 			@metadata_type = metadata_type
+			{:id => response[:id], :done => false}
 		end
 
 		def execute_retrieve
@@ -39,10 +39,13 @@ module Metadata
 		    }
 		end
 
-		def check_status
+		#def check_status
+		def retrieve_status
 			response = @client.retrieve_status(@id, false)
 			@status = response[:status]
-			response
+			#response
+			
+			{:id => response[:id], :done => response[:done]}
 		end
 
 		def succeeded?

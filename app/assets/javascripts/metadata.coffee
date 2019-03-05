@@ -10,6 +10,7 @@ coordinates = ->
   fieldTypes = null
   selectedCellOnCreateGrid = null
   deployId = null
+  retrieveId = null
   checkInterval = 2000
   checkCount = 0;
 
@@ -121,10 +122,51 @@ coordinates = ->
   # retrieve
   #------------------------------------------------
   $("#metadataArea #retrieveButton").on "click", (e) ->
+    if retrieveId
+      return false
+    
     e.preventDefault()
-    options = getDownloadOptions(this)
-    $.ajaxDownload(options)
+    checkCount = 0
+    
+    selected_type = getSelectedMetadata()
+    selected_records = getSelectedRecords()
+    val = {selected_type: selected_type, selected_records: selected_records}
+    action = $("#metadataArea #retrieveForm").attr('action')
+    method = $("#metadataArea #retrieveForm").attr('method')
+    options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
+    callbacks = $.getAjaxCallbacks(checkRetrieveStatus, displayError, null)
+    $.executeAjax(options, callbacks)
+    
+    #e.preventDefault()
+    #options = getDownloadOptions(this)
+    #$.ajaxDownload(options)
+    
+  checkRetrieveStatus = (json) ->
+    if json.done
+      retrieveDone(json)
+    else
+      retrieveId = json.id
+      checkCount++
+      sleep(checkInterval * checkCount);      
+      val = {id: retrieveId}
+      action = "metadata/retrieve_check"
+      method = "post"
+      options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
+      callbacks = $.getAjaxCallbacks(checkRetrieveStatus, displayError, null)
+      $.executeAjax(options, callbacks)
 
+  sleep = (waitMsec) ->
+    startMsec = new Date()
+    while new Date - startMsec < waitMsec
+      return
+
+  retrieveDone = (json) ->
+    retrieveId = null
+    url = "metadata/retrieve_result"
+    method = "post"
+    options = $.getAjaxDownloadOptions(url, method, null, downloadDone, downloadFail, ->)
+    $.ajaxDownload(options)
+    
   getDownloadOptions = (target) ->
     url = $("#metadataArea #retrieveForm").attr('action')
     method = $("#metadataArea #retrieveForm").attr('method')
@@ -338,6 +380,7 @@ coordinates = ->
   # message
   #------------------------------------------------
   displayError = (json) ->
+    retrieveId = null
     deployId = null
     $("#metadataArea #messageArea").html(json.error)
     $("#metadataArea #messageArea").show()
