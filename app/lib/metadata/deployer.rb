@@ -13,8 +13,7 @@ module Metadata
 			async_result
 		end
 
-		def check_deploy_status(sforce_session, id, include_details)
-			#deploy_result = Service::MetadataClientService.call(sforce_session).check_deploy_status(id, include_details)
+		def check_deploy_status(include_details)
 			deploy_result = @client.check_deploy_status(@id, include_details)
 			result = deploy_result.except(*Exclude_header).slice(*Key_order)
 			

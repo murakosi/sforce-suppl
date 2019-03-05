@@ -185,33 +185,6 @@ class MetadataController < ApplicationController
             respond_download_error(ex.message)
         end
     end
-    
-=begin
-    def retrieve
-        metadata_type = params[:selected_type]
-        selected_records = JSON.parse(params[:selected_records])
-        
-        begin
-            full_names = extract_full_names(selected_records)
-            raise_when_type_unmached(metadata_type)
-            try_retrieve(metadata_type, full_names)
-            set_download_success_cookie(response)
-        rescue StandardError => ex
-            print_error(ex)
-            respond_download_error(ex.message)
-        end
-    end
-=end
-
-    def try_retrieve(metadata_type, full_names)
-        result = Metadata::Retriever.retrieve(sforce_session, metadata_type, full_names)
-        send_data(result[:zip_file],
-          :disposition => 'attachment',
-          :type => 'application/x-compress',
-          :filename => result[:id] + '.zip',
-          :status => 200
-        )        
-    end
 
     def deploy
         zip_file = params[:zip_file]
@@ -227,10 +200,9 @@ class MetadataController < ApplicationController
     end
 
     def check_deploy_status
-        id = params[:id]
 
         begin
-            deploy_result = Metadata::Deployer.check_deploy_status(sforce_session, id, true)
+            deploy_result = Metadata::Deployer.check_deploy_status(true)
             render :json => {:id => deploy_result[:id], :done => deploy_result[:done], :result => deploy_result[:result], :details => deploy_result[:details]}, :status => 200
         rescue StandardError => ex
             print_error(ex)

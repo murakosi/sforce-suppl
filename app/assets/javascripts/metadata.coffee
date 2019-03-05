@@ -137,10 +137,6 @@ coordinates = ->
     callbacks = $.getAjaxCallbacks(checkRetrieveStatus, displayError, null)
     $.executeAjax(options, callbacks)
     
-    #e.preventDefault()
-    #options = getDownloadOptions(this)
-    #$.ajaxDownload(options)
-    
   checkRetrieveStatus = (json) ->
     if json.done
       retrieveDone(json)
@@ -167,14 +163,6 @@ coordinates = ->
     options = $.getAjaxDownloadOptions(url, method, null, downloadDone, downloadFail, ->)
     $.ajaxDownload(options)
     
-  getDownloadOptions = (target) ->
-    url = $("#metadataArea #retrieveForm").attr('action')
-    method = $("#metadataArea #retrieveForm").attr('method')
-    selected_type = getSelectedMetadata()
-    selected_records = getSelectedRecords()
-    data = {selected_type: selected_type, selected_records: selected_records}
-    $.getAjaxDownloadOptions(url, method, data, downloadDone, downloadFail, ->)
-
   downloadDone = (url) ->
     hideMessageArea()
   
@@ -243,9 +231,7 @@ coordinates = ->
       return
 
   deployDone = (json) ->
-    console.log(json.result)
     deployId = null
-    #createGrid("#metadataArea #deployResultGrid", json.result)
     $('#metadataArea #deployResultGrid').jstree(true).settings.core.data = json.result
     $('#metadataArea #deployResultGrid').jstree(true).refresh()
     hideMessageArea()
