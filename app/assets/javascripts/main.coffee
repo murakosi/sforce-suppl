@@ -108,7 +108,7 @@ mains = ->
     jqXHR.always (res1, stat, res2) ->
       jqXHR = null
 
-  options = getAjaxOptions("main", "POST", "describe", "TEXT", defaultContentType, false)
+  options = getAjaxOptions("main", "POST", "", "TEXT", defaultContentType, false)
   executeAjax(options, displayUserId)
 
 $(document).ready(mains)

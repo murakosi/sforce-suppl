@@ -2,11 +2,11 @@
     background:white !important;
 }
 
-#soqlexecuterContent, #describeContent, #metadataContent {
+#soqlexecuterContent, #describeContent, #metadataContent, #toolingContent {
  display:none;   
 }
 
-.soqlexecuter #soqlexecuterContent, .describe #describeContent, .metadata #metadataContent{
+.soqlexecuter #soqlexecuterContent, .describe #describeContent, .metadata #metadataContent, .tooling #toolingContent{
  display:block;   
 }
 

@@ -1,0 +1,25 @@
+<div id="toolingArea">
+	<div id="formArea">
+		<%= form_tag tooling_path(), :method => :post, :class => "execute-form" do %>
+		<%= text_area_tag :code,"", :size => "120x5" %>
+		<br>
+		<%= submit_tag "Execute Anonymous", :class => "btn btn-primary execute-anonymous" %>
+		<% end %>
+		<p><div id="messageArea"></div></p>
+	</div>
+
+	<div id="dummyArea"></div>
+	
+	<div id="tabArea">
+		<%= button_tag "Add tab", :type => "button", :id => "add-tab", :class => "btn btn-default" %>		
+		<ul>
+			<li class="noselect"><a href="#tab1">Grid1</a>
+			<span class="ui-icon ui-icon-close ui-closable-tab"></span>
+			</li>
+		</ul>
+		<div id="tab1" class="resultTab" tabId="1">
+			<div id="soql1" class="resultSoql" tabId="1"></div>
+			<div id="grid1" class="resultGrid" tabId="1"></div>
+		</div>
+	</div>
+</div>

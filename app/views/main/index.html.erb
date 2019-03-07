@@ -13,7 +13,8 @@
               'main',			  
               'soqlexecuter', 
               'describe', 
-              'metadata' 
+              'metadata',
+              'tooling'
 %>
 <style>
 
@@ -62,10 +63,11 @@
     <div id="menuList">
       
         <ul>
-    		<li><%= link_to "Logout", logout_path, method: :delete, id: "logoutLink" %></li>
-            <li><a id="soqlexecuter" href="" class="menus" method="GET" loadTarget="#soqlexecuterContent" action="">SOQL</a></li>
-    		<li><a id="describe" href="#" class="menus" method="GET" loadTarget="#describeContent" action="describe">Describe</a></li>
-    		<li><a id="metadata" href="#" class="menus" method="GET" loadTarget="#metadataContent" action="metadata">Metadata</a></li>
+      		<li><%= link_to "Logout", logout_path, method: :delete, id: "logoutLink" %></li>
+          <li><a id="soqlexecuter" href="" class="menus" method="GET" loadTarget="#soqlexecuterContent" action="">SOQL</a></li>
+      		<li><a id="describe" href="#" class="menus" method="GET" loadTarget="#describeContent" action="describe">Describe</a></li>
+      		<li><a id="metadata" href="#" class="menus" method="GET" loadTarget="#metadataContent" action="metadata">Metadata</a></li>
+          <li><a id="tooling" href="" class="menus" method="GET" loadTarget="#toolingContent" action="">Tooling</a></li>
         </ul>
     </div>  
 
@@ -78,6 +80,7 @@
     <div id="contentsArea">
         <div id="soqlexecuterContent"><%= render "soqlexecuter/soqlexecuter" %></div>
         <div id="describeContent"><%= render "describe/describe" %></div>
-    	<div id="metadataContent"><%= render "metadata/metadata" %></div>	
+        <div id="metadataContent"><%= render "metadata/metadata" %></div>	
+        <div id="toolingContent"><%= render "tooling/tooling" %></div>
     </div>
 </div>
