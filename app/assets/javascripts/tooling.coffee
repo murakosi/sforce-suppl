@@ -24,6 +24,7 @@ coordinates = ->
       return false
 
     e.preventDefault()
+    hideMessageArea()
     executeAnonymous()
     
   executeAnonymous = () ->    

@@ -1,7 +1,7 @@
 <div id="toolingArea">
 	<div id="formArea">
 		<%= form_tag tooling_path(), :method => :post, :class => "execute-form" do %>
-		<%= text_area_tag :code,"", :size => "120x5" %>
+		<%= text_area_tag :code,"String x = 'b';system.debug(x);", :size => "120x5" %>
 		<br>
 		<%= submit_tag "Execute Anonymous", :class => "btn btn-primary execute-anonymous" %>
 		<% end %>

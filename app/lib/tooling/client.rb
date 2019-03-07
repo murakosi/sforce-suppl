@@ -75,7 +75,7 @@ module Tooling
         def execute_anonymous(code)
             #call_tooling_api(:execute_anonymous, {:executeAnonymousRequest => { :string => Base64.urlsafe_encode64(code)} })
             #@client.call(:execute_anonymous)
-            call_tooling_api(:execute_anonymous, {})
+            call_tooling_api(:execute_anonymous, {:string => code})
         end
 
         def call_tooling_api(method, message_hash={})

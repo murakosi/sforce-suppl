@@ -5,6 +5,8 @@ class ToolingController < ApplicationController
   
   protect_from_forgery :except => [:execute]
   
+  Time_format = "%Y/%m/%d %H:%M:%S"
+
   def show
   end
 
@@ -14,7 +16,8 @@ class ToolingController < ApplicationController
 
   def execute_anonymous(code)
     begin
-      p result = Service::ToolingClientService.call(sforce_session).execute_anonymous("String x = 'b';system.debug(x);")
+      p result = Service::ToolingClientService.call(sforce_session).execute_anonymous(code)
+      raise_if_error(result)
       render :json => response_json(result), :status => 200
     rescue StandardError => ex
       print_error(ex)
@@ -27,19 +30,17 @@ class ToolingController < ApplicationController
   end
 
   def anonymous_result(result)
-    "success: " + nil_or_value(result[:success]) + "<br>" +
-    "compiled: " + nil_or_value(result[:compiled]) + "<br>" +
-     nil_or_value(result[:line]) + ":" + nil_or_value(result[:column]) + "<br>" +
-     "compile problem: " + nil_or_value(result[:compile_problem]) + "<br>" +
-     "message: " + nil_or_value(result[:exception_message]) + "<br>" +
-     "trace: " + nil_or_value(result[:exception_stack_trace])
+    "@" + Time.now.strftime(Time_format) + "<br>"
+    "success: " + result[:success].to_s + "<br>" +
+    "compiled: " + result[:compiled].to_s
   end
 
-  def nil_or_value(value)
-    if value.nil?
-      ""
-    else
-      value.to_s
+  def raise_if_error(result)
+    if result[:exception_message].present?
+      msg = result[:exception_message] + "<br>" + result[:exception_stack_trace]
+      raise StandardError.new(msg)
+    elsif result[:compile_problem].present?
+      raise StandardError.new(result[:compile_problem])
     end
   end
 
