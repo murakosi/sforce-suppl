@@ -39,8 +39,7 @@ module Tooling
 
             if options[:session_id] && options[:server_url]
                 @session_id = options[:session_id]
-                @server_url = options[:server_url].gsub("/Soap/u/", "/Soap/s/")
-                p @server_url
+                @server_url = options[:server_url]
             else
                 raise ArgumentError.new("Must provide session_id/server_url.")
             end

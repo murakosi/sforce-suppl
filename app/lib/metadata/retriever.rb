@@ -42,7 +42,7 @@ module Metadata
 			response = @client.retrieve_status(@id, true)
 			{
 				:zip_file => decode(response[:zip_file]),
-				:id => @metadata_type
+				:metadta_type => @metadata_type
 			}
 		end
 

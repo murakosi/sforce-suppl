@@ -176,7 +176,7 @@ class MetadataController < ApplicationController
             send_data(result[:zip_file],
               :disposition => 'attachment',
               :type => 'application/x-compress',
-              :filename => result[:id] + '.zip',
+              :filename => result[:metadta_type] + '.zip',
               :status => 200
             )        
             set_download_success_cookie(response)
