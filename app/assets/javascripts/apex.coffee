@@ -1,9 +1,9 @@
-###
 coordinates = ->
   
   selectedTabId = 1
   currentTabIndex = 1
   grids = {}
+  logNames = {}
   jqXHR = null
   defaultDataType = ""
   defaultContentType = null
@@ -17,9 +17,29 @@ coordinates = ->
       executeAnonymous()
   
   #------------------------------------------------
-  # Execute SOQL
+  # CSV Download
   #------------------------------------------------
-  $('#toolingArea .execute-anonymous').on 'click', (e) ->
+  $('#apexArea #download-log').on 'click', (e) ->
+    tabId = $("#apexArea #tabArea .ui-tabs-panel:visible").attr("tabId")
+    elementId = "#apexArea #grid" + tabId
+    hotElement =grids[elementId]
+    hotElement.getPlugin('exportFile').downloadFile('csv', {
+      bom: false,
+      columnDelimiter: ',',
+      columnHeaders: true,
+      exportHiddenColumns: true,
+      exportHiddenRows: true,
+      fileExtension: 'csv',
+      filename: logNames[elementId],
+      mimeType: 'text/csv',
+      rowDelimiter: '\r\n',
+      rowHeaders: true
+    })
+  
+  #------------------------------------------------
+  # Execute Anonymous
+  #------------------------------------------------
+  $('#apexArea .execute-anonymous').on 'click', (e) ->
     if $.isAjaxBusy()
       e.preventDefault()
       return false
@@ -30,17 +50,18 @@ coordinates = ->
     
   executeAnonymous = () ->    
 
-    selectedTabId = $("#toolingArea #tabArea .ui-tabs-panel:visible").attr("tabId");
-    val = {code: $('#toolingArea #code').val()}
-    action = $('#toolingArea .execute-form').attr('action')
-    method = $('#toolingArea .execute-form').attr('method')
+    selectedTabId = $("#apexArea #tabArea .ui-tabs-panel:visible").attr("tabId")
+    val = {code: $('#apexArea #code').val()}
+    action = $('#apexArea .execute-form').attr('action')
+    method = $('#apexArea .execute-form').attr('method')
     options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
     callbacks = $.getAjaxCallbacks(processSuccessResult, displayError, null)
     $.executeAjax(options, callbacks)
   
   processSuccessResult = (json) ->
-    $("#toolingArea #soql" + selectedTabId).html(getExecuteResult(json))
-    elementId = "#toolingArea #grid" + selectedTabId
+    elementId = "#apexArea #grid" + selectedTabId
+    logNames[elementId] = json.log_name    
+    $("#apexArea #soql" + selectedTabId).html(json.log_name)    
     createGrid(elementId, json)
     
   #------------------------------------------------
@@ -48,42 +69,42 @@ coordinates = ->
   #------------------------------------------------
   $(document).on 'click', 'span', (e) ->
     e.preventDefault()
-    tabContainerDiv=$(this).closest("#toolingArea .ui-tabs").attr("id")
-    tabCount = $("#toolingArea #" + tabContainerDiv).find(".ui-closable-tab").length
+    tabContainerDiv=$(this).closest("#apexArea .ui-tabs").attr("id")
+    tabCount = $("#apexArea #" + tabContainerDiv).find(".ui-closable-tab").length
 
     if tabCount <= 1
       return
 
     if window.confirm("Close this tab?")
-      panelId = $(this).closest("#toolingArea li").remove().attr("aria-controls")
-      $("#toolingArea #" + panelId ).remove();
-      $("#toolingArea #" + tabContainerDiv).tabs("refresh")
+      panelId = $(this).closest("#apexArea li").remove().attr("aria-controls")
+      $("#apexArea #" + panelId ).remove();
+      $("#apexArea #" + tabContainerDiv).tabs("refresh")
 
-  $('#toolingArea #add-tab').on 'click', (e) ->
+  $('#apexArea #add-tab').on 'click', (e) ->
     e.preventDefault()
     currentTabIndex = currentTabIndex + 1
     newTabId = currentTabIndex
 
-    $("#toolingArea #tabArea ul").append(
+    $("#apexArea #tabArea ul").append(
       "<li class=\"noselect\"><a href=\"#tab" + newTabId + "\">Grid" + newTabId + "</a>" +
       "<span class=\"ui-icon ui-icon-close ui-closable-tab\"></span>" +
       "</li>"
     )
 
-    $("#toolingArea #tabArea").append(
+    $("#apexArea #tabArea").append(
       "<div id=\"tab" + newTabId + "\" class=\"resultTab\" tabId=\"" + newTabId + "\">" +
       "<div id=\"soql" + newTabId + "\" class=\"resultSoql\" tabId=\"" + newTabId + "\"></div>" +
       "<div id=\"grid" + newTabId + "\" class=\"resultGrid\" tabId=\"" + newTabId + "\"></div>" +
       "</div>"
     )
     
-    createGrid("#toolingArea #grid" + newTabId)
+    createGrid("#apexArea #grid" + newTabId)
     
-    $("#toolingArea #tabArea").tabs("refresh")
+    $("#apexArea #tabArea").tabs("refresh")
     
-    newTabIndex = $("#toolingArea #tabArea ul li").length - 1
+    newTabIndex = $("#apexArea #tabArea ul li").length - 1
     selectedTabId = newTabIndex
-    $("#toolingArea #tabArea").tabs({ active: newTabIndex });
+    $("#apexArea #tabArea").tabs({ active: newTabIndex });
       
   #------------------------------------------------
   # Create grid
@@ -145,21 +166,20 @@ coordinates = ->
   # message
   #------------------------------------------------
   displayError = (json) ->
-    $("#toolingArea #messageArea").html(json.error)
-    $("#toolingArea #messageArea").show()
+    $("#apexArea #messageArea").html(json.error)
+    $("#apexArea #messageArea").show()
   
   hideMessageArea = () ->
-    $("#toolingArea #messageArea").empty()
-    $("#toolingArea #messageArea").hide()
+    $("#apexArea #messageArea").empty()
+    $("#apexArea #messageArea").hide()
     
   #------------------------------------------------
   # page load actions
   #------------------------------------------------
   selectedTabId = 1
-  createGrid("#toolingArea #grid" + selectedTabId)
+  createGrid("#apexArea #grid" + selectedTabId)
 
-  $("#toolingArea #tabArea").tabs()
+  $("#apexArea #tabArea").tabs()
 
 $(document).ready(coordinates)
 $(document).on('page:load', coordinates)
-###

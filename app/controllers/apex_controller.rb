@@ -1,5 +1,5 @@
 
-class ToolingController < ApplicationController
+class ApexController < ApplicationController
 
     before_action :require_sign_in!
 
@@ -16,17 +16,21 @@ class ToolingController < ApplicationController
 
     def execute_anonymous(code)
     begin
-        p result = Service::ToolingClientService.call(sforce_session).execute_anonymous(code)
-        raise_if_error(result)
-        render :json => response_json(result), :status => 200
+        result = Service::ApexClientService.call(sforce_session).execute_anonymous(code)
+        raise_if_error(result[:anonymous_result])
+        render :json => response_json(result[:debug_log]), :status => 200
     rescue StandardError => ex
         print_error(ex)
         render :json => {:error => ex.message}, :status => 400
     end
     end
 
-    def response_json(result)
-        {:result => anonymous_result(result), :columns => [1], :rows => [[]]}
+    def response_json(debug_log)
+        {
+            :log_name => "excecuteAnonymous @" + Time.now.strftime(Time_format),
+            :columns => [:details],
+            :rows => debug_log.split("\n").map{|str| [str]}
+        }
     end
 
     def anonymous_result(result)

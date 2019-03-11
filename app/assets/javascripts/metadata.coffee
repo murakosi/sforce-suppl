@@ -416,6 +416,7 @@ coordinates = ->
         fillHandle: {autoInsertRow: false},
         #contextMenu: contextMenu,
         columnSorting: allowSort,
+        licenseKey: 'non-commercial-and-evaluation',
         beforeChange: (source, changes) -> beforeChangeFunc(source, changes),
         afterOnCellMouseDown: (event, coords, td) -> onClickFunc(event, coords, td)
     }

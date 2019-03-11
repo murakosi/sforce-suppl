@@ -106,7 +106,8 @@ coordinates = ->
         columns: columnsOption,
         contextMenu: false,
         readOnly: true,
-        startRows: 0
+        startRows: 0,
+        licenseKey: 'non-commercial-and-evaluation'
     }
 
     table = new Handsontable(hotElement, hotSettings)

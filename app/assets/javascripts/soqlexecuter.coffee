@@ -115,7 +115,8 @@ coordinates = ->
         columns: columnsOption,
         contextMenu: false,
         readOnly: true,
-        startRows: 0
+        startRows: 0,
+        licenseKey: 'non-commercial-and-evaluation'
     }
 
     grids[elementId] = new Handsontable(hotElement, hotSettings)

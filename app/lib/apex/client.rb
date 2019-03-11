@@ -1,6 +1,6 @@
 require "savon"
 
-module Tooling
+module Apex
     class Client
 
         def initialize(options={})
@@ -8,7 +8,7 @@ module Tooling
 
             @wsdl = options[:wsdl]
 
-            @headers = {}
+            @headers = {"tns:DebuggingHeader" => {"tns:categories" => [ {:category => "Apex_code", :level => "FINEST"}] } }
 
             @version = options[:version] || Constants::DefaultApiVersion
 
@@ -38,7 +38,7 @@ module Tooling
 
             if options[:session_id] && options[:server_url]
                 @session_id = options[:session_id]
-                @server_url = options[:server_url].gsub(/Soap\/.*\/.*/, "Soap/T/" + @version)
+                @server_url = options[:server_url].gsub(/Soap\/.*\/.*/, "Soap/s/" + @version)
             else
                 raise ArgumentError.new("Must provide session_id/server_url.")
             end
@@ -68,14 +68,35 @@ module Tooling
             @client.wsdl.namespace
         end
 
+        def response_header
+            @response_header
+        end
+
         def execute_anonymous(code)
-            call_tooling_api(:execute_anonymous, {:string => code})
+            result = call_tooling_api(:execute_anonymous, {:string => code})
+            if @response_header.present?
+                {
+                    :debug_log => @response_header[:debugging_info][:debug_log],
+                    :anonymous_result => result
+                }
+            else
+                {
+                    :debug_log => "",
+                    :anonymous_result => result
+                }
+            end
         end
 
         def call_tooling_api(method, message_hash={})
+            
+            @response_header = nil
+
             response = @client.call(method.to_sym) do |locals|
                 locals.message message_hash
             end
+
+            # Get Response Header
+            p @response_header = response.header.to_hash unless response.header.nil?
 
             # Convert SOAP XML to Hash
             response = response.to_hash

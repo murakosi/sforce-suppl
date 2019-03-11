@@ -12,6 +12,8 @@ module Service
         		file_name = "metadata.wsdl.xml"
             when :tooling_wsdl
                 file_name = "tooling.wsdl.xml"
+            when :apex_wsdl
+                file_name = "apex.wsdl.xml"
         	when :excel_export_settings
         		file_name = "excel_export_settings.yml"
         	when :translations

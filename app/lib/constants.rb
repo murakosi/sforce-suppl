@@ -31,4 +31,28 @@ module Constants
     ProductionUrl = "login.salesforce.com"
     SandboxUrl = "test.salesforce.com"
     SSLVersion = :TLSv1_2
+    LogCategory = 
+    [
+    	"Db",
+    	"Workflow",
+    	"Validation",
+    	"Callout",
+    	"Apex_code",
+    	"Apex_profiling",
+    	"Visualforce",
+    	"System",
+    	"All"
+    ]
+
+    LogCategoryLevel =
+    [
+    	"NONE",
+    	"ERROR",
+    	"WARN",
+    	"INFO",
+    	"DEBUG",
+    	"FINE",
+    	"FINER",
+    	"FINEST"
+    ]
 end
