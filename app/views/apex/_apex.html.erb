@@ -1,10 +1,27 @@
+<style>
+#debugOptions{
+    display: none;
+    padding-top: 10px;
+    margin-bottom: 20px;
+}
+</style>
 <div id="apexArea">
 	<div id="formArea">
 		<%= form_tag apex_path(), :method => :post, :class => "execute-form" do %>
 		<%= text_area_tag :code,"String x = 'b';system.debug(x);", :size => "120x5" %>
 		<br>
 		<%= submit_tag "Execute Anonymous", :class => "btn btn-primary execute-anonymous" %>
+		<%= button_tag "Debug options", :type => "button", :id => "debug-opt-btn", :class => "btn btn-default" %>
+		<div id="debugOptions">
+		<% @debug_options.each_with_index do |options, idx| %>
+		    <% options.each do |k, v| %>
+		        <label><%= k %></label>
+			    <%= select_tag k, options_for_select(v, :selected => @default_debug_levels[idx]), :id => k, :multiple => false %>
+			<% end %>
 		<% end %>
+		</div>
+		<% end %>
+		
 		<p><div id="messageArea"></div></p>
 	</div>
 
@@ -14,7 +31,7 @@
 		<%= button_tag "Add tab", :type => "button", :id => "add-tab", :class => "btn btn-default" %>
 		<%= button_tag "Download", :type => "button", :id => "download-log", :class => "btn btn-default" %>
 		<ul>
-			<li class="noselect"><a href="#tab1">Grid1</a>
+			<li class="noselect"><a href="#tab1">Log1</a>
 			<span class="ui-icon ui-icon-close ui-closable-tab"></span>
 			</li>
 		</ul>

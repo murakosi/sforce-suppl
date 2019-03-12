@@ -11,18 +11,20 @@ class ApexController < ApplicationController
     end
 
     def execute
-        execute_anonymous(params[:code])
+        execute_params = params.permit!.to_h
+        execute_anonymous(execute_params[:code], execute_params[:debug_options])
     end
 
-    def execute_anonymous(code)
-    begin
-        result = Service::ApexClientService.call(sforce_session).execute_anonymous(code)
-        raise_if_error(result[:anonymous_result])
-        render :json => response_json(result[:debug_log]), :status => 200
-    rescue StandardError => ex
-        print_error(ex)
-        render :json => {:error => ex.message}, :status => 400
-    end
+    def execute_anonymous(code, debug_options)
+        begin
+            debug_categories = {:debug_categories => debug_options.map{|k,v| {:category => k, :level => v} } }
+            result = Service::ApexClientService.call(sforce_session.merge(debug_categories)).execute_anonymous(code)
+            raise_if_error(result[:anonymous_result])
+            render :json => response_json(result[:debug_log]), :status => 200
+        rescue StandardError => ex
+            print_error(ex)
+            render :json => {:error => ex.message}, :status => 400
+        end
     end
 
     def response_json(debug_log)

@@ -15,7 +15,17 @@ coordinates = ->
     if e.ctrlKey && e.key == 'r'
       e.preventDefault()
       executeAnonymous()
-  
+  #------------------------------------------------
+  # Debug options
+  #------------------------------------------------  
+  $('#apexArea #debug-opt-btn').on 'click', (e) ->
+    e.preventDefault()
+    area = $('#debugOptions')
+    if area.css('display') == 'none'
+      area.css('display', 'block')
+    else
+      area.css('display', 'none')
+
   #------------------------------------------------
   # CSV Download
   #------------------------------------------------
@@ -51,7 +61,13 @@ coordinates = ->
   executeAnonymous = () ->    
 
     selectedTabId = $("#apexArea #tabArea .ui-tabs-panel:visible").attr("tabId")
-    val = {code: $('#apexArea #code').val()}
+    debugOptions = {}
+    $('#debugOptions option:selected').each () ->
+      category = $(this).parent().attr("id")
+      level = $(this).val()
+      debugOptions[category] = level
+      
+    val = {code: $('#apexArea #code').val(), debug_options: debugOptions}
     action = $('#apexArea .execute-form').attr('action')
     method = $('#apexArea .execute-form').attr('method')
     options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
@@ -75,10 +91,10 @@ coordinates = ->
     if tabCount <= 1
       return
 
-    if window.confirm("Close this tab?")
-      panelId = $(this).closest("#apexArea li").remove().attr("aria-controls")
-      $("#apexArea #" + panelId ).remove();
-      $("#apexArea #" + tabContainerDiv).tabs("refresh")
+    #if window.confirm("Close this tab?")
+    panelId = $(this).closest("#apexArea li").remove().attr("aria-controls")
+    $("#apexArea #" + panelId ).remove();
+    $("#apexArea #" + tabContainerDiv).tabs("refresh")
 
   $('#apexArea #add-tab').on 'click', (e) ->
     e.preventDefault()
@@ -86,7 +102,7 @@ coordinates = ->
     newTabId = currentTabIndex
 
     $("#apexArea #tabArea ul").append(
-      "<li class=\"noselect\"><a href=\"#tab" + newTabId + "\">Grid" + newTabId + "</a>" +
+      "<li class=\"noselect\"><a href=\"#tab" + newTabId + "\">Log" + newTabId + "</a>" +
       "<span class=\"ui-icon ui-icon-close ui-closable-tab\"></span>" +
       "</li>"
     )
@@ -133,6 +149,7 @@ coordinates = ->
         contextMenu: false,
         readOnly: true,
         startRows: 0,
+        trimWhitespace: false,
         licenseKey: 'non-commercial-and-evaluation'
     }
 

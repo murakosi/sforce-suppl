@@ -4,17 +4,24 @@ module Apex
     class Client
 
         def initialize(options={})
-            @headers = {}
 
             @wsdl = options[:wsdl]
 
-            @headers = {"tns:DebuggingHeader" => {"tns:categories" => [ {:category => "Apex_code", :level => "FINEST"}] } }
+            if options[:debug_categories].nil?
+                debug_categories = [ {:category => "All", :level => "NONE"}]
+            else
+                debug_categories = options[:debug_categories]
+            end
+
+            #Set debug info
+            @headers = {"tns:DebuggingHeader" => {"tns:categories" => debug_categories}}
 
             @version = options[:version] || Constants::DefaultApiVersion
 
             @logger = options[:logger] || false
 
             @log_level = options[:log_level] || :debug
+
             # Due to SSLv3 POODLE vulnerabilty and disabling of TLSv1, use TLSv1_2
             @ssl_version = options[:ssl_version] || :TLSv1_2
 
@@ -43,7 +50,8 @@ module Apex
                 raise ArgumentError.new("Must provide session_id/server_url.")
             end
 
-            @headers = @headers.merge({"tns:SessionHeader" => {"tns:sessionId" => @session_id}})
+            #Set session header
+            @headers = @headers.merge({"tns:SessionHeader" => {"tns:sessionId" => @session_id}})            
 
             @client = Savon.client({
                 wsdl: @wsdl,
@@ -96,7 +104,7 @@ module Apex
             end
 
             # Get Response Header
-            p @response_header = response.header.to_hash unless response.header.nil?
+            @response_header = response.header.to_hash unless response.header.nil?
 
             # Convert SOAP XML to Hash
             response = response.to_hash

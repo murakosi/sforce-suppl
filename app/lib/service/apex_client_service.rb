@@ -17,7 +17,8 @@ module Service
                     :ssl_version => Constants::SSLVersion,
                     :ssl_ca_cert_file => Utils::SforceApiUtils.ssl_certificate,
                     :logger => set_temp_logger,
-                    :log => true
+                    :log => true,
+                    :debug_categories => params[:debug_categories]
                 }                
             end
 

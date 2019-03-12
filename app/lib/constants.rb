@@ -55,4 +55,17 @@ module Constants
     	"FINER",
     	"FINEST"
     ]
+
+    DefaultLogLevel =
+    [
+    	"INFO",
+    	"INFO",
+    	"INFO",
+    	"INFO",
+    	"FINEST",
+    	"INFO",
+    	"INFO",
+    	"FINE",
+    	"NONE"
+    ]
 end
