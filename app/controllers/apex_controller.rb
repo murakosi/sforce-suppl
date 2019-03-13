@@ -6,6 +6,9 @@ class ApexController < ApplicationController
     protect_from_forgery :except => [:execute]
 
     Time_format = "%Y/%m/%d %H:%M:%S"
+    Log_split_char = "|"
+    Log_split_limit = 3
+    Log_headers = ["Timestamp", "Event", "Details"]
 
     def show
     end
@@ -27,12 +30,29 @@ class ApexController < ApplicationController
         end
     end
 
-    def response_json(debug_log)
+    def response_json(debug_log)   
+        
         {
             :log_name => "excecuteAnonymous @" + Time.now.strftime(Time_format),
-            :columns => [:details],
-            :rows => debug_log.split("\n").map{|str| [str]}
+            :columns => Log_headers,
+            :rows => format_log(debug_log),
+            :columnOptions => [{:type => "text"},{:type => "text"}, nil]
         }
+    end
+
+    def format_log(debug_log)
+        logs = debug_log.split("\n").map{|str| str.split(Log_split_char, Log_split_limit)}
+        logs.select{|log| log.length >= 1}.map{|log| fill_blank(log)}
+    end
+
+    def fill_blank(log)
+        if log.length == 1
+            ["","",log[0]]
+        elsif log.length == 2
+            [log[0],log[1],""]
+        else
+            log
+        end
     end
 
     def anonymous_result(result)

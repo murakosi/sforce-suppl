@@ -7,6 +7,8 @@ coordinates = ->
   jqXHR = null
   defaultDataType = ""
   defaultContentType = null
+  eventColumnIndex = 1
+  USER_DEBUG = "USER_DEBUG"
 
   #------------------------------------------------
   # Shortcut keys
@@ -45,7 +47,35 @@ coordinates = ->
       rowDelimiter: '\r\n',
       rowHeaders: true
     })
-  
+
+  #------------------------------------------------
+  # Filter debug only
+  #------------------------------------------------
+  $("#apexArea").on "click", "input.debugOnly", ->
+    if $(this).prop("checked")
+      filterLog()
+    else
+      clearFilter()
+
+  filterLog = () ->
+    tabId = $("#apexArea #tabArea .ui-tabs-panel:visible").attr("tabId")
+    elementId = "#apexArea #grid" + tabId
+    hotElement =grids[elementId]    
+    filtersPlugin = hotElement.getPlugin('filters');
+    filtersPlugin.removeConditions(eventColumnIndex);
+    filtersPlugin.addCondition(eventColumnIndex, 'eq', [USER_DEBUG]);
+    filtersPlugin.filter()
+    hotElement.render()
+
+  clearFilter = () ->
+    tabId = $("#apexArea #tabArea .ui-tabs-panel:visible").attr("tabId")
+    elementId = "#apexArea #grid" + tabId
+    hotElement =grids[elementId]
+    filtersPlugin = hotElement.getPlugin('filters');
+    filtersPlugin.clearConditions();
+    filtersPlugin.filter()
+    hotElement.render()
+
   #------------------------------------------------
   # Execute Anonymous
   #------------------------------------------------
@@ -77,9 +107,12 @@ coordinates = ->
   processSuccessResult = (json) ->
     elementId = "#apexArea #grid" + selectedTabId
     logNames[elementId] = json.log_name    
-    $("#apexArea #soql" + selectedTabId).html(json.log_name)    
+    $("#apexArea #soql" + selectedTabId).html(getLogResult(json))
     createGrid(elementId, json)
-    
+
+  getLogResult = (json) ->
+    json.log_name +
+    '&nbsp;&nbsp;<input type="checkbox" class="debugOnly">Debug only</input>'
   #------------------------------------------------
   # Tab events
   #------------------------------------------------
@@ -145,7 +178,9 @@ coordinates = ->
         manualColumnResize: true,
         rowHeaders: true,
         colHeaders: header,
-        columns: columnsOption,
+        #columns: columnsOption,
+        #dropdownMenu: ['filter_by_value', 'filter_action_bar'],
+        filters: true,
         contextMenu: false,
         readOnly: true,
         startRows: 0,
@@ -156,26 +191,26 @@ coordinates = ->
     grids[elementId] = new Handsontable(hotElement, hotSettings)
 
   getColumns = (json) ->
-    if !json?
-      null
-    else
+    if json && json.columns
       json.columns
+    else
+      null
   
   getRows = (json) ->
-    if !json?
-      null
-    else
+    if json && json.rows
       json.rows
+    else
+      null
 
   getExecuteResult = (json) ->
-    if !json?
-      null
-    else
+    if json && json.result
       json.result
+    else
+      null
 
   getColumnsOption = (json) ->
-    if !json?
-      [[]]
+    if json && json.columnOptions
+      json.columnOptions
     else
       null
       
