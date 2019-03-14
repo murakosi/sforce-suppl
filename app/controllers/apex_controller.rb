@@ -60,11 +60,11 @@ class ApexController < ApplicationController
     end
 
     def raise_if_error(result)
-        if !result[:success]
+        if !result[:compiled]
+            raise StandardError.new(result[:compile_problem])
+        elsif !result[:success]
             msg = result[:exception_message] + "<br>" + result[:exception_stack_trace]
             raise StandardError.new(msg)
-        elsif !result[:compiled]
-            raise StandardError.new(result[:compile_problem])
         end
     end
 

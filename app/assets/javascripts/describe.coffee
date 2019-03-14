@@ -107,10 +107,13 @@ coordinates = ->
         contextMenu: false,
         readOnly: true,
         startRows: 0,
+        columnSorting: true,
         licenseKey: 'non-commercial-and-evaluation'
     }
 
     table = new Handsontable(hotElement, hotSettings)
+    table.updateSettings afterColumnSort: ->
+      table.render()
 
   getColumns = (json) ->
     if !json?

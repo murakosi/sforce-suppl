@@ -16,7 +16,9 @@ coordinates = ->
   $(window).on 'keydown', (e) ->
     if e.ctrlKey && e.key == 'r'
       e.preventDefault()
-      executeAnonymous()
+      if e.target.id == "apex_code"
+        executeAnonymous()
+
   #------------------------------------------------
   # Debug options
   #------------------------------------------------  
@@ -34,19 +36,20 @@ coordinates = ->
   $('#apexArea #download-log').on 'click', (e) ->
     tabId = $("#apexArea #tabArea .ui-tabs-panel:visible").attr("tabId")
     elementId = "#apexArea #grid" + tabId
-    hotElement =grids[elementId]
-    hotElement.getPlugin('exportFile').downloadFile('csv', {
-      bom: false,
-      columnDelimiter: ',',
-      columnHeaders: true,
-      exportHiddenColumns: true,
-      exportHiddenRows: true,
-      fileExtension: 'csv',
-      filename: logNames[elementId],
-      mimeType: 'text/csv',
-      rowDelimiter: '\r\n',
-      rowHeaders: true
-    })
+    if logNames[elementId]
+      hotElement =grids[elementId]
+      hotElement.getPlugin('exportFile').downloadFile('csv', {
+        bom: false,
+        columnDelimiter: ',',
+        columnHeaders: true,
+        exportHiddenColumns: true,
+        exportHiddenRows: true,
+        fileExtension: 'csv',
+        filename: logNames[elementId],
+        mimeType: 'text/csv',
+        rowDelimiter: '\r\n',
+        rowHeaders: true
+      })
 
   #------------------------------------------------
   # Filter debug only
@@ -66,6 +69,7 @@ coordinates = ->
     filtersPlugin.addCondition(eventColumnIndex, 'eq', [USER_DEBUG]);
     filtersPlugin.filter()
     hotElement.render()
+
 
   clearFilter = () ->
     tabId = $("#apexArea #tabArea .ui-tabs-panel:visible").attr("tabId")
@@ -97,7 +101,7 @@ coordinates = ->
       level = $(this).val()
       debugOptions[category] = level
       
-    val = {code: $('#apexArea #code').val(), debug_options: debugOptions}
+    val = {code: $('#apexArea #apex_code').val(), debug_options: debugOptions}
     action = $('#apexArea .execute-form').attr('action')
     method = $('#apexArea .execute-form').attr('method')
     options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
@@ -111,8 +115,8 @@ coordinates = ->
     createGrid(elementId, json)
 
   getLogResult = (json) ->
-    json.log_name +
-    '&nbsp;&nbsp;<input type="checkbox" class="debugOnly">Debug only</input>'
+    json.log_name + #<label><input type="checkbox" /> Label text</label>
+    '&nbsp;&nbsp;<label><input type="checkbox" class="debugOnly"/> Debug only</label>'
   #------------------------------------------------
   # Tab events
   #------------------------------------------------
@@ -172,7 +176,7 @@ coordinates = ->
     hotSettings = {
         data: records,
         height: 500;
-        stretchH: 'all',
+        stretchH: 'last',
         autoWrapRow: true,
         manualRowResize: false,
         manualColumnResize: true,
@@ -188,7 +192,10 @@ coordinates = ->
         licenseKey: 'non-commercial-and-evaluation'
     }
 
-    grids[elementId] = new Handsontable(hotElement, hotSettings)
+    #grids[elementId] = new Handsontable(hotElement, hotSettings)
+    hot = new Handsontable(hotElement, hotSettings)
+    grids[elementId] = hot
+    hot.render()
 
   getColumns = (json) ->
     if json && json.columns

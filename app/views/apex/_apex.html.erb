@@ -4,11 +4,16 @@
     padding-top: 10px;
     margin-bottom: 20px;
 }
+
+.debugOnly{
+	vertical-align: bottom;
+}
+
 </style>
 <div id="apexArea">
 	<div id="formArea">
 		<%= form_tag apex_path(), :method => :post, :class => "execute-form" do %>
-		<%= text_area_tag :code,"String x = 'b';system.debug(x);", :size => "120x5" %>
+		<%= text_area_tag :apex_code,"String x = 'b';system.debug(x);", :size => "120x5" %>
 		<br>
 		<%= submit_tag "Execute Anonymous", :class => "btn btn-primary execute-anonymous" %>
 		<%= button_tag "Debug options", :type => "button", :id => "debug-opt-btn", :class => "btn btn-default" %>
@@ -30,7 +35,6 @@
 	<div id="tabArea">
 		<%= button_tag "Add tab", :type => "button", :id => "add-tab", :class => "btn btn-default" %>
 		<%= button_tag "Download", :type => "button", :id => "download-log", :class => "btn btn-default" %>
-		<input type="checkbox" id="debugonly" name="Debug onlyu"/>
 		<ul>
 			<li class="noselect"><a href="#tab1">Log1</a>
 			<span class="ui-icon ui-icon-close ui-closable-tab"></span>

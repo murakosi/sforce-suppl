@@ -21,7 +21,8 @@ coordinates = ->
   $(window).on 'keydown', (e) ->
     if e.ctrlKey && e.key == 'r'
       e.preventDefault()
-      executeSoql()
+      if e.target.id == "input_soql"        
+        executeSoql()
   
   #------------------------------------------------
   # Execute SOQL

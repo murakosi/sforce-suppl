@@ -421,7 +421,11 @@ coordinates = ->
         afterOnCellMouseDown: (event, coords, td) -> onClickFunc(event, coords, td)
     }
 
-    grids[elementId] = new Handsontable(hotElement, hotSettings)
+    hot = new Handsontable(hotElement, hotSettings)
+    hot.updateSettings afterColumnSort: ->
+      hot.render()
+
+    grids[elementId] = hot
 
   getColumns = (json) ->
     if !json
