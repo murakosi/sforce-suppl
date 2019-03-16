@@ -8,17 +8,17 @@ coordinates = ->
   selectedNode = null
   fieldNames = null
   fieldTypes = null
-  selectedCellOnCreateGrid = null
+  #selectedCellOnCreateGrid = null
   deployId = null
   retrieveId = null
   checkInterval = 2000
   checkCount = 0;
 
   disableButtons = () ->
-    $("#createButton").prop("disabled", true)
-    $("#addRow").prop("disabled", true)
-    $("#removeRow").prop("disabled", true)
-    $("#clearGrid").prop("disabled", true)
+    #$("#createButton").prop("disabled", true)
+    #$("#addRow").prop("disabled", true)
+    #$("#removeRow").prop("disabled", true)
+    #$("#clearGrid").prop("disabled", true)
     $("#updateButton").prop("disabled", true)
     $("#deleteButton").prop("disabled", true)
     $("#expand").prop("disabled", true)
@@ -34,8 +34,8 @@ coordinates = ->
   getSelectedFullNames = () ->
     JSON.stringify(Object.keys(selectedFullNames))
 
-  getDataOnCreateGrid = () ->
-    JSON.stringify(grids["#metadataArea #createGrid"].getData())
+  #getDataOnCreateGrid = () ->
+  #  JSON.stringify(grids["#metadataArea #createGrid"].getData())
 
   #------------------------------------------------
   # list metadata
@@ -59,7 +59,7 @@ coordinates = ->
       $.abortAjax()
 
     createGrid("#metadataArea #grid")
-    createGrid("#metadataArea #createGrid")
+    #createGrid("#metadataArea #createGrid")
     $('#metadataArea #editTree').jstree(true).settings.core.data = null
     $('#metadataArea #editTree').jstree(true).refresh()
     selectedRecords = {}
@@ -68,7 +68,7 @@ coordinates = ->
     fieldTypes = null
     selectedFullNames = {}
     selectedNode = null
-    selectedCellOnCreateGrid = null
+    #selectedCellOnCreateGrid = null
 
   processListError = (json) ->
     disableButtons()
@@ -81,13 +81,13 @@ coordinates = ->
     fieldNames = json.create_grid.field_names
     fieldTypes = json.create_grid.field_types
     createGrid("#metadataArea #grid", json.list_grid)
-    createGrid("#metadataArea #createGrid", json.create_grid)
+    #createGrid("#metadataArea #createGrid", json.create_grid)
 
   changeButtonStyles = (json) ->
-    $("#createButton").prop("disabled", !json.api_creatable)
-    $("#addRow").prop("disabled", !json.api_creatable)
-    $("#removeRow").prop("disabled", !json.api_creatable)
-    $("#clearGrid").prop("disabled", !json.api_creatable)
+    #$("#createButton").prop("disabled", !json.api_creatable)
+    #$("#addRow").prop("disabled", !json.api_creatable)
+    #$("#removeRow").prop("disabled", !json.api_creatable)
+    #$("#clearGrid").prop("disabled", !json.api_creatable)
     $("#updateButton").prop("disabled", !json.api_updatable)
     $("#deleteButton").prop("disabled", !json.api_deletable)
     $("#expand").prop("disabled", !json.api_readable)
@@ -551,7 +551,7 @@ coordinates = ->
   Handsontable.renderers.registerRenderer('customDropdownRenderer', customDropdownRenderer);
 
   createGrid("#metadataArea #grid")
-  createGrid("#metadataArea #createGrid")
+  #createGrid("#metadataArea #createGrid")
 
   $('#metadataArea #editTree').jstree({
     
