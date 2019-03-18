@@ -35,6 +35,7 @@ coordinates = ->
     if jqXHR
       return false
     
+    hideMessageArea()
     selectedTabId = $("#soqlArea #tabArea .ui-tabs-panel:visible").attr("tabId");
     val = {soql: $('#soqlArea #input_soql').val()}
     action = $('#soqlArea .execute-form').attr('action')

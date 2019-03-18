@@ -89,11 +89,11 @@ coordinates = ->
       return false
 
     e.preventDefault()
-    hideMessageArea()
     executeAnonymous()
     
   executeAnonymous = () ->    
 
+    hideMessageArea()
     selectedTabId = $("#apexArea #tabArea .ui-tabs-panel:visible").attr("tabId")
     debugOptions = {}
     $('#debugOptions option:selected').each () ->
