@@ -70,6 +70,8 @@ gem 'hashie'
 
 gem "rack", ">= 2.0.6"
 
+gem "nokogiri", ">= 1.8.5"
+
 group :production do
   gem 'rails_12factor'
 end
