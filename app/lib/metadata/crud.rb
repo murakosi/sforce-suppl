@@ -60,8 +60,7 @@ module Metadata
 		end
 
 		def update_metadata(sforce_session, metadata_type, read_results, full_names)
-			
-			metadata = read_results.select{|k, v| full_names.include?(k)}.flatten
+			metadata = read_results.select{|k, v| full_names.include?(k)}.values
 			if metadata.empty?
 				raise StandardError.new("No metadata to update")
 			end

@@ -8561,7 +8561,9 @@
 	};
 	// include the wholerow plugin by default
 	// $.jstree.defaults.plugins.push("wholerow");
-	if(document.registerElement && Object && Object.create) {
+	//if(document.registerElement && Object && Object.create) {
+	//document.registerElement -> window.customElements.define
+	if(window.customElements.define && Object && Object.create) {
 		var proto = Object.create(HTMLElement.prototype);
 		proto.createdCallback = function () {
 			var c = { core : {}, plugins : [] }, i;
@@ -8582,7 +8584,9 @@
 		};
 		// proto.attributeChangedCallback = function (name, previous, value) { };
 		try {
-			document.registerElement("vakata-jstree", { prototype: proto });
+			//document.registerElement("vakata-jstree", { prototype: proto });
+			//document.registerElement -> window.customElements.define
+			window.customElements.define("vakata-jstree", { prototype: proto });
 		} catch(ignore) { }
 	}
 

@@ -10,7 +10,8 @@ end
 gem 'rails', '~> 5.1.5'
 # Use sqlite3 as the database for Active Record
 #gem 'sqlite3'
-gem 'sqlite3', group: :development
+#gem 'sqlite3', group: :development
+gem 'sqlite3', git: "https://github.com/larskanis/sqlite3-ruby", branch: "add-gemspec", group: :development
 gem 'pg', group: :production
 # Use Puma as the app server
 gem 'puma', '~> 3.7'
@@ -68,6 +69,8 @@ gem 'activerecord-session_store'
 gem 'hashie'
 
 gem "rack", ">= 2.0.6"
+
+gem "nokogiri", ">= 1.8.5"
 
 group :production do
   gem 'rails_12factor'

@@ -8,28 +8,34 @@
         ajaxOptions: function (options) {
             return $.extend({
                 action: null,
-                method: "GET",
+                method: null,
                 data: null,
                 datatype: "",
-                contentType: "application/json",
-                parseJSON: false
+                processData: true,
+                contentType: null,
+                showProgress: true
+                //parseJSON: false
             }, options);
         },
 
-        getAjaxOptions: function (action, method, data, datatype, contentType) {
-            var ajaxContentType = null;
+        getAjaxOptions: function (action, method, data, datatype, contentType, showProgress = true) {
+            var ajaxContentType = contentType;
+            var ajaxProcessData = true;
+            var ajaxData = data;
+
             if (contentType == null || contentType == undefined) {
                 ajaxContentType = "application/json";
-            } else {
-                ajaxContentType = contentType;
+                ajaxData = JSON.stringify(data);
             }
 
             return $.ajaxOptions({
                 action: action,
                 method: method,
-                data: data,
+                data: ajaxData,
                 datatype: datatype,
+                processData: ajaxProcessData,
                 contentType: ajaxContentType,
+                showProgress: showProgress
             });
         },
 
@@ -67,18 +73,34 @@
             }
         },
 
+
+
         executeAjax: function (options, callbacks, raw = false) {
+            function showProgress() {
+                $("#progress-line").addClass("progress-line");
+                $("#progress").css("visibility","visible");
+            };
+
+            function hideProgress() {
+                $("#progress-line").removeClass("progress-line");
+                $("#progress").css("visibility","hidden");            
+            };
 
             if (jqXHR) {
                 return;
+            }
+
+            if(options.showProgress){
+                showProgress();
             }
 
             jqXHR = $.ajax({
                 url: options.action,
                 type: options.method,
                 dataType: options.datatype,
+                processData: options.processData,
                 contentType: options.contentType,
-                data: JSON.stringify(options.data),
+                data: options.data,
                 cache: false
             });
 
@@ -105,9 +127,13 @@
             jqXHR.always(function (res1, stat, res2) {
                 jqXHR = null;
                 console.log({ always: stat, res1: res1, res2: res2 });
+                if(options.showProgress){
+                    hideProgress();
+                }
                 return callbacks.alwaysCallback(callbacks.alwaysCallbackParams)
             });
         }
+
     });
 })(jQuery, this);
 

@@ -2,7 +2,8 @@
 coordinates = ->
   
   defaultDataType = ""  
-
+  defaultContentType = null
+  
   #------------------------------------------------
   # change custom/standard
   #------------------------------------------------
@@ -18,7 +19,7 @@ coordinates = ->
     val = {object_type: e.target.value}
     action = $('#filterSObjectList').attr('action')
     method = $('#filterSObjectList').attr('method')
-    options = $.getAjaxOptions(action, method, val, defaultDataType)
+    options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType, false)
     callbacks = $.getAjaxCallbacks(refreshSelectOptions, displayError, null)
     $.executeAjax(options, callbacks, true)
 
@@ -30,7 +31,7 @@ coordinates = ->
     val = {selected_sobject: $('#describeArea #selected_sobject').val()}
     action = $('#executeDescribe').attr('action')
     method = $('#executeDescribe').attr('method')
-    options = $.getAjaxOptions(action, method, val, defaultDataType)
+    options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
     callbacks = $.getAjaxCallbacks(processSuccessResult, displayError, null)
     $.executeAjax(options, callbacks)
 
@@ -105,10 +106,14 @@ coordinates = ->
         columns: columnsOption,
         contextMenu: false,
         readOnly: true,
-        startRows: 0
+        startRows: 0,
+        columnSorting: true,
+        licenseKey: 'non-commercial-and-evaluation'
     }
 
     table = new Handsontable(hotElement, hotSettings)
+    table.updateSettings afterColumnSort: ->
+      table.render()
 
   getColumns = (json) ->
     if !json?

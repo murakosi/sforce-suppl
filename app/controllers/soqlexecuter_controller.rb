@@ -12,7 +12,7 @@ class SoqlexecuterController < ApplicationController
   end
 
   def execute
-    execute_soql(params[:soql]) if params[:soql].present?
+    execute_soql(params[:soql])
   end
 
   def execute_soql(soql)

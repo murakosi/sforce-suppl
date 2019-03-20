@@ -7,7 +7,7 @@ class MetadataController < ApplicationController
 
     before_action :require_sign_in!
 
-    protect_from_forgery :except => [:list, :read, :prepare, :edit, :crud, :retrieve]
+    protect_from_forgery :except => [:list, :read, :prepare, :edit, :crud, :retrieve, :check_retrieve_status, :retrieve_result, :deploy, :check_deploy_status]
 
     Full_name_index = 4
     
@@ -52,7 +52,6 @@ class MetadataController < ApplicationController
         parent_tree_nodes = format_parent_tree_nodes(crud_info, formatted_list)            
         clear_session(metadata_type, formatted_field_types)
 
-        #list_response_json(metadata_type, formatted_list, parent_tree_nodes, field_types, crud_info)
         list_response_json(metadata_type, formatted_list, parent_tree_nodes, formatted_field_types, crud_info)
     end
 
@@ -158,7 +157,28 @@ class MetadataController < ApplicationController
         begin
             full_names = extract_full_names(selected_records)
             raise_when_type_unmached(metadata_type)
-            try_retrieve(metadata_type, full_names)
+            async_result = Metadata::Retriever.retrieve(sforce_session, metadata_type, full_names)
+            render :json => {:id => async_result[:id], :done => async_result[:done]}, :status => 200
+        rescue StandardError => ex
+            print_error(ex)
+            render :json => {:error => ex.message}, :status => 400
+        end
+    end
+    
+    def check_retrieve_status
+        status = Metadata::Retriever.retrieve_status
+        render :json => {:id => status[:id], :done => status[:done]}, :status => 200
+    end
+    
+    def retrieve_result
+        begin
+            result = Metadata::Retriever.retrieve_result
+            send_data(result[:zip_file],
+              :disposition => 'attachment',
+              :type => 'application/x-compress',
+              :filename => result[:metadta_type] + '.zip',
+              :status => 200
+            )        
             set_download_success_cookie(response)
         rescue StandardError => ex
             print_error(ex)
@@ -166,14 +186,28 @@ class MetadataController < ApplicationController
         end
     end
 
-    def try_retrieve(metadata_type, full_names)
-        result = Metadata::Retriever.retrieve(sforce_session, metadata_type, full_names)
-        send_data(result[:zip_file],
-          :disposition => 'attachment',
-          :type => 'application/x-compress',
-          :filename => result[:id] + '.zip',
-          :status => 200
-        )        
+    def deploy
+        zip_file = params[:zip_file]
+        options = JSON.parse(params[:options])
+
+        begin
+            async_result = Metadata::Deployer.deploy(sforce_session, zip_file, options)
+            render :json => {:id => async_result[:id], :done => async_result[:done]}, :status => 200
+        rescue StandardError => ex
+            print_error(ex)
+            render :json => {:error => ex.message}, :status => 400
+        end
+    end
+
+    def check_deploy_status
+
+        begin
+            deploy_result = Metadata::Deployer.check_deploy_status(true)
+            render :json => {:id => deploy_result[:id], :done => deploy_result[:done], :result => deploy_result[:result], :details => deploy_result[:details]}, :status => 200
+        rescue StandardError => ex
+            print_error(ex)
+            render :json => {:error => ex.message}, :status => 400
+        end
     end
 
     def extract_full_names(selected_records)

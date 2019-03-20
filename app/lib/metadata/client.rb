@@ -138,7 +138,11 @@ module Metadata
             call_metadata_api(:update_metadata, request_body)
         end
         alias :update_metadata :update
-        
+
+        def prepare_metadata(metadata)
+            Array[metadata].flatten.map{|hash| hash.reject{|k,v| k == :"@xsi:type"}}.flatten 
+        end
+
         def delete(metadata_type, full_names)
             request_body = {:metadata_type => metadata_type, :full_names => Array[full_names].compact.flatten }
             call_metadata_api(:delete_metadata, request_body)
@@ -154,11 +158,6 @@ module Metadata
         def retrieve(metadata_type, metadata)
             request_body = retrieve_request(metadata_type, metadata)
             call_metadata_api(:retrieve, request_body)
-        end
-
-        def prepare_metadata(metadata)
-            #metadata.values.map{|arr| arr.reject{|k, v| k == :"@xsi:type"}}
-            Array[metadata].flatten.map{|hash| hash.reject{|k,v| k == :"@xsi:type"}}.flatten 
         end
 
         def retrieve_status(id, include_zip)
@@ -179,6 +178,16 @@ module Metadata
 
         def package(metadata_type, metadata)
             {:types => {:members => Array[metadata].compact.flatten, :name => metadata_type}}
+        end
+
+        def deploy(zip_file, deploy_options)
+            request_body = {:zip_file => zip_file, :deploy_options => deploy_options}
+            call_metadata_api(:deploy, request_body)
+        end
+
+        def check_deploy_status(id, include_details)
+            request_body = {:id => id, :include_details => include_details}
+            call_metadata_api(:check_deploy_status, request_body)
         end
 
         def call_metadata_api(method, message_hash={})

@@ -1,3 +1,4 @@
+###
 coordinates = ->
   
   selectedTabId = 1
@@ -7,46 +8,39 @@ coordinates = ->
   defaultDataType = ""
   defaultContentType = null
 
-  getAjaxOptions = (action, method, data, datatype) ->
-    {
-      "action": action,
-      "method": method,
-      "data": data,
-      "datatype": datatype
-    }
-
   #------------------------------------------------
   # Shortcut keys
   #------------------------------------------------
   $(window).on 'keydown', (e) ->
     if e.ctrlKey && e.key == 'r'
       e.preventDefault()
-      if e.target.id == "input_soql"        
-        executeSoql()
+      executeAnonymous()
   
   #------------------------------------------------
   # Execute SOQL
   #------------------------------------------------
-  $('#soqlArea .execute-soql').on 'click', (e) ->
-    e.preventDefault()
-    executeSoql()
-    
-  executeSoql = () ->
-    if jqXHR
+  $('#toolingArea .execute-anonymous').on 'click', (e) ->
+    if $.isAjaxBusy()
+      e.preventDefault()
       return false
-    
+
+    e.preventDefault()
     hideMessageArea()
-    selectedTabId = $("#soqlArea #tabArea .ui-tabs-panel:visible").attr("tabId");
-    val = {soql: $('#soqlArea #input_soql').val()}
-    action = $('#soqlArea .execute-form').attr('action')
-    method = $('#soqlArea .execute-form').attr('method')
+    executeAnonymous()
+    
+  executeAnonymous = () ->    
+
+    selectedTabId = $("#toolingArea #tabArea .ui-tabs-panel:visible").attr("tabId");
+    val = {code: $('#toolingArea #code').val()}
+    action = $('#toolingArea .execute-form').attr('action')
+    method = $('#toolingArea .execute-form').attr('method')
     options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
     callbacks = $.getAjaxCallbacks(processSuccessResult, displayError, null)
     $.executeAjax(options, callbacks)
   
   processSuccessResult = (json) ->
-    $("#soqlArea #soql" + selectedTabId).html(getExecutedSoql(json))
-    elementId = "#soqlArea #grid" + selectedTabId
+    $("#toolingArea #soql" + selectedTabId).html(getExecuteResult(json))
+    elementId = "#toolingArea #grid" + selectedTabId
     createGrid(elementId, json)
     
   #------------------------------------------------
@@ -54,42 +48,42 @@ coordinates = ->
   #------------------------------------------------
   $(document).on 'click', 'span', (e) ->
     e.preventDefault()
-    tabContainerDiv=$(this).closest("#soqlArea .ui-tabs").attr("id")
-    tabCount = $("#soqlArea #" + tabContainerDiv).find(".ui-closable-tab").length
+    tabContainerDiv=$(this).closest("#toolingArea .ui-tabs").attr("id")
+    tabCount = $("#toolingArea #" + tabContainerDiv).find(".ui-closable-tab").length
 
     if tabCount <= 1
       return
 
     if window.confirm("Close this tab?")
-      panelId = $(this).closest("#soqlArea li").remove().attr("aria-controls")
-      $("#soqlArea #" + panelId ).remove();
-      $("#soqlArea #" + tabContainerDiv).tabs("refresh")
+      panelId = $(this).closest("#toolingArea li").remove().attr("aria-controls")
+      $("#toolingArea #" + panelId ).remove();
+      $("#toolingArea #" + tabContainerDiv).tabs("refresh")
 
-  $('#soqlArea #add-tab').on 'click', (e) ->
+  $('#toolingArea #add-tab').on 'click', (e) ->
     e.preventDefault()
     currentTabIndex = currentTabIndex + 1
     newTabId = currentTabIndex
 
-    $("#soqlArea #tabArea ul").append(
+    $("#toolingArea #tabArea ul").append(
       "<li class=\"noselect\"><a href=\"#tab" + newTabId + "\">Grid" + newTabId + "</a>" +
       "<span class=\"ui-icon ui-icon-close ui-closable-tab\"></span>" +
       "</li>"
     )
 
-    $("#soqlArea #tabArea").append(
+    $("#toolingArea #tabArea").append(
       "<div id=\"tab" + newTabId + "\" class=\"resultTab\" tabId=\"" + newTabId + "\">" +
       "<div id=\"soql" + newTabId + "\" class=\"resultSoql\" tabId=\"" + newTabId + "\"></div>" +
       "<div id=\"grid" + newTabId + "\" class=\"resultGrid\" tabId=\"" + newTabId + "\"></div>" +
       "</div>"
     )
     
-    createGrid("#soqlArea #grid" + newTabId)
+    createGrid("#toolingArea #grid" + newTabId)
     
-    $("#soqlArea #tabArea").tabs("refresh")
+    $("#toolingArea #tabArea").tabs("refresh")
     
-    newTabIndex = $("#soqlArea #tabArea ul li").length - 1
+    newTabIndex = $("#toolingArea #tabArea ul li").length - 1
     selectedTabId = newTabIndex
-    $("#soqlArea #tabArea").tabs({ active: newTabIndex });
+    $("#toolingArea #tabArea").tabs({ active: newTabIndex });
       
   #------------------------------------------------
   # Create grid
@@ -135,11 +129,11 @@ coordinates = ->
     else
       json.rows
 
-  getExecutedSoql = (json) ->
+  getExecuteResult = (json) ->
     if !json?
       null
     else
-      json.soql
+      json.result
 
   getColumnsOption = (json) ->
     if !json?
@@ -151,20 +145,21 @@ coordinates = ->
   # message
   #------------------------------------------------
   displayError = (json) ->
-    $("#soqlArea #messageArea").html(json.error)
-    $("#soqlArea #messageArea").show()
+    $("#toolingArea #messageArea").html(json.error)
+    $("#toolingArea #messageArea").show()
   
   hideMessageArea = () ->
-    $("#soqlArea #messageArea").empty()
-    $("#soqlArea #messageArea").hide()
+    $("#toolingArea #messageArea").empty()
+    $("#toolingArea #messageArea").hide()
     
   #------------------------------------------------
   # page load actions
   #------------------------------------------------
   selectedTabId = 1
-  createGrid("#soqlArea #grid" + selectedTabId)
+  createGrid("#toolingArea #grid" + selectedTabId)
 
-  $("#soqlArea #tabArea").tabs()
+  $("#toolingArea #tabArea").tabs()
 
 $(document).ready(coordinates)
 $(document).on('page:load', coordinates)
+###

@@ -13,51 +13,46 @@
               'main',			  
               'soqlexecuter', 
               'describe', 
-              'metadata' 
+              'metadata',
+              'tooling',
+              'apex'
 %>
 <style>
-.loader,
-.loader:after {
-  border-radius: 50%;
-  width: 10em;
-  height: 10em;
-}
-.loader {
-  margin: 60px auto;
-  font-size: 10px;
-  position: relative;
-  text-indent: -9999em;
-  border-top: 1.1em solid rgba(0,255,255, 0.2);
-  border-right: 1.1em solid rgba(0,255,255, 0.2);
-  border-bottom: 1.1em solid rgba(0,255,255, 0.2);
-  border-left: 1.1em solid #00ffff;
-  -webkit-transform: translateZ(0);
-  -ms-transform: translateZ(0);
-  transform: translateZ(0);
-  -webkit-animation: load8 1.1s infinite linear;
-  animation: load8 1.1s infinite linear;
-}
-@-webkit-keyframes load8 {
-  0% {
-    -webkit-transform: rotate(0deg);
-    transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(360deg);
-    transform: rotate(360deg);
-  }
-}
-@keyframes load8 {
-  0% {
-    -webkit-transform: rotate(0deg);
-    transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(360deg);
-    transform: rotate(360deg);
-  }
+
+/* Progress Bar */
+
+#progress{
+    visibility: hidden;
+    height: 2px;
 }
 
+.progress-line, .progress-line:before {
+  height: 2px;
+  width: 100%;
+  margin: 0;
+}
+.progress-line {
+  /*background-color: #b3d4fc;*/
+  display: -webkit-flex;
+  display: flex;
+}
+.progress-line:before {
+  /*background-color: #3f51b5;*/
+  background-color: #337ab7;
+  content: '';
+  -webkit-animation: running-progress 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation: running-progress 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+@-webkit-keyframes running-progress {
+  0% { margin-left: 0px; margin-right: 100%; }
+  50% { margin-left: 25%; margin-right: 0%; }
+  100% { margin-left: 100%; margin-right: 0; }
+}
+@keyframes running-progress {
+  0% { margin-left: 0px; margin-right: 100%; }
+  50% { margin-left: 25%; margin-right: 0%; }
+  100% { margin-left: 100%; margin-right: 0; }
+}
 
 </style>
 <div id="mainArea">
@@ -69,20 +64,26 @@
     <div id="menuList">
       
         <ul>
-    		<li><%= link_to "Logout", logout_path, method: :delete, id: "logoutLink" %></li>
-            <li><a id="soqlexecuter" href="" class="menus" method="GET" loadTarget="#soqlexecuterContent" action="">SOQL</a></li>
-    		<li><a id="describe" href="#" class="menus" method="GET" loadTarget="#describeContent" action="describe">Describe</a></li>
-    		<li><a id="metadata" href="#" class="menus" method="GET" loadTarget="#metadataContent" action="metadata">Metadata</a></li>
+      		<li><%= link_to "Logout", logout_path, method: :delete, id: "logoutLink" %></li>
+          <li><a id="soqlexecuter" href="" class="menus" method="GET" loadTarget="#soqlexecuterContent" action="">SOQL</a></li>
+      		<li><a id="describe" href="#" class="menus" method="GET" loadTarget="#describeContent" action="describe">Describe</a></li>
+      		<li><a id="metadata" href="#" class="menus" method="GET" loadTarget="#metadataContent" action="metadata">Metadata</a></li>
+          <!--<li><a id="tooling" href="" class="menus" method="GET" loadTarget="#toolingContent" action="">Tooling</a></li>-->
+          <li><a id="apex" href="" class="menus" method="GET" loadTarget="#apexContent" action="">Apex</a></li>
         </ul>
     </div>  
-      
-    <div id="spaceArea" style="height:50px;">
-    <!--<div class="loader"></div>-->
+
+    <div id="progress"><div id="progress-line"></div></div>
+
+    <div id="spaceArea" style="height:20px;">
+
     </div>
 
     <div id="contentsArea">
         <div id="soqlexecuterContent"><%= render "soqlexecuter/soqlexecuter" %></div>
         <div id="describeContent"><%= render "describe/describe" %></div>
-    	<div id="metadataContent"><%= render "metadata/metadata" %></div>	
+        <div id="metadataContent"><%= render "metadata/metadata" %></div>	
+        <!--<div id="toolingContent"><%= render "tooling/tooling" %></div>-->
+        <div id="apexContent"><%= render "apex/apex" %></div>
     </div>
 </div>

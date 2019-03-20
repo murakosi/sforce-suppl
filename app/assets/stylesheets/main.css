@@ -2,11 +2,19 @@
     background:white !important;
 }
 
-#soqlexecuterContent, #describeContent, #metadataContent {
+#soqlexecuterContent,
+#describeContent, 
+#metadataContent, 
+#toolingContent,
+#apexContent{
  display:none;   
 }
 
-.soqlexecuter #soqlexecuterContent, .describe #describeContent, .metadata #metadataContent{
+.soqlexecuter #soqlexecuterContent, 
+.describe #describeContent, 
+.metadata #metadataContent, 
+.tooling #toolingContent,
+.apex #apexContent{
  display:block;   
 }
 
@@ -135,7 +143,7 @@
     margin: 0 auto;   
 }
 
-#tree, #editTree{
+#tree, .treeView{
     font-size:12px;
     font-family: Verdana;
     height:500px;
