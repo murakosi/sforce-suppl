@@ -30,4 +30,4 @@
 !/output/.keep
 
 /config/local_env.yml
-/lib/cacert.cer
+#/lib/cacert.cer
