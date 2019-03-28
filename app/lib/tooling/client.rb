@@ -8,7 +8,14 @@ module Tooling
 
             @wsdl = options[:wsdl]
 
-            @headers = {}
+            if options[:debug_categories].nil?
+                debug_categories = [ {:category => "All", :level => "NONE"}]
+            else
+                debug_categories = options[:debug_categories]
+            end
+
+            #Set debug info
+            @headers = {"tns:DebuggingHeader" => {"tns:categories" => debug_categories}}
 
             @version = options[:version] || Constants::DefaultApiVersion
 
@@ -68,11 +75,29 @@ module Tooling
             @client.wsdl.namespace
         end
 
+        def response_header
+            @response_header
+        end
+
         def execute_anonymous(code)
-            call_tooling_api(:execute_anonymous, {:string => code})
+            result = call_tooling_api(:execute_anonymous, {:string => code})
+            if @response_header.present?
+                {
+                    :debug_log => @response_header[:debugging_info][:debug_log],
+                    :anonymous_result => result
+                }
+            else
+                {
+                    :debug_log => "",
+                    :anonymous_result => result
+                }
+            end
         end
 
         def call_tooling_api(method, message_hash={})
+            
+            @response_header = nil
+
             response = @client.call(method.to_sym) do |locals|
                 locals.message message_hash
             end
