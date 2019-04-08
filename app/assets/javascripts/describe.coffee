@@ -102,7 +102,7 @@ coordinates = ->
         manualColumnResize: true,
         rowHeaders: true,
         colHeaders: header,
-        columns: columnsOption,
+        #columns: columnsOption,
         contextMenu: false,
         readOnly: true,
         startRows: 0,
