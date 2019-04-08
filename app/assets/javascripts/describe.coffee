@@ -3,6 +3,7 @@ coordinates = ->
   
   defaultDataType = ""  
   defaultContentType = null
+  currentTable = null
   
   #------------------------------------------------
   # change custom/standard
@@ -86,8 +87,10 @@ coordinates = ->
   #------------------------------------------------ 
   createGrid = (elementId, json = null) ->   
     hotElement = document.querySelector(elementId)
-    table = new Handsontable(hotElement)
-    table.destroy()
+    
+    if currentTable
+      currentTable.destroy()
+      currentTable = null
 
     header = getColumns(json)
     records = getRows(json)
@@ -112,9 +115,9 @@ coordinates = ->
         licenseKey: 'non-commercial-and-evaluation'
     }
 
-    hot = new Handsontable(hotElement, hotSettings)
-    hot.updateSettings afterColumnSort: ->
-      hot.render()
+    currentTable = new Handsontable(hotElement, hotSettings)
+    currentTable.updateSettings afterColumnSort: ->
+      currentTable.render()
     #table.render()
     
   getColumns = (json) ->
