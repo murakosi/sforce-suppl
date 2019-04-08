@@ -30,6 +30,7 @@ module Describe
                 length = get_length_name(raw_hash, @translation[translate_key][:type])
 
                 if raw_hash[:type] == "picklist"
+                    p raw_hash
                     val = raw_hash[:picklist_values].map{ |hash| hash[:value]}
                     raw_hash[:picklist_values] = val.join("\r\n")
                 end
