@@ -115,7 +115,7 @@ coordinates = ->
 
     table = new Handsontable(hotElement, hotSettings)
     table.updateSettings afterColumnSort: ->
-      table.render()
+      #table.render()
 
   getColumns = (json) ->
     if !json?
