@@ -37,7 +37,7 @@ module Describe
                     end
                     
                     if picklist_values.is_a?(Hash)
-                        val = picklist_values[:value]
+                        val = [picklist_values[:value]]
                     end
                     
                     raw_hash[:picklist_values] = val.join("\r\n")
