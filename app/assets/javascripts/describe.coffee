@@ -108,6 +108,8 @@ coordinates = ->
         readOnly: true,
         startRows: 0,
         columnSorting: true,
+        dropdownMenu: true,
+        filters: true,
         licenseKey: 'non-commercial-and-evaluation'
     }
 
