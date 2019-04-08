@@ -101,8 +101,7 @@ coordinates = ->
         manualRowResize: false,
         manualColumnResize: true,
         rowHeaders: true,
-        #colHeaders: header,
-        colHeaders: true,
+        colHeaders: header,
         #columns: columnsOption,
         contextMenu: false,
         readOnly: true,
@@ -116,7 +115,8 @@ coordinates = ->
     table = new Handsontable(hotElement, hotSettings)
     table.updateSettings afterColumnSort: ->
       table.render()
-
+    table.render()
+    
   getColumns = (json) ->
     if !json?
       null
