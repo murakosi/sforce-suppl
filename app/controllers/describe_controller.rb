@@ -49,6 +49,7 @@ class DescribeController < ApplicationController
     def response_json(describe_result, formatted_result)
         abc = []
         formatted_result.first.keys.size.times{abc << {type: "text", readOnly: true}}
+        p abc
         {
             :method => get_sobject_info(describe_result),
             :columns => formatted_result.first.keys,
