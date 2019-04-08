@@ -86,7 +86,6 @@ coordinates = ->
   #------------------------------------------------ 
   createGrid = (elementId, json = null) ->   
     hotElement = document.querySelector(elementId)
-    console.log('here')
     table = new Handsontable(hotElement)
     table.destroy()
 
@@ -96,7 +95,7 @@ coordinates = ->
 
     hotSettings = {
         data: records,
-        height: 500;
+        height: 500,
         stretchH: 'all',
         autoWrapRow: true,
         manualRowResize: false,
@@ -137,7 +136,8 @@ coordinates = ->
 
   getColumnsOption = (json) ->
     if json && json.column_options
-      json.column_options
+      #json.column_options
+      null
     else
       null
 
