@@ -52,7 +52,7 @@ class DescribeController < ApplicationController
             :method => get_sobject_info(describe_result),
             :columns => formatted_result.first.keys,
             :rows => formatted_result.each{ |hash| hash.values},
-            :column_options => formatted_result.each{|h| abc << {type: 'text'}}
+            :column_options => formatted_result.first.keys.each{|h| abc << {type: 'text'}}
         }
     end
 
