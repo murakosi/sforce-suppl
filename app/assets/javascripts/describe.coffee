@@ -137,8 +137,7 @@ coordinates = ->
 
   getColumnsOption = (json) ->
     if json && json.column_options
-      console.log(json.column_options)
-      [json.column_options]
+      json.column_options
     else
       null
 
