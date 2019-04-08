@@ -86,7 +86,7 @@ coordinates = ->
   #------------------------------------------------ 
   createGrid = (elementId, json = null) ->   
     hotElement = document.querySelector(elementId)
-console.log('here')
+    console.log('here')
     table = new Handsontable(hotElement)
     table.destroy()
 
