@@ -47,10 +47,12 @@ class DescribeController < ApplicationController
     end
 
     def response_json(describe_result, formatted_result)
+        abc = []
         {
             :method => get_sobject_info(describe_result),
             :columns => formatted_result.first.keys,
-            :rows => formatted_result.each{ |hash| hash.values}
+            :rows => formatted_result.each{ |hash| hash.values},
+            :column_options => formatted_result.each{|h| abc << {type: 'text'}}
         }
     end
 
