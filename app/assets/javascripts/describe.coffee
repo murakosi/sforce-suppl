@@ -136,8 +136,8 @@ coordinates = ->
       json.method
 
   getColumnsOption = (json) ->
-    if !json?
-      [[]]
+    if json && json.column_options
+      json.column_options
     else
       null
 
