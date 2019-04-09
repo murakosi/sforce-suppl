@@ -54,6 +54,10 @@
   50% { margin-left: 25%; margin-right: 0%; }
   100% { margin-left: 100%; margin-right: 0; }
 }
+  
+.dropdown-item-font{
+  font-size: 0.875rem;
+  }
 
 </style>
 <div id="mainArea">
@@ -66,11 +70,11 @@
         <%= @current_user.name %>
       </button>
       <div class="dropdown-menu" aria-labelledby="userInfoButton">
-          <a class="dropdown-item" href="#">Action</a>
-          <a class="dropdown-item" href="#">Another action</a>
-          <a class="dropdown-item" href="#">Something else here</a>
+          <a class="dropdown-item dropdown-item-font" href="#">Action</a>
+          <a class="dropdown-item dropdown-item-font" href="#">Another action</a>
+          <a class="dropdown-item dropdown-item-font" href="#">Something else here</a>
           <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="#">Separated link</a>
+          <a class="dropdown-item dropdown-item-font" href="#">Separated link</a>
       </div>
     </div>    
     <div id="menuList">
