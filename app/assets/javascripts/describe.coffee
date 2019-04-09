@@ -109,6 +109,7 @@ coordinates = ->
         contextMenu: false,
         readOnly: true,
         startRows: 0,
+        fragmentSelection: true,
         columnSorting: true,
         filters: true,
         dropdownMenu: ['filter_action_bar', 'filter_by_value'],
