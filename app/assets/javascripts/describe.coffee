@@ -3,6 +3,7 @@ coordinates = ->
   
   defaultDataType = ""  
   defaultContentType = null
+  currentTable = null
   
   #------------------------------------------------
   # change custom/standard
@@ -86,9 +87,10 @@ coordinates = ->
   #------------------------------------------------ 
   createGrid = (elementId, json = null) ->   
     hotElement = document.querySelector(elementId)
-
-    table = new Handsontable(hotElement)
-    table.destroy()
+    
+    if currentTable
+      currentTable.destroy()
+      currentTable = null
 
     header = getColumns(json)
     records = getRows(json)
@@ -96,25 +98,29 @@ coordinates = ->
 
     hotSettings = {
         data: records,
-        height: 500;
+        height: 500,
         stretchH: 'all',
         autoWrapRow: true,
         manualRowResize: false,
         manualColumnResize: true,
         rowHeaders: true,
         colHeaders: header,
-        columns: columnsOption,
+        #columns: columnsOption,
         contextMenu: false,
         readOnly: true,
         startRows: 0,
+        fragmentSelection: true,
         columnSorting: true,
+        filters: true,
+        dropdownMenu: ['filter_action_bar', 'filter_by_value'],
         licenseKey: 'non-commercial-and-evaluation'
     }
 
-    table = new Handsontable(hotElement, hotSettings)
-    table.updateSettings afterColumnSort: ->
-      table.render()
-
+    currentTable = new Handsontable(hotElement, hotSettings)
+    currentTable.updateSettings afterColumnSort: ->
+      currentTable.render()
+    #table.render()
+    
   getColumns = (json) ->
     if !json?
       null
@@ -134,8 +140,9 @@ coordinates = ->
       json.method
 
   getColumnsOption = (json) ->
-    if !json?
-      [[]]
+    if json && json.column_options
+      #json.column_options
+      null
     else
       null
 
