@@ -414,7 +414,7 @@ coordinates = ->
         minSpareRows: 0,
         minSpareCols: 0,
         fillHandle: {autoInsertRow: false},
-        #contextMenu: contextMenu,
+        fragmentSelection: true,
         columnSorting: allowSort,
         licenseKey: 'non-commercial-and-evaluation',
         beforeChange: (source, changes) -> beforeChangeFunc(source, changes),
