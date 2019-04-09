@@ -81,7 +81,7 @@ mains = ->
     $(targetDiv).html(html)
   
   displayUserId = (id) ->
-    $("#currentUserId").html("ID: " + id)
+    #$("#currentUserId").html("ID: " + id)
     
   executeAjax = (options, callback) ->
 
