@@ -118,6 +118,7 @@ coordinates = ->
         contextMenu: false,
         readOnly: true,
         startRows: 0,
+        fragmentSelection: true,
         licenseKey: 'non-commercial-and-evaluation'
     }
 
