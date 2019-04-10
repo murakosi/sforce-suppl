@@ -70,8 +70,13 @@
         <button id="userInfoButton" class="btn btn-secondary btn-sm dropdown-toggle" style="border-radius: 12px;" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <%= @current_user.name %>
         </button>
-        <a href="#">Action</a>
-        <a href="#">Action</a>
+  <div class="dropdown-menu">
+    <a class="dropdown-item" href="#">Action</a>
+    <a class="dropdown-item" href="#">Another action</a>
+    <a class="dropdown-item" href="#">Something else here</a>
+    <div class="dropdown-divider"></div>
+    <a class="dropdown-item" href="#">Separated link</a>
+  </div>
         <ul class="dropdown-menu">
           <li><a href="#">Action</a></li>
           <li><a href="#">Another action</a></li>
