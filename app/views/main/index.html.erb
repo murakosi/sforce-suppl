@@ -65,12 +65,12 @@
     <!--<div id="userInfo" style="text-align:right; padding-right:10px;margin:0px;height:20px;">
             <div id="currentUserId"></div>
     </div>-->
-    <div id="userInfo" style="text-align:right; padding-right:10px;margin:0px;">
+    <div id="userInfo" class="dropdown-menu-right" style="text-align:right; padding-right:10px;margin:0px;">
       <div class="btn-group">
         <button id="userInfoButton" class="btn btn-secondary btn-sm dropdown-toggle" style="border-radius: 12px;" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <%= @current_user.name %>
         </button>
-        <ul class="dropdown-menu dropdown-menu-right">
+        <ul class="dropdown-menu">
           <li><a href="#">Action</a></li>
           <li><a href="#">Another action</a></li>
           <li><a href="#">Something else here</a></li>
