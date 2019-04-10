@@ -71,7 +71,7 @@
           <%= @current_user.name %>
         </button>
         <ul class="dropdown-menu">
-          <li><a href="#">Action</a></li>
+          <li><%= link_to "Logout", logout_path, method: :delete, id: "logoutLink" %></li>
           <li><a href="#">Another action</a></li>
           <li><a href="#">Something else here</a></li>
           <li role="separator" class="divider"></li>
