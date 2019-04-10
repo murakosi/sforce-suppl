@@ -14,7 +14,7 @@
 			</div>
 			<div class="left_block">
 				<div class="label_block">
-					<%= button_tag "Describe", :action => describe_path(), :method => :post, :id => "executeDescribe", :class => "btn btn-primary" %>
+					<%= button_tag "Describe", :action => describe_path(), :method => :post, :id => "executeDescribe", :class => "btn btn-sm btn-primary" %>
 				</div>
 			</div>
 
@@ -27,7 +27,7 @@
 			<br>
 			<div id="exportButtonArea">
 				<%= form_tag describe_download_path(), :id => "exportForm", :method => :post, :remote => false do %>
-					<%= button_tag "CSV Export", :id => "csv-expprt", :class => "btn btn-default exp-btn", :dl_format => "csv" %>
+					<%= button_tag "CSV Export", :id => "csv-expprt", :class => "btn btn-sm btn-default exp-btn", :dl_format => "csv" %>
 				<% end %>
 			</div>	
 
