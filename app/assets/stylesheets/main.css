@@ -18,6 +18,10 @@
  display:block;   
 }
 
+button:disabled {
+  cursor: default !important;
+}
+
 /* ------------------------------
    #JQuery UI
 ------------------------------ */
@@ -118,25 +122,6 @@
 /* ------------------------------
    #Areas
 ------------------------------ */
-/*
-#soqlArea{
-    padding-top: 20px;
-    width:100%;
-    margin: 0 auto;
-}
-
-#describeArea{
-    padding-top: 20px;
-    width:100%;
-    margin: 0 auto;
-}
-
-#metadataArea{
-    padding-top: 20px;
-    width:100%;
-    margin: 0 auto;
-}
-*/
 #mainArea{
     padding-top: 20px;
     width:100%;
@@ -151,7 +136,6 @@
 }
 
 #formArea{
-    /*width: 70%;*/
     width: 80%;
     margin: 0 auto;
 }
@@ -182,14 +166,6 @@
     cursor: pointer; 
 }
 
-#dummyArea{
-    /*
-    width: 15%;
-    height: 10px;
-    border: 1px solid lightgray;
-    float: left;
-    */
-}
 
 /* ------------------------------
    #select2
@@ -349,132 +325,3 @@ span.select2-selection.select2-selection--single {
 #menuList ul li:hover > a {
     background: #fff;
 }
-
-/* 
-#menuList {
-    margin-top: 15px;
-    width: 100%;
-    height: 45px;
-    border-top: #aaa 1px solid;
-    border-bottom: #aaa 1px solid;
-    position: relative;
-    z-index: 10;
-    background: #d3cbdb;
-    display: flex;
-    font-size:10pt;
-}
-
-.nav {
-  width: 750px;
-  height: 45px;
-  margin: 0 auto;
-  padding: 0;
-  display: flex;
-  margin-left:70%;
-}
-
-.nav li {
-    position: relative;
-    list-style: none;
-}
-
-.nav li a {
-    display: block;
-    width: 120px;
-    height: 43px;
-    text-align: center;
-    font-size: 10pt;
-    line-height: 2;
-    background: #d3cbdb;
-    transition: 0.5s;
-    text-decoration: none;
-    border-left: #aaa 1px solid;
-    box-sizing: border-box;
-}
-
-.nav li:last-child a {
-    border-right: #aaa 1px solid;
-}
-
-.nav > li:hover > a {
-    background: white;
-}
-
-.nav > li:visited > a {
-    background: white !important;
-}
-
-.nav > li li:hover > a {
-    background: #afc6e2;
-}
-
-.nav li ul {
-    top: 43px;
-    left: -40px;
-    position: absolute;
-}
-
-.nav li ul li {
-    overflow: hidden;
-    height: 0;
-    transition: 0.2s;
-}
-
-.nav li ul li a {
-    font-size: 10pt;
-    line-height: 2.8;
-    text-decoration: none;
-    border: #aaa 1px solid;
-    box-sizing: border-box;
-}
-
-.nav li:hover > ul > li {
-    overflow: visible;
-    height: 40px;
-}
-
-.nav li ul li ul {
-    top: 0;
-    left: 110px;
-    line-height: 2;
-}
-
-.nav li ul li ul:before {
-    position: absolute;
-    content: "";
-    top: 15px;
-    left: 30px;
-    border: 5px solid transparent;
-    border-left: 5px solid #fff;
-}
-
-.nav li ul li ul li:hover > a {
-    color: pink;
-    background: #afc6e2;
-}
-
-.nav li ul li ul.left {
-    top: 0;
-    left: -190px;
-}
-
-.nav li ul li ul.left:before,
-.nav li ul li ul li ul.left:before {
-    position: absolute;
-    content: "";
-    top: 15px;
-    left: 190px;
-    border: 5px solid transparent;
-    border-right: 5px solid #fff;
-}
-
-.nav li ul li ul.left li:hover > a {
-    color: pink;
-    background: #afc6e2;
-}
-
-.nav li ul li ul li ul.left li:hover > a {
-    color: purple;
-    background: #afc6e2;
-}
-*/

@@ -38,7 +38,7 @@
 		</div>
 		<div class="left_block">
 			<div class="label_block">
-				<%= submit_tag 'Metadata', :class => 'btn btn-sm btn-primary execute-metadata' %>                
+				<%= submit_tag 'List metadata', :class => 'btn btn-sm btn-primary execute-metadata' %>                
 			</div>
 		</div>
 		<% end %>
@@ -63,7 +63,7 @@
 					<%= button_tag "Delete", :id => "deleteButton", :class => "btn btn-warning btn-xs" %>
 				<% end %>
 				<%= form_tag metadata_retrieve_path(), :id => "retrieveForm", :method => :post do %>
-					<%= button_tag "Retrieve metadata", :id => "retrieveButton", :class => "btn btn-info btn-xs exp" %>
+					<%= button_tag "Retrieve metadata", :id => "retrieveButton", :class => "btn btn-warning btn-xs exp" %>
 				<% end %>
 			</div>
 			<div id="grid" class="resultGrid"></div>

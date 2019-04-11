@@ -18,7 +18,7 @@ module Sforcesuppl
     config.assets.precompile += %w(jstree.js)
     config.assets.precompile += %w(jstree.dropdown.js)
     config.assets.precompile += %w(select2.full.js)
-    config.assets.precompile += %w(bootstrap.bundle.min.js)
+    config.assets.precompile += %w(bootstrap.js)
     config.assets.precompile += %w(jquery.fileDownload.js)
     config.assets.precompile += %w(chosen.jquery.js)
     config.assets.precompile += %w(ajaxDownload.js)
