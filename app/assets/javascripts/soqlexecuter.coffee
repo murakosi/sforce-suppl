@@ -119,7 +119,6 @@ coordinates = ->
         readOnly: true,
         startRows: 0,
         fragmentSelection: true,
-        disableVisualSelection: true,
         licenseKey: 'non-commercial-and-evaluation'
     }
 
