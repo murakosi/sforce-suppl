@@ -416,7 +416,7 @@ coordinates = ->
         fillHandle: {autoInsertRow: false},
         fragmentSelection: true,
         columnSorting: allowSort,
-        licenseKey: 'non-commercial-and-evaluation',
+        licenseKey: 'non-commercial-and-evaluation'
         beforeChange: (source, changes) -> beforeChangeFunc(source, changes),
         afterOnCellMouseDown: (event, coords, td) -> onClickFunc(event, coords, td)
     }
@@ -548,7 +548,7 @@ coordinates = ->
 
   $("#metadataArea #tabArea").tabs()
 
-  Handsontable.renderers.registerRenderer('customDropdownRenderer', customDropdownRenderer);
+  #Handsontable.renderers.registerRenderer('customDropdownRenderer', customDropdownRenderer);
 
   createGrid("#metadataArea #grid")
   #createGrid("#metadataArea #createGrid")

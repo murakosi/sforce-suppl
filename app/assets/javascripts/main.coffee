@@ -10,7 +10,7 @@ mains = ->
 
   $("#menuList").on "click", "a", (e) ->
     clickedAnchor = ($(this).prop("id"))
-    
+
     if selectedAnchor == clickedAnchor
       e.preventDefault()
       return false
