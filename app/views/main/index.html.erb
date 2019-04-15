@@ -1,6 +1,4 @@
-
 <% javascript 'handsontable.full',
-              'handsontable-chosen-editor',
               'jquery-1.11.2.min',
               'jquery-ui-1.11.3.min',
               'jstree',
@@ -11,7 +9,7 @@
               'chosen.jquery.js',
               'ajaxDownload.js',
               'ajaxUtils.js',
-              'main',			  
+              'main',       
               'soqlexecuter', 
               'describe', 
               'metadata',
@@ -94,14 +92,13 @@
     <div id="progress"><div id="progress-line"></div></div>
 
     <div id="spaceArea" style="height:20px;">
-
     </div>
 
     <div id="contentsArea">
         <div id="soqlexecuterContent"><%= render "soqlexecuter/soqlexecuter" %></div>
         <div id="describeContent"><%= render "describe/describe" %></div>
         <div id="metadataContent"><%= render "metadata/metadata" %></div>	
-        <!--<div id="toolingContent"><%= render "tooling/tooling" %></div>-->
+        <!--<div id="toolingContent"><%#= render "tooling/tooling" %></div>-->
         <div id="apexContent"><%= render "apex/apex" %></div>
     </div>
 </div>

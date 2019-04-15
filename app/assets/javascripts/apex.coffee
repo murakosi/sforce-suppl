@@ -128,7 +128,6 @@ coordinates = ->
     if tabCount <= 1
       return
 
-    #if window.confirm("Close this tab?")
     panelId = $(this).closest("#apexArea li").remove().attr("aria-controls")
     $("#apexArea #" + panelId ).remove();
     $("#apexArea #" + tabContainerDiv).tabs("refresh")
@@ -175,14 +174,14 @@ coordinates = ->
 
     hotSettings = {
         data: records,
-        height: 500;
+        height: 500,
         stretchH: 'last',
         autoWrapRow: true,
         manualRowResize: false,
         manualColumnResize: true,
         rowHeaders: true,
         colHeaders: header,
-        fragmentSelection: true,
+        fragmentSelection: 'cell',
         filters: true,
         contextMenu: false,
         readOnly: true,
@@ -191,7 +190,6 @@ coordinates = ->
         licenseKey: 'non-commercial-and-evaluation'
     }
 
-    #grids[elementId] = new Handsontable(hotElement, hotSettings)
     hot = new Handsontable(hotElement, hotSettings)
     grids[elementId] = hot
     hot.render()
@@ -235,7 +233,6 @@ coordinates = ->
   # page load actions
   #------------------------------------------------
   selectedTabId = 1
-  createGrid("#apexArea #grid" + selectedTabId)
 
   $("#apexArea #tabArea").tabs()
 

@@ -12,7 +12,6 @@ module Sforcesuppl
     config.load_defaults 5.1
 
     config.assets.precompile += %w(handsontable.full.js)
-    config.assets.precompile += %w(handsontable-chosen-editor.js)
     config.assets.precompile += %w(jquery-1.11.2.min.js)
     config.assets.precompile += %w(jquery-ui-1.11.3.min.js)
     config.assets.precompile += %w(jstree.js)

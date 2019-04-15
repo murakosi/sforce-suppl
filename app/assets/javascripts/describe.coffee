@@ -1,5 +1,5 @@
 
-coordinates = ->
+describe = ->
   
   defaultDataType = ""  
   defaultContentType = null
@@ -109,7 +109,7 @@ coordinates = ->
         contextMenu: false,
         readOnly: true,
         startRows: 0,
-        fragmentSelection: true,
+        fragmentSelection: 'cell',
         columnSorting: true,
         filters: true,
         dropdownMenu: ['filter_action_bar', 'filter_by_value'],
@@ -150,5 +150,5 @@ coordinates = ->
 
   createGrid("#describeArea #grid")
 
-$(document).ready(coordinates)
-$(document).on('page:load', coordinates)
+$(document).ready(describe)
+$(document).on('page:load', describe)
