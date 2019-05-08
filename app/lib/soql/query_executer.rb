@@ -10,7 +10,7 @@ module Soql
                 soql.delete!(";");
             end
 
-            query_result = Service::SoapSessionService.call(sforce_session).query(soql)
+            p query_result = Service::SoapSessionService.call(sforce_session).query(soql)
 
             if query_result.empty?
                raise StandardError.new("No matched records found")
