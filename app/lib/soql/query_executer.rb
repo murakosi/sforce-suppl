@@ -22,7 +22,14 @@ module Soql
         end
  
         def parse_query_result(query_result)
-            results = get_results(query_result.raw_result)
+            results = nil
+            if query_result.is_a?(Soapforce::Result)
+                results = get_results(query_result.raw_result)
+            else
+                result = Soapforce::Result.new(query_result)
+                results = get_results(result.raw_result)
+            end
+            
             records = []
             results.each do |result|                
                 new_record = {}
