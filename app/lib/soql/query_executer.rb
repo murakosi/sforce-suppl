@@ -23,10 +23,10 @@ module Soql
  
         def parse_query_result(query_result)
             results = nil
-            if query_result.is_a?(Soapforce::Result)
+            if query_result.is_a?(Soapforce::QueryResult)
                 results = get_results(query_result.raw_result)
             else
-                result = Soapforce::Result.new(query_result)
+                result = Soapforce::QueryResult.new(query_result)
                 results = get_results(result.raw_result)
             end
             
