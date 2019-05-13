@@ -10,8 +10,8 @@ module Soql
                 soql.delete!(";");
             end
 
-            #query_result = Service::SoapSessionService.call(sforce_session).query(soql)
-            query_result = Service::ToolingClientService.call(sforce_session).query(soql)
+            query_result = Service::SoapSessionService.call(sforce_session).query(soql)
+            #query_result = Service::ToolingClientService.call(sforce_session).query(soql)
 
             #if query_result.empty?
             if query_result.blank?
