@@ -5,13 +5,16 @@ module Soql
         
         Exclude_key_names = ["@xsi:type", "type"]
         
-        def execute_query(sforce_session, soql)
+        def execute_query(sforce_session, soql, tooling)
             if soql.strip.end_with?(";")
                 soql.delete!(";");
             end
-
-            query_result = Service::SoapSessionService.call(sforce_session).query(soql)
-            #query_result = Service::ToolingClientService.call(sforce_session).query(soql)
+            
+            if tooling
+                query_result = Service::ToolingClientService.call(sforce_session).query(soql)
+            else
+                query_result = Service::SoapSessionService.call(sforce_session).query(soql)
+            end
 
             #if query_result.empty?
             if query_result.blank?
