@@ -15,7 +15,7 @@ module Soql
             else
                 query_result = Service::SoapSessionService.call(sforce_session).query(soql)
             end
-
+p query_result
             if query_result.nil? || query_result.blank?
                raise StandardError.new("No matched records found")
             end
