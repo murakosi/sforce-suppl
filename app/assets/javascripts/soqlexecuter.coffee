@@ -37,7 +37,7 @@ coordinates = ->
     
     hideMessageArea()
     selectedTabId = $("#soqlArea #tabArea .ui-tabs-panel:visible").attr("tabId");
-    val = {soql: $('#soqlArea #input_soql').val()}
+    val = {soql: $('#soqlArea #input_soql').val(), tooling: $('#soqlArea #useTooling').is(':checked')}
     action = $('#soqlArea .execute-form').attr('action')
     method = $('#soqlArea .execute-form').attr('method')
     options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
