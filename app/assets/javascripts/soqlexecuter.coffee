@@ -116,9 +116,9 @@ coordinates = ->
         colHeaders: header,
         columns: columnsOption,
         contextMenu: false,
-        readOnly: true,
+        readOnly: false,
         startRows: 0,
-        fragmentSelection: true,
+        fragmentSelection: 'cell',
         licenseKey: 'non-commercial-and-evaluation'
     }
 
