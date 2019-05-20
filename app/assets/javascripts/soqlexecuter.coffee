@@ -63,7 +63,7 @@ coordinates = ->
       exportHiddenColumns: true,
       exportHiddenRows: true,
       fileExtension: 'csv',
-      filename: 'soql_result,
+      filename: 'soql_result',
       mimeType: 'text/csv',
       rowDelimiter: '\r\n',
       rowHeaders: true
