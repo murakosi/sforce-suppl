@@ -66,7 +66,7 @@ coordinates = ->
       filename: 'soql_result',
       mimeType: 'text/csv',
       rowDelimiter: '\r\n',
-      rowHeaders: true
+      rowHeaders: false
     })
       
   #------------------------------------------------
