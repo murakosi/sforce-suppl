@@ -48,7 +48,27 @@ coordinates = ->
     $("#soqlArea #soql" + selectedTabId).html(getExecutedSoql(json))
     elementId = "#soqlArea #grid" + selectedTabId
     createGrid(elementId, json)
-    
+  
+  #------------------------------------------------
+  # CSV Download
+  #------------------------------------------------
+  $('#soqlArea #exportBtn').on 'click', (e) ->
+    tabId = $("#soqlArea #tabArea .ui-tabs-panel:visible").attr("tabId")
+    elementId = "#soqlArea #grid" + tabId
+    hotElement =grids[elementId]
+    hotElement.getPlugin('exportFile').downloadFile('csv', {
+      bom: false,
+      columnDelimiter: ',',
+      columnHeaders: true,
+      exportHiddenColumns: true,
+      exportHiddenRows: true,
+      fileExtension: 'csv',
+      filename: 'soql_result,
+      mimeType: 'text/csv',
+      rowDelimiter: '\r\n',
+      rowHeaders: true
+    })
+      
   #------------------------------------------------
   # Tab events
   #------------------------------------------------
