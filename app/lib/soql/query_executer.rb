@@ -43,6 +43,7 @@ module Soql
                         p "is_ref"
                         p resolve_reference(k, v)
                         new_record.merge!(resolve_reference(k, v))
+                        p new_record
                     elsif is_child?(v)
                         new_record.merge!(parse_child(k, v))
                     else
