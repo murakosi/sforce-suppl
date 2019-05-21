@@ -40,6 +40,7 @@ module Soql
                 record.each do |k,v|
                     
                     if is_reference?(v)
+                        p "is_ref"
                         new_record.merge!(resolve_reference(k, v))
                     elsif is_child?(v)
                         new_record.merge!(parse_child(k, v))
@@ -74,6 +75,8 @@ module Soql
         def resolve_reference(key, value)
             result = {}
             extract(value).each do | k, v|
+                p k
+                p v
                 result.merge!(key.to_s + "." + k.to_s => v)
             end
             result
