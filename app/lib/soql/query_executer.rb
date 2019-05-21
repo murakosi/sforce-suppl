@@ -77,7 +77,7 @@ module Soql
             extract(value).each do | k, v|
                 p k
                 p v
-                p {key.to_s + "." + k.to_s => v}
+                p key.to_s + "." + k.to_s
                 result.merge!(key.to_s + "." + k.to_s => v)
             end
             result
