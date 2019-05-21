@@ -13,7 +13,7 @@ module Soql
             if tooling
                 query_result = Service::ToolingClientService.call(sforce_session).query(soql)
             else
-                query_result = Service::SoapSessionService.call(sforce_session).query(soql)
+                p query_result = Service::SoapSessionService.call(sforce_session).query(soql)
             end
 
             if query_result.nil? || query_result.blank? || !query_result.has_key?(:records)
