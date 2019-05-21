@@ -13,7 +13,7 @@ module Soql
             if tooling
                 query_result = Service::ToolingClientService.call(sforce_session).query(soql)
             else
-                p query_result = Service::SoapSessionService.call(sforce_session).query(soql)
+                query_result = Service::SoapSessionService.call(sforce_session).query(soql)
             end
 
             if query_result.nil? || query_result.blank? || !query_result.has_key?(:records)
@@ -40,10 +40,7 @@ module Soql
                 record.each do |k,v|
                     
                     if is_reference?(v)
-                        p "is_ref"
-                        p resolve_reference(k, v)
                         new_record.merge!(resolve_reference(k, v))
-                        p new_record
                     elsif is_child?(v)
                         new_record.merge!(parse_child(k, v))
                     else
