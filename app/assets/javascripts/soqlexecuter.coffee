@@ -37,7 +37,7 @@ coordinates = ->
     
     hideMessageArea()
     selectedTabId = $("#soqlArea #tabArea .ui-tabs-panel:visible").attr("tabId");
-    val = {soql: $('#soqlArea #input_soql').val()}
+    val = {soql: $('#soqlArea #input_soql').val(), tooling: $('#soqlArea #useTooling').is(':checked')}
     action = $('#soqlArea .execute-form').attr('action')
     method = $('#soqlArea .execute-form').attr('method')
     options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
@@ -48,7 +48,27 @@ coordinates = ->
     $("#soqlArea #soql" + selectedTabId).html(getExecutedSoql(json))
     elementId = "#soqlArea #grid" + selectedTabId
     createGrid(elementId, json)
-    
+  
+  #------------------------------------------------
+  # CSV Download
+  #------------------------------------------------
+  $('#soqlArea #exportBtn').on 'click', (e) ->
+    tabId = $("#soqlArea #tabArea .ui-tabs-panel:visible").attr("tabId")
+    elementId = "#soqlArea #grid" + tabId
+    hotElement =grids[elementId]
+    hotElement.getPlugin('exportFile').downloadFile('csv', {
+      bom: false,
+      columnDelimiter: ',',
+      columnHeaders: true,
+      exportHiddenColumns: true,
+      exportHiddenRows: true,
+      fileExtension: 'csv',
+      filename: 'soql_result',
+      mimeType: 'text/csv',
+      rowDelimiter: '\r\n',
+      rowHeaders: false
+    })
+      
   #------------------------------------------------
   # Tab events
   #------------------------------------------------
@@ -116,10 +136,9 @@ coordinates = ->
         colHeaders: header,
         columns: columnsOption,
         contextMenu: false,
-        readOnly: true,
+        readOnly: false,
         startRows: 0,
-        fragmentSelection: true,
-        disableVisualSelection: true,
+        fragmentSelection: 'cell',
         licenseKey: 'non-commercial-and-evaluation'
     }
 

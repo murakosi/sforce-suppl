@@ -1,3 +1,7 @@
+label {
+    font-weight: normal !important;
+}
+
 .displayed{
     background:white !important;
 }

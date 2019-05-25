@@ -5,14 +5,18 @@ module Soql
         
         Exclude_key_names = ["@xsi:type", "type"]
         
-        def execute_query(sforce_session, soql)
+        def execute_query(sforce_session, soql, tooling)
             if soql.strip.end_with?(";")
                 soql.delete!(";");
             end
+            
+            if tooling
+                query_result = Service::ToolingClientService.call(sforce_session).query(soql)
+            else
+                query_result = Service::SoapSessionService.call(sforce_session).query(soql)
+            end
 
-            query_result = Service::SoapSessionService.call(sforce_session).query(soql)
-
-            if query_result.empty?
+            if query_result.nil? || query_result.blank? || !query_result.has_key?(:records)
                raise StandardError.new("No matched records found")
             end
 
@@ -20,7 +24,14 @@ module Soql
         end
  
         def parse_query_result(query_result)
-            results = get_results(query_result.raw_result)
+            results = nil
+            if query_result.is_a?(Soapforce::QueryResult)
+                results = get_results(query_result.raw_result)
+            else
+                result = Soapforce::QueryResult.new(query_result)
+                results = get_results(result.raw_result)
+            end
+            
             records = []
             results.each do |result|                
                 new_record = {}

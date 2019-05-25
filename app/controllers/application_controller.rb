@@ -17,7 +17,9 @@ class ApplicationController < ActionController::Base
     end
 
     def sign_out
-        Service::SoapLogoutService.call(@sforce_session)
+        if sforce_session_alive?
+            Service::SoapLogoutService.call(@sforce_session)
+        end
         @current_user = nil
         reset_session
     end

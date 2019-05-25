@@ -1,11 +1,12 @@
-require "soapforce"
+#require "soapforce"
 
 module Service
     class SoapClientService
         include Service::ServiceCore
     
         def call(params)
-            client = Soapforce::Client.new(client_options(params))
+            #client = Soapforce::Client.new(client_options(params))
+            client = Client.new(client_options(params))
         end
 
         private

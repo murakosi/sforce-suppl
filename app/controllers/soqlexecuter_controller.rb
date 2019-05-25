@@ -12,12 +12,12 @@ class SoqlexecuterController < ApplicationController
   end
 
   def execute
-    execute_soql(params[:soql])
+    execute_soql(params[:soql], params[:tooling])
   end
 
-  def execute_soql(soql)
+  def execute_soql(soql, tooling)
     begin
-      query_result = execute_query(sforce_session, soql)
+      query_result = execute_query(sforce_session, soql, tooling)
       render :json => response_json(soql, query_result), :status => 200
     rescue StandardError => ex
       print_error(ex)

@@ -79,6 +79,10 @@ module Tooling
             @response_header
         end
 
+        def query(soql)
+            call_tooling_api(:query, {:queryString => soql})
+        end
+        
         def execute_anonymous(code)
             result = call_tooling_api(:execute_anonymous, {:string => code})
             if @response_header.present?

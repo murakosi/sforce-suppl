@@ -4,6 +4,7 @@
 		<%= text_area_tag :input_soql,"", :size => "120x5" %>
 		<br>
 		<%= submit_tag "Execute", :class => "btn btn-sm btn-primary execute-soql" %>
+		&nbsp;&nbsp;<label><input type="checkbox" id="useTooling"/> Use Tooling API</label>
 		<% end %>
 		<p><div id="messageArea"></div></p>
 	</div>
@@ -11,7 +12,8 @@
 	<div id="dummyArea"></div>
 	
 	<div id="tabArea">
-		<%= button_tag "Add tab", :type => "button", :id => "add-tab", :class => "btn btn-sm btn-default" %>		
+		<%= button_tag "Add tab", :type => "button", :id => "add-tab", :class => "btn btn-sm btn-default" %>
+		<%= button_tag "Export", :type => "button", :id => "exportBtn", :class => "btn btn-sm btn-default" %>
 		<ul>
 			<li class="noselect"><a href="#tab1">Grid1</a>
 			<span class="ui-icon ui-icon-close ui-closable-tab"></span>
