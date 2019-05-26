@@ -26,7 +26,12 @@ class SoqlexecuterController < ApplicationController
   end
 
   def response_json(soql, query_result)
-    {:soql => soql_info(soql), :columns => query_result.first.keys, :rows => query_result.each{ |hash| hash.values}}
+    {
+      :soql => soql_info(soql),
+      :sobject => query_result[:sobject],
+      :columns => query_result[:records].first.keys,
+      :rows => query_result[:records].each{ |hash| hash.values}
+   }
   end
 
   def soql_info(soql)

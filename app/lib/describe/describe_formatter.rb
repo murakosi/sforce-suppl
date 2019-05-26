@@ -2,7 +2,7 @@ module Describe
     class DescribeFormatter
         class << self
 
-        Key_order = %i[label name type auto_number calculated calculated_formula external_id length digits scale precision picklist_values custom unique case_sensitive nillable inline_help_text default_value_formula] 
+        Key_order = %i[label name type auto_number calculated calculated_formula external_id length digits scale precision picklist_values picklist_lables custom unique case_sensitive nillable inline_help_text default_value_formula] 
         Exclude_header = ["byte_length", "creatable", "defaulted_on_create",
                         "deprecated_and_hidden", "filterable", "groupable",
                         "id_lookup","name_field","name_pointing", "restricted_picklist",
@@ -30,23 +30,45 @@ module Describe
                 length = get_length_name(raw_hash, @translation[translate_key][:type])
 
                 if raw_hash[:type] == "picklist"
-                    picklist_values = raw_hash[:picklist_values]
-                    
-                    if picklist_values.is_a?(Array)
-                        val = picklist_values.map{ |hash| hash[:value]}
-                    end
-                    
-                    if picklist_values.is_a?(Hash)
-                        val = [picklist_values[:value]]
-                    end
-                    
-                    raw_hash[:picklist_values] = val.join("\r\n")
+                    picklist_values = raw_hash[:picklist_values]                    
+                    raw_hash[:picklist_values] = get_picklist_values(picklist_values)
+                    raw_hash[:picklist_lables] = get_picklist_labels(picklist_values)
                 end
 
                 raw_hash[:type] = type
                 raw_hash[:length] = length
 
                 raw_hash
+            end
+
+            def get_picklist_values(picklist_values)
+
+                values = ""
+                
+                if picklist_values.is_a?(Array)
+                    values = picklist_values.map{ |hash| hash[:value]}
+                end
+                
+                if picklist_values.is_a?(Hash)
+                    values = [picklist_values[:value]]
+                end
+                
+                values.join("\r\n")
+            end
+
+            def get_picklist_labels(picklist_values)
+
+                labels = ""
+
+                if picklist_values.is_a?(Array)
+                    labels = picklist_values.map{ |hash| hash[:label]}
+                end
+                
+                if picklist_values.is_a?(Hash)
+                    labels = [picklist_values[:label]]
+                end
+                
+                labels.join("\r\n")
             end
 
             def add_missing_key(raw_hash)
@@ -61,6 +83,10 @@ module Describe
 
                 if !raw_hash.has_key?(:picklist_values)
                     raw_hash.store(:picklist_values, nil)
+                end
+
+                if !raw_hash.has_key?(:picklist_lables)
+                    raw_hash.store(:picklist_lables, nil)
                 end
 
                 if !raw_hash.has_key?(:inline_help_text)

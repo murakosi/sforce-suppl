@@ -1,8 +1,11 @@
 coordinates = ->
   
-  selectedTabId = 1
-  currentTabIndex = 1
+  selectedTabId = 0
+  currentTabIndex = 0
+  selectedCellOnCreateGrid = null
   grids = {}
+  soqls = {}
+
   jqXHR = null
   defaultDataType = ""
   defaultContentType = null
@@ -45,17 +48,15 @@ coordinates = ->
     $.executeAjax(options, callbacks)
   
   processSuccessResult = (json) ->
-    $("#soqlArea #soql" + selectedTabId).html(getExecutedSoql(json))
+    $("#soqlArea #soql" + selectedTabId).html(json.soql)
     elementId = "#soqlArea #grid" + selectedTabId
-    createGrid(elementId, json)
+    createGrid(elementId, json.records)
   
   #------------------------------------------------
   # CSV Download
   #------------------------------------------------
   $('#soqlArea #exportBtn').on 'click', (e) ->
-    tabId = $("#soqlArea #tabArea .ui-tabs-panel:visible").attr("tabId")
-    elementId = "#soqlArea #grid" + tabId
-    hotElement =grids[elementId]
+    hotElement = getActiveGrid()
     hotElement.getPlugin('exportFile').downloadFile('csv', {
       bom: false,
       columnDelimiter: ',',
@@ -87,6 +88,9 @@ coordinates = ->
 
   $('#soqlArea #add-tab').on 'click', (e) ->
     e.preventDefault()
+    createTab()
+  
+  createTab = () ->
     currentTabIndex = currentTabIndex + 1
     newTabId = currentTabIndex
 
@@ -110,7 +114,44 @@ coordinates = ->
     newTabIndex = $("#soqlArea #tabArea ul li").length - 1
     selectedTabId = newTabIndex
     $("#soqlArea #tabArea").tabs({ active: newTabIndex });
-      
+
+    #createGrid("#soqlArea #grid" + newTabId)
+
+  #--
+  # Grid
+  #--
+  $("#clearGrid").on "click", (e) ->
+    grid = grids["#soqlArea #createGrid"]
+    grid.clear()
+
+  $("#addRow").on "click", (e) ->
+    grid = getActiveGrid()
+    if !selectedCellOnCreateGrid? || selectedCellOnCreateGrid.row < 0
+      return false
+    else
+      grid.alter('insert_row', selectedCellOnCreateGrid.row + 1, 1)
+      grid.selectCell(selectedCellOnCreateGrid.row, selectedCellOnCreateGrid.col)
+
+  $("#removeRow").on "click", (e) ->
+    grid = getActiveGrid()
+    if !selectedCellOnCreateGrid? || selectedCellOnCreateGrid.row < 0
+      return false
+    else
+      grid.alter('remove_row', selectedCellOnCreateGrid.row, 1)
+      grid.selectCell(getValidRowAfterRemove(grid), selectedCellOnCreateGrid.col)
+
+  getValidRowAfterRemove = (grid) ->
+    lastRow = grid.countVisibleRows() - 1
+    if selectedCellOnCreateGrid.row > lastRow
+      selectedCellOnCreateGrid.row = lastRow
+    else
+      selectedCellOnCreateGrid.row
+
+  getActiveGrid = () ->
+    tabId = $("#soqlArea #tabArea .ui-tabs-panel:visible").attr("tabId")
+    elementId = "#soqlArea #grid" + tabId
+    grids[elementId]
+
   #------------------------------------------------
   # Create grid
   #------------------------------------------------
@@ -124,49 +165,97 @@ coordinates = ->
     header = getColumns(json)
     records = getRows(json)
     columnsOption = getColumnsOption(json)
+    rowHeaderWidth = getRowHeaderWidth(elementId, json)
+    minRow = getMinRow(json)
 
     hotSettings = {
         data: records,
         height: 500,
         stretchH: 'all',
         autoWrapRow: true,
+        allowRemoveColumn: false,
         manualRowResize: false,
         manualColumnResize: true,
         rowHeaders: true,
+        rowHeaderWidth: rowHeaderWidth,
         colHeaders: header,
         columns: columnsOption,
-        contextMenu: false,
-        readOnly: false,
         startRows: 0,
-        fragmentSelection: 'cell',
+        minRows: minRow,
+        minSpareRows: 0,
+        minSpareCols: 0,
+        fillHandle: {autoInsertRow: false},
+        fragmentSelection: true,
+        columnSorting: true,
         licenseKey: 'non-commercial-and-evaluation'
+        afterChange: (source, changes) -> detectAfterEditOnGrid(source, changes),
+        afterOnCellMouseDown: (event, coords, td) -> onCellClick(event, coords, td)
     }
 
-    grids[elementId] = new Handsontable(hotElement, hotSettings)
+    hot = new Handsontable(hotElement, hotSettings)
+    hot.updateSettings afterColumnSort: ->
+      hot.render()
+
+    grids[elementId] = hot
 
   getColumns = (json) ->
-    if !json?
+    if !json
       null
     else
       json.columns
-  
+
   getRows = (json) ->
-    if !json?
+    if !json
       null
     else
       json.rows
 
-  getExecutedSoql = (json) ->
-    if !json?
-      null
-    else
-      json.soql
-
   getColumnsOption = (json) ->
-    if !json?
+    if !json
       [[]]
-    else
+    else if json.column_options
+      json.column_options
+    else 
       null
+
+  getRowHeaderWidth = (elementId, json) ->
+    if !json || !json.profiles
+      return null
+      
+    widths = []
+    for value in json.profiles
+      widths.push(getTextWidth(value, "10pt Verdana,Arial,sans-serif"))
+    Math.max.apply(null, widths)
+
+  getTextWidth = (text, font) ->
+    canvas = getTextWidth.canvas || (getTextWidth.canvas = document.createElement("canvas"));
+    context = canvas.getContext("2d");
+    context.font = font;
+    metrics = context.measureText(text);
+    return metrics.width;
+
+  getMinRow = (json) ->
+    if json && json.min_row
+      json.min_row
+    else
+      0
+
+  detectAfterEditOnGrid = (source, changes) ->
+    if changes != 'edit'
+      return
+
+    rowIndex = source[0][0]
+    checked = source[0][3]
+
+    #if checked
+    #    selectedRecords[rowIndex] = grids["#metadataArea #grid"].getDataAtRow(rowIndex)
+    #else
+    #  delete selectedRecords[rowIndex]
+    console.log("changed")
+    console.log(source)
+
+  onCellClick = (event, coords, td) ->
+    selectedCellOnCreateGrid = coords
       
   #------------------------------------------------
   # message
@@ -182,10 +271,11 @@ coordinates = ->
   #------------------------------------------------
   # page load actions
   #------------------------------------------------
-  selectedTabId = 1
-  createGrid("#soqlArea #grid" + selectedTabId)
+  #selectedTabId = 1
+  #createGrid("#soqlArea #grid" + selectedTabId)
 
   $("#soqlArea #tabArea").tabs()
+  createTab()
 
 $(document).ready(coordinates)
 $(document).on('page:load', coordinates)

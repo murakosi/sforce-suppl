@@ -4,7 +4,8 @@ module Soql
     module QueryExecuter
         
         Exclude_key_names = ["@xsi:type", "type"]
-        
+        Reference_suffix = "__r"
+
         def execute_query(sforce_session, soql, tooling)
             if soql.strip.end_with?(";")
                 soql.delete!(";");
@@ -20,43 +21,70 @@ module Soql
                raise StandardError.new("No matched records found")
             end
 
-            parse_query_result(query_result)
+            @sobject_type = nil
+
+            records = parse_query_result(query_result)
+
+            {:sobject => @sobject_type, :records => records}
         end
  
         def parse_query_result(query_result)
-            results = nil
-            if query_result.is_a?(Soapforce::QueryResult)
-                results = get_results(query_result.raw_result)
-            else
-                result = Soapforce::QueryResult.new(query_result)
-                results = get_results(result.raw_result)
-            end
-            
-            records = []
-            results.each do |result|                
-                new_record = {}
-                record = extract(result[:records])
 
-                record.each do |k,v|
+            records = []
+
+            query_result[:records].each do |result|                
+
+                @sobject_type = result[:type]
+
+                record = {}
+
+                extract(result).each do |k,v|
                     
-                    if is_reference?(v)
-                        new_record.merge!(resolve_reference(k, v))
+                    if is_reference?(k, v)
+                        record.merge!(resolve_reference(k, v))
                     elsif is_child?(v)
-                        new_record.merge!(parse_child(k, v))
+                        record.merge!(parse_child(k, v))
                     else
-                        new_record.merge!({k => v})
+                        record.merge!({k => v})
                     end
 
                 end
-                records << new_record
+                records << record
+            end
+
+            #records
+            format_records(records)
+        end
+        
+        #def get_results(hash)
+        #    results = []
+        #    records = Array[hash[:records]].flatten
+        #    records.each do |record|
+        #        if record.is_a?(Soapforce::SObject)
+        #            results << {:records => record.raw_hash}
+        #        else
+        #            results << {:records => record}
+        #        end
+        #    end
+        #    results
+        #end
+
+        def format_records(raw_records)
+            records = []
+            max_size_hash = raw_records.max{|hash| hash.size}
+            model_hash = max_size_hash.map{|k,v| [k,nil]}.to_h
+
+            raw_records.each do | hash |
+                records << model_hash.merge(hash)
             end
             records
         end
-        
-        def is_reference?(value)
+
+        def is_reference?(key, value)
             if is_child?(value)
                 false
-            elsif value.is_a?(Hash) && value.size > 1
+            #elsif value.is_a?(Hash) && value.size > 1
+            elsif key.to_s.end_with?(Reference_suffix)
                 true
             else
                 false
@@ -73,9 +101,13 @@ module Soql
 
         def resolve_reference(key, value)
             result = {}
-            extract(value).each do | k, v|
-                result.merge!(key.to_s + "." + k.to_s => v)
+
+            if !value.nil?
+                extract(value).each do | k, v|
+                    result.merge!(key.to_s + "." + k.to_s => v)
+                end
             end
+
             result
         end
 
@@ -114,17 +146,5 @@ module Soql
             end
         end
 
-        def get_results(hash)
-            results = []
-            records = Array[hash[:records]].flatten
-            records.each do |record|
-                if record.is_a?(Soapforce::SObject)
-                    results << {:records => record.raw_hash}
-                else
-                    results << {:records => record}
-                end
-            end
-            results
-        end
     end
 end

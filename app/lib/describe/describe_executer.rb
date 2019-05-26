@@ -19,16 +19,8 @@ module Describe
             Service::SoapSessionService.call(sforce_session).describe(object_name)
         end
 
-        def field_result(object_name)
-            Describe::DescribeResults.field_result[object_name]
-        end
-
         def format_field_result(object_name, field_result)
             Describe::DescribeFormatter.format(field_result)
-        end
-
-        def formatted_field_result(object_name)
-            Describe::DescribeResults.formatted_field_result[object_name]
         end
 
         private
