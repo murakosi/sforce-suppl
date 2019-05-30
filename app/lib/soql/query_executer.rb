@@ -31,9 +31,15 @@ module Soql
         def parse_query_result(query_result)
 
             records = []
-p query_result[:records]
-            query_result[:records].each do |result|                
-p result
+
+            results = query_result[:records]
+            
+            if results.is_a?(Hash)
+                results = [results]
+            end
+            
+            results.each do |result|                
+
                 if result.has_key?(:type)
                     @sobject_type = result[:type]
                 end
