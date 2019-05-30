@@ -29,8 +29,10 @@ class SoqlexecuterController < ApplicationController
     {
       :soql => soql_info(soql),
       :sobject => query_result[:sobject],
-      :columns => query_result[:records].first.keys,
-      :rows => query_result[:records].each{ |hash| hash.values}
+      :records => {
+                  :columns => query_result[:records].first.keys,
+                  :rows => query_result[:records].each{ |hash| hash.values}
+                  }
    }
   end
 
