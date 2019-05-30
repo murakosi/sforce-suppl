@@ -61,8 +61,8 @@ module Soql
             end
 
             #records
-            p records
-            p format_records(records)
+
+            format_records(records)
         end
         
         #def get_results(hash)
