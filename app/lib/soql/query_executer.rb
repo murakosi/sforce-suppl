@@ -16,7 +16,7 @@ module Soql
             else
                 query_result = Service::SoapSessionService.call(sforce_session).query(soql)
             end
-p query_result
+
             if query_result.nil? || query_result.blank? || !query_result.has_key?(:records)
                raise StandardError.new("No matched records found")
             end
@@ -34,8 +34,10 @@ p query_result
 
             query_result[:records].each do |result|                
 
-                @sobject_type = result[:type]
-
+                if result.has_key?(:type)
+                    @sobject_type = result[:type]
+                end
+                
                 record = {}
 
                 extract(result).each do |k,v|
