@@ -101,7 +101,7 @@ coordinates = ->
       "</li>"
     )
 
-    tabDOM = "<div id=\"tab" + newTabId + "\" class=\"resultTab\" tabId=\"" + newTabId + "\" sobject=\"\" soql=\"\"></div>"
+    tabDOM = "<div id=\"tab" + newTabId + "\" class=\"resultTab\" tabId=\"" + newTabId + "\" sobject=\"\" soql=\"\">"
     soqlDOM = "<div id=\"soql" + newTabId + "\" class=\"resultSoql\" tabId=\"" + newTabId + "\"></div>"
     gridDOM = "<div id=\"grid" + newTabId + "\" class=\"resultGrid\" tabId=\"" + newTabId + "\"></div>"
 	
