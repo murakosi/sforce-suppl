@@ -49,6 +49,7 @@ coordinates = ->
   
   processSuccessResult = (json) ->
     $("#soqlArea #soql" + selectedTabId).html(json.soql)
+    $("#soqlArea #tab" + selectedTabId).attr("soal", json.soql)
     elementId = "#soqlArea #grid" + selectedTabId
     createGrid(elementId, json.records)
   
@@ -100,10 +101,14 @@ coordinates = ->
       "</li>"
     )
 
+	tabDOM = "<div id=\"tab" + newTabId + "\" class=\"resultTab\" tabId=\"" + newTabId + "\" sobject=\"\" soql=\"\">"
+	soqlDOM = "<div id=\"soql" + newTabId + "\" class=\"resultSoql\" tabId=\"" + newTabId + "\"></div>"
+	gridDOM = "<div id=\"grid" + newTabId + "\" class=\"resultGrid\" tabId=\"" + newTabId + "\"></div>"
+	
     $("#soqlArea #tabArea").append(
-      "<div id=\"tab" + newTabId + "\" class=\"resultTab\" tabId=\"" + newTabId + "\">" +
-      "<div id=\"soql" + newTabId + "\" class=\"resultSoql\" tabId=\"" + newTabId + "\"></div>" +
-      "<div id=\"grid" + newTabId + "\" class=\"resultGrid\" tabId=\"" + newTabId + "\"></div>" +
+       tabDOM +
+       soqlDOM +
+       gridDOM +
       "</div>"
     )
     
