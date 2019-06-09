@@ -60,23 +60,8 @@ module Soql
                 records << record
             end
 
-            #records
-
             format_records(records)
         end
-        
-        #def get_results(hash)
-        #    results = []
-        #    records = Array[hash[:records]].flatten
-        #    records.each do |record|
-        #        if record.is_a?(Soapforce::SObject)
-        #            results << {:records => record.raw_hash}
-        #        else
-        #            results << {:records => record}
-        #        end
-        #    end
-        #    results
-        #end
 
         def format_records(raw_records)
             records = []
@@ -92,8 +77,7 @@ module Soql
         def is_reference?(key, value)
             if is_child?(value)
                 false
-            #elsif value.is_a?(Hash) && value.size > 1
-            elsif key.to_s.end_with?(Reference_suffix)
+            elsif value.is_a?(Hash) && value.size > 1
                 true
             else
                 false
