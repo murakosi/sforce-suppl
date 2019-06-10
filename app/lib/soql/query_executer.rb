@@ -60,7 +60,7 @@ module Soql
                 records << record
             end
 
-            p format_records(records)
+            format_records(records)
         end
 
         def format_records(raw_records)
