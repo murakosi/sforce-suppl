@@ -21,7 +21,7 @@ module Soql
                raise StandardError.new("No matched records found")
             end
             
-            
+            p query_result
 
             @sobject_type = nil
 
