@@ -20,6 +20,8 @@ module Soql
             if query_result.nil? || query_result.blank? || !query_result.has_key?(:records)
                raise StandardError.new("No matched records found")
             end
+            
+            
 
             @sobject_type = nil
 
