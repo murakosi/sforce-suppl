@@ -4,7 +4,8 @@ module Soql
     module QueryExecuter
         
         Exclude_key_names = ["@xsi:type", "type"]
-        Reference_suffix = "__r"
+        Records = "records"
+        Type = "type"
 
         def execute_query(sforce_session, soql, tooling)
             if soql.strip.end_with?(";")
@@ -17,7 +18,7 @@ module Soql
                 query_result = Service::SoapSessionService.call(sforce_session).query(soql)
             end
 
-            if query_result.nil? || query_result.blank? || !query_result.has_key?(:records)
+            if query_result.nil? || query_result.blank? || !query_result.has_key?(Records)
                raise StandardError.new("No matched records found")
             end
 
@@ -32,7 +33,7 @@ module Soql
 
             records = []
 
-            results = query_result[:records]
+            results = query_result[Records]
             
             if results.is_a?(Hash)
                 results = [results]
@@ -40,8 +41,8 @@ module Soql
             
             results.each do |result|                
 
-                if result.has_key?(:type)
-                    @sobject_type = result[:type]
+                if result.has_key?(Type)
+                    @sobject_type = result[Type]
                 end
                 
                 record = {}
@@ -105,7 +106,7 @@ module Soql
         end
 
         def parse_child(key,value)
-            records = value[:records]
+            records = value[Records]
             child_records = Array[records].flatten.map{|record| extract(record)}
             {key => JSON.generate(child_records)}
         end

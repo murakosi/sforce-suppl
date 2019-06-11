@@ -53,13 +53,13 @@ module Service
       @client = Savon.client({
         wsdl: @wsdl,
         soap_header: @headers,
-        convert_request_keys_to: :none,
         convert_response_tags_to: @response_tags,
-        pretty_print_xml: true,
         filters: @filters,
         logger: @logger,
         log: (@logger != false),
         endpoint: @login_url,
+        pretty_print_xml: true,
+        convert_request_keys_to: :lower_camelcase,
         ssl_version: @ssl_version # Sets ssl_version for HTTPI adapter
       }.update(savon_options))
     end
@@ -106,12 +106,13 @@ module Service
       @client = Savon.client(
         wsdl: @wsdl,
         soap_header: @headers,
-        convert_request_keys_to: :none,
         convert_response_tags_to: @response_tags,
         logger: @logger,
         filters: @filters,
         log: (@logger != false),
         endpoint: @server_url,
+        pretty_print_xml: true,
+        convert_request_keys_to: :lower_camelcase,        
         ssl_version: @ssl_version # Sets ssl_version for HTTPI adapter
       )
 
