@@ -18,7 +18,7 @@ module Soql
                 query_result = Service::SoapSessionService.call(sforce_session).query(soql)
             end
 
-            if query_result.nil? || query_result.blank? || !query_result.has_key?(Records)
+            if query_result.nil? || query_result.blank? || !query_result.has_key?(:records)
                raise StandardError.new("No matched records found")
             end
 
@@ -33,7 +33,7 @@ module Soql
 
             records = []
 
-            results = query_result[Records]
+            results = query_result[:records]
             
             if results.is_a?(Hash)
                 results = [results]
@@ -41,8 +41,8 @@ module Soql
             
             results.each do |result|                
 
-                if result.has_key?(Type)
-                    @sobject_type = result[Type]
+                if result.has_key?(:type)
+                    @sobject_type = result[:type]
                 end
                 
                 record = {}
@@ -106,7 +106,7 @@ module Soql
         end
 
         def parse_child(key,value)
-            records = value[Records]
+            records = value[:records]
             child_records = Array[records].flatten.map{|record| extract(record)}
             {key => JSON.generate(child_records)}
         end
