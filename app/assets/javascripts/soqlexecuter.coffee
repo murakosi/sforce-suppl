@@ -75,7 +75,7 @@ coordinates = ->
   # Tab events
   #------------------------------------------------
   #$(document).on 'click', 'span', (e) ->
-  (document).on 'click', '.ui-closable-tab', (e) ->
+  $(document).on 'click', '.ui-closable-tab', (e) ->
     e.preventDefault()
     tabContainerDiv=$(this).closest("#soqlArea .ui-tabs").attr("id")
     tabCount = $("#soqlArea #" + tabContainerDiv).find(".ui-closable-tab").length
