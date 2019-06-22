@@ -5,6 +5,7 @@ coordinates = ->
   selectedCellOnCreateGrid = null
   grids = {}
   soqls = {}
+  sObjects = {}
 
   jqXHR = null
   defaultDataType = ""
@@ -51,6 +52,10 @@ coordinates = ->
     $("#soqlArea #soql" + selectedTabId).html(json.soql)
     $("#soqlArea #tab" + selectedTabId).attr("soql", json.soql)
     elementId = "#soqlArea #grid" + selectedTabId
+
+    sObjects[elementId] = {columns: json.records.columns, editions:{}, sobject_type: json.sobject}
+
+
     createGrid(elementId, json.records)
   
   #------------------------------------------------
@@ -187,7 +192,7 @@ coordinates = ->
         minSpareRows: 0,
         minSpareCols: 0,
         fillHandle: {autoInsertRow: false},
-        fragmentSelection: true,
+        #fragmentSelection: true,
         columnSorting: true,
         licenseKey: 'non-commercial-and-evaluation'
         afterChange: (source, changes) -> detectAfterEditOnGrid(source, changes),
@@ -246,6 +251,11 @@ coordinates = ->
     if changes != 'edit'
       return
 
+    console.log(source)
+
+    if source[0][2] == source[0][3]
+      return
+
     rowIndex = source[0][0]
     checked = source[0][3]
 
@@ -253,8 +263,19 @@ coordinates = ->
     #    selectedRecords[rowIndex] = grids["#metadataArea #grid"].getDataAtRow(rowIndex)
     #else
     #  delete selectedRecords[rowIndex]
-    console.log("changed")
-    console.log(source)
+
+    tabId = $("#soqlArea #tabArea .ui-tabs-panel:visible").attr("tabId")
+    elementId = "#soqlArea #grid" + tabId
+    colname = sObjects[elementId].columns[source[0][1]]
+
+    if sObjects[elementId].editions[rowIndex]
+      sObjects[elementId].editions[rowIndex][colname] = source[0][3]
+    else
+      sObjects[elementId].editions[rowIndex] = {}
+      sObjects[elementId].editions[rowIndex][colname] = source[0][3]
+
+    #console.log(sObjects[elementId].editions[rowIndex])
+    
 
   onCellClick = (event, coords, td) ->
     selectedCellOnCreateGrid = coords

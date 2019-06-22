@@ -24,14 +24,16 @@ module Soql
 
             @sobject_type = nil
 
+            preprare_check_key(soql)            
+
             records = parse_query_result(query_result)
 
-            {:sobject => @sobject_type, :records => records}
+            {:sobject => @sobject_type, :records => records, :column_options => generate_column_options}
         end
  
         def parse_query_result(query_result)
 
-            records = []
+            records = []            
 
             results = query_result[:records]
             
@@ -54,7 +56,9 @@ module Soql
                     elsif is_child?(v)
                         record.merge!(parse_child(k, v))
                     else
-                        record.merge!({k => v})
+                        if @chekc_keys.include?(k.to_s)
+                            record.merge!({k => v})
+                        end
                     end
 
                 end
@@ -64,15 +68,61 @@ module Soql
             format_records(records)
         end
 
-        def format_records(raw_records)
+        def preprare_check_key(soql)
+            str1_markerstring = "select"
+            str2_markerstring = "from"
+
+            chekc_key_string = soql[/#{str1_markerstring}(.*?)#{str2_markerstring}/mi, 1].gsub(/\s+/, '').strip
+            if chekc_key_string.nil? || !chekc_key_string.include?(",")
+                @chekc_keys = []
+            else
+                @chekc_keys = chekc_key_string.split(",").reject{|str| str.start_with?("(")}
+            end
+        end
+
+        def format_records(raw_records)            
             records = []
-            max_size_hash = raw_records.max{|hash| hash.size}
-            model_hash = max_size_hash.map{|k,v| [k,nil]}.to_h
+            max_size_hash = raw_records.max{|h1, h2| h1.size <=> h2.size}
+            @model_hash = max_size_hash.map{|k,v| [k,nil]}.to_h
 
             raw_records.each do | hash |
-                records << model_hash.merge(hash)
+                records << @model_hash.merge(hash)
             end
             records
+        end
+
+        def generate_column_options
+            #column_options = [{:type => "checkbox", :readOnly => false, :className => "htCenter htMiddle"}]
+            column_options = []
+
+            @model_hash.each do |k,v|
+                if k.to_s.include?(".")
+                    column_options << {:readOnly => true, :type => "text"}
+                else
+                    column_options << {:readOnly => false, :type => "text"}
+                end
+            end
+
+            column_options
+        end
+
+        def create_grid_column_option(hash)
+            if hash[:parent]
+                type = {:readOnly => true}
+            elsif hash[:soap_type] == "boolean"
+                type = {:type => "checkbox", :className => "htCenter htMiddle", :checkedTemplate => true, :uncheckedTemplate => nil}
+            elsif hash.has_key?(:picklist_values)
+                type = {:type => "autocomplete", :source => hash[:picklist_values].map{|hash| hash[:value]}, :trimDropdown => false}
+            elsif hash[:soap_type] == "multiselect" 
+                type = {:renderer => "customDropdownRenderer",
+                    :editor => "chosen",
+                    :chosenOptions => hash[:options]
+                    }               
+            elsif @enums.has_key?(hash[:name])
+                type = {:type => "autocomplete", :source => @enums[hash[:name]]}
+            else
+                type = {:type => "text"}
+            end
         end
 
         def is_reference?(key, value)

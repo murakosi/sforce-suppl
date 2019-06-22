@@ -31,7 +31,8 @@ class SoqlexecuterController < ApplicationController
       :sobject => query_result[:sobject],
       :records => {
                   :columns => query_result[:records].first.keys,
-                  :rows => query_result[:records].each{ |hash| hash.values}
+                  :rows => query_result[:records].map{ |hash| hash.values},
+                  :column_options => query_result[:column_options]
                   }
    }
   end
