@@ -53,7 +53,10 @@ coordinates = ->
     $("#soqlArea #tab" + selectedTabId).attr("soql", json.soql)
     elementId = "#soqlArea #grid" + selectedTabId
 
-    sObjects[elementId] = {columns: json.records.columns, editions:{}, sobject_type: json.sobject}
+    sObjects[elementId] = {rows: json.records.rows, 
+                           columns: json.records.columns,
+                           editions:{}, sobject_type: json.sobject
+                          }
 
 
     createGrid(elementId, json.records)
@@ -253,11 +256,15 @@ coordinates = ->
 
     console.log(source)
 
-    if source[0][2] == source[0][3]
+    rowIndex = source[0][0]
+    columnIndex = source[0][1]
+    oldValue = source[0][2]
+    newValue = source[0][3]
+    
+    if oldValue == newValue
       return
 
-    rowIndex = source[0][0]
-    checked = source[0][3]
+
 
     #if checked
     #    selectedRecords[rowIndex] = grids["#metadataArea #grid"].getDataAtRow(rowIndex)
@@ -266,14 +273,26 @@ coordinates = ->
 
     tabId = $("#soqlArea #tabArea .ui-tabs-panel:visible").attr("tabId")
     elementId = "#soqlArea #grid" + tabId
-    colname = sObjects[elementId].columns[source[0][1]]
-
+    fieldName = sObjects[elementId].columns[columnIndex]
+    
+    isUndone = false
+     
     if sObjects[elementId].editions[rowIndex]
-      sObjects[elementId].editions[rowIndex][colname] = source[0][3]
+      if newValue == sObjects[elementId].rows[rowIndex][columnIndex]
+        delete sObjects[elementId].editions[rowIndex][fieldName]
+        isUndone = true
+      else
+        sObjects[elementId].editions[rowIndex][fieldName] = newValue
     else
       sObjects[elementId].editions[rowIndex] = {}
-      sObjects[elementId].editions[rowIndex][colname] = source[0][3]
+      sObjects[elementId].editions[rowIndex][fieldName] = newValue
 
+    hot = grids[elementId]
+    if isUndone
+      hot.removeCellMeta(rowIndex, columnIndex, 'className');
+    else
+      hot.setCellMeta(rowIndex, columnIndex, 'className', 'changed-cell-border');
+    hot.render()
     #console.log(sObjects[elementId].editions[rowIndex])
     
 
