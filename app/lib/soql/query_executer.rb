@@ -96,7 +96,7 @@ module Soql
             column_options = []
 
             @model_hash.each do |k,v|
-                if k.to_s.include?(".")
+                if k.to_s.upcase == "ID" || k.to_s.include?(".")
                     column_options << {:readOnly => true, :type => "text"}
                 else
                     column_options << {:readOnly => false, :type => "text"}
