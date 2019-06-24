@@ -282,7 +282,7 @@ coordinates = ->
     if sObjects[elementId].editions[rowIndex]
       if newValue == sObjects[elementId].rows[rowIndex][columnIndex]
         delete sObjects[elementId].editions[rowIndex][fieldName]
-        isUndone = true
+        isUndone = false
       else
         sObjects[elementId].editions[rowIndex][fieldName] = newValue
     else
