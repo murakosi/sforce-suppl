@@ -15,7 +15,7 @@ module Soql
             if tooling
                 query_result = Service::ToolingClientService.call(sforce_session).query(soql)
             else
-                p query_result = Service::SoapSessionService.call(sforce_session).query(soql)
+                query_result = Service::SoapSessionService.call(sforce_session).query(soql)
             end
 
             if query_result.nil? || query_result.blank? || !query_result.has_key?(:records)
@@ -26,7 +26,7 @@ module Soql
 
             preprare_check_key(soql)            
 
-            p records = parse_query_result(query_result)
+            records = parse_query_result(query_result)
 
             {:sobject => @sobject_type, :records => records, :column_options => generate_column_options}
         end
@@ -64,7 +64,7 @@ module Soql
                 end
                 records << record
             end
-
+p records
             format_records(records)
         end
 
