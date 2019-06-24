@@ -20,7 +20,7 @@ module Service
                     :ssl_version => Constants::SSLVersion,
                     :ssl_ca_cert_file => Utils::SforceApiUtils.ssl_certificate,
                     :proxy => proxy,
-                    :tag_style => params[:tag_style] if params[:tag_style], #:raw,
+                    :tag_style => params[:tag_style],
                     :logger => set_temp_logger,
                     :log => false
                 }                
