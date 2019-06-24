@@ -17,7 +17,7 @@ module Soql
             if tooling
                 query_result = Service::ToolingClientService.call(params).query(soql)
             else
-                query_result = Service::SoapSessionService.call(params).query(soql)
+                p query_result = Service::SoapSessionService.call(params).query(soql)
             end
 
             if query_result.nil? || query_result.blank? || !query_result.has_key?(Records)
