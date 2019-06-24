@@ -22,7 +22,7 @@ module Soql
                raise StandardError.new("No matched records found")
             end
 
-            @sobject_type = nil
+            @sobject_type = ""
 
             preprare_check_key(soql)            
 
@@ -94,9 +94,12 @@ module Soql
         def generate_column_options
             #column_options = [{:type => "checkbox", :readOnly => false, :className => "htCenter htMiddle"}]
             column_options = []
-
+            updatable = @model_hash.has_key?(:id)
+            
             @model_hash.each do |k,v|
-                if k.to_s.upcase == "ID" || k.to_s.include?(".")
+                if !updatable
+                    column_options << {:readOnly => true, :type => "text"}
+                elsif k.to_s.upcase == "ID" || k.to_s.include?(".")
                     column_options << {:readOnly => true, :type => "text"}
                 else
                     column_options << {:readOnly => false, :type => "text"}
