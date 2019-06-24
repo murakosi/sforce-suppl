@@ -17,7 +17,7 @@ module Soql
             if tooling
                 query_result = Service::ToolingClientService.call(params).query(soql)
             else
-                p query_result = Service::SoapSessionService.call(params).query(soql)
+                query_result = Service::SoapSessionService.call(params).query(soql)
             end
 
             if query_result.nil? || query_result.blank? || !query_result.has_key?(Records)
@@ -58,7 +58,7 @@ module Soql
                     elsif is_child?(v)
                         record.merge!(parse_child(k, v))
                     else
-                        if @chekc_keys.include?(k.to_s)
+                        if @chekc_keys.include?(k.to_s.upcase)
                             record.merge!({k => v})
                         end
                     end
@@ -78,7 +78,7 @@ module Soql
             if chekc_key_string.nil?
                 @chekc_keys = []
             else
-                @chekc_keys = chekc_key_string.split(",").reject{|str| str.start_with?("(")}
+                @chekc_keys = chekc_key_string.split(",").map{|str| str.upcase}.reject{|str| str.start_with?("(")}
             end
         end
 
