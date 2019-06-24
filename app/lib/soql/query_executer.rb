@@ -64,7 +64,7 @@ module Soql
                 end
                 records << record
             end
-p records
+
             format_records(records)
         end
 
@@ -78,6 +78,7 @@ p records
             else
                 @chekc_keys = chekc_key_string.split(",").reject{|str| str.start_with?("(")}
             end
+            p @chekc_keys
         end
 
         def format_records(raw_records)            
