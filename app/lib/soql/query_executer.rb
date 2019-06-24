@@ -73,12 +73,11 @@ module Soql
             str2_markerstring = "from"
 
             chekc_key_string = soql[/#{str1_markerstring}(.*?)#{str2_markerstring}/mi, 1].gsub(/\s+/, '').strip
-            if chekc_key_string.nil? || !chekc_key_string.include?(",")
+            if chekc_key_string.nil?
                 @chekc_keys = []
             else
                 @chekc_keys = chekc_key_string.split(",").reject{|str| str.start_with?("(")}
             end
-            p @chekc_keys
         end
 
         def format_records(raw_records)            
