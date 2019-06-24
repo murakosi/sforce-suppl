@@ -12,13 +12,15 @@ module Soql
                 soql.delete!(";");
             end
             
+            params = sforce_session.merge({:tag_style => :raw})
+            
             if tooling
-                query_result = Service::ToolingClientService.call(sforce_session).query(soql)
+                query_result = Service::ToolingClientService.call(params).query(soql)
             else
-                query_result = Service::SoapSessionService.call(sforce_session).query(soql)
+                query_result = Service::SoapSessionService.call(params).query(soql)
             end
 
-            if query_result.nil? || query_result.blank? || !query_result.has_key?(:records)
+            if query_result.nil? || query_result.blank? || !query_result.has_key?(Records)
                raise StandardError.new("No matched records found")
             end
 
@@ -35,7 +37,7 @@ module Soql
 
             records = []            
 
-            results = query_result[:records]
+            results = query_result[Records]
             
             if results.is_a?(Hash)
                 results = [results]
@@ -43,8 +45,8 @@ module Soql
             
             results.each do |result|                
 
-                if result.has_key?(:type)
-                    @sobject_type = result[:type]
+                if result.has_key?(Type)
+                    @sobject_type = result[Type]
                 end
                 
                 record = {}
@@ -108,26 +110,7 @@ module Soql
 
             column_options
         end
-
-        def create_grid_column_option(hash)
-            if hash[:parent]
-                type = {:readOnly => true}
-            elsif hash[:soap_type] == "boolean"
-                type = {:type => "checkbox", :className => "htCenter htMiddle", :checkedTemplate => true, :uncheckedTemplate => nil}
-            elsif hash.has_key?(:picklist_values)
-                type = {:type => "autocomplete", :source => hash[:picklist_values].map{|hash| hash[:value]}, :trimDropdown => false}
-            elsif hash[:soap_type] == "multiselect" 
-                type = {:renderer => "customDropdownRenderer",
-                    :editor => "chosen",
-                    :chosenOptions => hash[:options]
-                    }               
-            elsif @enums.has_key?(hash[:name])
-                type = {:type => "autocomplete", :source => @enums[hash[:name]]}
-            else
-                type = {:type => "text"}
-            end
-        end
-
+        
         def is_reference?(key, value)
             if is_child?(value)
                 false
@@ -139,7 +122,7 @@ module Soql
         end
 
         def is_child?(value)
-            if value.is_a?(Hash) && (value.has_key?(:records) || value.has_key?("records"))
+            if value.is_a?(Hash) && (value.has_key?(:records) || value.has_key?(Records))
                 true
             else
                 false
@@ -159,7 +142,7 @@ module Soql
         end
 
         def parse_child(key,value)
-            records = value[:records]
+            records = value[Records]
             child_records = Array[records].flatten.map{|record| extract(record)}
             {key => JSON.generate(child_records)}
         end
