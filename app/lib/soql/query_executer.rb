@@ -56,6 +56,8 @@ module Soql
                     elsif is_child?(v)
                         record.merge!(parse_child(k, v))
                     else
+                        p k
+                        p v
                         if @chekc_keys.include?(k.to_s)
                             record.merge!({k => v})
                         end
@@ -78,6 +80,7 @@ module Soql
             else
                 @chekc_keys = chekc_key_string.split(",").reject{|str| str.start_with?("(")}
             end
+            p @chekc_keys
         end
 
         def format_records(raw_records)            
