@@ -53,9 +53,11 @@ coordinates = ->
     $("#soqlArea #tab" + selectedTabId).attr("soql", json.soql)
     elementId = "#soqlArea #grid" + selectedTabId
 
-    sObjects[elementId] = {rows: json.records.rows, 
-                           columns: json.records.columns,
-                           editions:{}, sobject_type: json.sobject
+    sObjects[elementId] = {
+                            rows: json.records.rows, 
+                            columns: json.records.columns,
+                            editions:{},
+                            sobject_type: json.sobject
                           }
 
 
