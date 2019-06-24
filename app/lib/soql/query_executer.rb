@@ -15,7 +15,7 @@ module Soql
             if tooling
                 query_result = Service::ToolingClientService.call(sforce_session).query(soql)
             else
-                p query_result = Service::SoapSessionService.call(sforce_session).query(soql)
+                query_result = Service::SoapSessionService.call(sforce_session).query(soql)
             end
 
             if query_result.nil? || query_result.blank? || !query_result.has_key?(:records)
@@ -56,8 +56,6 @@ module Soql
                     elsif is_child?(v)
                         record.merge!(parse_child(k, v))
                     else
-                        p k
-                        p v
                         if @chekc_keys.include?(k.to_s)
                             record.merge!({k => v})
                         end
@@ -80,7 +78,6 @@ module Soql
             else
                 @chekc_keys = chekc_key_string.split(",").reject{|str| str.start_with?("(")}
             end
-            p @chekc_keys
         end
 
         def format_records(raw_records)            
