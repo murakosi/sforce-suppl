@@ -283,7 +283,7 @@ coordinates = ->
     hot = grids[elementId]
     
     if sObjects[elementId].editions[rowIndex]
-      if !hos.isUndoAvailable()
+      if !hot.isUndoAvailable()
       #if newValue == sObjects[elementId].rows[rowIndex][columnIndex]
         delete sObjects[elementId].editions[rowIndex][fieldName]
         isRestored = true
