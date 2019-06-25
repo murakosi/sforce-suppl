@@ -254,7 +254,7 @@ coordinates = ->
 
   detectAfterEditOnGrid = (source, changes) ->
 
-    if changes != 'edit' || !changes.startsWith('UndoRedo')
+    if changes != 'edit' && !changes.startsWith('UndoRedo')
       return
 
     console.log(source)
