@@ -284,11 +284,14 @@ coordinates = ->
       if newValue == sObjects[elementId].rows[rowIndex][columnIndex]
         delete sObjects[elementId].editions[rowIndex][fieldName]
         isRestored = true
+        console.log("restore")
       else
         sObjects[elementId].editions[rowIndex][fieldName] = newValue
+        console.log("old change")
     else
       sObjects[elementId].editions[rowIndex] = {}
       sObjects[elementId].editions[rowIndex][fieldName] = newValue
+      console.log("new change")
 
     hot = grids[elementId]
     if isRestored
@@ -296,6 +299,7 @@ coordinates = ->
       hot.setCellMeta(rowIndex, columnIndex, 'className', '');
     else
       hot.setCellMeta(rowIndex, columnIndex, 'className', 'changed-cell-border');
+      console.log("set")
     hot.render()
     #console.log(sObjects[elementId].editions[rowIndex])
     
