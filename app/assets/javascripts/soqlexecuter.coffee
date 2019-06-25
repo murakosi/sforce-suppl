@@ -253,6 +253,7 @@ coordinates = ->
       0
 
   detectAfterEditOnGrid = (source, changes) ->
+    condole.log(changes)
     if changes != 'edit'
       return
 
