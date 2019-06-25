@@ -281,7 +281,7 @@ coordinates = ->
     isRestored = false
     
     hot = grids[elementId]
-    
+    console.log(hot.isUndoAvailable())
     if sObjects[elementId].editions[rowIndex]
       if !hot.isUndoAvailable()
       #if newValue == sObjects[elementId].rows[rowIndex][columnIndex]
@@ -295,6 +295,7 @@ coordinates = ->
 
     if isRestored
       hot.removeCellMeta(rowIndex, columnIndex, 'className');
+      console.log("rem")
       #hot.setCellMeta(rowIndex, columnIndex, 'className', '');
     else
       hot.setCellMeta(rowIndex, columnIndex, 'className', 'changed-cell-border');
