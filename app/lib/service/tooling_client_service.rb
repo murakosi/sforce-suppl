@@ -18,6 +18,7 @@ module Service
                     :host => Utils::SforceApiUtils.sforce_host(params),
                     :ssl_version => Constants::SSLVersion,
                     :ssl_ca_cert_file => Utils::SforceApiUtils.ssl_certificate,
+                    :tag_style => params[:tag_style],
                     :logger => set_temp_logger,
                     :log => true
                 }                
