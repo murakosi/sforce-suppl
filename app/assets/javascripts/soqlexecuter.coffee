@@ -284,14 +284,13 @@ coordinates = ->
       if newValue == sObjects[elementId].rows[rowIndex][columnIndex]
         delete sObjects[elementId].editions[rowIndex][fieldName]
         isRestored = true
-        console.log("restore")
+        console.log(newValue)
+        console.log(sObjects[elementId].rows[rowIndex][columnIndex])
       else
         sObjects[elementId].editions[rowIndex][fieldName] = newValue
-        console.log("old change")
     else
       sObjects[elementId].editions[rowIndex] = {}
       sObjects[elementId].editions[rowIndex][fieldName] = newValue
-      console.log("new change")
 
     hot = grids[elementId]
     if isRestored
