@@ -292,7 +292,8 @@ coordinates = ->
 
     hot = grids[elementId]
     if isRestored
-      hot.removeCellMeta(rowIndex, columnIndex, 'className');
+      #hot.removeCellMeta(rowIndex, columnIndex, 'className');
+      hot.setCellMeta(rowIndex, columnIndex, 'className', '');
     else
       hot.setCellMeta(rowIndex, columnIndex, 'className', 'changed-cell-border');
     hot.render()
