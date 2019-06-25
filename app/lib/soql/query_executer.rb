@@ -96,7 +96,7 @@ module Soql
         def generate_column_options
             #column_options = [{:type => "checkbox", :readOnly => false, :className => "htCenter htMiddle"}]
             column_options = []
-            updatable = @model_hash.has_key?(:id)
+            updatable = @model_hash.has_key?(:id) || @model_hash.has_key?("Id")
             
             @model_hash.each do |k,v|
                 if !updatable
