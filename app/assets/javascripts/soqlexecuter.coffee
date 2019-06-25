@@ -253,7 +253,7 @@ coordinates = ->
       0
 
   detectAfterEditOnGrid = (source, changes) ->
-    condole.log(changes)
+    console.log(changes)
     if changes != 'edit'
       return
 
