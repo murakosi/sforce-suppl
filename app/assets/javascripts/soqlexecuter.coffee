@@ -279,23 +279,23 @@ coordinates = ->
     fieldName = sObjects[elementId].columns[columnIndex]
     
     isRestored = false
-     
+    
+    hot = grids[elementId]
+    
     if sObjects[elementId].editions[rowIndex]
-      if newValue == sObjects[elementId].rows[rowIndex][columnIndex]
+      if !hos.isUndoAvailable()
+      #if newValue == sObjects[elementId].rows[rowIndex][columnIndex]
         delete sObjects[elementId].editions[rowIndex][fieldName]
         isRestored = true
-        console.log(newValue)
-        console.log(sObjects[elementId].rows[rowIndex][columnIndex])
       else
         sObjects[elementId].editions[rowIndex][fieldName] = newValue
     else
       sObjects[elementId].editions[rowIndex] = {}
       sObjects[elementId].editions[rowIndex][fieldName] = newValue
 
-    hot = grids[elementId]
     if isRestored
-      #hot.removeCellMeta(rowIndex, columnIndex, 'className');
-      hot.setCellMeta(rowIndex, columnIndex, 'className', '');
+      hot.removeCellMeta(rowIndex, columnIndex, 'className');
+      #hot.setCellMeta(rowIndex, columnIndex, 'className', '');
     else
       hot.setCellMeta(rowIndex, columnIndex, 'className', 'changed-cell-border');
       console.log("set")
