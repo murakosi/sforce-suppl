@@ -54,7 +54,7 @@ coordinates = ->
     elementId = "#soqlArea #grid" + selectedTabId
 
     sObjects[elementId] = {
-                            rows: json.records.rows, 
+                            rows: json.records.initial_rows, 
                             columns: json.records.columns,
                             editions:{},
                             sobject_type: json.sobject
@@ -267,8 +267,6 @@ coordinates = ->
     if oldValue == newValue
       return
 
-
-
     #if checked
     #    selectedRecords[rowIndex] = grids["#metadataArea #grid"].getDataAtRow(rowIndex)
     #else
@@ -280,11 +278,8 @@ coordinates = ->
     
     isRestored = false
     
-    hot = grids[elementId]
-    console.log(hot.isUndoAvailable())
     if sObjects[elementId].editions[rowIndex]
-      if !hot.isUndoAvailable()
-      #if newValue == sObjects[elementId].rows[rowIndex][columnIndex]
+      if newValue == sObjects[elementId].rows[rowIndex][columnIndex]
         delete sObjects[elementId].editions[rowIndex][fieldName]
         isRestored = true
       else
@@ -293,6 +288,7 @@ coordinates = ->
       sObjects[elementId].editions[rowIndex] = {}
       sObjects[elementId].editions[rowIndex][fieldName] = newValue
 
+    hot = grids[elementId]
     if isRestored
       hot.removeCellMeta(rowIndex, columnIndex, 'className');
       console.log("rem")
