@@ -253,8 +253,8 @@ coordinates = ->
       0
 
   detectAfterEditOnGrid = (source, changes) ->
-    console.log(changes)
-    if changes != 'edit'
+
+    if changes != 'edit' || !changes.startsWith('UndoRedo')
       return
 
     console.log(source)
@@ -278,12 +278,12 @@ coordinates = ->
     elementId = "#soqlArea #grid" + tabId
     fieldName = sObjects[elementId].columns[columnIndex]
     
-    isUndone = false
+    isRestored = false
      
     if sObjects[elementId].editions[rowIndex]
       if newValue == sObjects[elementId].rows[rowIndex][columnIndex]
         delete sObjects[elementId].editions[rowIndex][fieldName]
-        isUndone = true
+        isRestored = true
       else
         sObjects[elementId].editions[rowIndex][fieldName] = newValue
     else
@@ -291,7 +291,7 @@ coordinates = ->
       sObjects[elementId].editions[rowIndex][fieldName] = newValue
 
     hot = grids[elementId]
-    if isUndone
+    if isRestored
       hot.removeCellMeta(rowIndex, columnIndex, 'className');
     else
       hot.setCellMeta(rowIndex, columnIndex, 'className', 'changed-cell-border');
