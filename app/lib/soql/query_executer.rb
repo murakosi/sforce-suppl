@@ -49,8 +49,9 @@ module Soql
                     @sobject_type = result[Type]
                 end
                 
-                record = {}
-
+                record = {}                
+                field_count = 0
+                
                 extract(result).each do |k,v|
                     
                     if is_reference?(k, v)
@@ -60,9 +61,12 @@ module Soql
                     else
                         if @chekc_keys.include?(k.to_s.upcase)
                             record.merge!({k => v})
+                        else
+                            record.merge!({@check_keys[field_count] => nil})
                         end
                     end
-
+                    
+                    field_count += 1
                 end
                 records << record
             end
