@@ -25,6 +25,7 @@ module Soql
             end
 
             @sobject_type = ""
+            @check_keys = []
 
             preprare_check_key(soql)            
 
@@ -59,7 +60,7 @@ module Soql
                     elsif is_child?(v)
                         record.merge!(parse_child(k, v))
                     else
-                        if @chekc_keys.include?(k.to_s.upcase)
+                        if @check_keys.include?(k.to_s.upcase)
                             record.merge!({k => v})
                         else
                             record.merge!({@check_keys[field_count] => nil})
@@ -75,14 +76,12 @@ module Soql
         end
 
         def preprare_check_key(soql)
-            str1_markerstring = "select"
-            str2_markerstring = "from"
+            start_markerstring = "select"
+            end_markerstring = "from"
 
-            chekc_key_string = soql[/#{str1_markerstring}(.*?)#{str2_markerstring}/mi, 1].gsub(/\s+/, '').strip
-            if chekc_key_string.nil?
-                @chekc_keys = []
-            else
-                @chekc_keys = chekc_key_string.split(",").map{|str| str.upcase}.reject{|str| str.start_with?("(")}
+            chekc_key_string = soql[/#{start_markerstring}(.*?)#{end_markerstring}/mi, 1].gsub(/\s+/, '').strip
+            if !chekc_key_string.nil?
+                @check_keys = chekc_key_string.split(",").map{|str| str.upcase}.reject{|str| str.start_with?("(")}
             end
         end
 
@@ -148,6 +147,8 @@ module Soql
         def parse_child(key,value)
             records = value[Records]
             child_records = Array[records].flatten.map{|record| extract(record)}
+            a = JSON.generate(child_records)
+            p a.class
             {key => JSON.generate(child_records)}
         end
 
