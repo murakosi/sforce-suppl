@@ -23,7 +23,7 @@ coordinates = ->
   # Shortcut keys
   #------------------------------------------------
   $(window).on 'keydown', (e) ->
-    if e.ctrlKey && (e.key == 'r' || e.keyCode === 13)
+    if e.ctrlKey && (e.key == 'r' || e.keyCode == 13)
       e.preventDefault()
       if e.target.id == "input_soql"        
         executeSoql()
