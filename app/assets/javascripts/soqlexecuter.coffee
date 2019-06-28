@@ -4,7 +4,6 @@ coordinates = ->
   currentTabIndex = 0
   selectedCellOnCreateGrid = null
   grids = {}
-  soqls = {}
   sObjects = {}
 
   jqXHR = null
@@ -35,18 +34,20 @@ coordinates = ->
     e.preventDefault()
     executeSoql()
     
-  executeSoql = (input_soql) ->
+  executeSoql = (soql_info) ->
     if jqXHR
       return false
     
     hideMessageArea()
     selectedTabId = $("#soqlArea #tabArea .ui-tabs-panel:visible").attr("tabId");
-    if input_soql
-      soql = input_soql
+    if soql_info
+      soql = soql_info.soql
+      tooling = soql_info.tooling
     else
       soql = $('#soqlArea #input_soql').val()
+      tooling = $('#soqlArea #useTooling').is(':checked')
        
-    val = {soql: soql, tooling: $('#soqlArea #useTooling').is(':checked')}
+    val = {soql: soql, tooling: tooling}
     action = $('#soqlArea .execute-form').attr('action')
     method = $('#soqlArea .execute-form').attr('method')
     options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
@@ -54,8 +55,8 @@ coordinates = ->
     $.executeAjax(options, callbacks)
   
   processSuccessResult = (json) ->
-    $("#soqlArea #soql" + selectedTabId).html(json.soql_info)
-    $("#soqlArea #tab" + selectedTabId).attr("soql", json.soql)
+    $("#soqlArea #soql" + selectedTabId).html(json.soql_info.timestamp + json.soql_info.soql)
+    $("#soqlArea #tab" + selectedTabId).attr("soql", json.soql_info.soql)
     elementId = "#soqlArea #grid" + selectedTabId
 
     sObjects[elementId] = {
@@ -63,7 +64,7 @@ coordinates = ->
                             columns: json.records.columns,
                             editions:{},
                             sobject_type: json.sobject,
-                            soql: json.soql
+                            soql_info: json.soql_info
                           }
 
 
@@ -94,7 +95,7 @@ coordinates = ->
     e.preventDefault()
     
     elementId = getActiveGridElementId()
-    executeSoql(sObjects[elementId].soql)   
+    executeSoql(sObjects[elementId].json.soql_info)   
 
   #------------------------------------------------
   # Tab events
