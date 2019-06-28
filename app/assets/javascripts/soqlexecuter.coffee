@@ -23,7 +23,7 @@ coordinates = ->
   # Shortcut keys
   #------------------------------------------------
   $(window).on 'keydown', (e) ->
-    if e.ctrlKey && e.key == 'r'
+    if e.ctrlKey && (e.key == 'r' || e.keyCode === 13)
       e.preventDefault()
       if e.target.id == "input_soql"        
         executeSoql()
@@ -35,13 +35,18 @@ coordinates = ->
     e.preventDefault()
     executeSoql()
     
-  executeSoql = () ->
+  executeSoql = (input_soql) ->
     if jqXHR
       return false
     
     hideMessageArea()
     selectedTabId = $("#soqlArea #tabArea .ui-tabs-panel:visible").attr("tabId");
-    val = {soql: $('#soqlArea #input_soql').val(), tooling: $('#soqlArea #useTooling').is(':checked')}
+    if input_soql
+      soql = input_soql
+    else
+      soql = $('#soqlArea #input_soql').val()
+       
+    val = {soql: soql, tooling: $('#soqlArea #useTooling').is(':checked')}
     action = $('#soqlArea .execute-form').attr('action')
     method = $('#soqlArea .execute-form').attr('method')
     options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
@@ -49,7 +54,7 @@ coordinates = ->
     $.executeAjax(options, callbacks)
   
   processSuccessResult = (json) ->
-    $("#soqlArea #soql" + selectedTabId).html(json.soql)
+    $("#soqlArea #soql" + selectedTabId).html(json.soql_info)
     $("#soqlArea #tab" + selectedTabId).attr("soql", json.soql)
     elementId = "#soqlArea #grid" + selectedTabId
 
@@ -57,7 +62,8 @@ coordinates = ->
                             rows: json.records.initial_rows, 
                             columns: json.records.columns,
                             editions:{},
-                            sobject_type: json.sobject
+                            sobject_type: json.sobject,
+                            soql: json.soql
                           }
 
 
@@ -80,7 +86,16 @@ coordinates = ->
       rowDelimiter: '\r\n',
       rowHeaders: false
     })
-      
+
+  #------------------------------------------------
+  # Rerun SOQL
+  #------------------------------------------------
+  $('#soqlArea #rerunBtn').on 'click', (e) ->
+    e.preventDefault()
+    
+    elementId = getActiveGridElementId()
+    executeSoql(sObjects[elementId].soql)   
+
   #------------------------------------------------
   # Tab events
   #------------------------------------------------
@@ -159,9 +174,12 @@ coordinates = ->
     else
       selectedCellOnCreateGrid.row
 
-  getActiveGrid = () ->
+  getActiveGridElementId = () ->
     tabId = $("#soqlArea #tabArea .ui-tabs-panel:visible").attr("tabId")
-    elementId = "#soqlArea #grid" + tabId
+    "#soqlArea #grid" + tabId
+    
+  getActiveGrid = () ->
+    elementId = getActiveGridElementId()
     grids[elementId]
 
   #------------------------------------------------
