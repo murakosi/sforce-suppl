@@ -61,8 +61,6 @@ module Soql
                         record.merge!(parse_child(k, v))
                     else
                         if @check_keys.include?(k.to_s.upcase)
-                            p v.class
-                            p v.attributes
                             record.merge!({k => v})
                         else
                             record.merge!({@check_keys[field_count] => nil})
@@ -74,7 +72,8 @@ module Soql
                 records << record
             end
 
-            format_records(records)
+            #format_records(records)
+            records
         end
 
         def preprare_check_key(soql)
