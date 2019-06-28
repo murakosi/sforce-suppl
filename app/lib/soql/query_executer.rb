@@ -61,7 +61,7 @@ module Soql
                         record.merge!(parse_child(k, v))
                     else
                         if @check_keys.include?(k.to_s.upcase)
-                            p result
+                            p v.class
                             record.merge!({k => v})
                         else
                             record.merge!({@check_keys[field_count] => nil})
