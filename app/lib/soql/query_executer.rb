@@ -72,8 +72,7 @@ module Soql
                 records << record
             end
 
-            #format_records(records)
-            records
+            format_records(records)
         end
 
         def preprare_check_key(soql)
