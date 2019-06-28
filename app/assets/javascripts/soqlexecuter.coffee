@@ -37,16 +37,21 @@ coordinates = ->
   executeSoql = (soql_info) ->
     if jqXHR
       return false
-    
-    hideMessageArea()
-    selectedTabId = $("#soqlArea #tabArea .ui-tabs-panel:visible").attr("tabId");
+      
     if soql_info
       soql = soql_info.soql
       tooling = soql_info.tooling
     else
       soql = $('#soqlArea #input_soql').val()
       tooling = $('#soqlArea #useTooling').is(':checked')
-       
+      
+    if soql == null || soql == 'undefined'
+      return false
+      
+    hideMessageArea()
+    
+    selectedTabId = $("#soqlArea #tabArea .ui-tabs-panel:visible").attr("tabId");
+    
     val = {soql: soql, tooling: tooling}
     action = $('#soqlArea .execute-form').attr('action')
     method = $('#soqlArea .execute-form').attr('method')
