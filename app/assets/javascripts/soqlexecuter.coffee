@@ -100,7 +100,7 @@ coordinates = ->
     e.preventDefault()
     
     elementId = getActiveGridElementId()
-    executeSoql(sObjects[elementId].json.soql_info)   
+    executeSoql(sObjects[elementId].soql_info)   
 
   #------------------------------------------------
   # Tab events
