@@ -104,6 +104,9 @@ coordinates = ->
     if sObjects[elementId]      
       executeSoql(sObjects[elementId].soql_info)   
 
+  $(document).on 'click', '#soqlTabs', (e) ->
+    alert("clicked")
+    
   #------------------------------------------------
   # Tab events
   #------------------------------------------------
