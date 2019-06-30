@@ -144,6 +144,12 @@ module Soql
 
         end
 
+        def extract2(record)
+            @extract_result = {}
+            extract_deep(record)
+            @extract_result
+        end
+
         def extract(record)
             result = {}
             record.each do |k,v|
@@ -151,6 +157,17 @@ module Soql
                 result.merge!(remove_duplicate_id(k, v))                
             end
             result
+        end
+
+        def extract_deep(record)
+            record.each do |k,v|
+                next if skip?(k, v)
+                if v.is_a?(Hash)
+                    extract_deep(v)
+                else
+                    @extract_result.merge!(remove_duplicate_id(k, v))
+                end
+            end            
         end
 
         def get_hash(key, value, type = nil)
