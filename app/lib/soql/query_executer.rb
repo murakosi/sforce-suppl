@@ -6,6 +6,10 @@ module Soql
         Exclude_key_names = ["@xsi:type", "type"]
         Records = "records"
         Type = "type"
+        From_with_space = " from "
+        Select_with_space = "select "
+        Select = "select"
+        Where_with_space = " where "
 
         def execute_query(sforce_session, soql, tooling)
             if soql.strip.end_with?(";")
@@ -24,10 +28,10 @@ module Soql
                raise StandardError.new("No matched records found")
             end
 
-            @sobject_type = ""
+            @sobject_type = nil
+            @model_hash = {}
             @check_keys = []
-
-            preprare_check_key(soql)            
+            preprare_check_key(soql)
 
             records = parse_query_result(query_result)
 
@@ -43,10 +47,10 @@ module Soql
             if results.is_a?(Hash)
                 results = [results]
             end
-            
+
             results.each do |result|                
 
-                if result.has_key?(Type)
+                if @sobject_type.nil? && result.has_key?(Type)
                     @sobject_type = result[Type]
                 end
                 
@@ -54,16 +58,15 @@ module Soql
                 field_count = 0
                 
                 extract(result).each do |k,v|
-                    
                     if is_reference?(k, v)
                         record.merge!(resolve_reference(k, v))
                     elsif is_child?(v)
                         record.merge!(parse_child(k, v))
                     else
                         if @check_keys.include?(k.to_s.upcase)
-                            record.merge!({k => v})
+                            record.merge!(get_hash(k, v))
                         else
-                            record.merge!({@check_keys[field_count] => nil})
+                            record.merge!(get_hash(@check_keys[field_count], nil))
                         end
                     end
                     
@@ -72,46 +75,7 @@ module Soql
                 records << record
             end
 
-            format_records(records)
-        end
-
-        def preprare_check_key(soql)
-            start_markerstring = "select"
-            end_markerstring = "from"
-
-            chekc_key_string = soql[/#{start_markerstring}(.*?)#{end_markerstring}/mi, 1].gsub(/\s+/, '').strip
-            if !chekc_key_string.nil?
-                @check_keys = chekc_key_string.split(",").map{|str| str.upcase}.reject{|str| str.start_with?("(")}
-            end
-        end
-
-        def format_records(raw_records)            
-            records = []
-            max_size_hash = raw_records.max{|h1, h2| h1.size <=> h2.size}
-            @model_hash = max_size_hash.map{|k,v| [k,nil]}.to_h
-
-            raw_records.each do | hash |
-                records << @model_hash.merge(hash)
-            end
             records
-        end
-
-        def generate_column_options
-            #column_options = [{:type => "checkbox", :readOnly => false, :className => "htCenter htMiddle"}]
-            column_options = []
-            updatable = @model_hash.has_key?(:id) || @model_hash.has_key?("Id")
-            
-            @model_hash.each do |k,v|
-                if !updatable
-                    column_options << {:readOnly => true, :type => "text"}
-                elsif k.to_s.upcase == "ID" || k.to_s.include?(".")
-                    column_options << {:readOnly => true, :type => "text"}
-                else
-                    column_options << {:readOnly => false, :type => "text"}
-                end
-            end
-
-            column_options
         end
         
         def is_reference?(key, value)
@@ -137,7 +101,7 @@ module Soql
 
             if !value.nil?
                 extract(value).each do | k, v|
-                    result.merge!(key.to_s + "." + k.to_s => v)
+                    result.merge!(get_hash(key.to_s + "." + k.to_s, v))
                 end
             end
 
@@ -147,18 +111,39 @@ module Soql
         def parse_child(key,value)
             records = value[Records]
             child_records = Array[records].flatten.map{|record| extract(record)}
-            a = JSON.generate(child_records)
-            p a.class
-            {key => JSON.generate(child_records)}
+            #{key => JSON.generate(child_records)}
+            get_hash(key, JSON.generate(child_records), :child)
         end
 
         def extract(record)
             result = {}
             record.each do |k,v|
                 next if skip?(k, v)
-                result.merge!(remove_duplicate_id(k, v))
+                result.merge!(remove_duplicate_id(k, v))                
             end
             result
+        end
+
+        def get_hash(key, value, type = nil)
+            upcase_key = key.to_s.upcase
+            generate_model_hash(upcase_key, type)
+            {upcase_key => value}
+        end
+
+        def generate_model_hash(key, type)
+            if @model_hash.has_key?(key)
+                return
+            end
+
+            if type == :child
+                @model_hash[key] = type
+            elsif key.to_s.upcase == "ID"
+                @model_hash[key] = :id
+            elsif key.to_s.include?(".")              
+                @model_hash[key] = :reference
+            else
+                @model_hash[key] = :text
+            end
         end
 
         def skip?(key, value)
@@ -181,5 +166,45 @@ module Soql
             end
         end
 
+        def preprare_check_key(soql)
+
+            #chekc_key_string = soql[/#{start_markerstring}(.*?)#{end_markerstring}/mi, 1].gsub(/\s+/, '').strip
+            start_position = soql.index(Select_with_space) + Select.size
+            end_position = soql.rindex(From_with_space) - 1
+            soql = soql[start_position..end_position]
+
+            sub_queries = soql.scan(/\((.*?)\)/mi).flatten
+
+            main_soql = soql.gsub(/\((.*?)\)/mi, "").gsub(/\s+/, '').strip
+
+            @check_keys << main_soql.split(",").reject(&:empty?).map(&:upcase)
+
+            if !sub_queries.nil?
+                @check_keys << sub_queries.map{|str| str[/#{From_with_space}(.*?)(#{Where_with_space}|$)/mi, 1].upcase}
+            end
+
+            upcase_soql = soql.upcase
+
+            @check_keys.flatten!.sort! {|a, b| upcase_soql.index(a) <=> upcase_soql.index(b) }
+        end
+
+        def generate_column_options
+            #column_options = [{:type => "checkbox", :readOnly => false, :className => "htCenter htMiddle"}]
+            column_options = []
+            updatable = @model_hash.has_key?(:id) || @model_hash.has_key?("ID")
+
+            @model_hash.each do |k,v|
+                if !updatable
+                    column_options << {:readOnly => true, :type => "text"}
+                elsif v == :id || v == :child || v == :reference
+                    column_options << {:readOnly => true, :type => "text"}
+                else
+                    column_options << {:readOnly => false, :type => "text"}
+                end
+            end
+
+            column_options
+        end
     end
+
 end
