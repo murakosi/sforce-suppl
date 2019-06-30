@@ -74,8 +74,8 @@ module Soql
                 end
                 records << record
             end
-
-            records
+            p @model_hash
+            p records
         end
         
         def is_reference?(key, value)
@@ -97,22 +97,51 @@ module Soql
         end
 
         def resolve_reference(key, value)
-            result = {}
-
-            if !value.nil?
-                extract(value).each do | k, v|
-                    result.merge!(get_hash(key.to_s + "." + k.to_s, v))
-                end
+            if value.nil?
+                return {}
             end
 
-            result
+            @reference = {}
+
+            resolve_ref_deep(key, extract(value))
+
+            @reference
+        end
+
+        def resolve_ref_deep(key, value)
+            value.each do | k, v|
+                if v.is_a?(Hash)
+                    resolve_ref_deep(key.to_s + "." + k.to_s, extract(v))
+                else
+                    @reference.merge!(get_hash(key.to_s + "." + k.to_s, v))
+                end
+            end
         end
 
         def parse_child(key,value)
             records = value[Records]
+            #@children = {}
             child_records = Array[records].flatten.map{|record| extract(record)}
+            #child_records = []
+            #Array[records].flatten.each do |record|
+            #    @children = {}
+            #    parse_deep_child(record)
+            #    child_records << @children
+            #end
             #{key => JSON.generate(child_records)}
+            #get_hash(key, JSON.generate(child_records), :child)
             get_hash(key, JSON.generate(child_records), :child)
+        end
+
+        def parse_deep_child(value)
+            value.each do |k, v|
+                if v.is_a?(Hash)
+                    parse_deep_child(v)
+                else
+                    @children.merge!(extract({k=>v}))
+                end
+            end
+
         end
 
         def extract(record)
