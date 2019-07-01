@@ -29,9 +29,9 @@ module Soql
             end
 
             @sobject_type = nil
-            @model_hash = {}
-            @check_keys = []
-            preprare_check_key(soql)
+            @query_fields = {}
+            parse_query_fields(soql)
+            @check_keys = query_fields.keys
 
             records = parse_query_result(query_result)
 
@@ -63,10 +63,10 @@ module Soql
                     elsif is_child?(v)
                         record.merge!(parse_child(k, v))
                     else
-                        if @check_keys.include?(k.to_s.upcase)
+                        if @query_fields.has_key?(k.to_s.upcase)
                             record.merge!(get_hash(k, v))
                         else
-                            record.merge!(get_hash(@check_keys[field_count], nil))
+                            record.merge!(get_hash(@query_fields.keys[field_count], nil))
                         end
                     end
                     
@@ -147,12 +147,6 @@ module Soql
 
         end
 
-        def extract2(record)
-            @extract_result = {}
-            extract_deep(record)
-            @extract_result
-        end
-
         def extract(record)
             result = {}
             record.each do |k,v|
@@ -162,20 +156,9 @@ module Soql
             result
         end
 
-        def extract_deep(record)
-            record.each do |k,v|
-                next if skip?(k, v)
-                if v.is_a?(Hash)
-                    extract_deep(v)
-                else
-                    @extract_result.merge!(remove_duplicate_id(k, v))
-                end
-            end            
-        end
-
         def get_hash(key, value, type = nil)
             upcase_key = key.to_s.upcase
-            generate_model_hash(upcase_key, type)
+            #generate_model_hash(upcase_key, type)
             {upcase_key => value}
         end
 
@@ -226,17 +209,28 @@ module Soql
 
             main_soql = soql.gsub(/\((.*?)\)/mi, "").gsub(/\s+/, '').strip
 
-            @check_keys << main_soql.split(",").reject(&:empty?).map(&:upcase)
+            main_soql.split(",").reject(&:empty?).map(|str| genereate_query_fields(str))
 
             if !sub_queries.nil?
-                @check_keys << sub_queries.map{|str| str[/#{From_with_space}(.*?)(#{Where_with_space}|$)/mi, 1].upcase}
+                sub_queries.map{|str| genereate_query_fields(str[/#{From_with_space}(.*?)(#{Where_with_space}|$)/mi, 1])}
             end
 
             upcase_soql = soql.upcase
 
-            @check_keys.flatten!.sort! {|a, b| upcase_soql.index(a) <=> upcase_soql.index(b) }
+            #@check_keys.flatten!.sort! {|a, b| upcase_soql.index(a) <=> upcase_soql.index(b) }
+            p @query_fields.sort! {|(k1, v1), (k2, v2)| upcase_soql.index(k1) <=> upcase_soql.index(k2) }
         end
 
+        def genereate_query_fields(field_name, type = nil)
+            field_name.upcase!
+            if type.nil?
+                @query_fields[field_name] = nil
+            else
+                @query_fields[field_name] = type
+            end
+            
+        end
+        
         def generate_column_options
             #column_options = [{:type => "checkbox", :readOnly => false, :className => "htCenter htMiddle"}]
             column_options = []
