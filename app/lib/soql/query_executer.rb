@@ -120,25 +120,28 @@ module Soql
 
         def parse_child(key,value)
             records = value[Records]
-            #@children = {}
-            child_records = Array[records].flatten.map{|record| extract(record)}
-            #child_records = []
-            #Array[records].flatten.each do |record|
-            #    @children = {}
-            #    parse_deep_child(record)
-            #    child_records << @children
-            #end
-            #{key => JSON.generate(child_records)}
-            #get_hash(key, JSON.generate(child_records), :child)
+            child_records = []
+            Array[records].flatten.each do |record|
+            	@children = {}
+            	parse_deep_child(record)
+            	child_records << @children
+            end
+            
+            #child_records = Array[records].flatten.map{|record| extract(record)}
             get_hash(key, JSON.generate(child_records), :child)
         end
 
-        def parse_deep_child(value)
-            value.each do |k, v|
+        def parse_deep_child(record, key = nil)
+            record.each do |k, v|
+            	next if skip?(k, v)
                 if v.is_a?(Hash)
-                    parse_deep_child(v)
+                    parse_deep_child(v, k)
                 else
-                    @children.merge!(extract({k=>v}))
+                	if key.nil?
+                    	@children.merge!({k=>v})
+                    else
+                    	@children.merge!({key => {k => v} })
+                    end
                 end
             end
 
