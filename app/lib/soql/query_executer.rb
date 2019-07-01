@@ -31,7 +31,7 @@ module Soql
             @sobject_type = nil
             @query_fields = {}
             parse_query_fields(soql)
-            @check_keys = query_fields.keys
+            @check_keys = @query_fields.keys
 
             records = parse_query_result(query_result)
 
@@ -212,7 +212,7 @@ module Soql
             main_soql.split(",").reject(&:empty?).map{|str| genereate_query_fields(str)}
 
             if !sub_queries.nil?
-                sub_queries.map{|str| genereate_query_fields(str[/#{From_with_space}(.*?)(#{Where_with_space}|$)/mi, 1])}
+                sub_queries.map{|str| genereate_query_fields(str[/#{From_with_space}(.*?)(#{Where_with_space}|$)/mi, 1], :children)}
             end
 
             upcase_soql = soql.upcase
@@ -223,10 +223,12 @@ module Soql
 
         def genereate_query_fields(field_name, type = nil)
             field_name.upcase!
-            if type.nil?
-                @query_fields[field_name] = nil
-            else
+            if !type.nil?
                 @query_fields[field_name] = type
+            elsif field_name == "ID"
+                @query_fields[field_name] = :id
+            elsif field_name.include?(".")
+                @query_fields[field_name] = :reference
             end
             
         end
@@ -239,7 +241,7 @@ module Soql
             @model_hash.each do |k,v|
                 if !updatable
                     column_options << {:readOnly => true, :type => "text"}
-                elsif v == :id || v == :child || v == :reference
+                elsif v == :id || v == :children || v == :reference
                     column_options << {:readOnly => true, :type => "text"}
                 else
                     column_options << {:readOnly => false, :type => "text"}
