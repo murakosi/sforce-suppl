@@ -218,7 +218,7 @@ module Soql
             upcase_soql = soql.upcase
 
             #@check_keys.flatten!.sort! {|a, b| upcase_soql.index(a) <=> upcase_soql.index(b) }
-            p @query_fields.sort! {|(k1, v1), (k2, v2)| upcase_soql.index(k1) <=> upcase_soql.index(k2) }
+            p @query_fields = @query_fields.sort{|(k1, v1), (k2, v2)| upcase_soql.index(k1) <=> upcase_soql.index(k2) }
         end
 
         def genereate_query_fields(field_name, type = nil)
