@@ -201,6 +201,7 @@ module Soql
         def parse_query_fields(soql)
 
             #chekc_key_string = soql[/#{start_markerstring}(.*?)#{end_markerstring}/mi, 1].gsub(/\s+/, '').strip
+            fields = []
             start_position = soql.index(Select_with_space) + Select.size
             end_position = soql.rindex(From_with_space) - 1
             soql = soql[start_position..end_position]
@@ -209,27 +210,30 @@ module Soql
 
             main_soql = soql.gsub(/\((.*?)\)/mi, "").gsub(/\s+/, '').strip
 
-            main_soql.split(",").reject(&:empty?).map{|str| genereate_query_fields(str)}
+            fields << main_soql.split(",").reject(&:empty?).map{|str| get_query_fields(str)}
 
             if !sub_queries.nil?
-                sub_queries.map{|str| genereate_query_fields(str[/#{From_with_space}(.*?)(#{Where_with_space}|$)/mi, 1], :children)}
+                fields << sub_queries.map{|str| get_query_fields(str[/#{From_with_space}(.*?)(#{Where_with_space}|$)/mi, 1], :children)}
             end
 
             upcase_soql = soql.upcase
 
+            p fields.flatten!
             #@check_keys.flatten!.sort! {|a, b| upcase_soql.index(a) <=> upcase_soql.index(b) }
             temp_array = @query_fields.sort{|(k1, v1), (k2, v2)| upcase_soql.index(k1) <=> upcase_soql.index(k2) }
             p @query_fields = Hash[*temp_array.flatten(1)]
         end
 
-        def genereate_query_fields(field_name, type = nil)
+        def get_query_fields(field_name, type = nil)
             field_name.upcase!
             if !type.nil?
-                @query_fields.merge!({field_name => type})
+                {field_name => type}
             elsif field_name == "ID"
-                @query_fields.merge!({field_name => :id})
+                {field_name => :id}
             elsif field_name.include?(".")
-                @query_fields.merge!({field_name => :reference})
+                {field_name => :reference}
+            else
+                {field_name => :text}
             end
             
         end
