@@ -198,7 +198,7 @@ module Soql
             end
         end
 
-        def preprare_check_key(soql)
+        def parse_query_fields(soql)
 
             #chekc_key_string = soql[/#{start_markerstring}(.*?)#{end_markerstring}/mi, 1].gsub(/\s+/, '').strip
             start_position = soql.index(Select_with_space) + Select.size
