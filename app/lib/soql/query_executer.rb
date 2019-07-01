@@ -209,7 +209,7 @@ module Soql
 
             main_soql = soql.gsub(/\((.*?)\)/mi, "").gsub(/\s+/, '').strip
 
-            main_soql.split(",").reject(&:empty?).map(|str| genereate_query_fields(str))
+            main_soql.split(",").reject(&:empty?).map{|str| genereate_query_fields(str)}
 
             if !sub_queries.nil?
                 sub_queries.map{|str| genereate_query_fields(str[/#{From_with_space}(.*?)(#{Where_with_space}|$)/mi, 1])}
