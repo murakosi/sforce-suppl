@@ -74,8 +74,8 @@ module Soql
                 end
                 records << record
             end
-            p @model_hash
-            p records
+
+            records
         end
         
         def is_reference?(key, value)
