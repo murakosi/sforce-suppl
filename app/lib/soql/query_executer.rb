@@ -224,11 +224,11 @@ module Soql
         def genereate_query_fields(field_name, type = nil)
             field_name.upcase!
             if !type.nil?
-                @query_fields[field_name] = type
+                @query_fields.merge!({field_name => type})
             elsif field_name == "ID"
-                @query_fields[field_name] = :id
+                @query_fields.merge!({field_name => :id})
             elsif field_name.include?(".")
-                @query_fields[field_name] = :reference
+                @query_fields.merge!({field_name => :reference})
             end
             
         end
