@@ -210,29 +210,29 @@ module Soql
 
             main_soql = soql.gsub(/\((.*?)\)/mi, "").gsub(/\s+/, '').strip
 
-            fields << main_soql.split(",").reject(&:empty?).map{|str| get_query_fields(str)}
+            fields << main_soql.split(",").reject(&:empty?).each{|str| generate_query_fields(str)}
 
             if !sub_queries.nil?
-                fields << sub_queries.map{|str| get_query_fields(str[/#{From_with_space}(.*?)(#{Where_with_space}|$)/mi, 1], :children)}
+                fields << sub_queries.each{|str| generate_query_fields(str[/#{From_with_space}(.*?)(#{Where_with_space}|$)/mi, 1], :children)}
             end
 
             upcase_soql = soql.upcase
 
             #@check_keys.flatten!.sort! {|a, b| upcase_soql.index(a) <=> upcase_soql.index(b) }
-            temp_array = fields.flatten!.first.sort{|(k1, v1), (k2, v2)| upcase_soql.index(k1) <=> upcase_soql.index(k2) }
-            p @query_fields = Hash[*temp_array.flatten(1)]
+            field_type_array = @query_fields.sort{|(k1, v1), (k2, v2)| upcase_soql.index(k1) <=> upcase_soql.index(k2) }
+            p @query_fields = Hash[*field_type_array.flatten(1)]
         end
 
-        def get_query_fields(field_name, type = nil)
+        def generate_query_fields(field_name, type = nil)
             field_name.upcase!
             if !type.nil?
-                {field_name => type}
+                @query_fields.merge! {field_name => type}
             elsif field_name == "ID"
-                {field_name => :id}
+                @query_fields.merge! {field_name => :id}
             elsif field_name.include?(".")
-                {field_name => :reference}
+                @query_fields.merge! {field_name => :reference}
             else
-                {field_name => :text}
+                @query_fields.merge! {field_name => :text}
             end
             
         end
