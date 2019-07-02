@@ -104,10 +104,10 @@ coordinates = ->
     if sObjects[elementId]      
       executeSoql(sObjects[elementId].soql_info)   
 
-  $(document).on 'click', 'ul.ui-tabs-nav', (e) ->
+  $(document).on 'click', 'ul#soqlTabs.ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all', (e) ->
     console.log(e)
   $(document).on 'click', 'ul.ui-tabs-nav', 'li', (e) ->
-    console.log(e)
+    e.stopPropagation()
     
   #------------------------------------------------
   # Tab events
