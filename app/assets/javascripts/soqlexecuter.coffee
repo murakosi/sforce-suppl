@@ -104,8 +104,10 @@ coordinates = ->
     if sObjects[elementId]      
       executeSoql(sObjects[elementId].soql_info)   
 
-  #$(document).on 'click', '.ui-tabs-nav', (e) ->
-  #  alert("clicked")
+  $("ul.ui-tabs-nav").on 'click', (e) ->
+    alert("clicked")
+  $("ul.ui-tabs-nav").on 'click', 'li', (e) ->
+    alert("li")
     
   #------------------------------------------------
   # Tab events
