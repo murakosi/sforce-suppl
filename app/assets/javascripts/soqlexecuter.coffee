@@ -105,15 +105,17 @@ coordinates = ->
       executeSoql(sObjects[elementId].soql_info)   
 
   $(document).on 'click', 'ul.ui-tabs-nav', (e) ->
-    if (e.target !== this)
+    if e.target != this
       console.log("child")
     else
       console.log("parent")
+  
   $("#soqlTabs").on "click", (e) ->
-    if (e.target !== this)
+    if e.target != this
       console.log("child2")
     else
-      console.log("parent2")    
+      console.log("parent2")
+ 
   $(document).on 'click', 'ul.ui-tabs-nav', 'li', (e) ->
     e.stopPropagation()
     
