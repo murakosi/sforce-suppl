@@ -6,6 +6,7 @@ module Soql
         Exclude_key_names = ["@xsi:type", "type"]
         Records = "records"
         Type = "type"
+        Id = "ID"
         From_with_space = " from "
         Select_with_space = "select "
         Select = "select"
@@ -54,7 +55,7 @@ module Soql
                     @sobject_type = result[Type]
                 end
                 
-                record = {}                
+                record = {"" => false}                
                 field_count = 0
                 
                 extract(result).each do |k,v|
@@ -89,7 +90,7 @@ module Soql
         end
 
         def is_child?(value)
-            if value.is_a?(Hash) && (value.has_key?(:records) || value.has_key?(Records))
+            if value.is_a?(Hash) && value.has_key?(Records)
                 true
             else
                 false
@@ -102,9 +103,7 @@ module Soql
             end
 
             @reference = {}
-
             resolve_ref_deep(key, extract(value))
-
             @reference
         end
 
@@ -128,7 +127,7 @@ module Soql
             end
             
             #child_records = Array[records].flatten.map{|record| extract(record)}
-            get_hash(key, JSON.generate(child_records), :child)
+            get_hash(key, JSON.generate(child_records))
         end
 
         def parse_deep_child(record, key = nil)
@@ -156,34 +155,16 @@ module Soql
             result
         end
 
-        def get_hash(key, value, type = nil)
-            upcase_key = key.to_s.upcase
-            #generate_model_hash(upcase_key, type)
-            {upcase_key => value}
+        def get_hash(key, value)
+            {key.to_s.upcase => value}
         end
-
-        def generate_model_hash(key, type)
-            if @model_hash.has_key?(key)
-                return
-            end
-
-            if type == :child
-                @model_hash[key] = type
-            elsif key.to_s.upcase == "ID"
-                @model_hash[key] = :id
-            elsif key.to_s.include?(".")              
-                @model_hash[key] = :reference
-            else
-                @model_hash[key] = :text
-            end
-        end
-
+        
         def skip?(key, value)
             if Exclude_key_names.include?(key.to_s.downcase)
                 return true
             end
 
-            if key.to_s.downcase == "id" && value.nil?
+            if key.to_s.upcase == Id && value.nil?
                 return true
             end
 
@@ -191,7 +172,7 @@ module Soql
         end
 
         def remove_duplicate_id(key, value)            
-            if key.to_s.downcase == "id" && value.is_a?(Array)
+            if key.to_s.upcase == Id && value.is_a?(Array)
                 {key => value.first}
             else
                 {key => value}
@@ -210,24 +191,24 @@ module Soql
 
             main_soql = soql.gsub(/\((.*?)\)/mi, "").gsub(/\s+/, '').strip
 
-            fields << main_soql.split(",").reject(&:empty?).each{|str| generate_query_fields(str)}
+            main_soql.split(",").reject(&:empty?).each{|str| generate_query_fields(str)}
 
             if !sub_queries.nil?
-                fields << sub_queries.each{|str| generate_query_fields(str[/#{From_with_space}(.*?)(#{Where_with_space}|$)/mi, 1], :children)}
+                sub_queries.each{|str| generate_query_fields(str[/#{From_with_space}(.*?)(#{Where_with_space}|$)/mi, 1], :children)}
             end
 
             upcase_soql = soql.upcase
 
             #@check_keys.flatten!.sort! {|a, b| upcase_soql.index(a) <=> upcase_soql.index(b) }
             field_type_array = @query_fields.sort{|(k1, v1), (k2, v2)| upcase_soql.index(k1) <=> upcase_soql.index(k2) }
-            p @query_fields = Hash[*field_type_array.flatten(1)]
+            @query_fields = Hash[*field_type_array.flatten(1)]
         end
 
         def generate_query_fields(field_name, type = nil)
             field_name.upcase!
             if !type.nil?
                 @query_fields[field_name] = type
-            elsif field_name == "ID"
+            elsif field_name == Id
                 @query_fields[field_name] = :id
             elsif field_name.include?(".")
                 @query_fields[field_name] = :reference
@@ -238,9 +219,9 @@ module Soql
         end
         
         def generate_column_options
-            #column_options = [{:type => "checkbox", :readOnly => false, :className => "htCenter htMiddle"}]
-            column_options = []
-            updatable = @query_fields.has_key?("ID")
+            column_options = [{:type => "checkbox", :readOnly => false, :className => "htCenter htMiddle"}]
+            #column_options = []
+            updatable = @query_fields.has_key?(Id)
 
             @query_fields.each do |k,v|
                 if !updatable
