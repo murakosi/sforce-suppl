@@ -210,7 +210,6 @@ coordinates = ->
     header = getColumns(json)
     records = getRows(json)
     columnsOption = getColumnsOption(json)
-    rowHeaderWidth = getRowHeaderWidth(elementId, json)
     minRow = getMinRow(json)
 
     hotSettings = {
@@ -222,7 +221,6 @@ coordinates = ->
         manualRowResize: false,
         manualColumnResize: true,
         rowHeaders: true,
-        rowHeaderWidth: rowHeaderWidth,
         colHeaders: header,
         columns: columnsOption,
         startRows: 0,
