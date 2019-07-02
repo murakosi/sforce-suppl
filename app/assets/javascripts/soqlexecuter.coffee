@@ -108,6 +108,7 @@ coordinates = ->
     if e.target != this
       return
     
+    e.preventDefault()
     createTab()
     
   #------------------------------------------------
@@ -262,22 +263,6 @@ coordinates = ->
     else 
       null
 
-  getRowHeaderWidth = (elementId, json) ->
-    if !json || !json.profiles
-      return null
-      
-    widths = []
-    for value in json.profiles
-      widths.push(getTextWidth(value, "10pt Verdana,Arial,sans-serif"))
-    Math.max.apply(null, widths)
-
-  getTextWidth = (text, font) ->
-    canvas = getTextWidth.canvas || (getTextWidth.canvas = document.createElement("canvas"));
-    context = canvas.getContext("2d");
-    context.font = font;
-    metrics = context.measureText(text);
-    return metrics.width;
-
   getMinRow = (json) ->
     if json && json.min_row
       json.min_row
@@ -295,6 +280,9 @@ coordinates = ->
     columnIndex = source[0][1]
     oldValue = source[0][2]
     newValue = source[0][3]
+    
+    if columnIndex == 0
+      return
     
     if oldValue == newValue
       return
