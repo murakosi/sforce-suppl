@@ -107,7 +107,7 @@ coordinates = ->
   $(document).on 'click', 'ul.ui-tabs-nav', (e) ->
     alert("clicked")
   $(document).on 'click', 'ul.ui-tabs-nav', 'li', (e) ->
-    alert("li")
+    e.stopPropagation()
     
   #------------------------------------------------
   # Tab events
