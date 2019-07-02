@@ -184,7 +184,7 @@ module Soql
             #chekc_key_string = soql[/#{start_markerstring}(.*?)#{end_markerstring}/mi, 1].gsub(/\s+/, '').strip
             fields = []
             p soql
-            p soql = soql.gsub(/(\r|\n|\r\n)\)/mi, " ")
+            p soql = soql.gsub(/\r\n?\)/mi, " ")
             start_position = soql.index(Select_with_space) + Select.size
             end_position = soql.rindex(From_with_space) - 1
             soql = soql[start_position..end_position]
