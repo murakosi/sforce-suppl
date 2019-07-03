@@ -108,11 +108,8 @@ coordinates = ->
     if e.target != this
       return
     
-    tabId = $("#soqlArea #tabArea .ui-tabs-panel:visible").attr("tabId")
-    soqlArea = "#soqlArea #soql" + tabId
-    $(soqlArea).addClass("noselect")
     createTab()
-    #$(soqlArea).removeClass("noselect")
+    return false
     
   #------------------------------------------------
   # Tab events
