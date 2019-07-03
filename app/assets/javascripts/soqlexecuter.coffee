@@ -112,7 +112,7 @@ coordinates = ->
     soqlArea = "#soqlArea #soql" + tabId
     $(soqlArea).addClass("noselect")
     createTab()
-    $(soqlArea).removeClass("noselect")
+    #$(soqlArea).removeClass("noselect")
     
   #------------------------------------------------
   # Tab events
