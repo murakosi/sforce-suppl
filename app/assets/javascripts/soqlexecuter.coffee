@@ -105,11 +105,14 @@ coordinates = ->
       executeSoql(sObjects[elementId].soql_info)   
 
   $("#soqlTabs").on "dblclick", (e) ->
-    #if e.target != this
-    if e.target != e.currentTarget
+    if e.target != this
       return
-    e.preventDefault()
+    
+    tabId = $("#soqlArea #tabArea .ui-tabs-panel:visible").attr("tabId")
+    soqlArea = "#soqlArea #soql" + tabId
+    $(soqlArea).addClass("noselect")
     createTab()
+    $(soqlArea).removeClass("noselect")
     
   #------------------------------------------------
   # Tab events
