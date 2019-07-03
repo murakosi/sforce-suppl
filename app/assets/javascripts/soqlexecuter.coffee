@@ -108,9 +108,9 @@ coordinates = ->
     if e.target != this
       return
     
+    createTab()
     e.preventDefault()
     e.stopPropagation()
-    createTab()
     
   #------------------------------------------------
   # Tab events
