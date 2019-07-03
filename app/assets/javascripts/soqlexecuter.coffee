@@ -106,10 +106,11 @@ coordinates = ->
 
   $("#soqlTabs").on "dblclick", (e) ->
     if e.target != this
+      e.preventDefault()
+      e.stopPropagation() 
       return
     
     createTab()
-    return false
     
   #------------------------------------------------
   # Tab events
