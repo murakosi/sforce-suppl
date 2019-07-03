@@ -109,6 +109,7 @@ coordinates = ->
       return
     
     e.preventDefault()
+    e.stopPropagation()
     createTab()
     
   #------------------------------------------------
