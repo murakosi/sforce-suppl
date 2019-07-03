@@ -106,6 +106,7 @@ coordinates = ->
 
   $("#soqlTabs").on "dblclick", (e) ->
     if e.target != this
+      console.log(e.target)
       e.preventDefault()
       e.stopPropagation() 
       return
