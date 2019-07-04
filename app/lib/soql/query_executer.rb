@@ -221,7 +221,7 @@ module Soql
         end
         
         def generate_column_options
-            column_options = [{:type => "checkbox", :readOnly => false, :className => "htCenter htMiddle grid-checkbox"}]
+            column_options = [{:type => "checkbox", :readOnly => false, :className => "htCenter htMiddle", :columnSortingBoolean => false}]
             #column_options = []
             updatable = @query_fields.has_key?(Id)
 
