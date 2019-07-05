@@ -217,7 +217,7 @@ coordinates = ->
     hotSettings = {
         data: records,
         height: 500,
-        stretchH: 'last',
+        stretchH: 'all',
         autoWrapRow: true,
         allowRemoveColumn: false,
         manualRowResize: false,
