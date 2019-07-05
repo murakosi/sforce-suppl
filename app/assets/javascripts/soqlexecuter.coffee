@@ -232,7 +232,7 @@ coordinates = ->
         fillHandle: {autoInsertRow: false},
         #fragmentSelection: true,
         columnSorting: true,
-        colWidths: ["30px"],
+        colWidths: [30,20],
         licenseKey: 'non-commercial-and-evaluation'
         afterChange: (source, changes) -> detectAfterEditOnGrid(source, changes),
         afterOnCellMouseDown: (event, coords, td) -> onCellClick(event, coords, td)
