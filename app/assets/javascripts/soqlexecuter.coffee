@@ -233,7 +233,8 @@ coordinates = ->
         #fragmentSelection: true,
         columnSorting: true,
         colWidths: (i) -> setColWidth(i),
-        licenseKey: 'non-commercial-and-evaluation'
+        licenseKey: 'non-commercial-and-evaluation',
+        beforeColumnSort: (currentConfig, newConfig) -> onBeforeSort(currentConfig, newConfig),
         afterChange: (source, changes) -> detectAfterEditOnGrid(source, changes),
         afterOnCellMouseDown: (event, coords, td) -> onCellClick(event, coords, td)
     }
@@ -249,7 +250,10 @@ coordinates = ->
       30
     else
       200
-      
+  
+  onBeforeSort = (currentConfig, newConfig) ->
+    console.log(currentConfig)
+  
   getColumns = (json) ->
     if !json
       null
