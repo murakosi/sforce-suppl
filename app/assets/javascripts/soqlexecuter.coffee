@@ -232,7 +232,7 @@ coordinates = ->
         fillHandle: {autoInsertRow: false},
         #fragmentSelection: true,
         columnSorting: true,
-        colWidths: [30],
+        colWidths: (i) -> setColWidth(i),
         licenseKey: 'non-commercial-and-evaluation'
         afterChange: (source, changes) -> detectAfterEditOnGrid(source, changes),
         afterOnCellMouseDown: (event, coords, td) -> onCellClick(event, coords, td)
@@ -244,6 +244,10 @@ coordinates = ->
 
     grids[elementId] = hot
 
+  setColWidth = (i) ->
+    if i == 0
+      30
+      
   getColumns = (json) ->
     if !json
       null
