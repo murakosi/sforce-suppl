@@ -247,6 +247,8 @@ coordinates = ->
   setColWidth = (i) ->
     if i == 0
       30
+    else
+      200
       
   getColumns = (json) ->
     if !json
