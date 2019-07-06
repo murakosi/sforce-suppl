@@ -217,7 +217,7 @@ coordinates = ->
     hotSettings = {
         data: records,
         height: 500,
-        stretchH: 'all',
+        #stretchH: 'all',
         autoWrapRow: true,
         allowRemoveColumn: false,
         manualRowResize: false,
@@ -252,7 +252,19 @@ coordinates = ->
       200
   
   onBeforeSort = (currentConfig, newConfig) ->
+    config = null
+    if currentConfig.length > 0
+      config = currentConfig
+    else
+      config = newConfig
+
+    console.log(config)
+    if config[0].column == 0
+      return false
+
     console.log(currentConfig)
+    console.log(newConfig)
+    console.log(newConfig[0].column)
   
   getColumns = (json) ->
     if !json

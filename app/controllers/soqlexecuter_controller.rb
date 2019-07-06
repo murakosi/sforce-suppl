@@ -27,11 +27,13 @@ class SoqlexecuterController < ApplicationController
 
   def response_json(soql, tooling, query_result)
     rows = query_result[:records].map{ |hash| hash.values}
+    #a = ["<input type='checkbox'>"]
     {
       :soql_info => soql_info(soql, tooling),
       :sobject => query_result[:sobject],
       :records => {
-                  :columns => query_result[:records].first.keys,
+                  #:columns =>  a + query_result[:records].first.keys,
+                  :columns =>  a + query_result[:records].first.keys,
                   :rows => rows,
                   :initial_rows => rows,
                   :column_options => query_result[:column_options]

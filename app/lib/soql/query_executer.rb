@@ -55,7 +55,7 @@ module Soql
                     @sobject_type = result[Type]
                 end
                 
-                record = {"" => false}                
+                record = {"" => false}#{}
                 field_count = 0
                 
                 extract(result).each do |k,v|
@@ -183,8 +183,8 @@ module Soql
 
             #chekc_key_string = soql[/#{start_markerstring}(.*?)#{end_markerstring}/mi, 1].gsub(/\s+/, '').strip
             fields = []
-            p soql
-            p soql = soql.gsub(/(\r|\n|\r\n)/mi, ' ')
+            soql = soql.gsub(/(\r|\n|\r\n)/mi, ' ')
+
             start_position = soql.index(Select_with_space) + Select.size
             end_position = soql.rindex(From_with_space) - 1
             soql = soql[start_position..end_position]
@@ -221,7 +221,7 @@ module Soql
         end
         
         def generate_column_options
-            column_options = [{:type => "checkbox", :readOnly => false, :className => "htCenter htMiddle", :columnSortingBoolean => false}]
+            column_options = [{:type => "checkbox", :readOnly => false, :className => "htCenter htMiddle"}]
             #column_options = []
             updatable = @query_fields.has_key?(Id)
 
