@@ -33,10 +33,11 @@ module Soql
             @query_fields = {}
             parse_query_fields(soql)
             @check_keys = @query_fields.keys
+            id_column_index = @query_fields.keys.index(Id)
 
-            records = parse_query_result(query_result)
+            records = parse_query_result(query_result).map{|hash| hash.slice(*@query_fields.keys)}
 
-            {:sobject => @sobject_type, :records => records, :column_options => generate_column_options}
+            {:sobject => @sobject_type, :records => records, :column_options => generate_column_options, :id_column_index => id_column_index}
         end
  
         def parse_query_result(query_result)
@@ -55,7 +56,9 @@ module Soql
                     @sobject_type = result[Type]
                 end
                 
-                record = {"" => false}#{}
+                #record = {"" => false}
+                record = {}
+
                 field_count = 0
                 
                 extract(result).each do |k,v|
@@ -221,8 +224,8 @@ module Soql
         end
         
         def generate_column_options
-            column_options = [{:type => "checkbox", :readOnly => false, :className => "htCenter htMiddle"}]
-            #column_options = []
+            #column_options = [{:type => "checkbox", :readOnly => false, :className => "htCenter htMiddle"}]
+            column_options = []
             updatable = @query_fields.has_key?(Id)
 
             @query_fields.each do |k,v|

@@ -69,12 +69,97 @@ coordinates = ->
                             columns: json.records.columns,
                             editions:{},
                             sobject_type: json.sobject,
-                            soql_info: json.soql_info
+                            soql_info: json.soql_info,
+                            idColumnIndex: json.id_column_index
                           }
 
 
     createGrid(elementId, json.records)
+
+  #------------------------------------------------
+  # Update
+  #------------------------------------------------
+  $('#soqlArea #saveBtn').on 'click', (e) ->
+    e.preventDefault()
+    update()
+    
+  update = () ->
+    if jqXHR
+      return false
+
+    hideMessageArea()
+    
+    elementId = getActiveGridElementId()
+    info = sObjects[elementId]
+    console.log(info)
+
+    if info.editions.length <= 0
+      return false
+    
+    val = {sobject: info.sobject_type, records: JSON.stringify(info.editions)}
+    action = "/update"
+    method = "post"
+    options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
+    callbacks = $.getAjaxCallbacks(processCrudSuccess, displayError, null)
+    $.executeAjax(options, callbacks)
   
+  processCrudSuccess = (json) ->
+
+  detectAfterEditOnGrid = (source, changes) ->
+
+    if changes != 'edit' && !changes.startsWith('UndoRedo')
+      return
+
+    console.log(source)
+
+    rowIndex = source[0][0]
+    columnIndex = source[0][1]
+    oldValue = source[0][2]
+    newValue = source[0][3]
+
+    tabId = $("#soqlArea #tabArea .ui-tabs-panel:visible").attr("tabId")
+    elementId = "#soqlArea #grid" + tabId
+    fieldName = sObjects[elementId].columns[columnIndex]
+
+    idColumnIndex = sObjects[elementId].idColumnIndex
+
+    if columnIndex == idColumnIndex
+      return
+    
+    if oldValue == newValue
+      return
+
+
+    
+    isRestored = false
+    
+    
+    id = sObjects[elementId].rows[rowIndex][idColumnIndex]
+
+    console.log(id)
+    console.log(sObjects[elementId].rows[id])
+
+    if sObjects[elementId].editions[id]
+      if newValue == sObjects[elementId].rows[id][columnIndex]
+        delete sObjects[elementId].editions[id][fieldName]
+        isRestored = true
+      else
+        sObjects[elementId].editions[id][fieldName] = newValue
+    else
+      sObjects[elementId].editions[id] = {}
+      sObjects[elementId].editions[id][fieldName] = newValue
+
+    hot = grids[elementId]
+    if isRestored
+      hot.removeCellMeta(rowIndex, columnIndex, 'className');
+      console.log("rem")
+      #hot.setCellMeta(rowIndex, columnIndex, 'className', '');
+    else
+      hot.setCellMeta(rowIndex, columnIndex, 'className', 'changed-cell-border');
+      console.log("set")
+    hot.render()
+    #console.log(sObjects[elementId].editions[rowIndex])
+
   #------------------------------------------------
   # CSV Download
   #------------------------------------------------
@@ -232,7 +317,7 @@ coordinates = ->
         fillHandle: {autoInsertRow: false},
         #fragmentSelection: true,
         columnSorting: true,
-        colWidths: (i) -> setColWidth(i),
+        #colWidths: (i) -> setColWidth(i),
         licenseKey: 'non-commercial-and-evaluation',
         beforeColumnSort: (currentConfig, newConfig) -> onBeforeSort(currentConfig, newConfig),
         afterChange: (source, changes) -> detectAfterEditOnGrid(source, changes),
@@ -290,58 +375,7 @@ coordinates = ->
     if json && json.min_row
       json.min_row
     else
-      0
-
-  detectAfterEditOnGrid = (source, changes) ->
-
-    if changes != 'edit' && !changes.startsWith('UndoRedo')
-      return
-
-    console.log(source)
-
-    rowIndex = source[0][0]
-    columnIndex = source[0][1]
-    oldValue = source[0][2]
-    newValue = source[0][3]
-    
-    if columnIndex == 0
-      return
-    
-    if oldValue == newValue
-      return
-
-    #if checked
-    #    selectedRecords[rowIndex] = grids["#metadataArea #grid"].getDataAtRow(rowIndex)
-    #else
-    #  delete selectedRecords[rowIndex]
-
-    tabId = $("#soqlArea #tabArea .ui-tabs-panel:visible").attr("tabId")
-    elementId = "#soqlArea #grid" + tabId
-    fieldName = sObjects[elementId].columns[columnIndex]
-    
-    isRestored = false
-    
-    if sObjects[elementId].editions[rowIndex]
-      if newValue == sObjects[elementId].rows[rowIndex][columnIndex]
-        delete sObjects[elementId].editions[rowIndex][fieldName]
-        isRestored = true
-      else
-        sObjects[elementId].editions[rowIndex][fieldName] = newValue
-    else
-      sObjects[elementId].editions[rowIndex] = {}
-      sObjects[elementId].editions[rowIndex][fieldName] = newValue
-
-    hot = grids[elementId]
-    if isRestored
-      hot.removeCellMeta(rowIndex, columnIndex, 'className');
-      console.log("rem")
-      #hot.setCellMeta(rowIndex, columnIndex, 'className', '');
-    else
-      hot.setCellMeta(rowIndex, columnIndex, 'className', 'changed-cell-border');
-      console.log("set")
-    hot.render()
-    #console.log(sObjects[elementId].editions[rowIndex])
-    
+      0    
 
   onCellClick = (event, coords, td) ->
     selectedCellOnCreateGrid = coords

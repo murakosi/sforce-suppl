@@ -32,7 +32,8 @@ Rails.application.routes.draw do
   post    'metadata/deploy_check',  to: 'metadata#check_deploy_status'
 
   get     'soql',                   to: 'soqlexecuter#show'
-  post    'soql',                   to: 'soqlexecuter#execute'
+  post    'query',                  to: 'soqlexecuter#query'
+  post    'update',                 to: 'soqlexecuter#update'
 
   get     'tooling',                to: 'tooling#show'
   post    'tooling',                to: 'tooling#execute'

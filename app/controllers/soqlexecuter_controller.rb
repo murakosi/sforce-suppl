@@ -4,15 +4,19 @@ class SoqlexecuterController < ApplicationController
 
   before_action :require_sign_in!
   
-  protect_from_forgery :except => [:execute]
+  protect_from_forgery :except => [:query, :update]
   
   Time_format = "%Y/%m/%d %H:%M:%S"
 
   def show
   end
 
-  def execute
+  def query
     execute_soql(params[:soql], params[:tooling])
+  end
+
+  def update
+    execute_update(params[:sobject], params[:records])
   end
 
   def execute_soql(soql, tooling)
@@ -27,16 +31,20 @@ class SoqlexecuterController < ApplicationController
 
   def response_json(soql, tooling, query_result)
     rows = query_result[:records].map{ |hash| hash.values}
+    idx = query_result[:id_column_index]
+    row_hash = query_result[:records].map{ |hash| { hash.values[idx] => hash.values }}
     #a = ["<input type='checkbox'>"]
+
     {
       :soql_info => soql_info(soql, tooling),
       :sobject => query_result[:sobject],
       :records => {
                   #:columns =>  a + query_result[:records].first.keys,
-                  :columns =>  a + query_result[:records].first.keys,
+                  :columns =>  query_result[:records].first.keys,
                   :rows => rows,
-                  :initial_rows => rows,
-                  :column_options => query_result[:column_options]
+                  :initial_rows => row_hash,
+                  :column_options => query_result[:column_options],
+                  :id_column_index => query_result[:id_column_index]
                   }
    }
   end
@@ -47,6 +55,12 @@ class SoqlexecuterController < ApplicationController
       :soql => soql,
       :tooling => tooling
     }
+  end
+
+  def execute_update(sobject, records)
+    p sobject
+    p records
+    render :json => nil, :status => 200
   end
 
 end
