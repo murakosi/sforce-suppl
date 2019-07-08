@@ -32,7 +32,8 @@ class SoqlexecuterController < ApplicationController
   def response_json(soql, tooling, query_result)
     rows = query_result[:records].map{ |hash| hash.values}
     idx = query_result[:id_column_index]
-    row_hash = query_result[:records].map{ |hash| { hash.values[idx] => hash.values }}
+    row_hash = {}
+    query_result[:records].each{ |hash| row_hash.merge!({hash.values[idx] => hash.values}) }
     #a = ["<input type='checkbox'>"]
 
     {
