@@ -129,7 +129,11 @@ coordinates = ->
     idColumnIndex = sObjects[elementId].idColumnIndex    
     id = grids[elementId].getDataAtCell(rowIndex, idColumnIndex)
 
+    console.log(id)
+    console.log(columnIndex)
     console.log(sObjects[elementId].rows)
+    console.log(sObjects[elementId].rows[id])
+    console.log(sObjects[elementId].rows[id][columnIndex])
 
     if sObjects[elementId].editions[id]
       if newValue == sObjects[elementId].rows[id][columnIndex]
