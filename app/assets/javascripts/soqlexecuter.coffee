@@ -70,7 +70,7 @@ coordinates = ->
                             editions:{},
                             sobject_type: json.sobject,
                             soql_info: json.soql_info,
-                            idColumnIndex: json.id_column_index
+                            idColumnIndex: json.records.id_column_index
                           }
 
 
@@ -129,11 +129,6 @@ coordinates = ->
     fieldName = sObjects[elementId].columns[columnIndex]
     idColumnIndex = sObjects[elementId].idColumnIndex    
     id = hot.getDataAtCell(rowIndex, idColumnIndex)
-
-    console.log(rowIndex)
-    console.log(idColumnIndex)
-    console.log(hot.getDataAtRow(rowIndex))
-    console.log(hot)
 
     if sObjects[elementId].editions[id]
       if newValue == sObjects[elementId].rows[id][columnIndex]
