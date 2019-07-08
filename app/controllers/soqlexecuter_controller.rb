@@ -61,6 +61,7 @@ class SoqlexecuterController < ApplicationController
   def execute_update(sobject, records)
     p sobject
     p records
+    p sobject_records = records.reject{|hash| hash.values.size <= 0}
     render :json => nil, :status => 200
   end
 
