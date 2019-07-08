@@ -142,13 +142,10 @@ coordinates = ->
     
     if isRestored
       hot.removeCellMeta(rowIndex, columnIndex, 'className');
-      console.log("rem")
-      #hot.setCellMeta(rowIndex, columnIndex, 'className', '');
     else
       hot.setCellMeta(rowIndex, columnIndex, 'className', 'changed-cell-border');
-      console.log("set")
+
     hot.render()
-    #console.log(sObjects[elementId].editions[rowIndex])
 
   #------------------------------------------------
   # CSV Download
