@@ -117,27 +117,19 @@ coordinates = ->
     oldValue = source[0][2]
     newValue = source[0][3]
 
-    tabId = $("#soqlArea #tabArea .ui-tabs-panel:visible").attr("tabId")
-    elementId = "#soqlArea #grid" + tabId
-    fieldName = sObjects[elementId].columns[columnIndex]
-
-    idColumnIndex = sObjects[elementId].idColumnIndex
-
-    if columnIndex == idColumnIndex
-      return
-    
     if oldValue == newValue
       return
 
-
-    
     isRestored = false
     
+    tabId = $("#soqlArea #tabArea .ui-tabs-panel:visible").attr("tabId")
+    elementId = "#soqlArea #grid" + tabId
     
-    id = sObjects[elementId].rows[rowIndex][idColumnIndex]
+    fieldName = sObjects[elementId].columns[columnIndex]
+    idColumnIndex = sObjects[elementId].idColumnIndex    
+    id = grids[elementId].getDataAtCell(rowIndex, idColumnIndex)
 
     console.log(id)
-    console.log(sObjects[elementId].rows[id])
 
     if sObjects[elementId].editions[id]
       if newValue == sObjects[elementId].rows[id][columnIndex]
