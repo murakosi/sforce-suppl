@@ -125,15 +125,15 @@ coordinates = ->
     tabId = $("#soqlArea #tabArea .ui-tabs-panel:visible").attr("tabId")
     elementId = "#soqlArea #grid" + tabId
     
+    hot = grids[elementId]
     fieldName = sObjects[elementId].columns[columnIndex]
     idColumnIndex = sObjects[elementId].idColumnIndex    
-    id = grids[elementId].getDataAtCell(rowIndex, idColumnIndex)
+    id = hot.getDataAtCell(rowIndex, idColumnIndex)
 
-    console.log(id)
-    console.log(columnIndex)
-    console.log(sObjects[elementId].rows)
-    console.log(sObjects[elementId].rows[id])
-    console.log(sObjects[elementId].rows[id][columnIndex])
+    console.log(rowIndex)
+    console.log(idColumnIndex)
+    console.log(hot.getDataAtRow(rowIndex))
+    console.log(hot)
 
     if sObjects[elementId].editions[id]
       if newValue == sObjects[elementId].rows[id][columnIndex]
@@ -144,8 +144,7 @@ coordinates = ->
     else
       sObjects[elementId].editions[id] = {}
       sObjects[elementId].editions[id][fieldName] = newValue
-
-    hot = grids[elementId]
+    
     if isRestored
       hot.removeCellMeta(rowIndex, columnIndex, 'className');
       console.log("rem")
