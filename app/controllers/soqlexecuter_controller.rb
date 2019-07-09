@@ -1,3 +1,4 @@
+require 'json' 
 
 class SoqlexecuterController < ApplicationController
   include Soql::QueryExecuter
@@ -61,7 +62,7 @@ class SoqlexecuterController < ApplicationController
   def execute_update(sobject, records)
     p sobject
     p records
-    p sobject_records = records.reject{|hash| hash.values.size <= 0}
+    p sobject_records = JSON.parse(records).reject{|hash| hash.values.size <= 0}
     render :json => nil, :status => 200
   end
 
