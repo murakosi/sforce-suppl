@@ -133,8 +133,8 @@ coordinates = ->
     if sObjects[elementId].editions[id]
       if newValue == sObjects[elementId].rows[id][columnIndex]
         delete sObjects[elementId].editions[id][fieldName]
-        console.log(Object.keys(sObjects[elementId].editions[id]).length)
-        console.log(sObjects[elementId].editions[id])
+        #if Object.keys(sObjects[elementId].editions[id]).length <= 0
+        #  delete sObjects[elementId].editions[id]
         isRestored = true
       else
         sObjects[elementId].editions[id][fieldName] = newValue
