@@ -96,7 +96,7 @@ coordinates = ->
     if info.editions.length <= 0
       return false
     
-    val = {sobject: info.sobject_type, records: JSON.stringify(info.editions)}
+    val = {soql_info:info.soql_info sobject: info.sobject_type, records: JSON.stringify(info.editions)}
     action = "/update"
     method = "post"
     options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
@@ -104,6 +104,7 @@ coordinates = ->
     $.executeAjax(options, callbacks)
   
   processCrudSuccess = (json) ->
+    executeSoql(json.soql_info) 
 
   detectAfterEditOnGrid = (source, changes) ->
 
