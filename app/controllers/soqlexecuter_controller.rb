@@ -60,14 +60,13 @@ class SoqlexecuterController < ApplicationController
   end
 
   def execute_update(sobject, records)
-    p sobject
-    p JSON.parse(records)
     sobject_records = JSON.parse(records).reject{|k,v| v.size <= 0}
+
     if sobject_records.size > 0
-      sobject_records = sobject_records.map{|k,v| {"Id" => k}.merge!(v)}
+      p sobject_records = sobject_records.map{|k,v| {"Id" => k}.merge!(v)}
+      p Service::SoapSessionService.call(params).update(sobject, sobject_records)
     end
     
-    p sobject_records
     render :json => nil, :status => 200
   end
 
