@@ -64,7 +64,7 @@ class SoqlexecuterController < ApplicationController
 
     if sobject_records.size > 0
       p sobject_records = sobject_records.map{|k,v| {"Id" => k}.merge!(v)}
-      p Service::SoapSessionService.call(params).update(sobject, sobject_records)
+      p Service::SoapSessionService.call(sforce_session).update(sobject, sobject_records)
     end
     
     render :json => nil, :status => 200
