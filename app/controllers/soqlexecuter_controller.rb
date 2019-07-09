@@ -64,7 +64,7 @@ class SoqlexecuterController < ApplicationController
     p JSON.parse(records)
     sobject_records = JSON.parse(records).reject{|k,v| v.size <= 0}
     if sobject_records.size > 0
-      sobject_records.map{|k,v| {"Id" => k}.merge!(v)}
+      sobject_records.map!{|k,v| {"Id" => k}.merge!(v)}
     end
     
     p sobject_records
