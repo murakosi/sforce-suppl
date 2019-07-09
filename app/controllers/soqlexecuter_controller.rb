@@ -62,7 +62,7 @@ class SoqlexecuterController < ApplicationController
   def execute_update(sobject, records)
     p sobject
     p JSON.parse(records)
-    p sobject_records = JSON.parse(records).reject{|k,v| {"Id" => k}.merge!(v)}
+    p sobject_records = JSON.parse(records).map{|k,v| {"Id" => k}.merge!(v)}
     render :json => nil, :status => 200
   end
 
