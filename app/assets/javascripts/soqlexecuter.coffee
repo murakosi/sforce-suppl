@@ -62,10 +62,11 @@ coordinates = ->
     $.executeAjax(options, callbacks)
   
   processSuccessResult = (json) ->
+    selectedTabId = json.soql_info.tab_id
     $("#soqlArea #soql" + selectedTabId).html(json.soql_info.timestamp + json.soql_info.soql)
     $("#soqlArea #tab" + selectedTabId).attr("soql", json.soql_info.soql)
     #elementId = "#soqlArea #grid" + selectedTabId
-    elementId = "#soqlArea #grid" + json.soql_info.tab_id
+    elementId = "#soqlArea #grid" + selectedTabId
 
     sObjects[elementId] = {
                             rows: json.records.initial_rows, 
