@@ -5,7 +5,7 @@ class SoqlexecuterController < ApplicationController
 
   before_action :require_sign_in!
   
-  protect_from_forgery :except => [:query, :update]
+  protect_from_forgery :except => [:query, :update, :delete]
   
   Time_format = "%Y/%m/%d %H:%M:%S"
 
@@ -18,6 +18,10 @@ class SoqlexecuterController < ApplicationController
 
   def update
     execute_update(params[:sobject], params[:records], params[:soql_info])
+  end
+  
+  def delete
+    execute_delete(params[:ids], params[:soql_info])
   end
 
   def execute_soql(soql, tooling, tab_id)
@@ -64,9 +68,9 @@ class SoqlexecuterController < ApplicationController
     sobject_records = JSON.parse(records).reject{|k,v| v.size <= 0}
 
     if sobject_records.size > 0
-      p sobject_records = sobject_records.map{|k,v| {"Id" => k}.merge!(v)}
+      sobject_records = sobject_records.map{|k,v| {"Id" => k}.merge!(v)}
       begin
-        p Service::SoapSessionService.call(sforce_session).update!(sobject, sobject_records)
+        Service::SoapSessionService.call(sforce_session).update!(sobject, sobject_records)
         render :json => {:done => true, :soql_info => soql_info}, :status => 200
       rescue StandardError => ex
         print_error(ex)
@@ -76,6 +80,11 @@ class SoqlexecuterController < ApplicationController
       render :json => nil, :status => 200
     end
 
+  end
+  
+  def execute_delete(ids, soql_info)
+    p ids
+    render :json => {:done => true, :soql_info => soql_info}, :status => 200
   end
 
 end
