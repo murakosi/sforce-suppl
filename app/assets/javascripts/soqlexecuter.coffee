@@ -127,6 +127,7 @@ coordinates = ->
     info = sObjects[elementId]
     hot = grids[elementId]
     selectedCells = hot.getSelected()
+    console.log(selectedCells)
     if selectedCells.length <= 0
       return false
     
