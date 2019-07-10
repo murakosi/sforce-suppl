@@ -60,14 +60,14 @@ class SoqlexecuterController < ApplicationController
     }
   end
 
-  def execute_update(sobject, records, tab_id)
+  def execute_update(sobject, records, soql_info)
     sobject_records = JSON.parse(records).reject{|k,v| v.size <= 0}
 
     if sobject_records.size > 0
       p sobject_records = sobject_records.map{|k,v| {"Id" => k}.merge!(v)}
       begin
         p Service::SoapSessionService.call(sforce_session).update(sobject, sobject_records)
-        render :json => {:done => true, :tab_id => tab_id}, :status => 200
+        render :json => {:done => true, :soql_info => soql_info}, :status => 200
       rescue StandardError => ex
         print_error(ex)
         render :json => {:error => ex.message}, :status => 400
