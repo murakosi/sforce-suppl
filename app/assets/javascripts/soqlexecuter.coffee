@@ -136,8 +136,8 @@ coordinates = ->
     for cells in selectedCells
       id = hot.getDataAtCell(cells[0],idColIdx)
       ids[id] = null
-      
-    val = {soql_info:info.soql_info, ids: JSON.stringify(Object.keys(ids))}
+    #JSON.stringify(
+    val = {soql_info:info.soql_info, ids: Object.keys(ids)}
     action = "/delete"
     method = "post"
     options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
