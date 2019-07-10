@@ -109,14 +109,15 @@ coordinates = ->
   
   processCrudSuccess = (json) ->
     executeSoql(json.soql_info) 
+    
   #------------------------------------------------
   # Delete
   #------------------------------------------------
   $('#soqlArea #deleteBtn').on 'click', (e) ->
     e.preventDefault()
-    delete()
+    deleteRows()
     
-  delete = () ->
+  deleteRows = () ->
     if jqXHR
       return false
 
