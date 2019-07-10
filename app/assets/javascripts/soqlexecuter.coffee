@@ -109,7 +109,42 @@ coordinates = ->
   
   processCrudSuccess = (json) ->
     executeSoql(json.soql_info) 
+  #------------------------------------------------
+  # Delete
+  #------------------------------------------------
+  $('#soqlArea #deleteBtn').on 'click', (e) ->
+    e.preventDefault()
+    delete()
+    
+  delete = () ->
+    if jqXHR
+      return false
 
+    hideMessageArea()
+    
+    elementId = getActiveGridElementId()
+    info = sObjects[elementId]
+    hot = grids[elementId]
+    selectedCells = hot.getSelected()
+    if selectedCells.length <= 0
+      return false
+    
+    ids = {}
+    index = info.idColumnIndex
+    selectedCells.forEach (src) ->
+      id = hot.getDataAtCell(src[0],index)
+      ids[id] = null
+      
+    val = {soql_info:info.soql_info, ids: JSON.stringify(Object.keys(ids))}
+    action = "/delete"
+    method = "post"
+    options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
+    callbacks = $.getAjaxCallbacks(processCrudSuccess, displayError, null)
+    $.executeAjax(options, callbacks)
+
+  #------------------------------------------------
+  # Edit on grid
+  #------------------------------------------------    
   detectAfterEditOnGrid = (source, changes) ->
 
     if changes != 'edit' && !changes.startsWith('UndoRedo')
