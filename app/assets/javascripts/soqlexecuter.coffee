@@ -130,9 +130,9 @@ coordinates = ->
       return false
     
     ids = {}
-    index = info.idColumnIndex
-    selectedCells.forEach (src) ->
-      id = hot.getDataAtCell(src[0],index)
+    idColIdx = info.idColumnIndex
+    for cells in selectedCells
+      id = hot.getDataAtCell(cells[0],idColIdx)
       ids[id] = null
       
     val = {soql_info:info.soql_info, ids: JSON.stringify(Object.keys(ids))}
