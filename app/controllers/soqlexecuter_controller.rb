@@ -66,7 +66,7 @@ class SoqlexecuterController < ApplicationController
     if sobject_records.size > 0
       p sobject_records = sobject_records.map{|k,v| {"Id" => k}.merge!(v)}
       begin
-        p Service::SoapSessionService.call(sforce_session).update(sobject, sobject_records)
+        p Service::SoapSessionService.call(sforce_session).update!(sobject, sobject_records)
         render :json => {:done => true, :soql_info => soql_info}, :status => 200
       rescue StandardError => ex
         print_error(ex)
