@@ -349,6 +349,7 @@ coordinates = ->
         #fragmentSelection: true,
         columnSorting: true,
         #colWidths: (i) -> setColWidth(i),
+        outsideClickDeselects: false,
         licenseKey: 'non-commercial-and-evaluation',
         beforeColumnSort: (currentConfig, newConfig) -> onBeforeSort(currentConfig, newConfig),
         afterChange: (source, changes) -> detectAfterEditOnGrid(source, changes),
@@ -409,7 +410,6 @@ coordinates = ->
       0    
 
   onCellClick = (event, coords, td) ->
-    console.log(coords)
     selectedCellOnCreateGrid = coords
       
   #------------------------------------------------
