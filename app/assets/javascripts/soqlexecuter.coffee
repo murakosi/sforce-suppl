@@ -409,6 +409,7 @@ coordinates = ->
       0    
 
   onCellClick = (event, coords, td) ->
+    console.log(coords)
     selectedCellOnCreateGrid = coords
       
   #------------------------------------------------
