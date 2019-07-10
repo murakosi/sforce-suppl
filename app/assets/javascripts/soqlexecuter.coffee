@@ -41,18 +41,20 @@ coordinates = ->
     if soql_info
       soql = soql_info.soql
       tooling = soql_info.tooling
+      tabId = soql_info.tab_id
     else
       soql = $('#soqlArea #input_soql').val()
       tooling = $('#soqlArea #useTooling').is(':checked')
+      tabId = $("#soqlArea #tabArea .ui-tabs-panel:visible").attr("tabId");
       
     if soql == null || soql == 'undefined'
       return false
       
     hideMessageArea()
     
-    selectedTabId = $("#soqlArea #tabArea .ui-tabs-panel:visible").attr("tabId");
+    #selectedTabId = $("#soqlArea #tabArea .ui-tabs-panel:visible").attr("tabId");
     
-    val = {soql: soql, tooling: tooling}
+    val = {soql: soql, tooling: tooling, tab_id: tabId}
     action = $('#soqlArea .execute-form').attr('action')
     method = $('#soqlArea .execute-form').attr('method')
     options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
@@ -62,7 +64,8 @@ coordinates = ->
   processSuccessResult = (json) ->
     $("#soqlArea #soql" + selectedTabId).html(json.soql_info.timestamp + json.soql_info.soql)
     $("#soqlArea #tab" + selectedTabId).attr("soql", json.soql_info.soql)
-    elementId = "#soqlArea #grid" + selectedTabId
+    #elementId = "#soqlArea #grid" + selectedTabId
+    elementId = "#soqlArea #grid" + json.soql_info.tab_id
 
     sObjects[elementId] = {
                             rows: json.records.initial_rows, 
