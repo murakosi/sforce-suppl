@@ -17,7 +17,7 @@ class SoqlexecuterController < ApplicationController
   end
 
   def update
-    execute_update(params[:sobject], params[:records], params[:tab_id])
+    execute_update(params[:sobject], params[:records], params[:soql_info])
   end
 
   def execute_soql(soql, tooling, tab_id)
