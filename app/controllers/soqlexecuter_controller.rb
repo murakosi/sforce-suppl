@@ -13,24 +13,24 @@ class SoqlexecuterController < ApplicationController
   end
 
   def query
-    execute_soql(params[:soql], params[:tooling])
+    execute_soql(params[:soql], params[:tooling], params[:tab_id])
   end
 
   def update
-    execute_update(params[:sobject], params[:records])
+    execute_update(params[:sobject], params[:records], params[:tab_id])
   end
 
-  def execute_soql(soql, tooling)
+  def execute_soql(soql, tooling, tab_id)
     begin
       query_result = execute_query(sforce_session, soql, tooling)
-      render :json => response_json(soql, tooling, query_result), :status => 200
+      render :json => response_json(soql, tooling, tab_id, query_result), :status => 200
     rescue StandardError => ex
       print_error(ex)
       render :json => {:error => ex.message}, :status => 400
     end
   end
 
-  def response_json(soql, tooling, query_result)
+  def response_json(soql, tooling, tab_id, query_result)
     rows = query_result[:records].map{ |hash| hash.values}
     idx = query_result[:id_column_index]
     row_hash = {}
@@ -38,7 +38,7 @@ class SoqlexecuterController < ApplicationController
     #a = ["<input type='checkbox'>"]
 
     {
-      :soql_info => soql_info(soql, tooling),
+      :soql_info => soql_info(soql, tooling, tab_id),
       :sobject => query_result[:sobject],
       :records => {
                   #:columns =>  a + query_result[:records].first.keys,
@@ -51,22 +51,23 @@ class SoqlexecuterController < ApplicationController
    }
   end
 
-  def soql_info(soql, tooling)
+  def soql_info(soql, tooling, tab_id)
     {
       :timestamp => " @" + Time.now.strftime(Time_format) + "\r\n",
       :soql => soql,
-      :tooling => tooling
+      :tooling => tooling,
+      :tab_id => tab_id
     }
   end
 
-  def execute_update(sobject, records)
+  def execute_update(sobject, records, tab_id)
     sobject_records = JSON.parse(records).reject{|k,v| v.size <= 0}
 
     if sobject_records.size > 0
       p sobject_records = sobject_records.map{|k,v| {"Id" => k}.merge!(v)}
       begin
         p Service::SoapSessionService.call(sforce_session).update(sobject, sobject_records)
-        render :json => {:done => true}, :status => 200
+        render :json => {:done => true, :tab_id => tab_id}, :status => 200
       rescue StandardError => ex
         print_error(ex)
         render :json => {:error => ex.message}, :status => 400
