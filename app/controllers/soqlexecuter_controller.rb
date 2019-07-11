@@ -82,7 +82,7 @@ class SoqlexecuterController < ApplicationController
         render :json => {:error => ex.message}, :status => 400
       end
     else
-      render :json => nil, :status => 200
+      render :json => {:done => false}, :status => 200
     end
 
   end
@@ -97,7 +97,7 @@ class SoqlexecuterController < ApplicationController
         render :json => {:error => ex.message}, :status => 400
       end
     else
-      render :json => nil, :status => 200
+      render :json => {:done => false}, :status => 200
     end
   end
   
@@ -111,7 +111,7 @@ class SoqlexecuterController < ApplicationController
         render :json => {:error => ex.message}, :status => 400
       end
     else
-      render :json => nil, :status => 200
+      render :json => {:done => false}, :status => 200
     end
   end
   
