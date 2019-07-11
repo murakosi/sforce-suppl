@@ -13,7 +13,7 @@ class SoqlexecuterController < ApplicationController
   end
 
   def query
-    execute_soql(params[:soql], params[:tooling], params[:tab_id])
+    execute_soql(params[:soql], params[:tooling], params[:query_all], params[:tab_id])
   end
 
   def update
@@ -24,17 +24,17 @@ class SoqlexecuterController < ApplicationController
     execute_delete(params[:ids], params[:soql_info])
   end
 
-  def execute_soql(soql, tooling, tab_id)
+  def execute_soql(soql, tooling, query_all, tab_id)
     begin
-      query_result = execute_query(sforce_session, soql, tooling)
-      render :json => response_json(soql, tooling, tab_id, query_result), :status => 200
+      query_result = execute_query(sforce_session, soql, tooling, query_all)
+      render :json => response_json(soql, tooling, query_all, tab_id, query_result), :status => 200
     rescue StandardError => ex
       print_error(ex)
       render :json => {:error => ex.message}, :status => 400
     end
   end
 
-  def response_json(soql, tooling, tab_id, query_result)
+  def response_json(soql, tooling, query_all, tab_id, query_result)
     rows = query_result[:records].map{ |hash| hash.values}
     idx = query_result[:id_column_index]
     row_hash = {}
@@ -42,7 +42,7 @@ class SoqlexecuterController < ApplicationController
     #a = ["<input type='checkbox'>"]
 
     {
-      :soql_info => soql_info(soql, tooling, tab_id),
+      :soql_info => soql_info(soql, tooling, query_all, tab_id),
       :sobject => query_result[:sobject],
       :records => {
                   #:columns =>  a + query_result[:records].first.keys,
@@ -55,11 +55,12 @@ class SoqlexecuterController < ApplicationController
    }
   end
 
-  def soql_info(soql, tooling, tab_id)
+  def soql_info(soql, tooling, query_all, tab_id)
     {
       :timestamp => " @" + Time.now.strftime(Time_format) + "\r\n",
       :soql => soql,
       :tooling => tooling,
+      :query_all => query_all,
       :tab_id => tab_id
     }
   end
