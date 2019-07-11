@@ -35,6 +35,7 @@ Rails.application.routes.draw do
   post    'query',                  to: 'soqlexecuter#query'
   post    'update',                 to: 'soqlexecuter#update'
   post    'delete',                 to: 'soqlexecuter#delete'
+  post    'undelete',               to: 'soqlexecuter#undelete'
 
   get     'tooling',                to: 'tooling#show'
   post    'tooling',                to: 'tooling#execute'
