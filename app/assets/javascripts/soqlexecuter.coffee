@@ -54,20 +54,17 @@ coordinates = ->
       
     hideMessageArea()
     
-    #selectedTabId = $("#soqlArea #tabArea .ui-tabs-panel:visible").attr("tabId");
-    
     val = {soql: soql, tooling: tooling, query_all: queryAll, tab_id: tabId}
     action = $('#soqlArea .execute-form').attr('action')
     method = $('#soqlArea .execute-form').attr('method')
     options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
-    callbacks = $.getAjaxCallbacks(processSuccessResult, displayError, null)
+    callbacks = $.getAjaxCallbacks(processQuerySuccess, displayError, null)
     $.executeAjax(options, callbacks)
   
-  processSuccessResult = (json) ->
+  processQuerySuccess = (json) ->
     selectedTabId = json.soql_info.tab_id
     $("#soqlArea #soql" + selectedTabId).html(json.soql_info.timestamp + json.soql_info.soql)
     $("#soqlArea #tab" + selectedTabId).attr("soql", json.soql_info.soql)
-    #elementId = "#soqlArea #grid" + selectedTabId
     elementId = "#soqlArea #grid" + selectedTabId
 
     sObjects[elementId] = {
@@ -96,21 +93,34 @@ coordinates = ->
     hideMessageArea()
     
     elementId = getActiveGridElementId()
-    info = sObjects[elementId]
-    console.log(info)
+    sobject = sObjects[elementId]
 
-    if info.editions.length <= 0
+    if sobject.editions.length <= 0
       return false
     
-    val = {soql_info:info.soql_info, sobject: info.sobject_type, records: JSON.stringify(info.editions)}
+    val = {soql_info:sobject.soql_info, sobject: sobject.sobject_type, records: JSON.stringify(sobject.editions)}
     action = "/update"
     method = "post"
     options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
-    callbacks = $.getAjaxCallbacks(processCrudSuccess, displayError, null)
+    callbacks = $.getAjaxCallbacks(processCrudSuccess, processCrudError, null)
+    beginCrud()
     $.executeAjax(options, callbacks)
   
+  beginCrud = () ->
+    $("#mainArea").addClass("requesting-overlay")
+    $("#overlay-content").show()
+    
+  endCrud = () ->
+    $("#overlay-content").hide()
+    $("#mainArea").removeClass("requesting-overlay")
+    
   processCrudSuccess = (json) ->
-    executeSoql(json.soql_info) 
+    executeSoql(json.soql_info)
+    endCrud()
+   
+  processCrudError = (json) ->
+    displayError(json)
+    endCrud()
     
   #------------------------------------------------
   # Delete
@@ -138,12 +148,13 @@ coordinates = ->
     for cells in selectedCells
       id = hot.getDataAtCell(cells[0],idColIdx)
       ids[id] = null
-    #JSON.stringify(
+
     val = {soql_info:info.soql_info, ids: Object.keys(ids)}
     action = "/delete"
     method = "post"
     options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
-    callbacks = $.getAjaxCallbacks(processCrudSuccess, displayError, null)
+    callbacks = $.getAjaxCallbacks(processCrudSuccess, processCrudError, null)
+    beginCrud()
     $.executeAjax(options, callbacks)
     
   #------------------------------------------------
@@ -176,7 +187,8 @@ coordinates = ->
     action = "/undelete"
     method = "post"
     options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
-    callbacks = $.getAjaxCallbacks(processCrudSuccess, displayError, null)
+    callbacks = $.getAjaxCallbacks(processCrudSuccess, processCrudError, null)
+    beginCrud()
     $.executeAjax(options, callbacks)
 
   #------------------------------------------------
