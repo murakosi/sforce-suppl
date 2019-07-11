@@ -104,7 +104,7 @@ class SoqlexecuterController < ApplicationController
   def execute_undelete(ids, soql_info)
     if ids.size > 0
       begin
-        Service::SoapSessionService.call(sforce_session).undelete(ids)
+        Service::SoapSessionService.call(sforce_session).undelete!(ids)
         render :json => {:done => true, :soql_info => soql_info}, :status => 200
       rescue StandardError => ex
         print_error(ex)
