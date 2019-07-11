@@ -107,16 +107,17 @@ coordinates = ->
     $.executeAjax(options, callbacks)
   
   beginCrud = () ->
-    $("#mainArea").addClass("requesting-overlay")
-    $("#overlay-content").show()
+    #$("#mainArea").addClass("requesting-overlay")
+    #$("#overlay-content").show()
     
   endCrud = () ->
-    $("#overlay-content").hide()
-    $("#mainArea").removeClass("requesting-overlay")
+    #$("#overlay-content").hide()
+    #$("#mainArea").removeClass("requesting-overlay")
     
   processCrudSuccess = (json) ->
-    executeSoql(json.soql_info)
-    endCrud()
+    if json.done
+      executeSoql(json.soql_info)
+      endCrud()
    
   processCrudError = (json) ->
     displayError(json)
