@@ -41,10 +41,12 @@ coordinates = ->
     if soql_info
       soql = soql_info.soql
       tooling = soql_info.tooling
+      queryAll = soql_info.query_all
       tabId = soql_info.tab_id
     else
       soql = $('#soqlArea #input_soql').val()
       tooling = $('#soqlArea #useTooling').is(':checked')
+      queryAll = $('#soqlArea #queryAll').is(':checked')
       tabId = $("#soqlArea #tabArea .ui-tabs-panel:visible").attr("tabId");
       
     if soql == null || soql == 'undefined'
@@ -54,7 +56,7 @@ coordinates = ->
     
     #selectedTabId = $("#soqlArea #tabArea .ui-tabs-panel:visible").attr("tabId");
     
-    val = {soql: soql, tooling: tooling, tab_id: tabId}
+    val = {soql: soql, tooling: tooling, query_all: queryAll, tab_id: tabId}
     action = $('#soqlArea .execute-form').attr('action')
     method = $('#soqlArea .execute-form').attr('method')
     options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
