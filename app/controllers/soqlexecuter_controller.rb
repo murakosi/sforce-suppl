@@ -5,7 +5,7 @@ class SoqlexecuterController < ApplicationController
 
   before_action :require_sign_in!
   
-  protect_from_forgery :except => [:query, :update, :delete]
+  protect_from_forgery :except => [:query, :update, :delete, :undelete]
   
   Time_format = "%Y/%m/%d %H:%M:%S"
 
@@ -22,6 +22,10 @@ class SoqlexecuterController < ApplicationController
   
   def delete
     execute_delete(params[:ids], params[:soql_info])
+  end
+  
+  def undelete
+    execute_undelete(params[:ids], params[:soql_info])
   end
 
   def execute_soql(soql, tooling, query_all, tab_id)
@@ -96,5 +100,19 @@ class SoqlexecuterController < ApplicationController
       render :json => nil, :status => 200
     end
   end
-
+  
+  def execute_undelete(ids, soql_info)
+    if ids.size > 0
+      begin
+        Service::SoapSessionService.call(sforce_session).undelete!(ids)
+        render :json => {:done => true, :soql_info => soql_info}, :status => 200
+      rescue StandardError => ex
+        print_error(ex)
+        render :json => {:error => ex.message}, :status => 400
+      end
+    else
+      render :json => nil, :status => 200
+    end
+  end
+  
 end
