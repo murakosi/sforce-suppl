@@ -457,7 +457,9 @@ coordinates = ->
   hideMessageArea = () ->
     $("#soqlArea #messageArea").empty()
     $("#soqlArea #messageArea").hide()
-    
+
+  $(window).scroll ->
+    console.log("scroll")
   #------------------------------------------------
   # page load actions
   #------------------------------------------------
