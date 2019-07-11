@@ -60,13 +60,36 @@
 .changed-cell-border {
   box-shadow: inset 0 -2px 0 red;
 }
+  
+.requesting-overlay {
+  /* Height & width depends on how you want to reveal the overlay (see JS below) */    
+  height: 100%;
+  width: 0;
+  position: fixed; /* Stay in place */
+  z-index: 999; /* Sit on top */
+  left: 0;
+  top: 0;
+  background-color: rgb(0,0,0); /* Black fallback color */
+  background-color: rgba(0,0,0, 0.9); /* Black w/opacity */
+  overflow-x: hidden; /* Disable horizontal scroll */
+}
 
+/* Position the content inside the overlay */
+#overlay-content {
+  position: relative;
+  top: 25%; /* 25% from the top */
+  width: 100%; /* 100% width */
+  text-align: center; /* Centered text/links */
+  margin-top: 30px; /* 30px top margin to avoid conflict with the close button on smaller screens */
+}
+  
 </style>
 <div id="mainArea">
 
     <!--<div id="userInfo" style="text-align:right; padding-right:10px;margin:0px;height:20px;">
             <div id="currentUserId"></div>
     </div>-->
+  <div id="overlay-content" style="display:none;">Requesting...</div>
     <div id="userInfo" style="text-align:right; padding-right:20px;margin:0px;height:20px;">
       <div class="btn-group">
         <button id="userInfoButton" class="btn btn-secondary btn-sm dropdown-toggle" style="float: right;border-radius: 12px;" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
