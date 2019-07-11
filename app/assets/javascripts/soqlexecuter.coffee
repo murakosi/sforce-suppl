@@ -145,6 +145,39 @@ coordinates = ->
     options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
     callbacks = $.getAjaxCallbacks(processCrudSuccess, displayError, null)
     $.executeAjax(options, callbacks)
+    
+  #------------------------------------------------
+  # Undelete
+  #------------------------------------------------
+  $('#soqlArea #undeleteBtn').on 'click', (e) ->
+    e.preventDefault()
+    undeleteRows()
+    
+  undeleteRows = () ->
+    if jqXHR
+      return false
+
+    hideMessageArea()
+    
+    elementId = getActiveGridElementId()
+    info = sObjects[elementId]
+    hot = grids[elementId]
+    selectedCells = hot.getSelected()
+    if selectedCells.length <= 0
+      return false
+    
+    ids = {}
+    idColIdx = info.idColumnIndex
+    for cells in selectedCells
+      id = hot.getDataAtCell(cells[0],idColIdx)
+      ids[id] = null
+    #JSON.stringify(
+    val = {soql_info:info.soql_info, ids: Object.keys(ids)}
+    action = "/undelete"
+    method = "post"
+    options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
+    callbacks = $.getAjaxCallbacks(processCrudSuccess, displayError, null)
+    $.executeAjax(options, callbacks)
 
   #------------------------------------------------
   # Edit on grid
