@@ -85,7 +85,7 @@ class SoqlexecuterController < ApplicationController
   def execute_delete(ids, soql_info)
     if ids.size > 0
       begin
-        Service::SoapSessionService.call(sforce_session).delete!(sobject, ids)
+        Service::SoapSessionService.call(sforce_session).delete!(ids)
         render :json => {:done => true, :soql_info => soql_info}, :status => 200
       rescue StandardError => ex
         print_error(ex)
