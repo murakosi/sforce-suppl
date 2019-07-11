@@ -373,6 +373,10 @@ module Service
       call_soap_api(:delete, {:ids => ids})
     end
     alias_method :destroy!, :delete
+    
+    def undelete!(ids)
+      call_soap_api(:undelete, {:ids => ids})
+    end
 
     # Public: Convert Lead to Opportunity
     #
