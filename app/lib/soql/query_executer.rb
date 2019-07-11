@@ -12,7 +12,7 @@ module Soql
         Select = "select"
         Where_with_space = " where "
 
-        def execute_query(sforce_session, soql, tooling)
+        def execute_query(sforce_session, soql, tooling, query_all)
             if soql.strip.end_with?(";")
                 soql.delete!(";");
             end
@@ -22,7 +22,11 @@ module Soql
             if tooling
                 query_result = Service::ToolingClientService.call(params).query(soql)
             else
-                query_result = Service::SoapSessionService.call(params).query(soql)
+                if query_all
+                    query_result = Service::SoapSessionService.call(params).query_all(soql)
+                else
+                    query_result = Service::SoapSessionService.call(params).query(soql)
+                end
             end
 
             if query_result.nil? || query_result.blank? || !query_result.has_key?(Records)
