@@ -107,12 +107,10 @@ coordinates = ->
     $.executeAjax(options, callbacks)
   
   beginCrud = () ->
-    $("#overlay").addClass("requesting-overlay")
-    $("#overlay-content").show()
+    $("#overlay").show()
     
   endCrud = () ->
-    $("#overlay-content").hide()
-    $("#overlay").removeClass("requesting-overlay")
+    $("#overlay").hide()
     
   processCrudSuccess = (json) ->
     if json.done
