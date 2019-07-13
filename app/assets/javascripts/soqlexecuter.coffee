@@ -6,17 +6,8 @@ coordinates = ->
   grids = {}
   sObjects = {}
 
-  jqXHR = null
   defaultDataType = ""
   defaultContentType = null
-
-  getAjaxOptions = (action, method, data, datatype) ->
-    {
-      "action": action,
-      "method": method,
-      "data": data,
-      "datatype": datatype
-    }
 
   #------------------------------------------------
   # Shortcut keys
@@ -34,22 +25,23 @@ coordinates = ->
     e.preventDefault()
     executeSoql()
     
-  executeSoql = (soql_info) ->
-    if jqXHR
+  executeSoql = (params) ->
+    if $.isAjaxBusy()
       return false
       
-    if soql_info
-      soql = soql_info.soql
-      tooling = soql_info.tooling
-      queryAll = soql_info.query_all
-      tabId = soql_info.tab_id
+    if params
+      soql = params.soql_info.soql
+      tooling = params.soql_info.tooling
+      queryAll = params.soql_info.query_all
+      tabId = params.soql_info.tab_id
     else
       soql = $('#soqlArea #input_soql').val()
       tooling = $('#soqlArea #useTooling').is(':checked')
       queryAll = $('#soqlArea #queryAll').is(':checked')
       tabId = $("#soqlArea #tabArea .ui-tabs-panel:visible").attr("tabId");
-      
-    if soql == null || soql == 'undefined'
+    
+    
+    if soql == null || soql == 'undefined' || soql == ""
       return false
       
     hideMessageArea()
@@ -58,10 +50,22 @@ coordinates = ->
     action = $('#soqlArea .execute-form').attr('action')
     method = $('#soqlArea .execute-form').attr('method')
     options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
-    callbacks = $.getAjaxCallbacks(processQuerySuccess, displayError, null)
+
+    if params && params.afterCrud
+      callbacks = $.getAjaxCallbacks(processQuerySuccessAfterCrud, displayError, null)
+    else
+      callbacks = $.getAjaxCallbacks(processQuerySuccess, displayError, null)
+
     $.executeAjax(options, callbacks)
   
   processQuerySuccess = (json) ->
+    displayQueryResult(json)
+
+  processQuerySuccessAfterCrud = (json) ->
+    displayQueryResult(json)
+    endCrud()
+
+  displayQueryResult = (json) ->
     selectedTabId = json.soql_info.tab_id
     $("#soqlArea #soql" + selectedTabId).html(json.soql_info.timestamp + json.soql_info.soql)
     $("#soqlArea #tab" + selectedTabId).attr("soql", json.soql_info.soql)
@@ -73,39 +77,21 @@ coordinates = ->
                             editions:{},
                             sobject_type: json.sobject,
                             soql_info: json.soql_info,
-                            idColumnIndex: json.records.id_column_index
+                            idColumnIndex: json.records.id_column_index,
+                            editable: if json.records.id_column_index == null then false else true
                           }
 
 
     createGrid(elementId, json.records)
 
   #------------------------------------------------
-  # Update
+  # Crud
   #------------------------------------------------
-  $('#soqlArea #saveBtn').on 'click', (e) ->
-    e.preventDefault()
-    update()
-    
-  update = () ->
-    if jqXHR
-      return false
-
-    hideMessageArea()
-    
-    elementId = getActiveGridElementId()
-    sobject = sObjects[elementId]
-
-    if sobject.editions.length <= 0
-      return false
-    
-    val = {soql_info:sobject.soql_info, sobject: sobject.sobject_type, records: JSON.stringify(sobject.editions)}
-    action = "/update"
-    method = "post"
-    options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
+  executeCrud = (options) ->
     callbacks = $.getAjaxCallbacks(processCrudSuccess, processCrudError, null)
     beginCrud()
-    $.executeAjax(options, callbacks)
-  
+    $.executeAjax(options, callbacks)  
+
   beginCrud = () ->
     $("#overlay").show()
     
@@ -114,81 +100,110 @@ coordinates = ->
     
   processCrudSuccess = (json) ->
     if json.done
-      executeSoql(json.soql_info)
+      executeSoql({soql_info:json.soql_info, afterCrud: true})
+    else
       endCrud()
    
   processCrudError = (json) ->
     displayError(json)
     endCrud()
+
+  #------------------------------------------------
+  # Update
+  #------------------------------------------------
+  $('#soqlArea #saveBtn').on 'click', (e) ->
+    e.preventDefault()
+    executeUpdate()
+    
+  executeUpdate = () ->
+    if $.isAjaxBusy()
+      return false
+    
+    elementId = getActiveGridElementId()
+    sobject = sObjects[elementId]
+
+    if !sobject.editable || $.isEmptyObject(sobject.editions)
+      return false
+
+    hideMessageArea()
+
+    val = {soql_info:sobject.soql_info, sobject: sobject.sobject_type, records: JSON.stringify(sobject.editions)}
+    action = "/update"
+    method = "post"
+    options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
+    executeCrud(options)
     
   #------------------------------------------------
   # Delete
   #------------------------------------------------
   $('#soqlArea #deleteBtn').on 'click', (e) ->
     e.preventDefault()
-    deleteRows()
+    executeDelete()
     
-  deleteRows = () ->
-    if jqXHR
+  executeDelete = () ->
+    if $.isAjaxBusy()
       return false
-
-    hideMessageArea()
     
     elementId = getActiveGridElementId()
-    info = sObjects[elementId]
+    sobject = sObjects[elementId]
+
+    if !sobject.editable
+      return false
+
     hot = grids[elementId]
     selectedCells = hot.getSelected()
-    console.log(selectedCells)
+
     if selectedCells.length <= 0
       return false
     
+    hideMessageArea()
+
     ids = {}
-    idColIdx = info.idColumnIndex
     for cells in selectedCells
-      id = hot.getDataAtCell(cells[0],idColIdx)
+      id = hot.getDataAtCell(cells[0], sobject.idColumnIndex)
       ids[id] = null
 
-    val = {soql_info:info.soql_info, ids: Object.keys(ids)}
+    val = {soql_info:sobject.soql_info, ids: Object.keys(ids)}
     action = "/delete"
     method = "post"
     options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
-    callbacks = $.getAjaxCallbacks(processCrudSuccess, processCrudError, null)
-    beginCrud()
-    $.executeAjax(options, callbacks)
+    executeCrud(options)
     
   #------------------------------------------------
   # Undelete
   #------------------------------------------------
   $('#soqlArea #undeleteBtn').on 'click', (e) ->
     e.preventDefault()
-    undeleteRows()
+    executeUndelete()
     
-  undeleteRows = () ->
-    if jqXHR
-      return false
-
-    hideMessageArea()
+  executeUndelete = () ->
+    if $.isAjaxBusy()
+      return false   
     
     elementId = getActiveGridElementId()
-    info = sObjects[elementId]
+    sobject = sObjects[elementId]
+
+    if !sobject.editable
+      return false
+
     hot = grids[elementId]
     selectedCells = hot.getSelected()
+    
     if selectedCells.length <= 0
       return false
     
+    hideMessageArea()
+
     ids = {}
-    idColIdx = info.idColumnIndex
     for cells in selectedCells
-      id = hot.getDataAtCell(cells[0],idColIdx)
+      id = hot.getDataAtCell(cells[0], sobject.idColumnIndex)
       ids[id] = null
-    #JSON.stringify(
-    val = {soql_info:info.soql_info, ids: Object.keys(ids)}
+
+    val = {soql_info:sobject.soql_info, ids: Object.keys(ids)}
     action = "/undelete"
     method = "post"
     options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
-    callbacks = $.getAjaxCallbacks(processCrudSuccess, processCrudError, null)
-    beginCrud()
-    $.executeAjax(options, callbacks)
+    executeCrud(options)
 
   #------------------------------------------------
   # Edit on grid
@@ -197,8 +212,6 @@ coordinates = ->
 
     if changes != 'edit' && !changes.startsWith('UndoRedo')
       return
-
-    console.log(source)
 
     rowIndex = source[0][0]
     columnIndex = source[0][1]
@@ -221,8 +234,8 @@ coordinates = ->
     if sObjects[elementId].editions[id]
       if newValue == sObjects[elementId].rows[id][columnIndex]
         delete sObjects[elementId].editions[id][fieldName]
-        #if Object.keys(sObjects[elementId].editions[id]).length <= 0
-        #  delete sObjects[elementId].editions[id]
+        if Object.keys(sObjects[elementId].editions[id]).length <= 0
+          delete sObjects[elementId].editions[id]
         isRestored = true
       else
         sObjects[elementId].editions[id][fieldName] = newValue
@@ -264,21 +277,19 @@ coordinates = ->
     elementId = getActiveGridElementId()
     
     if sObjects[elementId]      
-      executeSoql(sObjects[elementId].soql_info)   
-
+      executeSoql({soql_info:sObjects[elementId].soql_info, afterCrud: false})   
+    
+  #------------------------------------------------
+  # Tab events
+  #------------------------------------------------
   $("#soqlTabs").on "dblclick", (e) ->
     if e.target != this
-      console.log(e.target)
       e.preventDefault()
       e.stopPropagation() 
       return
     
     createTab()
-    
-  #------------------------------------------------
-  # Tab events
-  #------------------------------------------------
-  #$(document).on 'click', 'span', (e) ->
+
   $(document).on 'click', '.ui-closable-tab', (e) ->
     e.preventDefault()
     tabContainerDiv=$(this).closest("#soqlArea .ui-tabs").attr("id")
@@ -375,10 +386,11 @@ coordinates = ->
     records = getRows(json)
     columnsOption = getColumnsOption(json)
     minRow = getMinRow(json)
+    height = if json then 500 else 0
 
     hotSettings = {
         data: records,
-        height: 500,
+        height: height,
         #stretchH: 'all',
         autoWrapRow: true,
         allowRemoveColumn: false,
@@ -457,6 +469,9 @@ coordinates = ->
 
   onCellClick = (event, coords, td) ->
     selectedCellOnCreateGrid = coords
+
+  onTabSelect = (event, ui) ->
+    $("#spaceArea").trigger('click')
       
   #------------------------------------------------
   # message
@@ -469,15 +484,16 @@ coordinates = ->
     $("#soqlArea #messageArea").empty()
     $("#soqlArea #messageArea").hide()
 
-  $(window).scroll ->
-    console.log("scroll")
   #------------------------------------------------
   # page load actions
   #------------------------------------------------
   #selectedTabId = 1
   #createGrid("#soqlArea #grid" + selectedTabId)
-
-  $("#soqlArea #tabArea").tabs()
+  $("#soqlArea #tabArea").tabs(
+    {
+      select: (event, ui) -> onTabSelect(event, ui)
+    }
+  )
   createTab()
 
 $(document).ready(coordinates)

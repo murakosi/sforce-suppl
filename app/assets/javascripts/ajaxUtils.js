@@ -130,7 +130,7 @@
                 if(options.showProgress){
                     hideProgress();
                 }
-                return callbacks.alwaysCallback(callbacks.alwaysCallbackParams)
+                return callbacks.alwaysCallback(callbacks.alwaysCallbackParams);
             });
         }
 

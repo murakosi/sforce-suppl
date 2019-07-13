@@ -30,7 +30,7 @@ class SoqlexecuterController < ApplicationController
 
   def execute_soql(soql, tooling, query_all, tab_id)
     begin
-      query_result = execute_query(sforce_session, soql, tooling, query_all)
+      p query_result = execute_query(sforce_session, soql, tooling, query_all)
       render :json => response_json(soql, tooling, query_all, tab_id, query_result), :status => 200
     rescue StandardError => ex
       print_error(ex)
@@ -42,7 +42,9 @@ class SoqlexecuterController < ApplicationController
     rows = query_result[:records].map{ |hash| hash.values}
     idx = query_result[:id_column_index]
     row_hash = {}
-    query_result[:records].each{ |hash| row_hash.merge!({hash.values[idx] => hash.values}) }
+    if idx.present?      
+      query_result[:records].each{ |hash| row_hash.merge!({hash.values[idx] => hash.values}) }
+    end
     #a = ["<input type='checkbox'>"]
 
     {
