@@ -66,7 +66,7 @@ class DescribeController < ApplicationController
         begin
             describe_result = describe_field(sforce_session, sobject)
             formatted_result = format_field_result(sobject, describe_result[:fields])
-            try_download(params[:dl_format], sobject, formatted_result)
+            try_download("csv", sobject, formatted_result)
             set_download_success_cookie(response)
         rescue StandardError => ex
             print_error(ex)

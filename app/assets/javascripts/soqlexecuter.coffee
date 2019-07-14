@@ -2,7 +2,7 @@ coordinates = ->
   
   selectedTabId = 0
   currentTabIndex = 0
-  selectedCellOnCreateGrid = null
+  selectedCell = null
   grids = {}
   sObjects = {}
 
@@ -122,7 +122,7 @@ coordinates = ->
     elementId = getActiveGridElementId()
     sobject = sObjects[elementId]
 
-    if !sobject.editable || $.isEmptyObject(sobject.editions)
+    if !sobject || !sobject.editable || $.isEmptyObject(sobject.editions)
       return false
 
     hideMessageArea()
@@ -147,7 +147,7 @@ coordinates = ->
     elementId = getActiveGridElementId()
     sobject = sObjects[elementId]
 
-    if !sobject.editable
+    if !sobject || !sobject.editable
       return false
 
     hot = grids[elementId]
@@ -183,7 +183,7 @@ coordinates = ->
     elementId = getActiveGridElementId()
     sobject = sObjects[elementId]
 
-    if !sobject.editable
+    if !sobject || !sobject.editable
       return false
 
     hot = grids[elementId]
@@ -259,8 +259,8 @@ coordinates = ->
       bom: false,
       columnDelimiter: ',',
       columnHeaders: true,
-      exportHiddenColumns: true,
-      exportHiddenRows: true,
+      exportHiddenColumns: false,
+      exportHiddenRows: false,
       fileExtension: 'csv',
       filename: 'soql_result',
       mimeType: 'text/csv',
@@ -330,39 +330,58 @@ coordinates = ->
     
     newTabIndex = $("#soqlArea #tabArea ul li").length - 1
     selectedTabId = newTabIndex
-    $("#soqlArea #tabArea").tabs({ active: newTabIndex });
+    $("#soqlArea #tabArea").tabs({ active: newTabIndex, activate: onTabSelect});
 
-    #createGrid("#soqlArea #grid" + newTabId)
+  onTabSelect = (event, ui) ->
+    tabId = ui.newPanel.attr("tabId")
+    elementId = "#soqlArea #grid" + tabId
+    grids[elementId].render()
 
-  #--
+  #------------------------------------------------
   # Grid
-  #--
-  $("#clearGrid").on "click", (e) ->
-    grid = grids["#soqlArea #createGrid"]
-    grid.clear()
-
+  #------------------------------------------------
   $("#addRow").on "click", (e) ->
-    grid = getActiveGrid()
-    if !selectedCellOnCreateGrid? || selectedCellOnCreateGrid.row < 0
+    elementId = getActiveGridElementId()
+    grid = grids[elementId]
+    selectedCell = getSelectedCell(grid)
+    if !selectedCell || selectedCell.row < 0
       return false
-    else
-      grid.alter('insert_row', selectedCellOnCreateGrid.row + 1, 1)
-      grid.selectCell(selectedCellOnCreateGrid.row, selectedCellOnCreateGrid.col)
+    
+    sobject = sObjects[elementId]
+    grid.alter('insert_row', selectedCell.row + 1, 1)
+    grid.selectCell(selectedCell.row, selectedCell.col)
+
+    #sobject.newRow[selectedCell.row + 1] = null
 
   $("#removeRow").on "click", (e) ->
-    grid = getActiveGrid()
-    if !selectedCellOnCreateGrid? || selectedCellOnCreateGrid.row < 0
+    elementId = getActiveGridElementId()
+    grid = grids[elementId]
+    selectedCell = getSelectedCell(grid)
+    if !selectedCell || selectedCell.row < 0
       return false
+    
+    sobject = sObjects[elementId]
+    grid.alter('remove_row', selectedCell.row, 1)
+    grid.selectCell(getValidRowAfterRemove(grid), selectedCell.col)
+    #sobject.newRow[selectedCell.row] = null
+
+  getSelectedCell = (grid) ->
+    selectedCells = grid.getSelected()
+    
+    if selectedCells
+      {
+        row: selectedCells[0][0]
+        col: selectedCells[0][1]
+      }
     else
-      grid.alter('remove_row', selectedCellOnCreateGrid.row, 1)
-      grid.selectCell(getValidRowAfterRemove(grid), selectedCellOnCreateGrid.col)
+      null
 
   getValidRowAfterRemove = (grid) ->
     lastRow = grid.countVisibleRows() - 1
-    if selectedCellOnCreateGrid.row > lastRow
-      selectedCellOnCreateGrid.row = lastRow
+    if selectedCell.row > lastRow
+      selectedCell.row = lastRow
     else
-      selectedCellOnCreateGrid.row
+      selectedCell.row
 
   getActiveGridElementId = () ->
     tabId = $("#soqlArea #tabArea .ui-tabs-panel:visible").attr("tabId")
@@ -408,6 +427,11 @@ coordinates = ->
         columnSorting: true,
         #colWidths: (i) -> setColWidth(i),
         outsideClickDeselects: false,
+        hiddenColumns: {
+          copyPasteEnabled: false,
+          indicators: false,
+          columns: [0]
+        },
         licenseKey: 'non-commercial-and-evaluation',
         beforeColumnSort: (currentConfig, newConfig) -> onBeforeSort(currentConfig, newConfig),
         afterChange: (source, changes) -> detectAfterEditOnGrid(source, changes),
@@ -468,10 +492,7 @@ coordinates = ->
       0    
 
   onCellClick = (event, coords, td) ->
-    selectedCellOnCreateGrid = coords
-
-  onTabSelect = (event, ui) ->
-    $("#spaceArea").trigger('click')
+    selectedCell = coords
       
   #------------------------------------------------
   # message
@@ -487,13 +508,8 @@ coordinates = ->
   #------------------------------------------------
   # page load actions
   #------------------------------------------------
-  #selectedTabId = 1
-  #createGrid("#soqlArea #grid" + selectedTabId)
-  $("#soqlArea #tabArea").tabs(
-    {
-      select: (event, ui) -> onTabSelect(event, ui)
-    }
-  )
+  $("#soqlArea #tabArea").tabs() 
+  
   createTab()
 
 $(document).ready(coordinates)

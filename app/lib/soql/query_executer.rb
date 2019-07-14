@@ -39,7 +39,7 @@ module Soql
             @check_keys = @query_fields.keys
             id_column_index = @query_fields.keys.index(Id)
 
-            records = parse_query_result(query_result).map{|hash| hash.slice(*@query_fields.keys)}
+            p records = parse_query_result(query_result).map{|hash| hash.slice(*@query_fields.keys)}
 
             {:sobject => @sobject_type, :records => records, :column_options => generate_column_options, :id_column_index => id_column_index}
         end
@@ -60,10 +60,10 @@ module Soql
                     @sobject_type = result[Type]
                 end
                 
-                #record = {"" => false}
-                record = {}
+                record = {"newRow" => false}
+                #record = {}
 
-                field_count = 0
+                field_count = 1
                 
                 extract(result).each do |k,v|
                     if is_reference?(k, v)
@@ -210,7 +210,7 @@ module Soql
 
             #@check_keys.flatten!.sort! {|a, b| upcase_soql.index(a) <=> upcase_soql.index(b) }
             field_type_array = @query_fields.sort{|(k1, v1), (k2, v2)| upcase_soql.index(k1) <=> upcase_soql.index(k2) }
-            @query_fields = Hash[*field_type_array.flatten(1)]
+            p @query_fields = {"newRow" => false}.merge(Hash[*field_type_array.flatten(1)])
         end
 
         def generate_query_fields(field_name, type = nil)

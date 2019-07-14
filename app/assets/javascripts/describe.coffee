@@ -39,7 +39,7 @@ describe = ->
   #------------------------------------------------
   # export
   #------------------------------------------------
-  $("#describeArea .exp-btn").on "click", (e) ->
+  $("#describeArea #csv-expprt").on "click", (e) ->
     e.preventDefault()
     options = getDownloadOptions(this)
     $.ajaxDownload(options)
@@ -48,8 +48,7 @@ describe = ->
     url = $("#describeArea #exportForm").attr('action')
     method = $("#describeArea #exportForm").attr('method')
     selected_sobject = $('#describeArea #selected_sobject').val()
-    dl_format = $(target).attr('dl_format')
-    data = {dl_format: dl_format, selected_sobject: selected_sobject}
+    data = {selected_sobject: selected_sobject}
     $.getAjaxDownloadOptions(url, method, data, downloadDone, downloadFail, ->)
 
   #------------------------------------------------
@@ -99,7 +98,7 @@ describe = ->
     hotSettings = {
         data: records,
         height: 500,
-        stretchH: 'all',
+        #stretchH: 'all',
         autoWrapRow: true,
         manualRowResize: false,
         manualColumnResize: true,

@@ -27,7 +27,8 @@
 			<br>
 			<div id="exportButtonArea">
 				<%= form_tag describe_download_path(), :id => "exportForm", :method => :post, :remote => false do %>
-					<%= button_tag "CSV Export", :id => "csv-expprt", :class => "btn btn-sm btn-default exp-btn", :dl_format => "csv" %>
+					<%= button_tag "Add tab", :id => "add-tab", :class => "btn btn-xs btn-default ex-small-btn" %>
+					<%= button_tag "CSV Export", :id => "csv-expprt", :class => "btn btn-xs btn-default ex-small-btn" %>
 				<% end %>
 			</div>	
 

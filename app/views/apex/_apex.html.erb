@@ -13,7 +13,7 @@
 <div id="apexArea">
 	<div id="formArea">
 		<%= form_tag apex_path(), :method => :post, :class => "execute-form" do %>
-		<%= text_area_tag :apex_code,"String x = 'b';system.debug(x);", :size => "120x5" %>
+		<%= text_area_tag :apex_code,"", :size => "120x5" %>
 		<br>
 		<%= submit_tag "Execute Anonymous", :class => "btn btn-sm btn-primary execute-anonymous" %>
 		<%= button_tag "Debug options", :type => "button", :id => "debug-opt-btn", :class => "btn btn-sm btn-default" %>

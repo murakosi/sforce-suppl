@@ -1,3 +1,10 @@
+<style type="text/css">
+	.right-align{
+		float: right;
+	}
+
+
+</style>
 <div id="soqlArea">
 	<div id="formArea">
 		<%= form_tag query_path(), :method => :post, :class => "execute-form" do %>
@@ -12,23 +19,19 @@
 
 	<div id="dummyArea"></div>
 	
-	<div id="tabArea">
-		<%= button_tag "Add tab", :type => "button", :id => "add-tab", :class => "btn btn-sm btn-default" %>
-		<%= button_tag "Export", :type => "button", :id => "exportBtn", :class => "btn btn-sm btn-default" %>
-		<%= button_tag "Update", :type => "button", :id => "saveBtn", :class => "btn btn-sm btn-default" %>
-		<%= button_tag "Delete", :type => "button", :id => "deleteBtn", :class => "btn btn-sm btn-default" %>
-		<%= button_tag "Undelete", :type => "button", :id => "undeleteBtn", :class => "btn btn-sm btn-default" %>
-		<%= button_tag "Rerun", :type => "button", :id => "rerunBtn", :class => "btn btn-sm btn-default" %>
-		<ul id="soqlTabs">
-			<!--<li class="noselect"><a href="#tab1">Grid1</a>
-			<span class="ui-icon ui-icon-close ui-closable-tab"></span>
-			</li>
-		-->
-		</ul>
-		<!--<div id="tab1" class="resultTab" tabId="1">
-			<div id="soql1" class="resultSoql" tabId="1"></div>
-			<div id="grid1" class="resultGrid" tabId="1"></div>
+	<div id="tabArea">		
+		<%= button_tag "Add tab", :type => "button", :id => "add-tab", :class => "btn btn-xs btn-default" %>
+		<%= button_tag "Insert row", :type => "button", :id => "addRow", :class => "btn btn-xs btn-default" %>
+		<%= button_tag "Remove row", :type => "button", :id => "removeRow", :class => "btn btn-xs btn-default" %>
+				
+		<%= button_tag "Export", :type => "button", :id => "exportBtn", :class => "btn btn-xs btn-default" %>
+		<%= button_tag "Rerun", :type => "button", :id => "rerunBtn", :class => "btn btn-xs btn-default" %>
+		<div class="right-align">
+			<%= button_tag "Update", :type => "button", :id => "saveBtn", :class => "btn btn-xs btn-warning ex-small-btn" %>
+			<%= button_tag "Delete", :type => "button", :id => "deleteBtn", :class => "btn btn-xs btn-warning ex-small-btn" %>
+			<%= button_tag "Undelete", :type => "button", :id => "undeleteBtn", :class => "btn btn-xs btn-warning ex-small-btn" %>
 		</div>
-	-->
+		<ul id="soqlTabs">
+		</ul>
 	</div>
 </div>

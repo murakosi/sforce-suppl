@@ -199,6 +199,14 @@ span.select2-selection.select2-selection--single {
     overflow-y: auto;
 }
 
+.ex-small-btn{
+    font-size: 12px !important;
+}
+
+.btn-info{
+    font-size: 8pt !important;
+    font-family:Arial;
+}
 
 /* ------------------------------
    #tab area

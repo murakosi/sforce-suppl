@@ -30,7 +30,7 @@ class SoqlexecuterController < ApplicationController
 
   def execute_soql(soql, tooling, query_all, tab_id)
     begin
-      p query_result = execute_query(sforce_session, soql, tooling, query_all)
+      query_result = execute_query(sforce_session, soql, tooling, query_all)
       render :json => response_json(soql, tooling, query_all, tab_id, query_result), :status => 200
     rescue StandardError => ex
       print_error(ex)
@@ -40,25 +40,23 @@ class SoqlexecuterController < ApplicationController
 
   def response_json(soql, tooling, query_all, tab_id, query_result)
     rows = query_result[:records].map{ |hash| hash.values}
-    idx = query_result[:id_column_index]
+    id_column_index = query_result[:id_column_index]
     row_hash = {}
-    if idx.present?      
-      query_result[:records].each{ |hash| row_hash.merge!({hash.values[idx] => hash.values}) }
+    if id_column_index.present?      
+      query_result[:records].each{ |hash| row_hash.merge!({hash.values[id_column_index] => hash.values}) }
     end
-    #a = ["<input type='checkbox'>"]
 
     {
       :soql_info => soql_info(soql, tooling, query_all, tab_id),
       :sobject => query_result[:sobject],
       :records => {
-                  #:columns =>  a + query_result[:records].first.keys,
-                  :columns =>  query_result[:records].first.keys,
+                  :columns => query_result[:records].first.keys,
                   :rows => rows,
                   :initial_rows => row_hash,
                   :column_options => query_result[:column_options],
                   :id_column_index => query_result[:id_column_index]
                   }
-   }
+    }
   end
 
   def soql_info(soql, tooling, query_all, tab_id)
