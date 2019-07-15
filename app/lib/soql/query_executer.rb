@@ -10,7 +10,7 @@ module Soql
         From_with_space = " from "
         Select_with_space = "select "
         Select = "select"
-        Where_with_space = " where "
+        Where_with_space = " where "        
 
         def execute_query(sforce_session, soql, tooling, query_all)
             if soql.strip.end_with?(";")
@@ -29,19 +29,39 @@ module Soql
                 end
             end
 
-            if query_result.nil? || query_result.blank? || !query_result.has_key?(Records)
-               raise StandardError.new("No matched records found")
-            end
+            #if query_result.nil? || query_result.blank? || !query_result.has_key?(Records)
+            #    raise StandardError.new("No matched records found")
+            #end
 
+            if query_result.nil? || query_result.blank? || !query_result.has_key?(Records)
+                raise StandardError.new("No matched records found")
+            else
+                @sobject_type = nil
+                @query_fields = {}
+                parse_query_fields(soql)
+                @check_keys = @query_fields.keys
+                id_column_index = @query_fields.keys.index(Id)
+
+                records = parse_query_result(query_result).map{|hash| hash.slice(*@query_fields.keys)}
+
+                {
+                    :sobject => @sobject_type,
+                    :records => records,
+                    :column_options => generate_column_options,
+                    :id_column_index => id_column_index
+                }
+            end
+=begin                
             @sobject_type = nil
             @query_fields = {}
             parse_query_fields(soql)
             @check_keys = @query_fields.keys
             id_column_index = @query_fields.keys.index(Id)
 
-            p records = parse_query_result(query_result).map{|hash| hash.slice(*@query_fields.keys)}
+            records = parse_query_result(query_result).map{|hash| hash.slice(*@query_fields.keys)}
 
             {:sobject => @sobject_type, :records => records, :column_options => generate_column_options, :id_column_index => id_column_index}
+=end            
         end
  
         def parse_query_result(query_result)
@@ -60,8 +80,8 @@ module Soql
                     @sobject_type = result[Type]
                 end
                 
-                record = {"newRow" => false}
-                #record = {}
+                #record = {"newRow" => false}
+                record = {}
 
                 field_count = 1
                 
@@ -210,7 +230,7 @@ module Soql
 
             #@check_keys.flatten!.sort! {|a, b| upcase_soql.index(a) <=> upcase_soql.index(b) }
             field_type_array = @query_fields.sort{|(k1, v1), (k2, v2)| upcase_soql.index(k1) <=> upcase_soql.index(k2) }
-            p @query_fields = {"newRow" => false}.merge(Hash[*field_type_array.flatten(1)])
+            @query_fields = Hash[*field_type_array.flatten(1)]
         end
 
         def generate_query_fields(field_name, type = nil)

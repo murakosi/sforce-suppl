@@ -8,6 +8,7 @@ class SoqlexecuterController < ApplicationController
   protect_from_forgery :except => [:query, :update, :delete, :undelete]
   
   Time_format = "%Y/%m/%d %H:%M:%S"
+  TempIdPrefix = "@"
 
   def show
   end
@@ -17,7 +18,7 @@ class SoqlexecuterController < ApplicationController
   end
 
   def update
-    execute_update(params[:sobject], params[:records], params[:soql_info])
+    execute_save(params[:sobject], params[:records], params[:soql_info])
   end
   
   def delete
@@ -55,7 +56,8 @@ class SoqlexecuterController < ApplicationController
                   :initial_rows => row_hash,
                   :column_options => query_result[:column_options],
                   :id_column_index => query_result[:id_column_index]
-                  }
+                  },
+      :tempIdPrefix => TempIdPrefix
     }
   end
 
@@ -69,50 +71,90 @@ class SoqlexecuterController < ApplicationController
     }
   end
 
-  def execute_update(sobject, records, soql_info)
+  def execute_save(sobject, records, soql_info)
     sobject_records = JSON.parse(records).reject{|k,v| v.size <= 0}
 
-    if sobject_records.size > 0
-      sobject_records = sobject_records.map{|k,v| {"Id" => k}.merge!(v)}
-      begin
-        Service::SoapSessionService.call(sforce_session).update!(sobject, sobject_records)
-        render :json => {:done => true, :soql_info => soql_info}, :status => 200
-      rescue StandardError => ex
-        print_error(ex)
-        render :json => {:error => ex.message}, :status => 400
-      end
-    else
+    if sobject_records.size <= 0
       render :json => {:done => false}, :status => 200
+      return
     end
 
+    inserts = {}
+    updates = {}
+    upserts = []
+    sobject_records.each do |k,v|
+      if k.starts_with?(TempIdPrefix)
+        upserts << v#{"Id" => nil}.merge!(v)
+      else
+        updates = {"Id" => k}.merge!(v)
+        upserts << updates
+        #upserts.merge!({k => v})
+      end
+    end
+    
+    begin
+      #execute_update(sobject, updates)
+      #execute_insert(sobject, inserts)
+      p upserts
+      execute_upsert(sobject, upserts)
+      render :json => {:done => true, :soql_info => soql_info}, :status => 200
+    rescue StandardError => ex
+      print_error(ex)
+      render :json => {:error => ex.message}, :status => 400
+    end
+
+  end
+
+  def execute_upsert(sobject, sobject_records)
+    Service::SoapSessionService.call(sforce_session).upsert!(sobject, "Id", sobject_records)
+  end
+
+  def execute_update(sobject, sobject_records)
+    if sobject_records.empty?
+      return
+    end
+
+    sobject_records = sobject_records.map{|k,v| {"Id" => k}.merge!(v)}
+    Service::SoapSessionService.call(sforce_session).update!(sobject, sobject_records)
+  end
+
+  def execute_insert(sobject, sobject_records)
+    if sobject_records.empty?
+      return
+    end
+      
+    Service::SoapSessionService.call(sforce_session).create!(sobject, sobject_records)
   end
   
   def execute_delete(ids, soql_info)
-    if ids.size > 0
-      begin
-        Service::SoapSessionService.call(sforce_session).delete!(ids)
-        render :json => {:done => true, :soql_info => soql_info}, :status => 200
-      rescue StandardError => ex
-        print_error(ex)
-        render :json => {:error => ex.message}, :status => 400
-      end
-    else
+    if ids.size <= 0
       render :json => {:done => false}, :status => 200
+      return
     end
+
+    begin
+      Service::SoapSessionService.call(sforce_session).delete!(ids)
+      render :json => {:done => true, :soql_info => soql_info}, :status => 200
+    rescue StandardError => ex
+      print_error(ex)
+      render :json => {:error => ex.message}, :status => 400
+    end     
+
   end
   
   def execute_undelete(ids, soql_info)
-    if ids.size > 0
-      begin
-        Service::SoapSessionService.call(sforce_session).undelete!(ids)
-        render :json => {:done => true, :soql_info => soql_info}, :status => 200
-      rescue StandardError => ex
-        print_error(ex)
-        render :json => {:error => ex.message}, :status => 400
-      end
-    else
-      render :json => {:done => false}, :status => 200
+    if ids.size <= 0
+      return
     end
+
+    begin
+      Service::SoapSessionService.call(sforce_session).undelete!(ids)
+      render :json => {:done => true, :soql_info => soql_info}, :status => 200
+    rescue StandardError => ex
+      print_error(ex)
+      render :json => {:error => ex.message}, :status => 400
+    end
+
   end
   
 end

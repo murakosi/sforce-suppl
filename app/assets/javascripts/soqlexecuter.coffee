@@ -78,7 +78,9 @@ coordinates = ->
                             sobject_type: json.sobject,
                             soql_info: json.soql_info,
                             idColumnIndex: json.records.id_column_index,
-                            editable: if json.records.id_column_index == null then false else true
+                            editable: if json.records.id_column_index == null then false else true,
+                            tempIdPrefix: json.tempIdPrefix,
+                            assignedIndex: 0
                           }
 
 
@@ -210,7 +212,7 @@ coordinates = ->
   #------------------------------------------------    
   detectAfterEditOnGrid = (source, changes) ->
 
-    if changes != 'edit' && !changes.startsWith('UndoRedo')
+    if changes != 'edit' && !changes.startsWith('UndoRedo') && changes != "CopyPaste.paste"
       return
 
     rowIndex = source[0][0]
@@ -222,33 +224,110 @@ coordinates = ->
       return
 
     isRestored = false
-    
-    tabId = $("#soqlArea #tabArea .ui-tabs-panel:visible").attr("tabId")
-    elementId = "#soqlArea #grid" + tabId
-    
-    hot = grids[elementId]
-    fieldName = sObjects[elementId].columns[columnIndex]
-    idColumnIndex = sObjects[elementId].idColumnIndex    
-    id = hot.getDataAtCell(rowIndex, idColumnIndex)
+    isNewRow = false
+    #tabId = $("#soqlArea #tabArea .ui-tabs-panel:visible").attr("tabId")
+    #"#soqlArea #grid" + tabId
+    elementId = getActiveGridElementId()    
+    grid = grids[elementId]
+    sobject = sObjects[elementId]
 
-    if sObjects[elementId].editions[id]
-      if newValue == sObjects[elementId].rows[id][columnIndex]
-        delete sObjects[elementId].editions[id][fieldName]
-        if Object.keys(sObjects[elementId].editions[id]).length <= 0
-          delete sObjects[elementId].editions[id]
+    fieldName = sobject.columns[columnIndex]
+    #idColumnIndex = sobject.idColumnIndex
+    #id = grid.getDataAtCell(rowIndex, idColumnIndex)    
+    id = getSalesforceId(grid, sobject, rowIndex)
+
+    if id.startsWith(sobject.tempIdPrefix)
+      isNewRow = true
+
+    if sobject.editions[id]
+      if !isNewRow && newValue == sobject.rows[id][columnIndex]
+        delete sobject.editions[id][fieldName]
+        if Object.keys(sobject.editions[id]).length <= 0
+          delete sobject.editions[id]
         isRestored = true
       else
-        sObjects[elementId].editions[id][fieldName] = newValue
+        sobject.editions[id][fieldName] = newValue
     else
-      sObjects[elementId].editions[id] = {}
-      sObjects[elementId].editions[id][fieldName] = newValue
+      sobject.editions[id] = {}
+      sobject.editions[id][fieldName] = newValue
     
-    if isRestored
-      hot.removeCellMeta(rowIndex, columnIndex, 'className');
-    else
-      hot.setCellMeta(rowIndex, columnIndex, 'className', 'changed-cell-border');
+    if !isNewRow
+      if isRestored
+        grid.removeCellMeta(rowIndex, columnIndex, 'className')
+      else
+        grid.setCellMeta(rowIndex, columnIndex, 'className', 'changed-cell-border')
 
-    hot.render()
+      grid.render()
+
+  getSalesforceId = (grid, sobject, rowIndex) ->
+    idColumnIndex = sobject.idColumnIndex
+    id = grid.getDataAtCell(rowIndex, idColumnIndex)
+
+    if id == "" || id == "undefined" || id == null
+      grid.getCellMeta(rowIndex, idColumnIndex).tempId
+    else
+      id
+
+  #------------------------------------------------
+  # Grid
+  #------------------------------------------------
+  $("#addRow").on "click", (e) ->
+    elementId = getActiveGridElementId()
+    grid = grids[elementId]
+    selectedCell = getSelectedCell(grid)
+    if !selectedCell || selectedCell.row < 0
+      return false
+    
+    grid.alter('insert_row', selectedCell.row + 1, 1)
+    grid.selectCell(selectedCell.row, selectedCell.col)
+  
+    sobject = sObjects[elementId]
+    newIndex = sobject.assignedIndex + 1
+    tempId = sobject.tempIdPrefix + newIndex
+    sobject.assignedIndex = newIndex
+    grid.setCellMeta(selectedCell.row + 1, sobject.idColumnIndex, 'tempId', tempId)
+    
+
+  $("#removeRow").on "click", (e) ->
+    elementId = getActiveGridElementId()
+    grid = grids[elementId]
+    selectedCell = getSelectedCell(grid)
+    if !selectedCell || selectedCell.row < 0
+      return false
+
+    sobject = sObjects[elementId]
+    tempId = grid.getCellMeta(selectedCell.row, sobject.idColumnIndex).tempId
+    if sobject.editions[tempId]
+      delete sobject.editions[tempId]
+
+    grid.alter('remove_row', selectedCell.row, 1)
+    grid.selectCell(getValidRowAfterRemove(grid), selectedCell.col)    
+
+  getSelectedCell = (grid) ->
+    selectedCells = grid.getSelected()
+    
+    if selectedCells
+      {
+        row: selectedCells[0][0]
+        col: selectedCells[0][1]
+      }
+    else
+      null
+
+  getValidRowAfterRemove = (grid) ->
+    lastRow = grid.countVisibleRows() - 1
+    if selectedCell.row > lastRow
+      selectedCell.row = lastRow
+    else
+      selectedCell.row
+
+  getActiveGridElementId = () ->
+    tabId = $("#soqlArea #tabArea .ui-tabs-panel:visible").attr("tabId")
+    "#soqlArea #grid" + tabId
+    
+  getActiveGrid = () ->
+    elementId = getActiveGridElementId()
+    grids[elementId]
 
   #------------------------------------------------
   # CSV Download
@@ -338,60 +417,6 @@ coordinates = ->
     grids[elementId].render()
 
   #------------------------------------------------
-  # Grid
-  #------------------------------------------------
-  $("#addRow").on "click", (e) ->
-    elementId = getActiveGridElementId()
-    grid = grids[elementId]
-    selectedCell = getSelectedCell(grid)
-    if !selectedCell || selectedCell.row < 0
-      return false
-    
-    sobject = sObjects[elementId]
-    grid.alter('insert_row', selectedCell.row + 1, 1)
-    grid.selectCell(selectedCell.row, selectedCell.col)
-
-    #sobject.newRow[selectedCell.row + 1] = null
-
-  $("#removeRow").on "click", (e) ->
-    elementId = getActiveGridElementId()
-    grid = grids[elementId]
-    selectedCell = getSelectedCell(grid)
-    if !selectedCell || selectedCell.row < 0
-      return false
-    
-    sobject = sObjects[elementId]
-    grid.alter('remove_row', selectedCell.row, 1)
-    grid.selectCell(getValidRowAfterRemove(grid), selectedCell.col)
-    #sobject.newRow[selectedCell.row] = null
-
-  getSelectedCell = (grid) ->
-    selectedCells = grid.getSelected()
-    
-    if selectedCells
-      {
-        row: selectedCells[0][0]
-        col: selectedCells[0][1]
-      }
-    else
-      null
-
-  getValidRowAfterRemove = (grid) ->
-    lastRow = grid.countVisibleRows() - 1
-    if selectedCell.row > lastRow
-      selectedCell.row = lastRow
-    else
-      selectedCell.row
-
-  getActiveGridElementId = () ->
-    tabId = $("#soqlArea #tabArea .ui-tabs-panel:visible").attr("tabId")
-    "#soqlArea #grid" + tabId
-    
-  getActiveGrid = () ->
-    elementId = getActiveGridElementId()
-    grids[elementId]
-
-  #------------------------------------------------
   # Create grid
   #------------------------------------------------
   createGrid = (elementId, json = null) ->   
@@ -427,15 +452,12 @@ coordinates = ->
         columnSorting: true,
         #colWidths: (i) -> setColWidth(i),
         outsideClickDeselects: false,
-        hiddenColumns: {
-          copyPasteEnabled: false,
-          indicators: false,
-          columns: [0]
-        },
         licenseKey: 'non-commercial-and-evaluation',
         beforeColumnSort: (currentConfig, newConfig) -> onBeforeSort(currentConfig, newConfig),
         afterChange: (source, changes) -> detectAfterEditOnGrid(source, changes),
-        afterOnCellMouseDown: (event, coords, td) -> onCellClick(event, coords, td)
+        afterOnCellMouseDown: (event, coords, td) -> onCellClick(event, coords, td),
+        afterRedo: (action) -> onAfterRedo(action),
+        beforeUndo: (action) -> onBeforeUndo(action)
     }
 
     hot = new Handsontable(hotElement, hotSettings)
@@ -443,6 +465,26 @@ coordinates = ->
       hot.render()
 
     grids[elementId] = hot
+
+  onAfterRedo = (action) ->
+    if action.actionType == "insert_row"
+      elementId = getActiveGridElementId()
+      grid = grids[elementId]
+      sobject = sObjects[elementId]
+      newIndex = sobject.assignedIndex + 1
+      tempId = sobject.tempIdPrefix + newIndex
+      sobject.assignedIndex = newIndex
+      grid.setCellMeta(action.index, sobject.idColumnIndex, 'tempId', tempId)
+
+  onBeforeUndo = (action) ->
+    if action.actionType == "insert_row"
+      elementId = getActiveGridElementId()
+      grid = grids[elementId]
+      sobject = sObjects[elementId]
+      tempId = grid.getCellMeta(action.index, sobject.idColumnIndex).tempId
+      if sobject.editions[tempId]
+        delete sobject.editions[tempId]
+
 
   setColWidth = (i) ->
     if i == 0

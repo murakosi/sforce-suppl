@@ -101,7 +101,7 @@ module Service
         raise ArgumentError.new("Must provide username/password or session_id/server_url.")
       end
 
-      @headers = @headers.merge({"tns:SessionHeader" => {"tns:sessionId" => @session_id}})
+      @headers = @headers.merge({"tns:SessionHeader" => {"tns:sessionId" => @session_id}, "tns:AllOrNoneHeader" => {"tns:allOrNone" => true}})
 
       @client = Savon.client(
         wsdl: @wsdl,
@@ -626,12 +626,11 @@ module Service
         if result[key_name(:success)] == false && result[key_name(:errors)]
           errors = result[key_name(:errors)]
           raise Savon::Error.new("#{errors[key_name(:status_code)]}: #{errors[key_name(:message)]}")
-        #elsif xsi_type.include?("sObject")
-          #result = SObject.new(result)
-        #elsif xsi_type.include?("QueryResult")
-          #result = QueryResult.new(result)
-        #else
-          #result = Result.new(result)
+        end
+      elsif result.is_a?(Array)
+        if result.any?{|hash| hash.has_key?(:errors)}
+          errors = result.reject{|hash| hash[:errors][:status_code] == "ALL_OR_NONE_OPERATION_ROLLED_BACK"}.first[:errors]
+          raise Savon::Error.new("#{errors[key_name(:status_code)]}: #{errors[key_name(:message)]}")
         end
       end
 
