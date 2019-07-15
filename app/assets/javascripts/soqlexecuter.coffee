@@ -297,6 +297,9 @@ coordinates = ->
 
     sobject = sObjects[elementId]
     tempId = grid.getCellMeta(selectedCell.row, sobject.idColumnIndex).tempId
+    if !tempId
+      return false
+    
     if sobject.editions[tempId]
       delete sobject.editions[tempId]
 
