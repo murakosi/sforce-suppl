@@ -484,7 +484,7 @@ coordinates = ->
     
   onBeforeRedo = (action) ->
     elementId = getActiveGridElementId()
-    console.log($("#" + elementId).is(":focus"))
+    console.log($(elementId).is(":focus"))
     
   onAfterRedo = (action) ->
     if action.actionType == "insert_row"
@@ -500,7 +500,7 @@ coordinates = ->
 
   onBeforeUndo = (action) ->
     elementId = getActiveGridElementId()
-    console.log($("#" + elementId).is(":focus"))
+    console.log($(elementId).is(":focus"))
     
     if action.actionType == "insert_row"
       elementId = getActiveGridElementId()
@@ -561,7 +561,6 @@ coordinates = ->
 
   onCellClick = (event, coords, td) ->
     #selectedCell = coords
-    console.log(coords)
       
   #------------------------------------------------
   # message
