@@ -2,7 +2,7 @@ coordinates = ->
   
   selectedTabId = 0
   currentTabIndex = 0
-  #selectedCell = null
+  currenctCell = null
   grids = {}
   sObjects = {}
   THIS_AREA = "soqlArea"
@@ -496,7 +496,8 @@ coordinates = ->
       tempId = grid.getCellMeta(action.index, sobject.idColumnIndex).tempId
       if sobject.editions[tempId]
         delete sobject.editions[tempId]
-      #grid.selectCell(getValidRowAfterRemove(action.index, grid), selectedCell.col) 
+      selectedCell = getSelectedCell(grid)
+      grid.selectCell(getValidRowAfterRemove(selectedCell.row, grid), selectedCell.col) 
 
   setColWidth = (i) ->
     if i == 0
