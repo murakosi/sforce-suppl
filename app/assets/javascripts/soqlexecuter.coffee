@@ -550,6 +550,7 @@ coordinates = ->
 
   onCellClick = (event, coords, td) ->
     #selectedCell = coords
+    console.log(coords)
       
   #------------------------------------------------
   # message
