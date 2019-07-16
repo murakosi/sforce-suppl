@@ -488,6 +488,7 @@ coordinates = ->
       tempId = sobject.tempIdPrefix + newIndex
       sobject.assignedIndex = newIndex
       grid.setCellMeta(action.index, sobject.idColumnIndex, 'tempId', tempId)
+      $(elementId).focus()
 
   onBeforeUndo = (action) ->
     if action.actionType == "insert_row"
@@ -498,6 +499,7 @@ coordinates = ->
       tempId = grid.getCellMeta(action.index, sobject.idColumnIndex).tempId
       if sobject.editions[tempId]
         delete sobject.editions[tempId]
+      $(elementId).focus()
       #selectedCell = getSelectedCell(grid)
       #grid.selectCell(getValidRowAfterRemove(selectedCell.row, grid), selectedCell.col) 
 
