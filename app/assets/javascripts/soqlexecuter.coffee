@@ -6,7 +6,6 @@ coordinates = ->
   grids = {}
   sObjects = {}
   THIS_AREA = "soqlArea"
-  isInUndoRedo = false
 
   defaultDataType = ""
   defaultContentType = null
@@ -22,16 +21,7 @@ coordinates = ->
   # Shortcut keys
   #------------------------------------------------
   $(window).on 'keydown', (e) ->
-    if e.ctrlKey && e.key == 'z'
-      e.preventDefault()
-      $('#input_soql').blur()
-      return false
-      
-    if e.ctrlKey && e.key == 'y'
-      e.preventDefault()
-      $('#input_soql').blur()
-      return false
-      
+    
     if e.ctrlKey && (e.key == 'r' || e.keyCode == 13)
       e.preventDefault()
       if e.target.id == "input_soql"        
@@ -493,10 +483,10 @@ coordinates = ->
     grids[elementId] = hot
     
   onBeforeRedo = (action) ->
-    isInUndoRedo = true
+    elementId = getActiveGridElementId()
+    console.log($("#" + elementId).is(":focus"))
     
   onAfterRedo = (action) ->
-    isInUndoRedo = false
     if action.actionType == "insert_row"
       elementId = getActiveGridElementId()
       grid = grids[elementId]
@@ -509,7 +499,9 @@ coordinates = ->
       grid.selectCell(0, 0)
 
   onBeforeUndo = (action) ->
-    isInUndoRedo = true
+    elementId = getActiveGridElementId()
+    console.log($("#" + elementId).is(":focus"))
+    
     if action.actionType == "insert_row"
       elementId = getActiveGridElementId()
       grid = grids[elementId]
@@ -519,7 +511,6 @@ coordinates = ->
         delete sobject.editions[tempId]
   
   onAfterUndo = (action) ->
-    isInUndoRedo = false
 
   setColWidth = (i) ->
     if i == 0
