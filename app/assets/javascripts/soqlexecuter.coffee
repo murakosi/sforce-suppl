@@ -2,7 +2,7 @@ coordinates = ->
   
   selectedTabId = 0
   currentTabIndex = 0
-  selectedCell = null
+  #selectedCell = null
   grids = {}
   sObjects = {}
   THIS_AREA = "soqlArea"
@@ -312,7 +312,7 @@ coordinates = ->
       delete sobject.editions[tempId]
 
     grid.alter('remove_row', selectedCell.row, 1)
-    grid.selectCell(getValidRowAfterRemove(grid), selectedCell.col)    
+    grid.selectCell(getValidRowAfterRemove(selectedCell, grid), selectedCell.col)    
 
   getSelectedCell = (grid) ->
     selectedCells = grid.getSelected()
@@ -325,7 +325,7 @@ coordinates = ->
     else
       null
 
-  getValidRowAfterRemove = (grid) ->
+  getValidRowAfterRemove = (selectedCell, grid) ->
     lastRow = grid.countVisibleRows() - 1
     if selectedCell.row > lastRow
       selectedCell.row = lastRow
@@ -489,13 +489,14 @@ coordinates = ->
 
   onBeforeUndo = (action) ->
     if action.actionType == "insert_row"
+      console.log(action)
       elementId = getActiveGridElementId()
       grid = grids[elementId]
       sobject = sObjects[elementId]
       tempId = grid.getCellMeta(action.index, sobject.idColumnIndex).tempId
       if sobject.editions[tempId]
         delete sobject.editions[tempId]
-
+      #grid.selectCell(getValidRowAfterRemove(action.index, grid), selectedCell.col) 
 
   setColWidth = (i) ->
     if i == 0
@@ -545,7 +546,7 @@ coordinates = ->
       0    
 
   onCellClick = (event, coords, td) ->
-    selectedCell = coords
+    #selectedCell = coords
       
   #------------------------------------------------
   # message
