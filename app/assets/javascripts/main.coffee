@@ -60,7 +60,7 @@ mains = ->
       containerCssClass: ':all:'
       })
     
-    $(document).trigger("displayChange");
+    $(document).trigger("displayChange", [{targetArea: target + "Area"}]);
     
   createErrorDiv = (message) ->
     html = "<div style='text-align:center; white-space: pre; color:red; font-weight:bold;'>" + message  + "</div>"
