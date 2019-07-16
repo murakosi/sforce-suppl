@@ -22,11 +22,11 @@ coordinates = ->
   # Shortcut keys
   #------------------------------------------------
   $(window).on 'keydown', (e) ->
-    if (e.ctrlKey && e.key == 'z') && !$("#input_soql").is(":focus")
+    if e.ctrlKey && e.key == 'z'
       e.preventDefault()
       return false
       
-    if (e.ctrlKey && e.key == 'y') && !$("#input_soql").is(":focus")
+    if e.ctrlKey && e.key == 'y'
       e.preventDefault()
       return false
       
