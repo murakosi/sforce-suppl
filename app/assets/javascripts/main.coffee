@@ -53,15 +53,14 @@ mains = ->
 
     $("div#mainArea").prop("class", target)
     
-    #test
-    $(document).trigger( "custom");
-
     targetSelect2 = "div#" + target + "Area .selectlist"
     $(targetSelect2).select2({
       dropdownAutoWidth : true,
       width: 'resolve',
       containerCssClass: ':all:'
       })
+    
+    $(document).trigger("displayChange");
     
   createErrorDiv = (message) ->
     html = "<div style='text-align:center; white-space: pre; color:red; font-weight:bold;'>" + message  + "</div>"
