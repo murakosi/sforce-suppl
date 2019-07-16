@@ -24,9 +24,11 @@ coordinates = ->
   $(window).on 'keydown', (e) ->
     if (e.ctrlKey && e.key == 'z') && isInUndoRedo
       e.preventDefault()
+      return false
       
     if (e.ctrlKey && e.key == 'y') && isInUndoRedo
       e.preventDefault()
+      return false
       
     if e.ctrlKey && (e.key == 'r' || e.keyCode == 13)
       e.preventDefault()
