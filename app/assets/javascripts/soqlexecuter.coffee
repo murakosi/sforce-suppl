@@ -122,6 +122,8 @@ coordinates = ->
   # Update
   #------------------------------------------------
   $('#soqlArea #saveBtn').on 'click', (e) ->
+    console.log(e)
+    return false
     e.preventDefault()
     executeUpdate()
     
@@ -462,7 +464,7 @@ coordinates = ->
         #fragmentSelection: true,
         columnSorting: true,
         #colWidths: (i) -> setColWidth(i),
-        outsideClickDeselects: false,
+        #outsideClickDeselects: false,
         licenseKey: 'non-commercial-and-evaluation',
         beforeColumnSort: (currentConfig, newConfig) -> onBeforeSort(currentConfig, newConfig),
         afterChange: (source, changes) -> detectAfterEditOnGrid(source, changes),
