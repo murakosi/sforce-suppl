@@ -6,6 +6,7 @@ coordinates = ->
   grids = {}
   sObjects = {}
   THIS_AREA = "soqlArea"
+  isInUndoRedo = false
 
   defaultDataType = ""
   defaultContentType = null
@@ -21,6 +22,12 @@ coordinates = ->
   # Shortcut keys
   #------------------------------------------------
   $(window).on 'keydown', (e) ->
+    if (e.ctrlKey && e.key === 'z') && isInUndoRedo
+      e.preventDefault()
+      
+   if (e.ctrlKey && e.key === 'y') && isInUndoRedo
+      e.preventDefault()
+      
     if e.ctrlKey && (e.key == 'r' || e.keyCode == 13)
       e.preventDefault()
       if e.target.id == "input_soql"        
@@ -469,8 +476,10 @@ coordinates = ->
         beforeColumnSort: (currentConfig, newConfig) -> onBeforeSort(currentConfig, newConfig),
         afterChange: (source, changes) -> detectAfterEditOnGrid(source, changes),
         afterOnCellMouseDown: (event, coords, td) -> onCellClick(event, coords, td),
+        beforeRedo: (action) -> onBeforeRedo(action),
         afterRedo: (action) -> onAfterRedo(action),
-        beforeUndo: (action) -> onBeforeUndo(action)
+        beforeUndo: (action) -> onBeforeUndo(action),
+        afterUndo: (action) -> onAfterUndo(action)
     }
 
     hot = new Handsontable(hotElement, hotSettings)
@@ -479,7 +488,11 @@ coordinates = ->
 
     grids[elementId] = hot
     
+  onBeforeRedo = (action) ->
+    isInUndoRedo = true
+    
   onAfterRedo = (action) ->
+    isInUndoRedo = false
     if action.actionType == "insert_row"
       elementId = getActiveGridElementId()
       grid = grids[elementId]
@@ -492,18 +505,17 @@ coordinates = ->
       grid.selectCell(0, 0)
 
   onBeforeUndo = (action) ->
+    isInUndoRedo = true
     if action.actionType == "insert_row"
-      #console.log(action)
       elementId = getActiveGridElementId()
       grid = grids[elementId]
       sobject = sObjects[elementId]
       tempId = grid.getCellMeta(action.index, sobject.idColumnIndex).tempId
       if sobject.editions[tempId]
         delete sobject.editions[tempId]
-      $(elementId).focus()
-      #selectedCell = getSelectedCell(grid)
-      #grid.selectCell(getValidRowAfterRemove(selectedCell.row, grid), selectedCell.col) 
-      grid.selectCell(0, 0)
+  
+  onAfterUndo = (action) ->
+    isInUndoRedo = false
 
   setColWidth = (i) ->
     if i == 0
