@@ -52,6 +52,9 @@ mains = ->
     changeAnchorClass(anchorObject)
 
     $("div#mainArea").prop("class", target)
+    
+    #test
+    $(document).trigger( "custom");
 
     targetSelect2 = "div#" + target + "Area .selectlist"
     $(targetSelect2).select2({
