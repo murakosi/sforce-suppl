@@ -9,8 +9,8 @@ coordinates = ->
   defaultDataType = ""
   defaultContentType = null
 
-  $(document).on 'custom', (e) ->
-    alert("switch")
+  $(document).on 'displayChange', (e) ->
+    alert("changed")
     
   #------------------------------------------------
   # Shortcut keys
