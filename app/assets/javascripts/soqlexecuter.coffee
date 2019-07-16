@@ -10,7 +10,10 @@ coordinates = ->
   defaultContentType = null
 
   $(document).on 'displayChange', (e) ->
-    alert("changed")
+    elementId = getActiveGridElementId()
+    grid = grids[elementId]
+    if grid
+      grid.render()
     
   #------------------------------------------------
   # Shortcut keys
