@@ -489,15 +489,15 @@ coordinates = ->
 
   onBeforeUndo = (action) ->
     if action.actionType == "insert_row"
-      console.log(action)
+      #console.log(action)
       elementId = getActiveGridElementId()
       grid = grids[elementId]
       sobject = sObjects[elementId]
       tempId = grid.getCellMeta(action.index, sobject.idColumnIndex).tempId
       if sobject.editions[tempId]
         delete sobject.editions[tempId]
-      selectedCell = getSelectedCell(grid)
-      grid.selectCell(getValidRowAfterRemove(selectedCell.row, grid), selectedCell.col) 
+      #selectedCell = getSelectedCell(grid)
+      #grid.selectCell(getValidRowAfterRemove(selectedCell.row, grid), selectedCell.col) 
 
   setColWidth = (i) ->
     if i == 0
