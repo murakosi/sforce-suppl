@@ -5,15 +5,17 @@ coordinates = ->
   selectedCell = null
   grids = {}
   sObjects = {}
+  THIS_AREA = "soqlArea"
 
   defaultDataType = ""
   defaultContentType = null
 
-  $(document).on 'displayChange', (e) ->
-    elementId = getActiveGridElementId()
-    grid = grids[elementId]
-    if grid
-      grid.render()
+  $(document).on 'displayChange', (e, param) ->
+    if param.targetArea = THIS_AREA
+      elementId = getActiveGridElementId()
+      grid = grids[elementId]
+      if grid
+        grid.render()
     
   #------------------------------------------------
   # Shortcut keys
