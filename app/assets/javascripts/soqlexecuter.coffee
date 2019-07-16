@@ -460,7 +460,8 @@ coordinates = ->
         afterChange: (source, changes) -> detectAfterEditOnGrid(source, changes),
         afterOnCellMouseDown: (event, coords, td) -> onCellClick(event, coords, td),
         afterRedo: (action) -> onAfterRedo(action),
-        beforeUndo: (action) -> onBeforeUndo(action)
+        beforeUndo: (action) -> onBeforeUndo(action),
+        afterListen: () -> onAfterListen()
     }
 
     hot = new Handsontable(hotElement, hotSettings)
@@ -469,6 +470,9 @@ coordinates = ->
 
     grids[elementId] = hot
 
+  onAfterListen = () ->
+    console.log("listen")
+    
   onAfterRedo = (action) ->
     if action.actionType == "insert_row"
       elementId = getActiveGridElementId()
