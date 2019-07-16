@@ -24,10 +24,12 @@ coordinates = ->
   $(window).on 'keydown', (e) ->
     if e.ctrlKey && e.key == 'z'
       e.preventDefault()
+      $('#input_soql').blur()
       return false
       
     if e.ctrlKey && e.key == 'y'
       e.preventDefault()
+      $('#input_soql').blur()
       return false
       
     if e.ctrlKey && (e.key == 'r' || e.keyCode == 13)
