@@ -22,10 +22,10 @@ coordinates = ->
   # Shortcut keys
   #------------------------------------------------
   $(window).on 'keydown', (e) ->
-    if (e.ctrlKey && e.key === 'z') && isInUndoRedo
+    if (e.ctrlKey && e.key == 'z') && isInUndoRedo
       e.preventDefault()
       
-   if (e.ctrlKey && e.key === 'y') && isInUndoRedo
+    if (e.ctrlKey && e.key == 'y') && isInUndoRedo
       e.preventDefault()
       
     if e.ctrlKey && (e.key == 'r' || e.keyCode == 13)
