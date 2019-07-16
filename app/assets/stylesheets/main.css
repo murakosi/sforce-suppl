@@ -87,12 +87,21 @@ button:disabled {
 /* ------------------------------
    #Handontable
 ------------------------------ */
+/*
 .handsontable span.colHeader{
     font-size: 10pt;
 }
 
 .handsontable th, .handsontable td{
     font-size: 10pt;
+}
+*/
+.ht_master tr td {
+    font-size:12px;
+}
+
+.handsontable th {
+    font-size:12px;
 }
 
 .handsontable span.data{
