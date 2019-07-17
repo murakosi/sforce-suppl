@@ -355,6 +355,7 @@ coordinates = ->
     
     rowIndex = physicalRows[0]
     console.log(rowIndex)
+    elementId = getActiveGridElementId()
     sobject = sObjects[elementId]
     grid = grids[elementId]
     tempId = grid.getCellMeta(rowIndex, sobject.idColumnIndex).tempId
@@ -367,7 +368,7 @@ coordinates = ->
   getSelectedCell = (grid) ->
     selectedCells = grid.getSelected()
     
-    if selectedCells
+    if selectedCells.length > 0 && selectedCells[0].length > 0
       {
         row: selectedCells[0][0]
         col: selectedCells[0][1]
