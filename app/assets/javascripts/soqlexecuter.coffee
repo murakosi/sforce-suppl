@@ -304,10 +304,10 @@ coordinates = ->
     tempId = sobject.tempIdPrefix + newIndex
     sobject.assignedIndex = newIndex
     #grid.setCellMeta(selectedCell.row + 1, sobject.idColumnIndex, 'tempId', tempId)
-    setTimeout(setTempId, 3)
+    setTimeout(setTempId(selectedCell.row + 1, sobject.idColumnIndex, tempId), 3)
     
-  setTempId = () ->
-    grid.setCellMeta(rowIndex, sobject.idColumnIndex, 'tempId', tempId)
+  setTempId = (row, column, tempId) ->
+    grid.setCellMeta(row, column, 'tempId', tempId)
 
   $("#removeRow").on "click", (e) ->
     removeRow()
