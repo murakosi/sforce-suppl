@@ -296,7 +296,7 @@ coordinates = ->
     grid.selectCell(selectedCell.row, selectedCell.col)
   
   onAfterAddRow = (index, amount, source) ->
-    setTimeout(assignTempId(index), 3)
+    setTimeout(assignTempId(index), 300)
     
   assignTempId = (rowIndex) ->
     elementId = getActiveGridElementId()
