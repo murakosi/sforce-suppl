@@ -123,8 +123,6 @@ coordinates = ->
   # Update
   #------------------------------------------------
   $('#soqlArea #saveBtn').on 'click', (e) ->
-    console.log(e)
-    return false
     e.preventDefault()
     executeUpdate()
     
@@ -186,6 +184,13 @@ coordinates = ->
   # Undelete
   #------------------------------------------------
   $('#soqlArea #undeleteBtn').on 'click', (e) ->
+    
+    elementId = getActiveGridElementId()
+    hot = grids[elementId]
+    selectedCells = hot.getSelected()
+    console.log(selectedCells)
+    return false
+  
     e.preventDefault()
     executeUndelete()
     
