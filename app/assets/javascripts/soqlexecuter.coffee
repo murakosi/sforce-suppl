@@ -223,6 +223,10 @@ coordinates = ->
   #------------------------------------------------    
   detectAfterEditOnGrid = (source, changes) ->
 
+    if changes == "insert_row"
+      onAfterAddRow(source[0][0])
+      return
+    
     if changes != 'edit' && !changes.startsWith('UndoRedo') && changes != "CopyPaste.paste"
       return
 
@@ -295,7 +299,7 @@ coordinates = ->
     grid.alter('insert_row', selectedCell.row + 1, 1)
     grid.selectCell(selectedCell.row, selectedCell.col)
   
-  onAfterAddRow = (index, amount, source) ->
+  onAfterAddRow = (rowIndex) ->
     elementId = getActiveGridElementId()
     grid = grids[elementId]
     console.log(grid)
@@ -304,7 +308,7 @@ coordinates = ->
     tempId = sobject.tempIdPrefix + newIndex
     sobject.assignedIndex = newIndex
     #grid.setCellMeta(selectedCell.row + 1, sobject.idColumnIndex, 'tempId', tempId)
-    grid.setCellMeta(index, sobject.idColumnIndex, 'tempId', tempId)
+    grid.setCellMeta(rowIndex, sobject.idColumnIndex, 'tempId', tempId)
 
   $("#removeRow").on "click", (e) ->
     removeRow()
@@ -495,7 +499,7 @@ coordinates = ->
         beforeColumnSort: (currentConfig, newConfig) -> onBeforeSort(currentConfig, newConfig),
         afterChange: (source, changes) -> detectAfterEditOnGrid(source, changes),
         afterOnCellMouseDown: (event, coords, td) -> onCellClick(event, coords, td),
-        afterCreateRow: (index, amount, source) -> onAfterAddRow(index, amount, source),
+        #afterCreateRow: (index, amount, source) -> onAfterAddRow(index, amount, source),
         beforeRemoveRow: (index, amount, physicalRows, source) -> onBeforeRemoveRow(index, amount, physicalRows, source)
         #beforeRedo: (action) -> onBeforeRedo(action),
         #afterRedo: (action) -> onAfterRedo(action),
