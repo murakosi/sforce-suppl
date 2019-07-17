@@ -296,7 +296,6 @@ coordinates = ->
     grid.selectCell(selectedCell.row, selectedCell.col)
   
   onAfterAddRow = (rowIndex, amount, source) ->
-    alert(rowIndex)
     elementId = getActiveGridElementId()
     grid = grids[elementId]
     sobject = sObjects[elementId]
@@ -304,7 +303,7 @@ coordinates = ->
     tempId = sobject.tempIdPrefix + newIndex
     sobject.assignedIndex = newIndex
     #grid.setCellMeta(selectedCell.row + 1, sobject.idColumnIndex, 'tempId', tempId)
-    grid.setCellMeta(rowIndex, sobject.idColumnIndex, 'tempId', tempId)
+    grid.setCellMeta(rowIndex - 1, sobject.idColumnIndex, 'tempId', tempId)
 
   $("#removeRow").on "click", (e) ->
     removeRow()
@@ -328,13 +327,14 @@ coordinates = ->
     grid.selectCell(getValidRowAfterRemove(selectedCell, grid), selectedCell.col)
     
   onBeforeRemoveRow = (index, amount, physicalRows, source) ->
-    #for row in physicalRows
-    #  rows
-    alert("no")
-    return false
+    if physicalRows.length != 1
+      return false
+    
+    rowIndex = physicalRows[0] - 1
+    console.log(rowIndex)
     sobject = sObjects[elementId]
     grid = grids[elementId]
-    tempId = grid.getCellMeta(selectedCell.row, sobject.idColumnIndex).tempId
+    tempId = grid.getCellMeta(rowIndex, sobject.idColumnIndex).tempId
     if !tempId
       return false
     
