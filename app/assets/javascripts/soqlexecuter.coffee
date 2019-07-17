@@ -295,7 +295,7 @@ coordinates = ->
     grid.alter('insert_row', selectedCell.row + 1, 1)
     grid.selectCell(selectedCell.row, selectedCell.col)
   
-  onAfterAddRow = (rowIndex) ->
+  onAfterAddRow = (index, amount, source) ->
     elementId = getActiveGridElementId()
     grid = grids[elementId]
     console.log(grid)
@@ -304,7 +304,7 @@ coordinates = ->
     tempId = sobject.tempIdPrefix + newIndex
     sobject.assignedIndex = newIndex
     #grid.setCellMeta(selectedCell.row + 1, sobject.idColumnIndex, 'tempId', tempId)
-    setTimeout(setTempId(selectedCell.row + 1, sobject.idColumnIndex, tempId), 3)
+    setTimeout(setTempId(index, sobject.idColumnIndex, tempId), 3)
     
   setTempId = (row, column, tempId) ->
     grid.setCellMeta(row, column, 'tempId', tempId)
