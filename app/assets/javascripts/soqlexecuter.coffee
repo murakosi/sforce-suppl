@@ -292,11 +292,16 @@ coordinates = ->
     selectedCells = selectedCells[0]
     
     if selectedCells[2] >= selectedCells[0]
-      {startRow: selectedCells[0],
-        endRow: selectedCells[2]}
+      {
+        startRow: selectedCells[0],
+        endRow: selectedCells[2]
+      }
     else
-      {startRow: selectedCells[2],
-       endRow: selectedCells[0]}
+      {
+        startRow: selectedCells[2],
+        endRow: selectedCells[0]
+      }
+
   #------------------------------------------------
   # Grid
   #------------------------------------------------
