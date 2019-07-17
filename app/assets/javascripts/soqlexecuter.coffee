@@ -283,6 +283,9 @@ coordinates = ->
   # Grid
   #------------------------------------------------
   $("#addRow").on "click", (e) ->
+    addRow()
+    
+  addRow = () ->
     elementId = getActiveGridElementId()
     grid = grids[elementId]
     selectedCell = getSelectedCell(grid)
@@ -292,31 +295,51 @@ coordinates = ->
     grid.alter('insert_row', selectedCell.row + 1, 1)
     grid.selectCell(selectedCell.row, selectedCell.col)
   
+  onAfterAddRow = (rowIndex, amount, source)
+    elementId = getActiveGridElementId()
+    grid = grids[elementId]
     sobject = sObjects[elementId]
     newIndex = sobject.assignedIndex + 1
     tempId = sobject.tempIdPrefix + newIndex
     sobject.assignedIndex = newIndex
-    grid.setCellMeta(selectedCell.row + 1, sobject.idColumnIndex, 'tempId', tempId)
-    
+    #grid.setCellMeta(selectedCell.row + 1, sobject.idColumnIndex, 'tempId', tempId)
+    grid.setCellMeta(rowIndex, sobject.idColumnIndex, 'tempId', tempId)
 
   $("#removeRow").on "click", (e) ->
+    removeRow
+    
+  removeRow = () ->
     elementId = getActiveGridElementId()
     grid = grids[elementId]
     selectedCell = getSelectedCell(grid)
     if !selectedCell || selectedCell.row < 0
       return false
 
+    #sobject = sObjects[elementId]
+    #tempId = grid.getCellMeta(selectedCell.row, sobject.idColumnIndex).tempId
+    #if !tempId
+    #  return false
+    
+    #if sobject.editions[tempId]
+    #  delete sobject.editions[tempId]
+
+    grid.alter('remove_row', selectedCell.row, 1)
+    grid.selectCell(getValidRowAfterRemove(selectedCell, grid), selectedCell.col)
+    
+  onBeforeRemoveRow = (index, amount, physicalRows, source) ->
+    #for row in physicalRows
+    #  rows
+    alert("no")
+    return false
     sobject = sObjects[elementId]
+    grid = grids[elementId]
     tempId = grid.getCellMeta(selectedCell.row, sobject.idColumnIndex).tempId
     if !tempId
       return false
     
     if sobject.editions[tempId]
-      delete sobject.editions[tempId]
-
-    grid.alter('remove_row', selectedCell.row, 1)
-    grid.selectCell(getValidRowAfterRemove(selectedCell, grid), selectedCell.col)    
-
+      delete sobject.editions[tempId]    
+    
   getSelectedCell = (grid) ->
     selectedCells = grid.getSelected()
     
@@ -470,10 +493,12 @@ coordinates = ->
         beforeColumnSort: (currentConfig, newConfig) -> onBeforeSort(currentConfig, newConfig),
         afterChange: (source, changes) -> detectAfterEditOnGrid(source, changes),
         afterOnCellMouseDown: (event, coords, td) -> onCellClick(event, coords, td),
-        beforeRedo: (action) -> onBeforeRedo(action),
-        afterRedo: (action) -> onAfterRedo(action),
-        beforeUndo: (action) -> onBeforeUndo(action),
-        afterUndo: (action) -> onAfterUndo(action)
+        afterCreateRow: (index, amount, source) -> onAfterAddRow(index, amount, source),
+        beforeRemoveRow: (index, amount, physicalRows, source) -> onBeforeRemoveRow(index, amount, physicalRows, source)
+        #beforeRedo: (action) -> onBeforeRedo(action),
+        #afterRedo: (action) -> onAfterRedo(action),
+        #beforeUndo: (action) -> onBeforeUndo(action),
+        #afterUndo: (action) -> onAfterUndo(action)
     }
 
     hot = new Handsontable(hotElement, hotSettings)
@@ -495,13 +520,8 @@ coordinates = ->
       tempId = sobject.tempIdPrefix + newIndex
       sobject.assignedIndex = newIndex
       grid.setCellMeta(action.index, sobject.idColumnIndex, 'tempId', tempId)
-      $(elementId).focus()
-      grid.selectCell(0, 0)
 
-  onBeforeUndo = (action) ->
-    elementId = getActiveGridElementId()
-    console.log($(elementId).is(":focus"))
-    
+  onBeforeUndo = (action) ->    
     if action.actionType == "insert_row"
       elementId = getActiveGridElementId()
       grid = grids[elementId]
