@@ -290,7 +290,7 @@ coordinates = ->
     grid = grids[elementId]
     selectedCell = getSelectedCell(grid)
     if !selectedCell || selectedCell.row < 0
-      return false
+      return
     
     grid.alter('insert_row', selectedCell.row + 1, 1)
     grid.selectCell(selectedCell.row, selectedCell.col)
@@ -306,7 +306,7 @@ coordinates = ->
     grid.setCellMeta(rowIndex, sobject.idColumnIndex, 'tempId', tempId)
 
   $("#removeRow").on "click", (e) ->
-    removeRow
+    removeRow()
     
   removeRow = () ->
     elementId = getActiveGridElementId()
@@ -508,8 +508,6 @@ coordinates = ->
     grids[elementId] = hot
     
   onBeforeRedo = (action) ->
-    elementId = getActiveGridElementId()
-    console.log($(elementId).is(":focus"))
     
   onAfterRedo = (action) ->
     if action.actionType == "insert_row"
