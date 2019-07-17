@@ -295,7 +295,7 @@ coordinates = ->
     grid.alter('insert_row', selectedCell.row + 1, 1)
     grid.selectCell(selectedCell.row, selectedCell.col)
   
-  onAfterAddRow = (rowIndex, amount, source)
+  onAfterAddRow = (rowIndex, amount, source) ->
     elementId = getActiveGridElementId()
     grid = grids[elementId]
     sobject = sObjects[elementId]
