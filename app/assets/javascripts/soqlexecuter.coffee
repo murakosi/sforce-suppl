@@ -162,24 +162,46 @@ coordinates = ->
       return false
 
     hot = grids[elementId]
-    selectedCells = hot.getSelected()
+    #selectedCells = hot.getSelected()
 
-    if selectedCells.length <= 0
+    #if selectedCells.length <= 0
+    #  return false
+    rowRange = getSelectedRowRange(hot)
+    if rowRange == null
       return false
     
     hideMessageArea()
 
     ids = {}
-    for cells in selectedCells
-      id = hot.getDataAtCell(cells[0], sobject.idColumnIndex)
+    for rowIndex in [rowRange.startRow...rowRange.endRow]
+      id = hot.getDataAtCell(rowIndex, sobject.idColumnIndex)
       ids[id] = null
 
+    console.log(Object.keys(ids))
+    return false
+  
     val = {soql_info:sobject.soql_info, ids: Object.keys(ids)}
     action = "/delete"
     method = "post"
     options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
     executeCrud(options)
+  
+  getSelectedRowRange = (grid) ->
+    selectedCells = grid.getSelected()
+    if selectedCells.length <= 0
+      return null
     
+    if selectedCells[2] >= selectedCells[0]
+      {
+        startRow: selectedCells[0],
+        endRow: selectedCells[2]
+      }
+    else
+      {
+        startRow: selectedCells[2],
+        endRow: selectedCells[0]
+      }
+      
   #------------------------------------------------
   # Undelete
   #------------------------------------------------
