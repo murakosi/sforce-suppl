@@ -296,6 +296,7 @@ coordinates = ->
     grid.selectCell(selectedCell.row, selectedCell.col)
   
   onAfterAddRow = (rowIndex, amount, source) ->
+    alert("here")
     elementId = getActiveGridElementId()
     grid = grids[elementId]
     sobject = sObjects[elementId]
