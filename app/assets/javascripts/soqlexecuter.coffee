@@ -296,8 +296,10 @@ coordinates = ->
     grid.selectCell(selectedCell.row, selectedCell.col)
   
   onAfterAddRow = (rowIndex, amount, source) ->
+    
     elementId = getActiveGridElementId()
     grid = grids[elementId]
+    console.log(grid)
     sobject = sObjects[elementId]
     newIndex = sobject.assignedIndex + 1
     tempId = sobject.tempIdPrefix + newIndex
