@@ -191,6 +191,8 @@ coordinates = ->
     if selectedCells.length <= 0
       return null
     
+    selectedCells = selectedCells[0]
+    
     if selectedCells[2] >= selectedCells[0]
       {
         startRow: selectedCells[0],
