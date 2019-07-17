@@ -291,12 +291,12 @@ coordinates = ->
     selectedCell = getSelectedCell(grid)
     if !selectedCell || selectedCell.row < 0
       return
-    
+    alert("do:" + selectedCell.row + 1)
     grid.alter('insert_row', selectedCell.row + 1, 1)
     grid.selectCell(selectedCell.row, selectedCell.col)
   
   onAfterAddRow = (rowIndex, amount, source) ->
-    alert("here")
+    alert("after:" + rowIndex)
     elementId = getActiveGridElementId()
     grid = grids[elementId]
     sobject = sObjects[elementId]
