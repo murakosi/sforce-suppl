@@ -222,7 +222,7 @@ coordinates = ->
   # Edit on grid
   #------------------------------------------------    
   detectAfterEditOnGrid = (source, changes) ->
-
+    console.log(changes)
     if changes == "insert_row"
       onAfterAddRow(source[0][0])
       return
