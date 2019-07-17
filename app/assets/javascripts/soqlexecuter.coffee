@@ -308,7 +308,6 @@ coordinates = ->
   assignTempId = (rowIndex) ->
     elementId = getActiveGridElementId()
     grid = grids[elementId]
-    console.log(grid)
     sobject = sObjects[elementId]
     newIndex = sobject.assignedIndex + 1
     tempId = sobject.tempIdPrefix + newIndex
