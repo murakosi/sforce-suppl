@@ -1,8 +1,6 @@
 coordinates = ->
   
-  selectedTabId = 0
   currentTabIndex = 0
-  currenctCell = null
   grids = {}
   sObjects = {}
   THIS_AREA = "soqlArea"
@@ -10,6 +8,9 @@ coordinates = ->
   defaultDataType = ""
   defaultContentType = null
 
+  #------------------------------------------------
+  # Event on menu change
+  #------------------------------------------------
   $(document).on 'displayChange', (e, param) ->
     if param.targetArea = THIS_AREA
       elementId = getActiveGridElementId()
@@ -48,8 +49,7 @@ coordinates = ->
       tooling = $('#soqlArea #useTooling').is(':checked')
       queryAll = $('#soqlArea #queryAll').is(':checked')
       tabId = $("#soqlArea #tabArea .ui-tabs-panel:visible").attr("tabId");
-    
-    
+        
     if soql == null || soql == 'undefined' || soql == ""
       return false
       
@@ -66,7 +66,10 @@ coordinates = ->
       callbacks = $.getAjaxCallbacks(processQuerySuccess, displayError, null)
 
     $.executeAjax(options, callbacks)
-  
+    
+  #------------------------------------------------
+  # Query callbacks
+  #------------------------------------------------  
   processQuerySuccess = (json) ->
     displayQueryResult(json)
 
@@ -92,17 +95,20 @@ coordinates = ->
                             assignedIndex: 0
                           }
 
-
     createGrid(elementId, json.records)
 
   #------------------------------------------------
-  # Crud
+  # CRUD
   #------------------------------------------------
   executeCrud = (options) ->
+    hideMessageArea()
     callbacks = $.getAjaxCallbacks(processCrudSuccess, processCrudError, null)
     beginCrud()
     $.executeAjax(options, callbacks)  
-
+    
+  #------------------------------------------------
+  # CRUD callbacks
+  #------------------------------------------------
   beginCrud = () ->
     $("#overlay").show()
     
@@ -120,13 +126,13 @@ coordinates = ->
     endCrud()
 
   #------------------------------------------------
-  # Update
+  # Upsert
   #------------------------------------------------
-  $('#soqlArea #saveBtn').on 'click', (e) ->
+  $('#soqlArea #upsertBtn').on 'click', (e) ->
     e.preventDefault()
-    executeUpdate()
+    executeUpsert()
     
-  executeUpdate = () ->
+  executeUpsert = () ->
     if $.isAjaxBusy()
       return false
     
@@ -135,8 +141,6 @@ coordinates = ->
 
     if !sobject || !sobject.editable || $.isEmptyObject(sobject.editions)
       return false
-
-    hideMessageArea()
 
     val = {soql_info:sobject.soql_info, sobject: sobject.sobject_type, records: JSON.stringify(sobject.editions)}
     action = "/update"
@@ -165,8 +169,6 @@ coordinates = ->
     rowRange = getSelectedRowRange(hot)
     if rowRange == null
       return false
-    
-    hideMessageArea()
 
     ids = {}
     for rowIndex in [rowRange.startRow...rowRange.endRow]
@@ -182,14 +184,7 @@ coordinates = ->
   #------------------------------------------------
   # Undelete
   #------------------------------------------------
-  $('#soqlArea #undeleteBtn').on 'click', (e) ->
-    
-    elementId = getActiveGridElementId()
-    hot = grids[elementId]
-    selectedCells = hot.getSelected()
-    console.log(selectedCells)
-    return false
-  
+  $('#soqlArea #undeleteBtn').on 'click', (e) -> 
     e.preventDefault()
     executeUndelete()
     
@@ -208,8 +203,6 @@ coordinates = ->
     rowRange = getSelectedRowRange(hot)
     if rowRange == null
       return false
-    
-    hideMessageArea()
 
     ids = {}
     for rowIndex in [rowRange.startRow...rowRange.endRow]
@@ -240,15 +233,12 @@ coordinates = ->
 
     isRestored = false
     isNewRow = false
-    #tabId = $("#soqlArea #tabArea .ui-tabs-panel:visible").attr("tabId")
-    #"#soqlArea #grid" + tabId
+
     elementId = getActiveGridElementId()    
     grid = grids[elementId]
     sobject = sObjects[elementId]
 
-    fieldName = sobject.columns[columnIndex]
-    #idColumnIndex = sobject.idColumnIndex
-    #id = grid.getDataAtCell(rowIndex, idColumnIndex)    
+    fieldName = sobject.columns[columnIndex]  
     id = getSalesforceId(grid, sobject, rowIndex)
 
     if id.startsWith(sobject.tempIdPrefix)
@@ -266,13 +256,15 @@ coordinates = ->
       sobject.editions[id] = {}
       sobject.editions[id][fieldName] = newValue
     
-    if !isNewRow
-      if isRestored
-        grid.removeCellMeta(rowIndex, columnIndex, 'className')
-      else
-        grid.setCellMeta(rowIndex, columnIndex, 'className', 'changed-cell-border')
+    if isNewRow
+      return
+    
+    if isRestored
+      grid.removeCellMeta(rowIndex, columnIndex, 'className')
+    else
+      grid.setCellMeta(rowIndex, columnIndex, 'className', 'changed-cell-border')
 
-      grid.render()
+    grid.render()
 
   getSalesforceId = (grid, sobject, rowIndex) ->
     idColumnIndex = sobject.idColumnIndex
@@ -284,9 +276,8 @@ coordinates = ->
       id
       
   getSelectedRowRange = (grid) ->
-    selectedCells = grid.getSelected()
-    
-    if selectedCells.length <= 0
+    selectedCells = grid.getSelected()  
+    if selectedCells.length <= 0 || selectedCells[0].length <= 0
       return null
     
     selectedCells = selectedCells[0]
@@ -303,7 +294,7 @@ coordinates = ->
       }
 
   #------------------------------------------------
-  # Grid
+  # Add/Remove row
   #------------------------------------------------
   $("#addRow").on "click", (e) ->
     addRow()
@@ -387,7 +378,10 @@ coordinates = ->
       selectedCell.row = lastRow
     else
       selectedCell.row
-
+      
+  #------------------------------------------------
+  # Active grid
+  #------------------------------------------------
   getActiveGridElementId = () ->
     tabId = $("#soqlArea #tabArea .ui-tabs-panel:visible").attr("tabId")
     "#soqlArea #grid" + tabId
@@ -520,15 +514,10 @@ coordinates = ->
         #colWidths: (i) -> setColWidth(i),
         outsideClickDeselects: false,
         licenseKey: 'non-commercial-and-evaluation',
-        beforeColumnSort: (currentConfig, newConfig) -> onBeforeSort(currentConfig, newConfig),
         afterChange: (source, changes) -> detectAfterEditOnGrid(source, changes),
         afterOnCellMouseDown: (event, coords, td) -> onCellClick(event, coords, td),
         afterCreateRow: (index, amount, source) -> onAfterAddRow(index, amount, source),
         beforeRemoveRow: (index, amount, physicalRows, source) -> onBeforeRemoveRow(index, amount, physicalRows, source)
-        #beforeRedo: (action) -> onBeforeRedo(action),
-        #afterRedo: (action) -> onAfterRedo(action),
-        #beforeUndo: (action) -> onBeforeUndo(action),
-        #afterUndo: (action) -> onAfterUndo(action)
     }
 
     hot = new Handsontable(hotElement, hotSettings)
@@ -536,50 +525,12 @@ coordinates = ->
       hot.render()
 
     grids[elementId] = hot
-    
-  onBeforeRedo = (action) ->
-    
-  onAfterRedo = (action) ->
-    if action.actionType == "insert_row"
-      elementId = getActiveGridElementId()
-      grid = grids[elementId]
-      sobject = sObjects[elementId]
-      newIndex = sobject.assignedIndex + 1
-      tempId = sobject.tempIdPrefix + newIndex
-      sobject.assignedIndex = newIndex
-      grid.setCellMeta(action.index, sobject.idColumnIndex, 'tempId', tempId)
-
-  onBeforeUndo = (action) ->    
-    if action.actionType == "insert_row"
-      elementId = getActiveGridElementId()
-      grid = grids[elementId]
-      sobject = sObjects[elementId]
-      tempId = grid.getCellMeta(action.index, sobject.idColumnIndex).tempId
-      if sobject.editions[tempId]
-        delete sobject.editions[tempId]
-  
-  onAfterUndo = (action) ->
 
   setColWidth = (i) ->
     if i == 0
       30
     else
       200
-  
-  onBeforeSort = (currentConfig, newConfig) ->
-    config = null
-    if currentConfig.length > 0
-      config = currentConfig
-    else
-      config = newConfig
-
-    console.log(config)
-    if config[0].column == 0
-      return false
-
-    console.log(currentConfig)
-    console.log(newConfig)
-    console.log(newConfig[0].column)
   
   getColumns = (json) ->
     if !json
