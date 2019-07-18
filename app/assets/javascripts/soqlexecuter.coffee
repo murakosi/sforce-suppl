@@ -166,16 +166,12 @@ coordinates = ->
       return false
 
     hot = grids[elementId]
-    rowRange = getSelectedRowRange(hot)
-    if rowRange == null
+    ids = getSelectedIds(hot, sobject)
+    
+    if ids.length <= 0
       return false
-
-    ids = {}
-    for rowIndex in [rowRange.startRow...rowRange.endRow]
-      id = hot.getDataAtCell(rowIndex, sobject.idColumnIndex)
-      ids[id] = null
   
-    val = {soql_info:sobject.soql_info, ids: Object.keys(ids)}
+    val = {soql_info:sobject.soql_info, ids: ids}
     action = "/delete"
     method = "post"
     options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
@@ -199,17 +195,12 @@ coordinates = ->
       return false
 
     hot = grids[elementId]
+    ids = getSelectedIds(hot, sobject)
     
-    rowRange = getSelectedRowRange(hot)
-    if rowRange == null
+    if ids.length <= 0
       return false
 
-    ids = {}
-    for rowIndex in [rowRange.startRow...rowRange.endRow]
-      id = hot.getDataAtCell(rowIndex, sobject.idColumnIndex)
-      ids[id] = null
-
-    val = {soql_info:sobject.soql_info, ids: Object.keys(ids)}
+    val = {soql_info:sobject.soql_info, ids: ids}
     action = "/undelete"
     method = "post"
     options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
@@ -275,23 +266,21 @@ coordinates = ->
     else
       id
       
-  getSelectedRowRange = (grid) ->
-    selectedCells = grid.getSelected()  
-    if selectedCells.length <= 0 || selectedCells[0].length <= 0
-      return null
+  getSelectedIds = (grid, sobject) ->
+    rows = {}
+    selectedCells = grid.getSelected()
     
-    selectedCells = selectedCells[0]
+    for range in selectedCells
+      rows[range[0]] = null
+      if range[0] != range[2]
+        rows[range[2]] = null
     
-    if selectedCells[2] >= selectedCells[0]
-      {
-        startRow: selectedCells[0],
-        endRow: selectedCells[2] + 1
-      }
-    else
-      {
-        startRow: selectedCells[2],
-        endRow: selectedCells[0] + 1
-      }
+    ids = []
+    for rowIndex in Object.keys(rows)
+      id = hot.getDataAtCell(rowIndex, sobject.idColumnIndex)
+      ids.push(id)
+     
+    return ids
 
   #------------------------------------------------
   # Add/Remove row
