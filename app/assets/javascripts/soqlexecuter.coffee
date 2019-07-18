@@ -175,6 +175,10 @@ coordinates = ->
       id = hot.getDataAtCell(rowIndex, sobject.idColumnIndex)
       ids[id] = null
   
+    alert(rowRange)
+    alert(Object.keys(ids))
+    return
+  
     val = {soql_info:sobject.soql_info, ids: Object.keys(ids)}
     action = "/delete"
     method = "post"
