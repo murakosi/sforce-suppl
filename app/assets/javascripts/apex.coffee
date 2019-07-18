@@ -39,11 +39,11 @@ coordinates = ->
     if logNames[elementId]
       hotElement =grids[elementId]
       hotElement.getPlugin('exportFile').downloadFile('csv', {
-        bom: false,
+        bom: true,
         columnDelimiter: ',',
         columnHeaders: true,
-        exportHiddenColumns: true,
-        exportHiddenRows: true,
+        exportHiddenColumns: false,
+        exportHiddenRows: false,
         fileExtension: 'csv',
         filename: logNames[elementId],
         mimeType: 'text/csv',
