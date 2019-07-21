@@ -5,12 +5,22 @@ class SoqlexecuterController < ApplicationController
 
   before_action :require_sign_in!
   
-  protect_from_forgery :except => [:query, :update, :delete, :undelete]
+  protect_from_forgery :except => [:query, :update, :delete, :undelete, :parse]
   
   Time_format = "%Y/%m/%d %H:%M:%S"
   TempIdPrefix = "@"
 
   def show
+  end
+
+  def parse
+    begin
+      Soql.parse(params[:soql])
+      render :json => nil, :status => 200
+    rescue StandardError => ex
+      print_error(ex)
+      render :json => {:error => ex.message}, :status => 400
+    end
   end
 
   def query

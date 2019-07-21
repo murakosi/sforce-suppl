@@ -401,12 +401,32 @@ coordinates = ->
   # Rerun SOQL
   #------------------------------------------------
   $('#soqlArea #rerunBtn').on 'click', (e) ->
-    e.preventDefault()
+    if $.isAjaxBusy()
+      return false
+      
+    soql = $('#soqlArea #input_soql').val()
+        
+    if soql == null || soql == 'undefined' || soql == ""
+      return false
+      
+    hideMessageArea()
     
-    elementId = getActiveGridElementId()
+    val = {soql: soql}
+    action = '/parse'
+    method = $('#soqlArea .execute-form').attr('method')
+    options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
+
+    callbacks = $.getAjaxCallbacks(testParse, testParse, null)
+
+    $.executeAjax(options, callbacks)    
+
+  testParse = (json) ->
+    #e.preventDefault()
     
-    if sObjects[elementId]      
-      executeSoql({soql_info:sObjects[elementId].soql_info, afterCrud: false})   
+    #elementId = getActiveGridElementId()
+    
+    #if sObjects[elementId]      
+    #  executeSoql({soql_info:sObjects[elementId].soql_info, afterCrud: false})   
     
   #------------------------------------------------
   # Tab events
