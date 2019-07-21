@@ -75,7 +75,7 @@ module Soql
     }
 
     rule(:query_field){
-      field_expr.as(:field) >> (spaces? >> identifier.as(:alias)).maybe
+      field_expr >> spaces? >> identifier.as(:alias) | field_expr
     }
 
     rule(:field_expr){
@@ -138,7 +138,7 @@ module Soql
     }
 
     rule(:identifier){
-      match('[a-zA-Z][0-9a-zA-Z_]*')
+      match('[a-zA-Z]') >> match('[0-9a-zA-Z_]').repeat(1)
     }
   
 =begin
