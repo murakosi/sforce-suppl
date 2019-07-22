@@ -73,7 +73,7 @@ gem "rack", ">= 2.0.6"
 
 gem "nokogiri", ">= 1.8.5"
 
-getm 'parslet'
+gem 'parslet'
 
 group :production do
   gem 'rails_12factor'
