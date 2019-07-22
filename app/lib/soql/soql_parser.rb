@@ -138,7 +138,7 @@ module Soql
     }
 
     rule(:identifier){
-      match('[a-z]').repeat(1)
+      match('\w').repeat(1)
     }
   
 =begin
