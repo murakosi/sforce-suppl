@@ -416,7 +416,7 @@ coordinates = ->
     method = $('#soqlArea .execute-form').attr('method')
     options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
 
-    callbacks = $.getAjaxCallbacks(testParse, testParse, null)
+    callbacks = $.getAjaxCallbacks(testParse, displayError, null)
 
     $.executeAjax(options, callbacks)    
 
