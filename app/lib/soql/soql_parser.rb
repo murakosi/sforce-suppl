@@ -54,7 +54,7 @@ module Soql
     rule(:comma) { spaces? >> str(',') >> spaces? }
     rule(:digit) { match('[0-9]') }
     rule(:digits) { digit.repeat(1) }
-    rule(:anything){match('.*')}
+    rule(:anything) {match('.').repeat(1)}
 
     rule(:query){
       spaces? >> 
@@ -62,12 +62,12 @@ module Soql
       spaces? >> 
       query_field_list.as(:fields) >>
       spaces? >> 
-      from_clause.as(:object) >>
-      (spaces? >> where_clause).maybe
+      from_clause.as(:object) #>>
+      #(spaces? >> where_clause).maybe
     }
 
     rule(:query_field_list){
-      query_field_list_item >> comma >> query_field_list | query_field_list_item.as(:field)
+      query_field_list_item.as(:fields) >> comma >> query_field_list | query_field_list_item.as(:fields)
     }
 
     rule(:query_field_list_item){
@@ -83,11 +83,11 @@ module Soql
     }
 
     rule(:function_call){
-      identifier.as(:func) >> spaces? >> str(LPAREN) >> spaces? >> (function_arg.repeat).as(:args) >> spaces? >> str(RPAREN)
+      identifier.as(:func) >> spaces? >> str(LPAREN) >> spaces? >> function_arg.as(:args) >> spaces? >> str(RPAREN)
     }
 
     rule(:function_arg){
-      field_reference
+      field_reference.repeat(1)
     }
 
     rule(:field_reference){
@@ -95,15 +95,15 @@ module Soql
     }
 
     rule(:field_path){
-      identifier >> str(DOT) >> field_path | identifier.as(:field)
+      identifier.as(:field) >> str(DOT) >> field_path | identifier.as(:field)
     }
 
     rule(:from_clause){
-      stri(FROM) >> spaces >> object_reference.as(:object) >> (comma >> alias_object_list.as(:alias_objects)).maybe
+      stri(FROM) >> spaces >> object_reference.as(:object) #>> (comma >> alias_object_list.as(:alias_objects)).maybe
     }
  
     rule(:object_reference){
-      object_identifier.as(:name) >> (spaces? >> (stri(AS) >> spaces?).maybe >> identifier).maybe.as(:alias)
+      identifier.as(:name) #>> (spaces? >> (stri(AS) >> spaces?).maybe >> identifier).maybe.as(:alias)
     }
 
     rule(:alias_object_list){
@@ -138,7 +138,7 @@ module Soql
     }
 
     rule(:identifier){
-      match('[a-zA-Z]') >> match('[0-9a-zA-Z_]').repeat(1)
+      match('[0-9a-zA-Z_]').repeat(1)
     }
   
 =begin
