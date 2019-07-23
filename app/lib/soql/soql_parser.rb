@@ -78,7 +78,7 @@ module Soql
 
     rule(:query_field){
       #field_expr >> spaces? >> identifier.as(:alias) | field_expr
-      field_expr >> spaces? >> identifier.maybe
+      field_expr
     }
 
     rule(:field_expr){
@@ -98,7 +98,7 @@ module Soql
     }
 
     rule(:field_path){
-      identifier.as(:field) >> str(DOT) >> field_path | str("id")#identifier.as(:field)
+      identifier.as(:field) >> str(DOT) >> field_path | identifier.as(:field)
     }
 
     rule(:from_clause){
@@ -106,7 +106,7 @@ module Soql
     }
  
     rule(:object_reference){
-      str("table").as(:name)#identifier.as(:name) #>> (spaces? >> (stri(AS) >> spaces?).maybe >> identifier).maybe.as(:alias)
+      identifier.as(:name) #>> (spaces? >> (stri(AS) >> spaces?).maybe >> identifier).maybe.as(:alias)
     }
 
     rule(:alias_object_list){
