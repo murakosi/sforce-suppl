@@ -1,4 +1,5 @@
 require 'json' 
+require 'parslet'
 
 class SoqlexecuterController < ApplicationController
   include Soql::QueryExecuter
