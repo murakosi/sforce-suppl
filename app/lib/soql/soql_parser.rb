@@ -98,7 +98,7 @@ module Soql
     }
 
     rule(:field_path){
-      identifier.as(:field) >> str(DOT) >> field_path | identifier.as(:field)
+      identifier.as(:field) >> str(DOT) >> field_path | str("id")#identifier.as(:field)
     }
 
     rule(:from_clause){
