@@ -75,7 +75,8 @@ module Soql
     }
 
     rule(:query_field){
-      field_expr >> spaces? >> identifier.as(:alias) | field_expr
+      #field_expr >> spaces? >> identifier.as(:alias) | field_expr
+      field_expr >> spaces? >> identifier.maybe
     }
 
     rule(:field_expr){
