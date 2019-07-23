@@ -16,8 +16,8 @@ class SoqlexecuterController < ApplicationController
 
   def parse
     begin
-      Soql.parse(params[:soql])
-      render :json => nil, :status => 200
+      ret = Soql.parse(params[:soql])
+      render :json => {:error => ret}, :status => 200
     rescue StandardError => ex
       print_error(ex)
       render :json => {:error => ex.message}, :status => 400
