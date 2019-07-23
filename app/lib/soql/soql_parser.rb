@@ -62,7 +62,9 @@ module Soql
       spaces? >> 
       query_field_list.as(:fields) >>
       spaces? >> 
-      from_clause.as(:object) #>>
+      from_clause.as(:object) >>
+      spaces?
+      #>>
       #(spaces? >> where_clause).maybe
     }
 
