@@ -17,8 +17,9 @@ class SoqlexecuterController < ApplicationController
     begin
       Soql.parse(params[:soql])
       render :json => nil, :status => 200
-    rescue StandardError => ex
+    rescue Parslet::ParseFailed => ex
       print_error(ex)
+      p ex.cause.ascii_tree
       render :json => {:error => ex.message}, :status => 400
     end
   end
