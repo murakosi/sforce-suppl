@@ -72,7 +72,7 @@ module Soql
     rule(:reserved){
       #exp("('a' 'b'?)").as(:rooter)
       #exp("/abc/i").as(:am)
-      match(%Q{"SELECT|FROM"})
+      match("SELECT")
     }
 
     rule(:query_field_list){
