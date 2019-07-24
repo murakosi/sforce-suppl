@@ -69,7 +69,7 @@ module Soql
     }
     
     rule(:reserved){
-      match("select")
+      exp(%Q("a" "b"?)).as(:rooter)
     }
 
     rule(:query_field_list){
