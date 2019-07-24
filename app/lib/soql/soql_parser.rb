@@ -46,7 +46,7 @@ module Soql
         reduce(:>>)
     end
 
-    root(:reserved)
+    root(:query)
 
     rule(:spaces) { match('\s').repeat(1) }
     rule(:spaces?) { spaces.maybe }
@@ -58,7 +58,8 @@ module Soql
 
     rule(:query){
       spaces? >> 
-      stri(SELECT) >>
+      #stri(SELECT) >>
+      reserved >>
       spaces? >> 
       query_field_list.as(:fields) >>
       spaces? >> 
@@ -70,7 +71,8 @@ module Soql
     
     rule(:reserved){
       #exp("('a' 'b'?)").as(:rooter)
-      exp("/abc/i").as(:am)
+      #exp("/abc/i").as(:am)
+      match("(SELECT|FROM)")
     }
 
     rule(:query_field_list){
