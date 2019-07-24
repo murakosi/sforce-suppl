@@ -69,7 +69,7 @@ module Soql
     }
     
     rule(:reserved){
-      match(%Q{"select"i})
+      match("select")
     }
 
     rule(:query_field_list){
