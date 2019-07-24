@@ -70,7 +70,7 @@ module Soql
     }
     
     rule(:reserved){
-      exp('^(SELECT|FROM|AS|USING|WHERE|AND|OR|NOT|GROUP|BY|ORDER|LIMIT|OFFSET|FOR|TRUE|FALSE|NULL)$i')
+      exp('(SELECT|FROM|AS|USING|WHERE|AND|OR|NOT|GROUP|BY|ORDER|LIMIT|OFFSET|FOR|TRUE|FALSE|NULL)i')
     }
 
     rule(:query_field_list){
