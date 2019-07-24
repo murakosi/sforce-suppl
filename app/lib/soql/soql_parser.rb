@@ -70,7 +70,7 @@ module Soql
     
     rule(:reserved){
       #exp("('a' 'b'?)").as(:rooter)
-      exp("'select'i").as(:am)
+      exp("/abc/i").as(:am)
     }
 
     rule(:query_field_list){
