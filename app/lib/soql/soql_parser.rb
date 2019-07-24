@@ -58,7 +58,8 @@ module Soql
 
     rule(:query){
       spaces? >> 
-      stri(SELECT) >>
+      #stri(SELECT) >>
+      reserved >>
       spaces? >> 
       query_field_list.as(:fields) >>
       spaces? >> 
@@ -66,6 +67,10 @@ module Soql
       spaces?
       #>>
       #(spaces? >> where_clause).maybe
+    }
+    
+    rule(:reserved){
+      exp('/^(SELECT|FROM|AS|USING|WHERE|AND|OR|NOT|GROUP|BY|ORDER|LIMIT|OFFSET|FOR|TRUE|FALSE|NULL)$/i')
     }
 
     rule(:query_field_list){
