@@ -70,7 +70,7 @@ module Soql
     }
     
     rule(:reserved){
-      exp(%Q{"SELECT"i})
+      exp("select")
     }
 
     rule(:query_field_list){
