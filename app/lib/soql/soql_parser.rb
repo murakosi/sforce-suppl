@@ -57,7 +57,7 @@ module Soql
     rule(:anything) {match('.').repeat(1)}
 
     rule(:query){
-      spaces? >> 
+      #spaces? >> 
       #stri(SELECT) >>
       reserved >>
       spaces? >> 
