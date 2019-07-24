@@ -148,7 +148,7 @@ module Soql
     }
 
     rule(:identifier){
-      !str("id") && match('\w').repeat(1)
+      match('\w').repeat(1)
     }
   
 =begin
