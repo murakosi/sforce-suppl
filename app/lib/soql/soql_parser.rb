@@ -72,7 +72,7 @@ module Soql
     rule(:reserved){
       #exp("('a' 'b'?)").as(:rooter)
       #exp("/abc/i").as(:am)
-      exp("('SELECT'i / 'FROM'i)")
+      stri(SELECT) | stri(FROM)
     }
 
     rule(:query_field_list){
