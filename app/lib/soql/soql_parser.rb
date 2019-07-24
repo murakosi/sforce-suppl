@@ -7,7 +7,7 @@ module Soql
     parser = Parser.new
     #transformer = Transformer.new
 
-    p tree = parser.parse(soql)
+    p tree = parser.parse(soql.upcase)
     #puts; p tree; puts
     #out = transformer.apply(tree)
 
@@ -72,7 +72,7 @@ module Soql
     rule(:reserved){
       #exp("('a' 'b'?)").as(:rooter)
       #exp("/abc/i").as(:am)
-      match("(SELECT|FROM)")
+      match(%Q{"SELECT|FROM"})
     }
 
     rule(:query_field_list){
