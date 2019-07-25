@@ -148,7 +148,7 @@ module Soql
     }
 
     rule(:identifier){
-      reserved.absent? >> match('\w').repeat(1)
+      reserved.absent? >> match('[a-zA-Z][0-9a-zA-Z_]').repeat(1)
     }
   
 =begin
