@@ -58,7 +58,7 @@ module Soql
     }
 
     rule(:query_field_list){
-      query_field_list_item.as(:a) >> comma.as(:com) >> query_field_list.as(:b) | query_field_list_item.as(:c)
+      query_field_list_item >> comma >> query_field_list | query_field_list_item
     }
 
     rule(:query_field_list_item){
