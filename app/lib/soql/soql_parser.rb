@@ -58,7 +58,7 @@ module Soql
     }
 
     rule(:query_field_list){
-      query_field_list_item >> comma.as(:com) >> query_field_list | query_field_list_item
+      query_field_list_item.as(:a) >> comma.as(:com) >> query_field_list.as(:b) | query_field_list_item.as(:c)
     }
 
     rule(:query_field_list_item){
@@ -83,10 +83,6 @@ module Soql
     }
 
     rule(:field_reference){
-      field_path.as(:path)
-    }
-
-    rule(:field_path){
       identifier.as(:field) >> str(DOT) >> field_path | identifier.as(:field)
     }
 
