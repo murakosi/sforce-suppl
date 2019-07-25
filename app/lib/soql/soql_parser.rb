@@ -58,8 +58,7 @@ module Soql
 
     rule(:query){
       spaces? >> 
-      #stri(SELECT) >>
-      reserved >>
+      stri(SELECT) >>
       spaces? >> 
       query_field_list.as(:fields) >>
       spaces? >> 
@@ -70,9 +69,10 @@ module Soql
     }
     
     rule(:reserved){
-      #exp("('a' 'b'?)").as(:rooter)
-      #exp("/abc/i").as(:am)
-      stri(SELECT) | stri(FROM)
+      stri(SELECT) | stri(FROM) | stri(AS) | stri(USING) | 
+      stri(WHERE) | stri(AND) | stri(OR) | stri(NOT) | stri(GROUP) | 
+      stri(BY) | stri(ORDER) | stri(LIMIT) | stri(OFFSET) | stri(FOR) | 
+      stri(TRUE) | stri(FALSE) | stri(NULL)
     }
 
     rule(:query_field_list){
@@ -84,8 +84,8 @@ module Soql
     }
 
     rule(:query_field){
-      #field_expr >> spaces? >> identifier.as(:alias) | field_expr
-      field_expr
+      field_expr >> spaces? >> identifier.as(:alias) | field_expr
+      #field_expr
     }
 
     rule(:field_expr){
@@ -148,7 +148,7 @@ module Soql
     }
 
     rule(:identifier){
-      match('\w').repeat(1)
+      reserved.absent? >> match('\w').repeat(1)
     }
   
 =begin
