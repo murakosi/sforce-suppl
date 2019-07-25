@@ -42,7 +42,7 @@ module Soql
       spaces? >> 
       stri(SELECT) >>
       spaces? >> 
-      query_field_list.as(:fields) >>
+      query_field_list.repeat(1).as(:fields) >>
       spaces? >> 
       from_clause.as(:object) >>
       spaces?
