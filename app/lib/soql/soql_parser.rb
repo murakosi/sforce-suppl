@@ -58,7 +58,7 @@ module Soql
     }
 
     rule(:query_field_list){
-      query_field_list_item >> comma >> query_field_list | query_field_list_item
+      query_field_list_item >> comma.as(:com) >> query_field_list | query_field_list_item
     }
 
     rule(:query_field_list_item){
@@ -91,11 +91,11 @@ module Soql
     }
 
     rule(:from_clause){
-      stri(FROM) >> spaces >> object_reference.as(:object) #>> (comma >> alias_object_list.as(:alias_objects)).maybe
+      stri(FROM) >> spaces >> object_reference #>> (comma >> alias_object_list.as(:alias_objects)).maybe
     }
  
     rule(:object_reference){
-      identifier.as(:name) #>> (spaces? >> (stri(AS) >> spaces?).maybe >> identifier).maybe.as(:alias)
+      identifier.as(:object_name) #>> (spaces? >> (stri(AS) >> spaces?).maybe >> identifier).maybe.as(:alias)
     }
 
     rule(:alias_object_list){
