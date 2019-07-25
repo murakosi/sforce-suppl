@@ -15,24 +15,6 @@ module Soql
   end
 
   class Parser < Parslet::Parser
-
-    def assign()
-        #return Object.assign.apply(null, arguments);
-    end
-
-    def createLogicalConditionTree(operator, head, tail)
-#        result = head
-#        for (var i = 0; i < tail.length; i++) {
-#          result = {
-#            type: 'LogicalCondition',
-#            operator: operator,
-#            left: result,
-#            right: tail[i],
-#          };
-#        }
-#        return result;
-#      }
-    end
     
     def is_reserved(word)
         #return /^(SELECT|FROM|AS|USING|WHERE|AND|OR|NOT|GROUP|BY|ORDER|LIMIT|OFFSET|FOR|TRUE|FALSE|NULL)$/i.test(word);
@@ -76,7 +58,7 @@ module Soql
     }
 
     rule(:query_field_list){
-      query_field_list_item.as(:fields) >> comma >> query_field_list | query_field_list_item.as(:fields)
+      query_field_list_item >> comma >> query_field_list | query_field_list_item
     }
 
     rule(:query_field_list_item){
