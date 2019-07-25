@@ -83,7 +83,7 @@ module Soql
     }
 
     rule(:field_reference){
-      identifier.as(:field) >> str(DOT) >> field_path | identifier.as(:field)
+      identifier.as(:field) >> str(DOT) >> field_reference | identifier.as(:field)
     }
 
     rule(:from_clause){
