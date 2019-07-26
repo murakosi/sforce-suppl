@@ -1,5 +1,4 @@
 require 'json' 
-require 'parslet'
 
 class SoqlexecuterController < ApplicationController
   include Soql::QueryExecuter
@@ -16,7 +15,7 @@ class SoqlexecuterController < ApplicationController
 
   def parse
     begin
-      ret = Soql.parse(params[:soql])
+      ret = Soql::SoqlParser.parse(params[:soql])
       render :json => {:error => ret.to_s}, :status => 200
     rescue StandardError => ex
       print_error(ex)

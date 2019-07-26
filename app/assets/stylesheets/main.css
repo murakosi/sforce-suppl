@@ -159,10 +159,10 @@ button:disabled {
 }
 
 #messageArea{
-    width: 50%;
+    width: 100%;
     display: none;
     color: red;
-    white-space: pre;
+    white-space: pre-wrap;
 }
 
 #tabArea{
