@@ -97,6 +97,11 @@ coordinates = ->
 
     createGrid(elementId, json.records)
 
+    if json.records.size <= 0
+      grid = grids[elementId]
+      grid.getPlugin('AutoColumnSize').recalculateAllColumnsWidth()
+      grid.render()
+
   #------------------------------------------------
   # CRUD
   #------------------------------------------------
@@ -290,6 +295,9 @@ coordinates = ->
     
   addRow = () ->
     elementId = getActiveGridElementId()
+    if !sObjects[elementId].editable
+      return
+
     grid = grids[elementId]
     selectedCell = getSelectedCell(grid)
     if !selectedCell || selectedCell.row < 0
@@ -318,6 +326,9 @@ coordinates = ->
     
   removeRow = () ->
     elementId = getActiveGridElementId()
+    if !sObjects[elementId].editable
+      return
+
     grid = grids[elementId]
     selectedCell = getSelectedCell(grid)
     if !selectedCell || selectedCell.row < 0
@@ -352,6 +363,9 @@ coordinates = ->
     
   getSelectedCell = (grid) ->
     selectedCells = grid.getSelected()
+
+    if !selectedCells
+      return {row:0,col:0}
     
     if selectedCells.length > 0 && selectedCells[0].length > 0
       {
@@ -505,7 +519,7 @@ coordinates = ->
     hotSettings = {
         data: records,
         height: height,
-        #stretchH: 'all',
+        #stretchH: stretch,
         autoWrapRow: true,
         allowRemoveColumn: false,
         manualRowResize: false,

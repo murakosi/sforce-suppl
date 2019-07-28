@@ -14,10 +14,20 @@ coordinates = ->
   # Shortcut keys
   #------------------------------------------------
   $(window).on 'keydown', (e) ->
-    if e.ctrlKey && e.key == 'r'
+    if e.ctrlKey && (e.key == 'r' || e.keyCode == 13)
       e.preventDefault()
       if e.target.id == "apex_code"
         executeAnonymous()
+
+    if e.keyCode is 9
+      e.preventDefault()
+      elem = e.target
+      start = elem.selectionStart
+      end = elem.selectionEnd
+      value = elem.value
+      elem.value = "#{value.substring 0, start}\t#{value.substring end}"
+      elem.selectionStart = elem.selectionEnd = start + 1
+      false
 
   #------------------------------------------------
   # Debug options

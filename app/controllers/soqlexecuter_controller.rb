@@ -1,7 +1,7 @@
 require 'json' 
 
 class SoqlexecuterController < ApplicationController
-  include Soql::QueryExecuter
+  #include Soql::QueryExecuter
 
   before_action :require_sign_in!
   
@@ -41,7 +41,7 @@ class SoqlexecuterController < ApplicationController
 
   def execute_soql(soql, tooling, query_all, tab_id)
     begin
-      query_result = execute_query(sforce_session, soql, tooling, query_all)
+      query_result = Soql::QueryExecuter.execute_query(sforce_session, soql, tooling, query_all)
       render :json => response_json(soql, tooling, query_all, tab_id, query_result), :status => 200
     rescue StandardError => ex
       print_error(ex)
@@ -50,30 +50,55 @@ class SoqlexecuterController < ApplicationController
   end
 
   def response_json(soql, tooling, query_all, tab_id, query_result)
+    if query_result[:records].size > 0
+      normal_response(soql, tooling, query_all, tab_id, query_result)
+    else
+      not_found_response(soql, tooling, query_all, tab_id, query_result)
+    end
+  end
+
+  def normal_response(soql, tooling, query_all, tab_id, query_result)
     rows = query_result[:records].map{ |hash| hash.values}
     id_column_index = query_result[:id_column_index]
     row_hash = {}
-    if id_column_index.present?      
+    if id_column_index.present?
       query_result[:records].each{ |hash| row_hash.merge!({hash.values[id_column_index] => hash.values}) }
     end
 
     {
-      :soql_info => soql_info(soql, tooling, query_all, tab_id),
+      :soql_info => soql_info(query_result[:soql], query_result[:record_count], tooling, query_all, tab_id),
       :sobject => query_result[:sobject],
       :records => {
-                  :columns => query_result[:records].first.keys,
+                  :columns => query_result[:columns],
                   :rows => rows,
                   :initial_rows => row_hash,
                   :column_options => query_result[:column_options],
-                  :id_column_index => query_result[:id_column_index]
+                  :id_column_index => id_column_index,
+                  :size => query_result[:record_count]
                   },
       :tempIdPrefix => TempIdPrefix
     }
   end
 
-  def soql_info(soql, tooling, query_all, tab_id)
+  def not_found_response(soql, tooling, query_all, tab_id, query_result)
     {
-      :timestamp => " @" + Time.now.strftime(Time_format) + "\r\n",
+      :soql_info => soql_info(query_result[:soql], query_result[:record_count], tooling, query_all, tab_id),
+      :sobject => query_result[:sobject],
+      :records => {
+                  :columns => query_result[:columns],
+                  :rows => query_result[:records],
+                  :initial_rows => {},
+                  :column_options => query_result[:column_options],
+                  :id_column_index => query_result[:id_column_index],
+                  :size => query_result[:record_count]
+                  },
+      :tempIdPrefix => TempIdPrefix
+    }
+  end
+
+  def soql_info(soql, record_count, tooling, query_all, tab_id)
+    {
+      :timestamp => " @" + Time.now.strftime(Time_format) + " - " + record_count + " rows \r\n",
       :soql => soql,
       :tooling => tooling,
       :query_all => query_all,
@@ -89,23 +114,17 @@ class SoqlexecuterController < ApplicationController
       return
     end
 
-    inserts = {}
-    updates = {}
     upserts = []
     sobject_records.each do |k,v|
       if k.starts_with?(TempIdPrefix)
-        upserts << v#{"Id" => nil}.merge!(v)
+        upserts << v
       else
         updates = {"Id" => k}.merge!(v)
         upserts << updates
-        #upserts.merge!({k => v})
       end
     end
     
     begin
-      #execute_update(sobject, updates)
-      #execute_insert(sobject, inserts)
-      p upserts
       execute_upsert(sobject, upserts)
       render :json => {:done => true, :soql_info => soql_info}, :status => 200
     rescue StandardError => ex

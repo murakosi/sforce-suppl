@@ -1,19 +1,23 @@
 require "json"
 
 module Soql
-    module QueryExecuter
-        
+
+    class QueryExecuter
+    class << self
+
         Exclude_key_names = ["@xsi:type", "type"]
         Records = "records"
         Type = "type"
         Id = "ID"
-        From_with_space = " from "
-        Select_with_space = "select "
-        Select = "select"
-        Where_with_space = " where "        
+        #From_with_space = " from "
+        #Select_with_space = "select "
+        #Select = "select"
+        #Where_with_space = " where "
+
+        attr_reader :query_result
 
         def execute_query(sforce_session, soql, tooling, query_all)
-            if soql.strip.end_with?(";")
+            if soql.strip.include?(";")
                 soql.delete!(";");
             end
             
@@ -29,39 +33,37 @@ module Soql
                 end
             end
 
-            #if query_result.nil? || query_result.blank? || !query_result.has_key?(Records)
-            #    raise StandardError.new("No matched records found")
-            #end
+            get_parsed_query_result(soql, query_result)
+        end
 
-            if query_result.nil? || query_result.blank? || !query_result.has_key?(Records)
-                raise StandardError.new("No matched records found")
-            else
-                @sobject_type = nil
-                @query_fields = {}
-                parse_query_fields(soql)
-                @check_keys = @query_fields.keys
-                id_column_index = @query_fields.keys.index(Id)
-
-                records = parse_query_result(query_result).map{|hash| hash.slice(*@query_fields.keys)}
-
-                {
-                    :sobject => @sobject_type,
-                    :records => records,
-                    :column_options => generate_column_options,
-                    :id_column_index => id_column_index
-                }
-            end
-=begin                
+        def get_parsed_query_result(soql, query_result)
             @sobject_type = nil
             @query_fields = {}
-            parse_query_fields(soql)
-            @check_keys = @query_fields.keys
-            id_column_index = @query_fields.keys.index(Id)
+            parse_soql(soql)
+            @query_keys = @query_fields.keys
+            @executed_soql = soql.gsub(/(\r|\n|\r\n)/mi, ' ')
+            @record_count = query_result["size"]
+            records = []
 
-            records = parse_query_result(query_result).map{|hash| hash.slice(*@query_fields.keys)}
+            if query_result.nil? || query_result.blank? || !query_result.has_key?(Records)
+                @query_result = get_response_hash(records)
+            else
+                records = parse_query_result(query_result).map{|hash| hash.slice(*@query_keys)}
+                @query_result = get_response_hash(records)
+            end
+  
+        end
 
-            {:sobject => @sobject_type, :records => records, :column_options => generate_column_options, :id_column_index => id_column_index}
-=end            
+        def get_response_hash(records)
+            {
+                :soql => @executed_soql,
+                :sobject => @sobject_type,
+                :records => records,
+                :record_count => @record_count,
+                :columns => @query_keys,
+                :column_options => generate_column_options,
+                :id_column_index => @query_keys.index(Id)
+            }            
         end
  
         def parse_query_result(query_result)
@@ -74,18 +76,12 @@ module Soql
                 results = [results]
             end
 
-            results.each do |result|                
+            results.each do |result|
 
-                if @sobject_type.nil? && result.has_key?(Type)
-                    @sobject_type = result[Type]
-                end
-                
-                #record = {"newRow" => false}
                 record = {}
-
-                field_count = 1
                 
                 extract(result).each do |k,v|
+
                     if is_reference?(k, v)
                         record.merge!(resolve_reference(k, v))
                     elsif is_child?(v)
@@ -93,18 +89,24 @@ module Soql
                     else
                         if @query_fields.has_key?(k.to_s.upcase)
                             record.merge!(get_hash(k, v))
-                        else
-                            record.merge!(get_hash(@query_fields.keys[field_count], nil))
                         end
                     end
                     
-                    field_count += 1
                 end
+
+                @query_keys.each do | key |
+                    if !record.has_key?(key)
+                        record.merge!( {key => nil} )
+                    end
+                end
+
                 records << record
+
             end
 
             records
         end
+
         
         def is_reference?(key, value)
             if is_child?(value)
@@ -130,14 +132,14 @@ module Soql
             end
 
             @reference = {}
-            resolve_ref_deep(key, extract(value))
+            resolve_deep_reference(key, extract(value))
             @reference
         end
 
-        def resolve_ref_deep(key, value)
+        def resolve_deep_reference(key, value)
             value.each do | k, v|
                 if v.is_a?(Hash)
-                    resolve_ref_deep(key.to_s + "." + k.to_s, extract(v))
+                    resolve_deep_reference(key.to_s + "." + k.to_s, extract(v))
                 else
                     @reference.merge!(get_hash(key.to_s + "." + k.to_s, v))
                 end
@@ -153,7 +155,6 @@ module Soql
             	child_records << @children
             end
             
-            #child_records = Array[records].flatten.map{|record| extract(record)}
             get_hash(key, JSON.generate(child_records))
         end
 
@@ -206,9 +207,29 @@ module Soql
             end
         end
 
+
+        def parse_soql(soql)
+            parse_result = Soql::SoqlParser.parse(soql)
+
+            parse_result[:fields].each do |field|
+                if field.has_key?(:sub_query)
+                    sub_query = field[:sub_query]
+                    @query_fields[sub_query[:object_name]] = :children
+                else
+                    field_name = field[:name]
+                    if field_name == Id
+                        @query_fields[field_name] = :id
+                    elsif field_name.include?(".")
+                        @query_fields[field_name] = :reference
+                    else
+                        @query_fields[field_name] = :text
+                    end
+                end
+            end
+        end
+=begin
         def parse_query_fields(soql)
 
-            #chekc_key_string = soql[/#{start_markerstring}(.*?)#{end_markerstring}/mi, 1].gsub(/\s+/, '').strip
             fields = []
             soql = soql.gsub(/(\r|\n|\r\n)/mi, ' ')
 
@@ -228,7 +249,6 @@ module Soql
 
             upcase_soql = soql.upcase
 
-            #@check_keys.flatten!.sort! {|a, b| upcase_soql.index(a) <=> upcase_soql.index(b) }
             field_type_array = @query_fields.sort{|(k1, v1), (k2, v2)| upcase_soql.index(k1) <=> upcase_soql.index(k2) }
             @query_fields = Hash[*field_type_array.flatten(1)]
         end
@@ -246,9 +266,8 @@ module Soql
             end
             
         end
-        
+=end        
         def generate_column_options
-            #column_options = [{:type => "checkbox", :readOnly => false, :className => "htCenter htMiddle"}]
             column_options = []
             updatable = @query_fields.has_key?(Id)
 
@@ -265,5 +284,5 @@ module Soql
             column_options
         end
     end
-
+    end
 end
