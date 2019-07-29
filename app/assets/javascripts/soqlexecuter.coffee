@@ -484,6 +484,7 @@ coordinates = ->
     soqlArea += '<button name=\"button\" type=\"button\" class=\"remove-row btn btn-xxs btn-default\">Remove row</button>'
     soqlArea += '<button name=\"button\" type=\"button\" class=\"rerun btn btn-xxs btn-default\">Rerun</button>'
     soqlArea += '</div>'
+    console.log(soqlArea)
     
     $("#soqlArea #tabArea").append(
       "<div id=\"tab" + newTabId + "\" class=\"resultTab\" tabId=\"" + newTabId + "\">" +
@@ -491,6 +492,7 @@ coordinates = ->
       "<div id=\"grid" + newTabId + "\" class=\"resultGrid\" tabId=\"" + newTabId + "\"></div>" +
       "</div>"
     )
+    console.log($("#soqlArea #tabArea").html())
     
     createGrid("#soqlArea #grid" + newTabId)
     
