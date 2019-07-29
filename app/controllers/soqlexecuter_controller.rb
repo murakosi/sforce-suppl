@@ -88,7 +88,7 @@ class SoqlexecuterController < ApplicationController
 
   def soql_info(soql, record_count, tooling, query_all, tab_id)
     {
-      :timestamp => record_count + " rows @" + Time.now.strftime(Time_format) +  \r\n",
+      :timestamp => record_count + " rows @" + Time.now.strftime(Time_format) +  "\r\n",
       :soql => soql,
       :tooling => tooling,
       :query_all => query_all,
