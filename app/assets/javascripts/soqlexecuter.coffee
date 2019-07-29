@@ -417,30 +417,13 @@ coordinates = ->
   $('#soqlArea #rerunBtn').on 'click', (e) ->
     if $.isAjaxBusy()
       return false
-      
-    soql = $('#soqlArea #input_soql').val()
-        
-    if soql == null || soql == 'undefined' || soql == ""
-      return false
-      
-    hideMessageArea()
-    
-    val = {soql: soql}
-    action = '/parse'
-    method = $('#soqlArea .execute-form').attr('method')
-    options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
 
-    callbacks = $.getAjaxCallbacks(displayError, displayError, null)
-
-    $.executeAjax(options, callbacks)    
-
-  testParse = (json) ->
-    #e.preventDefault()
+    e.preventDefault()
     
-    #elementId = getActiveGridElementId()
+    elementId = getActiveGridElementId()
     
-    #if sObjects[elementId]      
-    #  executeSoql({soql_info:sObjects[elementId].soql_info, afterCrud: false})   
+    if sObjects[elementId]      
+      executeSoql({soql_info:sObjects[elementId].soql_info, afterCrud: false})   
     
   #------------------------------------------------
   # Tab events
