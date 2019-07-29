@@ -5,24 +5,14 @@ class SoqlexecuterController < ApplicationController
 
   before_action :require_sign_in!
   
-  protect_from_forgery :except => [:query, :update, :delete, :undelete, :parse]
+  protect_from_forgery :except => [:query, :update, :delete, :undelete]
   
   Time_format = "%Y/%m/%d %H:%M:%S"
   TempIdPrefix = "@"
 
   def show
   end
-
-  def parse
-    begin
-      ret = Soql::SoqlParser.parse(params[:soql])
-      render :json => {:error => ret.to_s}, :status => 200
-    rescue StandardError => ex
-      print_error(ex)
-      render :json => {:error => ex.message}, :status => 400
-    end
-  end
-
+  
   def query
     execute_soql(params[:soql], params[:tooling], params[:query_all], params[:tab_id])
   end
@@ -98,7 +88,7 @@ class SoqlexecuterController < ApplicationController
 
   def soql_info(soql, record_count, tooling, query_all, tab_id)
     {
-      :timestamp => " @" + Time.now.strftime(Time_format) + " - " + record_count + " rows \r\n",
+      :timestamp => record_count + " rows @" + Time.now.strftime(Time_format) +  \r\n",
       :soql => soql,
       :tooling => tooling,
       :query_all => query_all,
