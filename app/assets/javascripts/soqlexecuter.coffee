@@ -8,7 +8,7 @@ coordinates = ->
   defaultDataType = ""
   defaultContentType = null
 
-  $('#soqlArea .add-row').on 'click', 'button', (e) ->
+  $('#soqlArea').on 'click', ' .add-row', (e) ->
     alert(111)
   #------------------------------------------------
   # Event on menu change
