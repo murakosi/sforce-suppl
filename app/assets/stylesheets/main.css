@@ -212,6 +212,10 @@ span.select2-selection.select2-selection--single {
     font-size: 12px !important;
 }
 
+.btn-xxs{
+    font-size: 8pt !important;
+}
+
 .btn-info{
     font-size: 8pt !important;
     font-family:Arial;
