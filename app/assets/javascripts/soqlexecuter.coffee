@@ -478,11 +478,14 @@ coordinates = ->
       "</li>"
     )
 
-    soqlArea = '<div id="soql' + newTabId + '" class="resultSoql" tabId="' + newTabId + '">'
-    soqlArea += '<button name="showQueryBtn" type="button" class="show-query btn btn-xxs btn-default">Query</button>'
-    soqlArea += '<button name="insRowBtn" type="button" class="add-row btn btn-xxs btn-default">Insert row</button>'
-    soqlArea += '<button name="remRowBtn" type="button" class="remove-row btn btn-xxs btn-default">Remove row</button>'
-    soqlArea += '<button name="rerunBtn" type="button" class="rerun btn btn-xxs btn-default">Rerun</button>'
+    soqlArea = '<div class="resultSoql" tabId="' + newTabId + '">'
+    soqlArea += '<div id="soql' + newTabId + '">'
+    soqlArea += '<div id="soql-info' + newTabId + '"></div>'
+    soqlArea += '<button name="showQueryBtn" type="button" class="show-query btn btn-xs btn-default in-btn">Query</button>'
+    soqlArea += '<button name="insRowBtn" type="button" class="add-row btn btn-xs btn-default in-btn">Insert row</button>'
+    soqlArea += '<button name="remRowBtn" type="button" class="remove-row btn btn-xs btn-default in-btn">Remove row</button>'
+    soqlArea += '<button name="rerunBtn" type="button" class="rerun btn btn-xs btn-default in-btn">Rerun</button>'
+    soqlArea += '</div>'
     soqlArea += '</div>'
     
     $("#soqlArea #tabArea").append(
