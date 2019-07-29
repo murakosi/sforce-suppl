@@ -79,8 +79,9 @@ coordinates = ->
 
   displayQueryResult = (json) ->
     selectedTabId = json.soql_info.tab_id
-    $("#soqlArea #soql" + selectedTabId).html(json.soql_info.timestamp + json.soql_info.soql)
-    $("#soqlArea #tab" + selectedTabId).attr("soql", json.soql_info.soql)
+    #$("#soqlArea #soql" + selectedTabId).html(json.soql_info.timestamp + json.soql_info.soql)
+    #$("#soqlArea #tab" + selectedTabId).attr("soql", json.soql_info.soql)
+    $("#soqlArea #soql" + selectedTabId).html(json.soql_info.timestamp)
     elementId = "#soqlArea #grid" + selectedTabId
 
     sObjects[elementId] = {
@@ -290,7 +291,7 @@ coordinates = ->
   #------------------------------------------------
   # Add/Remove row
   #------------------------------------------------
-  $("#addRow").on "click", (e) ->
+  $("#soqlArea .add-row").on "click", (e) ->
     addRow()
     
   addRow = () ->
@@ -321,7 +322,7 @@ coordinates = ->
     #grid.setCellMeta(selectedCell.row + 1, sobject.idColumnIndex, 'tempId', tempId)
     grid.setCellMeta(rowIndex, sobject.idColumnIndex, 'tempId', tempId)
 
-  $("#removeRow").on "click", (e) ->
+  $("#soqlArea .remove-row").on "click", (e) ->
     removeRow()
     
   removeRow = () ->
@@ -414,7 +415,7 @@ coordinates = ->
   #------------------------------------------------
   # Rerun SOQL
   #------------------------------------------------
-  $('#soqlArea #rerunBtn').on 'click', (e) ->
+  $('#soqlArea .rerun').on 'click', (e) ->
     if $.isAjaxBusy()
       return false
 
@@ -423,8 +424,22 @@ coordinates = ->
     elementId = getActiveGridElementId()
     
     if sObjects[elementId]      
-      executeSoql({soql_info:sObjects[elementId].soql_info, afterCrud: false})   
+      executeSoql({soql_info:sObjects[elementId].soql_info, afterCrud: false})
+      
+  #------------------------------------------------
+  # Show Query
+  #------------------------------------------------
+  $('#soqlArea .show-query').on 'click', (e) ->
+    if $.isAjaxBusy()
+      return false
+
+    e.preventDefault()
     
+    elementId = getActiveGridElementId()
+    
+    if sObjects[elementId]      
+      executeSoql({soql_info.soql  
+      
   #------------------------------------------------
   # Tab events
   #------------------------------------------------
@@ -463,9 +478,17 @@ coordinates = ->
       "</li>"
     )
 
+    soqlArea = '<div id=\"soql' + newTabId + '\" class=\"resultSoql\" tabId=\"' + newTabId + '\">'
+    soqlArea += '<button name="button" type="button" class="show-query btn btn-xxs btn-default">Query</button>'
+    soqlArea += '<button name="button" type="button" class="add-row btn btn-xxs btn-default">Insert row</button>'
+    soqlArea += '<button name="button" type="button" class="remove-row btn btn-xxs btn-default">Remove row</button>'
+    soqlArea += '<button name="button" type="button" class="rerun btn btn-xxs btn-default">Rerun</button>'
+    soqlArea += '</div>'
+    
     $("#soqlArea #tabArea").append(
       "<div id=\"tab" + newTabId + "\" class=\"resultTab\" tabId=\"" + newTabId + "\">" +
-      "<div id=\"soql" + newTabId + "\" class=\"resultSoql\" tabId=\"" + newTabId + "\"></div>" +
+      #"<div id=\"soql" + newTabId + "\" class=\"resultSoql\" tabId=\"" + newTabId + "\"></div>" +
+      soqlArea + 
       "<div id=\"grid" + newTabId + "\" class=\"resultGrid\" tabId=\"" + newTabId + "\"></div>" +
       "</div>"
     )
