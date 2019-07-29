@@ -8,8 +8,6 @@ coordinates = ->
   defaultDataType = ""
   defaultContentType = null
 
-  $('#soqlArea').on 'click', ' .add-row', (e) ->
-    alert(111)
   #------------------------------------------------
   # Event on menu change
   #------------------------------------------------
@@ -293,7 +291,7 @@ coordinates = ->
   #------------------------------------------------
   # Add/Remove row
   #------------------------------------------------
-  $("#soqlArea button.add-row").on "click", (e) ->
+  $('#soqlArea').on 'click', ' .add-row', (e) ->
     addRow()
     
   addRow = () ->
@@ -324,7 +322,7 @@ coordinates = ->
     #grid.setCellMeta(selectedCell.row + 1, sobject.idColumnIndex, 'tempId', tempId)
     grid.setCellMeta(rowIndex, sobject.idColumnIndex, 'tempId', tempId)
 
-  $("#soqlArea .remove-row").on "click", (e) ->
+  $('#soqlArea').on 'click', ' .remove-row', (e) ->
     removeRow()
     
   removeRow = () ->
@@ -417,7 +415,7 @@ coordinates = ->
   #------------------------------------------------
   # Rerun SOQL
   #------------------------------------------------
-  $('#soqlArea .rerun').on 'click', (e) ->
+  $('#soqlArea').on 'click', ' .rerun', (e) ->
     if $.isAjaxBusy()
       return false
 
@@ -431,7 +429,7 @@ coordinates = ->
   #------------------------------------------------
   # Show Query
   #------------------------------------------------
-  $('#soqlArea .show-query').on 'click', (e) ->
+  $('#soqlArea').on 'click', ' .show-query', (e) ->
     if $.isAjaxBusy()
       return false
 
@@ -482,12 +480,12 @@ coordinates = ->
 
     soqlArea = '<div class="resultSoql" tabId="' + newTabId + '">'
     soqlArea += '<div id="soql' + newTabId + '">'
-    soqlArea += '<div id="soql-info' + newTabId + '">0 rows</div>'
     soqlArea += '<button name="showQueryBtn" type="button" class="show-query btn btn-xs btn-default in-btn">Query</button>'
     soqlArea += '<button name="insRowBtn" type="button" class="add-row btn btn-xs btn-default in-btn">Insert row</button>'
     soqlArea += '<button name="remRowBtn" type="button" class="remove-row btn btn-xs btn-default in-btn">Remove row</button>'
     soqlArea += '<button name="rerunBtn" type="button" class="rerun btn btn-xs btn-default in-btn">Rerun</button>'
     soqlArea += '</div>'
+    soqlArea += '<div id="soql-info' + newTabId + '">0 rows</div>'
     soqlArea += '</div>'
     
     $("#soqlArea #tabArea").append(
