@@ -478,7 +478,7 @@ coordinates = ->
       "</li>"
     )
 
-    soqlArea = '<div id=\"soql' + newTabId + '\" class=\"resultSoql\" tabId=\"' + newTabId + '\">'
+    soqlArea = '<div id="soql' + newTabId + '" class="resultSoql" tabId="' + newTabId + '">'
     soqlArea += '<button name="button" type="button" class="show-query btn btn-xxs btn-default">Query</button>'
     soqlArea += '<button name="button" type="button" class="add-row btn btn-xxs btn-default">Insert row</button>'
     soqlArea += '<button name="button" type="button" class="remove-row btn btn-xxs btn-default">Remove row</button>'
@@ -487,8 +487,7 @@ coordinates = ->
     
     $("#soqlArea #tabArea").append(
       "<div id=\"tab" + newTabId + "\" class=\"resultTab\" tabId=\"" + newTabId + "\">" +
-      #"<div id=\"soql" + newTabId + "\" class=\"resultSoql\" tabId=\"" + newTabId + "\"></div>" +
-      soqlArea + 
+      soqlArea +
       "<div id=\"grid" + newTabId + "\" class=\"resultGrid\" tabId=\"" + newTabId + "\"></div>" +
       "</div>"
     )
