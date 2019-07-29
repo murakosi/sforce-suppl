@@ -438,7 +438,7 @@ coordinates = ->
     elementId = getActiveGridElementId()
     
     if sObjects[elementId]      
-      executeSoql({soql_info.soql  
+      executeSoql()
       
   #------------------------------------------------
   # Tab events
@@ -478,13 +478,12 @@ coordinates = ->
       "</li>"
     )
 
-    soqlArea = '<div id=\"soql' + newTabId + '\" class=\"resultSoql\" tabId=\"' + newTabId + '\">'
-    soqlArea += '<button name=\"button\" type=\"button\" class=\"show-query btn btn-xxs btn-default\">Query</button>'
-    soqlArea += '<button name=\"button\" type=\"button\" class=\"add-row btn btn-xxs btn-default\">Insert row</button>'
-    soqlArea += '<button name=\"button\" type=\"button\" class=\"remove-row btn btn-xxs btn-default\">Remove row</button>'
-    soqlArea += '<button name=\"button\" type=\"button\" class=\"rerun btn btn-xxs btn-default\">Rerun</button>'
+    soqlArea = '<div id="soql' + newTabId + '" class="resultSoql" tabId="' + newTabId + '">'
+    soqlArea += '<button name="showQueryBtn" type="button" class="show-query btn btn-xxs btn-default">Query</button>'
+    soqlArea += '<button name="insRowBtn" type="button" class="add-row btn btn-xxs btn-default">Insert row</button>'
+    soqlArea += '<button name="remRowBtn" type="button" class="remove-row btn btn-xxs btn-default">Remove row</button>'
+    soqlArea += '<button name="rerunBtn" type="button" class="rerun btn btn-xxs btn-default">Rerun</button>'
     soqlArea += '</div>'
-    console.log(soqlArea)
     
     $("#soqlArea #tabArea").append(
       "<div id=\"tab" + newTabId + "\" class=\"resultTab\" tabId=\"" + newTabId + "\">" +
@@ -492,7 +491,6 @@ coordinates = ->
       "<div id=\"grid" + newTabId + "\" class=\"resultGrid\" tabId=\"" + newTabId + "\"></div>" +
       "</div>"
     )
-    console.log($("#soqlArea #tabArea").html())
     
     createGrid("#soqlArea #grid" + newTabId)
     
