@@ -291,7 +291,7 @@ coordinates = ->
   #------------------------------------------------
   # Add/Remove row
   #------------------------------------------------
-  $("#soqlArea .add-row").on "click", (e) ->
+  $("#soqlArea button.add-row").on "click", (e) ->
     addRow()
     
   addRow = () ->
