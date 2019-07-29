@@ -438,7 +438,7 @@ coordinates = ->
     elementId = getActiveGridElementId()
     
     if sObjects[elementId]      
-      executeSoql()
+      alert("soql")
       
   #------------------------------------------------
   # Tab events
@@ -480,7 +480,7 @@ coordinates = ->
 
     soqlArea = '<div class="resultSoql" tabId="' + newTabId + '">'
     soqlArea += '<div id="soql' + newTabId + '">'
-    soqlArea += '<div id="soql-info' + newTabId + '"></div>'
+    soqlArea += '<div id="soql-info' + newTabId + '">0 rows</div>'
     soqlArea += '<button name="showQueryBtn" type="button" class="show-query btn btn-xs btn-default in-btn">Query</button>'
     soqlArea += '<button name="insRowBtn" type="button" class="add-row btn btn-xs btn-default in-btn">Insert row</button>'
     soqlArea += '<button name="remRowBtn" type="button" class="remove-row btn btn-xs btn-default in-btn">Remove row</button>'
