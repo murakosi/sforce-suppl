@@ -81,7 +81,7 @@ coordinates = ->
     selectedTabId = json.soql_info.tab_id
     #$("#soqlArea #soql" + selectedTabId).html(json.soql_info.timestamp + json.soql_info.soql)
     #$("#soqlArea #tab" + selectedTabId).attr("soql", json.soql_info.soql)
-    $("#soqlArea #soql" + selectedTabId).html(json.soql_info.timestamp)
+    $("#soqlArea #soql-info" + selectedTabId).html(json.soql_info.timestamp)
     elementId = "#soqlArea #grid" + selectedTabId
 
     sObjects[elementId] = {
