@@ -215,8 +215,8 @@ coordinates = ->
   # Edit on grid
   #------------------------------------------------    
   detectAfterEditOnGrid = (source, changes) ->
-    console.log(changes)
-    if changes != 'edit' && !changes.startsWith('UndoRedo') && changes != "CopyPaste.paste"
+
+    if changes == 'loadData'
       return
 
     rowIndex = source[0][0]
