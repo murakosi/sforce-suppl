@@ -423,7 +423,7 @@ coordinates = ->
     
     elementId = getActiveGridElementId()
     
-    if sObjects[elementId]      
+    if sObjects[elementId]
       executeSoql({soql_info:sObjects[elementId].soql_info, afterCrud: false})
       
   #------------------------------------------------
@@ -437,12 +437,8 @@ coordinates = ->
     
     elementId = getActiveGridElementId()
     
-    if sObjects[elementId]      
-      win = window.open('','_blank','width=500,height=500,scrollbars=1,location=0,menubar=0,toolbar=0,status=1,directories=0,resizable=1,left=' +
-			(window.screen.width-500/2) +
-			',top=' + 
-			(window.screen.height-500)/2)
-      $(win.document.body).html(sObjects[elementId].soql_info.soql)
+    if sObjects[elementId]
+      console.log("a")
       
   #------------------------------------------------
   # Tab events
