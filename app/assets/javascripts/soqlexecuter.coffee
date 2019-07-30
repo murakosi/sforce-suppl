@@ -296,7 +296,7 @@ coordinates = ->
     
   addRow = () ->
     elementId = getActiveGridElementId()
-    if !sObjects[elementId].editable
+    if !sObjects[elementId] || !sObjects[elementId].editable
       return
 
     grid = grids[elementId]
@@ -327,7 +327,7 @@ coordinates = ->
     
   removeRow = () ->
     elementId = getActiveGridElementId()
-    if !sObjects[elementId].editable
+    if !sObjects[elementId] || !sObjects[elementId].editable
       return
 
     grid = grids[elementId]
