@@ -77,6 +77,10 @@ module Soql
             end
 
             results.each do |result|
+                
+                if result.has_key?(Type) && @sobject_type.nil?
+                    p @sobject_type = result[Type]
+                end
 
                 record = {}
                 
