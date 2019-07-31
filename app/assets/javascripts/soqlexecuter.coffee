@@ -283,7 +283,7 @@ coordinates = ->
     
     ids = []
     for rowIndex in Object.keys(rows)
-      id = hot.getDataAtCell(rowIndex, sobject.idColumnIndex)
+      id = grid.getDataAtCell(rowIndex, sobject.idColumnIndex)
       ids.push(id)
      
     return ids
