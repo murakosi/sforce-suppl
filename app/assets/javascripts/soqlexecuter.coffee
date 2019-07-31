@@ -45,10 +45,11 @@ coordinates = ->
       queryAll = params.soql_info.query_all
       tabId = params.soql_info.tab_id
     else
-      soql = $('#soqlArea #input_soql').val()
-      tooling = $('#soqlArea #useTooling').is(':checked')
-      queryAll = $('#soqlArea #queryAll').is(':checked')
       tabId = $("#soqlArea #tabArea .ui-tabs-panel:visible").attr("tabId");
+      #soql = $('#soqlArea #input_soql').val()
+      soql = $('#soqlArea #input_soql' + tabId).val()
+      tooling = $('#soqlArea #useTooling').is(':checked')
+      queryAll = $('#soqlArea #queryAll').is(':checked')      
         
     if soql == null || soql == 'undefined' || soql == ""
       return false
@@ -478,6 +479,10 @@ coordinates = ->
       "</li>"
     )
 
+    inputArea = '<div class="inputSoql" tabId="' + newTabId + '">'
+    inputArea = '<textarea name="input_soql" id="input_soql' + newTabId + '" cols="120" rows="5"></textarea>'
+    inputArea = '</div>'
+
     soqlArea = '<div class="resultSoql" tabId="' + newTabId + '">'    
     soqlArea += '<div id="soql' + newTabId + '">'
     soqlArea += '<button name="showQueryBtn" type="button" class="show-query btn btn-xs btn-default in-btn">Query</button>'
@@ -490,6 +495,7 @@ coordinates = ->
     
     $("#soqlArea #tabArea").append(
       "<div id=\"tab" + newTabId + "\" class=\"resultTab\" tabId=\"" + newTabId + "\">" +
+      inputArea + 
       soqlArea +
       "<div id=\"grid" + newTabId + "\" class=\"resultGrid\" tabId=\"" + newTabId + "\"></div>" +
       "</div>"
