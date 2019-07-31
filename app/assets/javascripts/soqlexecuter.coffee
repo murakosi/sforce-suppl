@@ -480,8 +480,8 @@ coordinates = ->
     )
 
     inputArea = '<div class="inputSoql" tabId="' + newTabId + '">'
-    inputArea = '<textarea name="input_soql" id="input_soql' + newTabId + '" cols="120" rows="5"></textarea>'
-    inputArea = '</div>'
+    inputArea += '<textarea name="input_soql" id="input_soql' + newTabId + '" cols="120" rows="5"></textarea>'
+    inputArea += '</div>'
 
     soqlArea = '<div class="resultSoql" tabId="' + newTabId + '">'    
     soqlArea += '<div id="soql' + newTabId + '">'
