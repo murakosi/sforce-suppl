@@ -8,7 +8,6 @@
 
 </style>
 <div id="soqlArea">
-	<!--
 	<div id="formArea">
 		<%= form_tag query_path(), :method => :post, :class => "execute-form" do %>
 		<%= text_area_tag :input_soql,"", :size => "120x5" %>
@@ -19,16 +18,10 @@
 		<% end %>
 		<p><div id="messageArea"></div></p>
 	</div>
-	-->
 
 	<div id="dummyArea"></div>
 	
-	<div id="formArea">
-		<%= form_tag query_path(), :method => :post, :class => "execute-form" do %>
 	<div id="tabArea">
-		<%= submit_tag "Execute", :class => "btn btn-sm btn-primary execute-soql" %>
-		<%= button_tag "Add tab", :type => "button", :id => "add-tab", :class => "btn btn-xs btn-default" %>
-		<%= button_tag "Export", :type => "button", :id => "exportBtn", :class => "btn btn-xs btn-default" %>
 		<!--
 		<%= button_tag "Add tab", :type => "button", :id => "add-tab", :class => "btn btn-xs btn-default" %>
 		<%= button_tag "Insert row", :type => "button", :id => "addRow", :class => "btn btn-xs btn-default" %>
