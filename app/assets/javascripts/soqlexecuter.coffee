@@ -46,8 +46,8 @@ coordinates = ->
       tabId = params.soql_info.tab_id
     else
       tabId = $("#soqlArea #tabArea .ui-tabs-panel:visible").attr("tabId");
-      #soql = $('#soqlArea #input_soql').val()
-      soql = $('#soqlArea #input_soql' + tabId).val()
+      soql = $('#soqlArea #input_soql').val()
+      #soql = $('#soqlArea #input_soql' + tabId).val()
       tooling = $('#soqlArea #useTooling').is(':checked')
       queryAll = $('#soqlArea #queryAll').is(':checked')      
         
@@ -495,7 +495,7 @@ coordinates = ->
     
     $("#soqlArea #tabArea").append(
       "<div id=\"tab" + newTabId + "\" class=\"resultTab\" tabId=\"" + newTabId + "\">" +
-      inputArea + 
+      #inputArea + 
       soqlArea +
       "<div id=\"grid" + newTabId + "\" class=\"resultGrid\" tabId=\"" + newTabId + "\"></div>" +
       "</div>"
