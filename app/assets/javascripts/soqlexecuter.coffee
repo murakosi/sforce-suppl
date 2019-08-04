@@ -216,15 +216,20 @@ coordinates = ->
   #------------------------------------------------
   # Edit on grid
   #------------------------------------------------    
-  detectAfterEditOnGrid = (source, changes) ->
+  detectAfterEditOnGrid = (changes, source) ->
 
-    if changes == 'loadData'
+    if source == 'loadData'
       return
+    
+    for change in changes
+      storeChanges(change)
 
-    rowIndex = source[0][0]
-    columnIndex = source[0][1]
-    oldValue = source[0][2]
-    newValue = source[0][3]
+  storeChanges = (change) ->
+
+    rowIndex = change[0]
+    columnIndex = change[1]
+    oldValue = change[2]
+    newValue = change[3]
 
     if oldValue == newValue
       return

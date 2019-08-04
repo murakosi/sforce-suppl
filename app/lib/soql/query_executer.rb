@@ -79,7 +79,7 @@ module Soql
             results.each do |result|
                 
                 if result.has_key?(Type) && @sobject_type.nil?
-                    p @sobject_type = result[Type]
+                    @sobject_type = result[Type]
                 end
 
                 record = {}
@@ -214,6 +214,8 @@ module Soql
 
         def parse_soql(soql)
             parse_result = Soql::SoqlParser.parse(soql)
+
+            @sobject_type = parse_result[:objects].first[:object_name]
 
             parse_result[:fields].each do |field|
                 if field.has_key?(:sub_query)
