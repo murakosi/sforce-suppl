@@ -226,7 +226,7 @@
     <div id="overlay-content" class="overlay-content noselect">Requesting...</div>
     <div class="loader"></div>
   </div>
-
+<!--
   <div id="userInfo" style="text-align:right; padding-right:20px;margin:0px;height:20px;">
     <div class="btn-group">
       <button id="userInfoButton" class="btn btn-secondary btn-sm dropdown-toggle" style="float: right;border-radius: 12px;" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -241,9 +241,21 @@
       </ul>
     </div>
   </div>
+-->
   <div id="menuList">
-      
-    <ul>
+      <div class="btn-group">
+      <button id="userInfoButton" class="btn btn-secondary btn-sm dropdown-toggle" style="float: right;border-radius: 12px;" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <%= @current_user.name %>
+      </button>
+      <ul class="dropdown-menu dropdown-menu-right">
+        <li><%= link_to "Logout", logout_path, method: :delete, id: "logoutLink" %></li>
+        <li><a href="#">Another action</a></li>
+        <li><a href="#">Something else here</a></li>
+        <li role="separator" class="divider"></li>
+        <li><a href="#">Separated link</a></li>
+      </ul>
+    </div>    
+    <ul id="menus">
       <li><a id="soqlexecuter" href="" class="menus" method="GET" loadTarget="#soqlexecuterContent" action="">SOQL</a></li>
   		<li><a id="describe" href="#" class="menus" method="GET" loadTarget="#describeContent" action="describe">Describe</a></li>
   		<li><a id="metadata" href="#" class="menus" method="GET" loadTarget="#metadataContent" action="metadata">Metadata</a></li>
