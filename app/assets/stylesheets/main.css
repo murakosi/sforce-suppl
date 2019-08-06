@@ -135,6 +135,10 @@ button:disabled {
 /* ------------------------------
    #Areas
 ------------------------------ */
+#contentsArea{
+    margin-top:15px;
+}
+
 #mainArea{
     padding-top: 20px;
     width:100%;
@@ -318,8 +322,13 @@ span.select2-selection.select2-selection--single {
     display: flex;
     font-size:10pt;
 }
- 
-#menuList ul {
+/*#menuList ul*/
+#userInfoButton{
+    margin-left:5px;
+    margin-top:5px;
+}
+
+#menus {
     height: 45px;
     /*margin-left:70%;*/
     margin-left: auto;
@@ -327,7 +336,7 @@ span.select2-selection.select2-selection--single {
     padding-right: 10px;
 }
  
-#menuList ul li {
+#menus li {
     width: 120px;
     height: 44px;
     float: left;
@@ -335,11 +344,11 @@ span.select2-selection.select2-selection--single {
     box-sizing: border-box;
 }
  
-#menuList ul li:last-child {
+#mens li:last-child {
     border-right: #aaa 1px solid;
 }
  
-#menuList ul li a {
+#menus li a {
     height: 45px;    
     line-height: 45px;
     display: block;
@@ -348,6 +357,6 @@ span.select2-selection.select2-selection--single {
     text-decoration: none;
 }
 
-#menuList ul li:hover > a {
+#menus li:hover > a {
     background: #fff;
 }
