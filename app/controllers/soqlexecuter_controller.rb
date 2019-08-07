@@ -109,7 +109,7 @@ class SoqlexecuterController < ApplicationController
       if k.starts_with?(TempIdPrefix)
         upserts << v
       else
-        updates = {"Id" => k}.merge!(v)
+        updates = {"Id" => k}.merge!(get_update_fields_hash(v))
         upserts << updates
       end
     end
@@ -122,6 +122,27 @@ class SoqlexecuterController < ApplicationController
       render :json => {:error => ex.message}, :status => 400
     end
 
+  end
+  
+  def get_update_fields_hash(fields_hash)
+    update_fields = {}
+    fields_to_null = []
+
+    fields_hash.each do |field, value|
+
+      if value.nil?
+        fields_to_null << field
+      else
+        update_fields.store(field, value)
+      end
+
+    end
+
+    if fields_to_null.size > 0
+      update_fields.store(:fields_to_null, fields_to_null)
+    end
+    
+    update_fields
   end
 
   def execute_upsert(sobject, sobject_records)
