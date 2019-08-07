@@ -66,7 +66,7 @@ class SoqlexecuterController < ApplicationController
                   :id_column_index => id_column_index,
                   :size => query_result[:record_count]
                   },
-      :tempIdPrefix => TempIdPrefix
+      :tempIdPrefix => Temp_id_prefix
     }
   end
 
@@ -82,7 +82,7 @@ class SoqlexecuterController < ApplicationController
                   :id_column_index => query_result[:id_column_index],
                   :size => query_result[:record_count]
                   },
-      :tempIdPrefix => TempIdPrefix
+      :tempIdPrefix => Temp_id_prefix
     }
   end
 
