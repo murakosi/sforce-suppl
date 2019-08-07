@@ -8,7 +8,7 @@ class SoqlexecuterController < ApplicationController
   protect_from_forgery :except => [:query, :update, :delete, :undelete]
   
   Time_format = "%Y/%m/%d %H:%M:%S"
-  TempIdPrefix = "@"
+  Temp_id_prefix = "@"
 
   def show
   end
@@ -106,11 +106,10 @@ class SoqlexecuterController < ApplicationController
 
     upserts = []
     sobject_records.each do |k,v|
-      if k.starts_with?(TempIdPrefix)
+      if k.starts_with?(Temp_id_prefix)
         upserts << v
       else
-        updates = {"Id" => k}.merge!(get_update_fields_hash(v))
-        upserts << updates
+        upserts << {"Id" => k}.merge(get_update_fields_hash(v))
       end
     end
     
@@ -129,7 +128,6 @@ class SoqlexecuterController < ApplicationController
     fields_to_null = []
 
     fields_hash.each do |field, value|
-
       if value.empty?
         fields_to_null << field
       else
