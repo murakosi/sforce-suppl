@@ -130,7 +130,7 @@ class SoqlexecuterController < ApplicationController
 
     fields_hash.each do |field, value|
 
-      if value.nil?
+      if value.empty?
         fields_to_null << field
       else
         update_fields.store(field, value)
