@@ -484,8 +484,8 @@ coordinates = ->
       "</li>"
     )
 
-    inputArea = '<div class="inputSoql" tabId="' + newTabId + '">'
-    inputArea += '<textarea name="input_soql" id="input_soql' + newTabId + '" width="100%" rows="5"></textarea>'
+    inputArea = '<div class="inputSoql" style="margin-bottom:-2px;" tabId="' + newTabId + '">'
+    inputArea += '<textarea name="input_soql" id="input_soql' + newTabId + '" style="width:100%" rows="5"></textarea>'
     inputArea += '</div>'
 
     soqlArea = '<div class="resultSoql" tabId="' + newTabId + '">'    
