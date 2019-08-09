@@ -444,7 +444,7 @@ coordinates = ->
     elementId = getActiveGridElementId()
     
     if sObjects[elementId]
-      console.log("a")
+      prompt("SOQL", sObjects[elementId].soql_info.soql)
       
   #------------------------------------------------
   # Tab events
