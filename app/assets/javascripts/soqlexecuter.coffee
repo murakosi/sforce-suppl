@@ -444,7 +444,14 @@ coordinates = ->
     elementId = getActiveGridElementId()
     
     if sObjects[elementId]
-      prompt("SOQL", sObjects[elementId].soql_info.soql)
+      width = 750
+      height = 400
+      left =(screen.width - width) / 2
+      top = (screen.height - height) / 2
+      options = "location=0, resizable=1, menubar=0, scrollbars=1"
+      options += ", left=" + left + ", top=" + top + ", width=" + width + ", height=" + height
+      popup = window.open("", "_blank", options)
+      popup.document.write("<pre>" + sObjects[elementId].soql_info.soql  + "</pre>")
       
   #------------------------------------------------
   # Tab events
