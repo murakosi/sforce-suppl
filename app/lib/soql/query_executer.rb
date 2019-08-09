@@ -41,7 +41,7 @@ module Soql
             @query_fields = {}
             parse_soql(soql)
             @query_keys = @query_fields.keys
-            @executed_soql = soql.gsub(/(\r|\n|\r\n)/mi, ' ')
+            @executed_soql = soql
             @record_count = query_result["size"]
             records = []
 
