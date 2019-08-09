@@ -459,13 +459,11 @@ coordinates = ->
   $("#soqlTabs").on "dblclick", (e) ->
     if e.target != this
       e.preventDefault()
-      e.stopPropagation() 
+      e.stopPropagation()
+      alert("other")
       return
-    alert("clicked")
-    tabId = getActiveGridElementId()
-    $("#soql" + tabId).addClass("noselect")
+
     createTab()
-    alert("created")
 
   $(document).on 'click', '.ui-closable-tab', (e) ->
     e.preventDefault()
