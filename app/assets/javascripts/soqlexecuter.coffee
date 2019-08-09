@@ -460,11 +460,13 @@ coordinates = ->
     if e.target != this
       e.preventDefault()
       e.stopPropagation()
-      alert("other")
       return
 
     createTab()
-
+    
+  $("#soqlTabs").on "click", (e) ->    
+    return false
+    
   $(document).on 'click', '.ui-closable-tab', (e) ->
     e.preventDefault()
     tabContainerDiv=$(this).closest("#soqlArea .ui-tabs").attr("id")
