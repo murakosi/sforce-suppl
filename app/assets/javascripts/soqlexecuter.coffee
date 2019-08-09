@@ -462,7 +462,10 @@ coordinates = ->
       e.stopPropagation() 
       return
     
+    tabId = getActiveGridElementId()
+    $("#soql" + tabId).addClass("noselect")
     createTab()
+    $("#soql" + tabId).removeClass("noselect")
 
   $(document).on 'click', '.ui-closable-tab', (e) ->
     e.preventDefault()
