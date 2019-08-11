@@ -109,6 +109,7 @@ coordinates = ->
   #------------------------------------------------
   executeCrud = (options) ->
     hideMessageArea()
+    options["showProgress"] = false
     callbacks = $.getAjaxCallbacks(processCrudSuccess, processCrudError, null)
     beginCrud()
     $.executeAjax(options, callbacks)  

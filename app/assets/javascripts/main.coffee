@@ -8,7 +8,7 @@ mains = ->
   defaultContentType = null
   anchorObject = null
 
-  $("#menuList").on "click", "a", (e) ->
+  $("#menus").on "click", "a", (e) ->
     clickedAnchor = ($(this).prop("id"))
 
     if selectedAnchor == clickedAnchor
