@@ -1,15 +1,15 @@
 <div id="describeArea">
 		<div id="formArea">
 			<%= form_tag describe_changelist_path(), :id => "filterSObjectList", :method => :post do %>
-				<%= radio_button_tag 'sobjectTypeCheckBox', :all, false, :class => "sobjectTypeCheckBox" %>All&nbsp;&nbsp;
+				<%= radio_button_tag 'sobjectTypeCheckBox', :all, true, :class => "sobjectTypeCheckBox" %>All&nbsp;&nbsp;
 				<%= radio_button_tag 'sobjectTypeCheckBox', :standard, false, :class => "sobjectTypeCheckBox" %>Standard&nbsp;&nbsp;
-				<%= radio_button_tag 'sobjectTypeCheckBox', :custom, true, :class => "sobjectTypeCheckBox" %>Custom&nbsp;&nbsp;
+				<%= radio_button_tag 'sobjectTypeCheckBox', :custom, false, :class => "sobjectTypeCheckBox" %>Custom&nbsp;&nbsp;
 			<% end %>
 
 			<div class="left_block">
 				<div class="combined_block">
 					<%= label_tag :sobjects, 'sObjects: ' %>
-					<div id="sobjectList" class="input-sm select2-single"></div>
+					<div id="sobjectList" class="sobject-list input-sm select2-single"></div>
 				</div>
 			</div>
 			<div class="left_block">

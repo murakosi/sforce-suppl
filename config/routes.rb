@@ -6,7 +6,7 @@ Rails.application.routes.draw do
   post    'check',                  to: 'main#check'
 
   get     'main',                   to: 'main#index'
-  post    'main',                   to: 'main#switch'
+  get     'prepare',                to: 'main#prepare'
 
   get     'login',                  to: 'login#new'
   post    'login',                  to: 'login#create'

@@ -7,6 +7,7 @@ mains = ->
   defaultDetatype = ""
   defaultContentType = null
   anchorObject = null
+  describeFault = false
 
   $("#menus").on "click", "a", (e) ->
     clickedAnchor = ($(this).prop("id"))
@@ -52,13 +53,14 @@ mains = ->
     changeAnchorClass(anchorObject)
 
     $("div#mainArea").prop("class", target)
-    
-    targetSelect2 = "div#" + target + "Area .selectlist"
-    $(targetSelect2).select2({
-      dropdownAutoWidth : true,
-      width: 'resolve',
-      containerCssClass: ':all:'
-      })
+
+    if target == "metadata"
+      targetSelect2 = "div#" + target + "Area .selectlist"
+      $(targetSelect2).select2({
+        dropdownAutoWidth : true,
+        width: 'resolve',
+        containerCssClass: ':all:'
+        })
     
     $(document).trigger("displayChange", [{targetArea: target + "Area"}]);
     
@@ -66,6 +68,19 @@ mains = ->
     html = "<div style='text-align:center; white-space: pre; color:red; font-weight:bold;'>" + message  + "</div>"
     $(targetDiv).html(html)
   
+
+  action = "prepare"
+  $.get action, (json) ->
+    $("div.sobject-list").html(json.content)
+    if json.status != 200
+      targetDiv = "#describeContent"
+      createErrorDiv(json.error)
+    else
+      $(".selectlist").select2({
+        dropdownAutoWidth : true,
+        width: 'resolve',
+        containerCssClass: ':all:'
+        })
 
 $(document).ready(mains)
 $(document).on('page:load', mains)

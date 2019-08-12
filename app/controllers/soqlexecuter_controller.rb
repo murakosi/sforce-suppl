@@ -11,6 +11,7 @@ class SoqlexecuterController < ApplicationController
   Temp_id_prefix = "@"
 
   def show
+
   end
   
   def query

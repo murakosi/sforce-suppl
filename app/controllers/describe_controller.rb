@@ -55,9 +55,9 @@ class DescribeController < ApplicationController
     end
 
     def get_sobject_info(describe_result)
-        info = "表示ラベル：" + describe_result[:label].to_s + "\n" +
-              "API参照名：" + describe_result[:name].to_s + "\n" +
-              "プレフィックス：" + describe_result[:key_prefix].to_s
+        info = "Label：" + describe_result[:label].to_s + "\n" +
+              "API Name：" + describe_result[:name].to_s + "\n" +
+              "Prefix：" + describe_result[:key_prefix].to_s
     end
   
     def download

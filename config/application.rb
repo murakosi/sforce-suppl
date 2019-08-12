@@ -28,6 +28,7 @@ module Sforcesuppl
     config.assets.precompile += %w(metadata.coffee)
     config.assets.precompile += %w(tooling.coffee)
     config.assets.precompile += %w(apex.coffee)
+    config.assets.precompile += %w(soqlgrids.coffee)
 
     config.before_configuration do
       env_file = File.join(Rails.root, 'config', 'local_env.yml')

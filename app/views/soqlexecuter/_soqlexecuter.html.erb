@@ -5,6 +5,16 @@
 		margin-bottom: 2px;
 	}
 
+.right_label_block{
+    display:table-cell;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    padding-right: 10px;
+    border: 0px solid black;
+    width: 40%;
+    text-align: right;
+    vertical-align: middle;	
+}
 
 </style>
 <div id="soqlArea">
@@ -22,31 +32,33 @@
 
 	<div id="dummyArea"></div>
 	
-	<!--<p><div id="messageArea"></div></p>-->
-	
 	<div id="tabArea">
-		<!--
-		<div id="formArea">
-		<%= form_tag query_path(), :method => :post, :class => "execute-form" do %>
-		<%= submit_tag "Execute", :class => "btn btn-sm btn-primary execute-soql" %>
-		&nbsp;&nbsp;<label><input type="checkbox" id="useTooling"/> Use Tooling API</label>
-		&nbsp;&nbsp;<label><input type="checkbox" id="queryAll"/> Query all</label>
-		<% end %>
--->
-		<!--
-		<%= button_tag "Add tab", :type => "button", :id => "add-tab", :class => "btn btn-xs btn-default" %>
-		<%= button_tag "Insert row", :type => "button", :id => "addRow", :class => "btn btn-xs btn-default" %>
-		<%= button_tag "Remove row", :type => "button", :id => "removeRow", :class => "btn btn-xs btn-default" %>
-				
-		<%= button_tag "Export", :type => "button", :id => "exportBtn", :class => "btn btn-xs btn-default" %>
-		<%= button_tag "Rerun", :type => "button", :id => "rerunBtn", :class => "btn btn-xs btn-default" %>
--->
 		<div class="right-align">
 			<%= button_tag "Upsert", :type => "button", :id => "upsertBtn", :class => "btn btn-xs btn-warning ex-small-btn" %>
 			<%= button_tag "Delete", :type => "button", :id => "deleteBtn", :class => "btn btn-xs btn-warning ex-small-btn" %>
 			<%= button_tag "Undelete", :type => "button", :id => "undeleteBtn", :class => "btn btn-xs btn-warning ex-small-btn" %>
 		</div>
-		<ul id="soqlTabs">
-		</ul>
+		<ul id="soqlTabs"></ul>
+	</div>
+	
+		<div id="creatGridArea" style="width:500px">
+		<div class="left_block">
+			<div class="right_label_block"><%= label_tag :sobjects, 'sObjects: ' %></div>
+			<div class="element_block"><div class="sobject-list input-sm select2-single"></div></div>
+		</div>
+		<div class="left_block">
+			<div class="right_label_block"><%= label_tag :sobjects, 'Fields: ' %></div>
+			<div class="element_block"><%= text_area_tag :input_soql,"select id from assetpolicy__c", :size => "50x5", :spellcheck => false %>
+				<br>
+			*Separate fields with tab
+			</div>
+		</div>
+		<div class="left_block">
+			<div class="combined_block">
+			<%= button_tag "Create", :type => "button", :id => "createBtn", :class => "btn btn-xs btn-primary ex-small-btn" %>
+			<%= button_tag "Cancel", :type => "button", :id => "cancelCreateBtn", :class => "btn btn-xs btn-primary ex-small-btn" %>
+		</div>
+		</div>
 	</div>
 </div>
+
