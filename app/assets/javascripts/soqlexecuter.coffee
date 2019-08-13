@@ -8,6 +8,24 @@ coordinates = ->
   defaultDataType = ""
   defaultContentType = null
 
+  $("#soqlArea #openCreatGridBtn").on 'click', (e) ->
+    $("#creatGridArea").show()
+
+  $("#creatGridArea #cancelCreateBtn").on 'click', (e) ->
+    $("#creatGridArea").hide()
+
+  $("#creatGridArea #createGridBtn").on 'click', (e) ->
+    rawFields = $("#creatGridArea #fields").val()
+    if rawFields
+      fields = rawFields.split(",")
+      json = {rows : null, columns: fields}
+      elementId = getActiveGridElementId()
+      createGrid(elementId, json)
+      $("#creatGridArea").hide()
+      grid = grids[elementId]
+      grid.getPlugin('AutoColumnSize').recalculateAllColumnsWidth()
+      grid.render()
+
   #------------------------------------------------
   # Event on menu change
   #------------------------------------------------
@@ -27,6 +45,9 @@ coordinates = ->
       e.preventDefault()
       if e.target.id == "input_soql"        
         executeSoql()
+
+    if e.keyCode == 27 && $("#creatGridArea").is(":visible")
+      $("#creatGridArea").hide()
   
   #------------------------------------------------
   # Execute SOQL

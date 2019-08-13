@@ -67,10 +67,17 @@ mains = ->
   createErrorDiv = (message) ->
     html = "<div style='text-align:center; white-space: pre; color:red; font-weight:bold;'>" + message  + "</div>"
     $(targetDiv).html(html)
-  
 
+  $(".selectlist").select2({
+    dropdownAutoWidth : true,
+    width: 'resolve',
+    containerCssClass: ':all:'
+  })
+      
+###
   action = "prepare"
   $.get action, (json) ->
+    console.log("done")
     $("div.sobject-list").html(json.content)
     if json.status != 200
       targetDiv = "#describeContent"
@@ -80,7 +87,9 @@ mains = ->
         dropdownAutoWidth : true,
         width: 'resolve',
         containerCssClass: ':all:'
-        })
+      })
+###
+
 
 $(document).ready(mains)
 $(document).on('page:load', mains)

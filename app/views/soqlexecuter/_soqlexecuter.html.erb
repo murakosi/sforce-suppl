@@ -11,11 +11,61 @@
     padding-bottom: 2px;
     padding-right: 10px;
     border: 0px solid black;
-    width: 40%;
+    width: 40px;
     text-align: right;
     vertical-align: middle;	
 }
 
+.tbl{
+	display:table;
+    position: relative;
+    top: 25%;
+    /*color: #80ffff;*/
+    color:black;
+    margin: 0 auto;
+}
+.row {
+    display:table-row;
+    }
+.row>div {
+    display:table-cell;
+    /*margin:15px;
+    padding:15px;
+    border:10px solid;
+    background-color:#eee;*/
+}
+.label_col{
+    padding-right: 10px;
+    text-align: right;
+    vertical-align: middle;
+}
+.label_col2{
+    padding-right: 10px;
+    text-align: right;
+    vertical-align: top;
+}
+.input-sm2 {
+    height: 30px;
+    /* padding: 5px 10px; */
+    font-size: 12px;
+    line-height: 1.5;
+    border-radius: 3px;
+}
+.create-dialog {
+  /* Height & width depends on how you want to reveal the overlay (see JS below) */    
+  height: 50%;
+  width: 50%;
+  position: fixed; /* Stay in place */
+  z-index: 9999; /* Sit on top */
+  left: 25%;
+  top: 20%;
+  background-color: #408080;
+  /*opacity: 0.8;*/
+  overflow-x: hidden; /* Disable horizontal scroll */
+  display:none;
+  border-radius: 12px;
+  box-shadow: 9px 9px 9px rgba(0, 0, 0, .125);
+}
 </style>
 <div id="soqlArea">
 
@@ -33,6 +83,10 @@
 	<div id="dummyArea"></div>
 	
 	<div id="tabArea">
+		<div style="float: left;">
+		<%= button_tag "Export", :type => "button", :id => "exportBtn", :class => "btn btn-xs btn-warning ex-small-btn" %>
+		<%= button_tag "Create", :type => "button", :id => "openCreatGridBtn", :class => "btn btn-xs btn-warning ex-small-btn" %>
+		</div>
 		<div class="right-align">
 			<%= button_tag "Upsert", :type => "button", :id => "upsertBtn", :class => "btn btn-xs btn-warning ex-small-btn" %>
 			<%= button_tag "Delete", :type => "button", :id => "deleteBtn", :class => "btn btn-xs btn-warning ex-small-btn" %>
@@ -41,24 +95,36 @@
 		<ul id="soqlTabs"></ul>
 	</div>
 	
-		<div id="creatGridArea" style="width:500px">
-		<div class="left_block">
-			<div class="right_label_block"><%= label_tag :sobjects, 'sObjects: ' %></div>
-			<div class="element_block"><div class="sobject-list input-sm select2-single"></div></div>
-		</div>
-		<div class="left_block">
-			<div class="right_label_block"><%= label_tag :sobjects, 'Fields: ' %></div>
-			<div class="element_block"><%= text_area_tag :input_soql,"select id from assetpolicy__c", :size => "50x5", :spellcheck => false %>
-				<br>
-			*Separate fields with tab
+	<div id="creatGridArea" class="create-dialog">
+		<div class="tbl">
+		<div class="row">
+			<div class="label_col">
+				<%= label_tag :sobjects, 'sObjects: ' %>
+			</div>
+			<div class="sobject-list input-sm2 select2-single">
+				<%= @describe_result %>
 			</div>
 		</div>
-		<div class="left_block">
-			<div class="combined_block">
-			<%= button_tag "Create", :type => "button", :id => "createBtn", :class => "btn btn-xs btn-primary ex-small-btn" %>
-			<%= button_tag "Cancel", :type => "button", :id => "cancelCreateBtn", :class => "btn btn-xs btn-primary ex-small-btn" %>
+		
+		<div class="row">
+			<div class="label_col2">
+				<%= label_tag :fields, 'Fields: ' %>
+			</div>
+			<div>
+				<%= text_area_tag :fields,"", :size => "50x5", :spellcheck => false %>				
+			</div>
 		</div>
+
+		<div class="row" style="margin-top:15px;"></div>
+
+		<div class="row">
+			<div></div>
+			<div>
+				<%= button_tag "Create", :type => "button", :id => "createGridBtn", :class => "btn btn-xs btn-primary ex-small-btn" %>
+				<%= button_tag "Cancel", :type => "button", :id => "cancelCreateBtn", :class => "btn btn-xs btn-primary ex-small-btn" %>
+			</div>
 		</div>
 	</div>
+
 </div>
 

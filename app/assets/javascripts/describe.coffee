@@ -4,7 +4,20 @@ describe = ->
   defaultDataType = ""  
   defaultContentType = null
   currentTable = null
-  
+
+
+  #------------------------------------------------
+  # Shortcut keys
+  #------------------------------------------------
+  $(window).on 'keydown', (e) ->
+
+    if $("#describeArea").is(":visible")
+
+      if e.ctrlKey && (e.key == 'r' || e.keyCode == 13)
+        e.preventDefault()       
+        executeDescribe()
+        return false
+
   #------------------------------------------------
   # change custom/standard
   #------------------------------------------------
@@ -29,6 +42,9 @@ describe = ->
   #------------------------------------------------
   $('#executeDescribe').on 'click', (e) ->
     e.preventDefault()
+    executeDescribe()
+
+  executeDescribe = () ->
     val = {selected_sobject: $('#describeArea #selected_sobject').val()}
     action = $('#executeDescribe').attr('action')
     method = $('#executeDescribe').attr('method')
@@ -118,8 +134,7 @@ describe = ->
     currentTable = new Handsontable(hotElement, hotSettings)
     currentTable.updateSettings afterColumnSort: ->
       currentTable.render()
-    #table.render()
-    
+
   getColumns = (json) ->
     if !json?
       null
