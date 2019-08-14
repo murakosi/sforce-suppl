@@ -21,7 +21,7 @@
     position: relative;
     top: 25%;
     /*color: #80ffff;*/
-    color:black;
+    color: white;
     margin: 0 auto;
 }
 .row {
@@ -53,18 +53,36 @@
 }
 .create-dialog {
   /* Height & width depends on how you want to reveal the overlay (see JS below) */    
-  height: 50%;
-  width: 50%;
+  height: 40%;
+  width: 40%;
   position: fixed; /* Stay in place */
   z-index: 9999; /* Sit on top */
-  left: 25%;
+  left: 30%;
   top: 20%;
   background-color: #408080;
   /*opacity: 0.8;*/
   overflow-x: hidden; /* Disable horizontal scroll */
-  display:none;
+  /*display:none;*/
   border-radius: 12px;
   box-shadow: 9px 9px 9px rgba(0, 0, 0, .125);
+}
+
+#sobject_fields{
+	color: black;
+}
+#soqlOverRay {
+/* 
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  z-index: 9998;
+  left: 0%;
+  top: 0%;
+  background-color: white;
+  opacity: 0.8;
+  overflow-x: hidden; 
+  display:none;
+  */
 }
 </style>
 <div id="soqlArea">
@@ -95,36 +113,38 @@
 		<ul id="soqlTabs"></ul>
 	</div>
 	
-	<div id="creatGridArea" class="create-dialog">
-		<div class="tbl">
-		<div class="row">
-			<div class="label_col">
-				<%= label_tag :sobjects, 'sObjects: ' %>
-			</div>
-			<div class="sobject-list input-sm2 select2-single">
-				<%= @describe_result %>
-			</div>
-		</div>
-		
-		<div class="row">
-			<div class="label_col2">
-				<%= label_tag :fields, 'Fields: ' %>
-			</div>
-			<div>
-				<%= text_area_tag :fields,"", :size => "50x5", :spellcheck => false %>				
-			</div>
-		</div>
+	<div id="soqlOverRay">
+		<div id="creatGridArea" class="create-dialog">
+			<div class="tbl">
+				<div class="row">
+					<div class="label_col">
+						<%= label_tag 'sObjects: ' %>
+					</div>
+					<div class="sobject-list input-sm2 select2-single">
+						<%= @describe_result %>
+					</div>
+				</div>
+				
+				<div class="row">
+					<div class="label_col2">
+						<%= label_tag 'Fields: ' %>
+					</div>
+					<div>
+						<%= text_area_tag :sobject_fields,"a,b,c", :size => "50x5", :spellcheck => false %>				
+					</div>
+				</div>
 
-		<div class="row" style="margin-top:15px;"></div>
+				<div class="row" style="height:10px;"></div>
 
-		<div class="row">
-			<div></div>
-			<div>
-				<%= button_tag "Create", :type => "button", :id => "createGridBtn", :class => "btn btn-xs btn-primary ex-small-btn" %>
-				<%= button_tag "Cancel", :type => "button", :id => "cancelCreateBtn", :class => "btn btn-xs btn-primary ex-small-btn" %>
+				<div class="row">
+					<div></div>
+					<div>
+						<%= button_tag "Create", :type => "button", :id => "createGridBtn", :class => "btn btn-xs btn-primary ex-small-btn" %>
+						<%= button_tag "Cancel", :type => "button", :id => "cancelCreateBtn", :class => "btn btn-xs btn-primary ex-small-btn" %>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
-
 </div>
 

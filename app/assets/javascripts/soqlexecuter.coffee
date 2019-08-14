@@ -9,22 +9,19 @@ coordinates = ->
   defaultContentType = null
 
   $("#soqlArea #openCreatGridBtn").on 'click', (e) ->
-    $("#creatGridArea").show()
+    $("#soqlOverRay").show()
 
   $("#creatGridArea #cancelCreateBtn").on 'click', (e) ->
-    $("#creatGridArea").hide()
+    $("#soqlOverRay").hide()
 
   $("#creatGridArea #createGridBtn").on 'click', (e) ->
-    rawFields = $("#creatGridArea #fields").val()
+    rawFields = $("#creatGridArea #sobject_fields").val()
     if rawFields
-      fields = rawFields.split(",")
-      json = {rows : null, columns: fields}
-      elementId = getActiveGridElementId()
-      createGrid(elementId, json)
-      $("#creatGridArea").hide()
-      grid = grids[elementId]
-      grid.getPlugin('AutoColumnSize').recalculateAllColumnsWidth()
-      grid.render()
+      action = "create"
+      val = {fields: rawFields, tab_id: getActiveTabElementId()}
+      $.get action, val, (json) ->
+        displayQueryResult(json)
+        $("#soqlOverRay").hide()
 
   #------------------------------------------------
   # Event on menu change
@@ -66,7 +63,7 @@ coordinates = ->
       queryAll = params.soql_info.query_all
       tabId = params.soql_info.tab_id
     else
-      tabId = $("#soqlArea #tabArea .ui-tabs-panel:visible").attr("tabId");
+      tabId = getActiveTabElementId();
       soql = $('#soqlArea #input_soql').val()
       #soql = $('#soqlArea #input_soql' + tabId).val()
       tooling = $('#soqlArea #useTooling').is(':checked')
@@ -414,6 +411,9 @@ coordinates = ->
   #------------------------------------------------
   # Active grid
   #------------------------------------------------
+  getActiveTabElementId = () ->
+    $("#soqlArea #tabArea .ui-tabs-panel:visible").attr("tabId")
+
   getActiveGridElementId = () ->
     tabId = $("#soqlArea #tabArea .ui-tabs-panel:visible").attr("tabId")
     "#soqlArea #grid" + tabId

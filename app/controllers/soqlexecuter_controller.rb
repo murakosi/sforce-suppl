@@ -195,5 +195,49 @@ class SoqlexecuterController < ApplicationController
     end
 
   end
+
+  def create
+    tab_id = params[:tab_id]
+    raw_fields = params[:fields]
+
+    fields = raw_fields.split(",").map(&:strip).map(&:upcase)
+
+    id_column_index = 0
+    if !fields.include?("ID")
+      fields = ["ID"] + fields
+    else
+      id_column_index = fields.index{|field| field == "ID"}
+    end
+
+    render :json => create_response_json(tab_id, fields, id_column_index), :status => 200
+
+  end
+
+  def create_response_json(tab_id, columns, id_column_index)
+    
+    column_options = []
+    columns.each do |column|
+      if column.upcase == "ID"
+        column_options << {readOnly: true, type: "text"}
+      else
+        column_options << {readOnly: false, type: "text"}
+      end
+    end
+
+    {
+      :soql_info => soql_info("", "0", false, false, tab_id),
+      :sobject => "temp",
+      :records => {
+                  :columns => columns,
+                  :rows => [],
+                  :initial_rows => {},
+                  :column_options => column_options,
+                  :id_column_index => id_column_index,
+                  :size => 0
+                  },
+      :tempIdPrefix => Temp_id_prefix
+    }    
+
+  end
   
 end
