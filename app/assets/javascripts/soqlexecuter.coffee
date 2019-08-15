@@ -8,6 +8,9 @@ coordinates = ->
   defaultDataType = ""
   defaultContentType = null
 
+  #------------------------------------------------
+  # CreatGrid Dialog
+  #------------------------------------------------
   $("#soqlArea #openCreatGridBtn").on 'click', (e) ->
     $("#soqlOverRay").show()
 
@@ -16,9 +19,10 @@ coordinates = ->
 
   $("#creatGridArea #createGridBtn").on 'click', (e) ->
     rawFields = $("#creatGridArea #sobject_fields").val()
+    sobject = $('#creatGridArea #selected_sobject').val()
     if rawFields
       action = "create"
-      val = {fields: rawFields, tab_id: getActiveTabElementId()}
+      val = {sobject: sobject, fields: rawFields, tab_id: getActiveTabElementId()}
       $.get action, val, (json) ->
         displayQueryResult(json)
         $("#soqlOverRay").hide()
@@ -62,14 +66,17 @@ coordinates = ->
       tooling = params.soql_info.tooling
       queryAll = params.soql_info.query_all
       tabId = params.soql_info.tab_id
+      if params.soql_info.key_map
+        updateGrid(tabId, params.soql_info.key_map)
     else
       tabId = getActiveTabElementId();
       soql = $('#soqlArea #input_soql').val()
       #soql = $('#soqlArea #input_soql' + tabId).val()
       tooling = $('#soqlArea #useTooling').is(':checked')
       queryAll = $('#soqlArea #queryAll').is(':checked')      
-        
+    
     if soql == null || soql == 'undefined' || soql == ""
+      endCrud()
       return false
       
     hideMessageArea()
@@ -85,7 +92,19 @@ coordinates = ->
       callbacks = $.getAjaxCallbacks(processQuerySuccess, displayError, null)
 
     $.executeAjax(options, callbacks)
-    
+  
+  updateGrid = (tabId, keyMap) ->
+    elementId = "#soqlArea #grid" + tabId
+    grid = grids[elementId]
+    sobject = sObjects[elementId]
+    cnt = grid.countRows()
+    for row in [0...cnt]
+      id = grid.getCellMeta(row, sobject.idColumnIndex).tempId
+      value = keyMap[id]
+      grid.setDataAtCell(row, sobject.idColumnIndex, value, "loadData")
+    grid.render()
+
+
   #------------------------------------------------
   # Query callbacks
   #------------------------------------------------  
@@ -98,8 +117,6 @@ coordinates = ->
 
   displayQueryResult = (json) ->
     selectedTabId = json.soql_info.tab_id
-    #$("#soqlArea #soql" + selectedTabId).html(json.soql_info.timestamp + json.soql_info.soql)
-    #$("#soqlArea #tab" + selectedTabId).attr("soql", json.soql_info.soql)
     $("#soqlArea #soql-info" + selectedTabId).html(json.soql_info.timestamp)
     elementId = "#soqlArea #grid" + selectedTabId
 
@@ -234,17 +251,19 @@ coordinates = ->
 
   #------------------------------------------------
   # Edit on grid
-  #------------------------------------------------    
+  #------------------------------------------------
   detectAfterEditOnGrid = (changes, source) ->
 
     if source == 'loadData'
       return
-    
-    for change in changes
-      storeChanges(change)
+
+    if changes.length > 1
+      for change of changes
+        storeChanges(change)
+    else
+      storeChanges(changes)
 
   storeChanges = (change) ->
-
     rowIndex = change[0]
     columnIndex = change[1]
     oldValue = change[2]
@@ -299,13 +318,22 @@ coordinates = ->
       
   getSelectedIds = (grid, sobject) ->
     rows = {}
-    selectedCells = grid.getSelected()
-    
+    selectedCells = grid.getSelected()   
+
+    startRow = 0
+    endRow = 0
+
     for range in selectedCells
-      rows[range[0]] = null
-      if range[0] != range[2]
-        rows[range[2]] = null
-    
+      if range[0] <= range[2]
+        startRow = range[0]
+        endRow = range[2] + 1
+      else
+        startRow = range[2]
+        endRow = range[0] + 1
+
+      for rowIndex in [startRow...endRow]
+        rows[rowIndex] = null
+
     ids = []
     for rowIndex in Object.keys(rows)
       id = grid.getDataAtCell(rowIndex, sobject.idColumnIndex)
@@ -314,7 +342,7 @@ coordinates = ->
     return ids
 
   #------------------------------------------------
-  # Add/Remove row
+  # Add row
   #------------------------------------------------
   $('#soqlArea').on 'click', ' .add-row', (e) ->
     addRow()
@@ -344,9 +372,11 @@ coordinates = ->
     newIndex = sobject.assignedIndex + 1
     tempId = sobject.tempIdPrefix + newIndex
     sobject.assignedIndex = newIndex
-    #grid.setCellMeta(selectedCell.row + 1, sobject.idColumnIndex, 'tempId', tempId)
     grid.setCellMeta(rowIndex, sobject.idColumnIndex, 'tempId', tempId)
 
+  #------------------------------------------------
+  # Remove row
+  #------------------------------------------------
   $('#soqlArea').on 'click', ' .remove-row', (e) ->
     removeRow()
     
@@ -360,30 +390,24 @@ coordinates = ->
     if !selectedCell || selectedCell.row < 0
       return false
 
-    #sobject = sObjects[elementId]
-    #tempId = grid.getCellMeta(selectedCell.row, sobject.idColumnIndex).tempId
-    #if !tempId
-    #  return false
-    
-    #if sobject.editions[tempId]
-    #  delete sobject.editions[tempId]
-
     grid.alter('remove_row', selectedCell.row, 1)
     grid.selectCell(getValidRowAfterRemove(selectedCell, grid), selectedCell.col)
     
   onBeforeRemoveRow = (index, amount, physicalRows, source) ->
+    console.log(physicalRows)
     if physicalRows.length != 1
       return false
-    
+
     rowIndex = physicalRows[0]
-    console.log(rowIndex)
+
     elementId = getActiveGridElementId()
     sobject = sObjects[elementId]
     grid = grids[elementId]
     tempId = grid.getCellMeta(rowIndex, sobject.idColumnIndex).tempId
+
     if !tempId
       return false
-    
+
     if sobject.editions[tempId]
       delete sobject.editions[tempId]    
     
@@ -476,7 +500,7 @@ coordinates = ->
       popup.document.write("<pre>" + sObjects[elementId].soql_info.soql  + "</pre>")
       
   #------------------------------------------------
-  # Tab events
+  # Create tab
   #------------------------------------------------
   $("#soqlTabs").on "dblclick", (e) ->
     if e.target != this

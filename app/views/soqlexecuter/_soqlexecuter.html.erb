@@ -54,42 +54,52 @@
 .create-dialog {
   /* Height & width depends on how you want to reveal the overlay (see JS below) */    
   height: 40%;
-  width: 40%;
+  width: 30%;
   position: fixed; /* Stay in place */
-  z-index: 9999; /* Sit on top */
+  z-index: 9999; 
   left: 30%;
   top: 20%;
   background-color: #408080;
   /*opacity: 0.8;*/
   overflow-x: hidden; /* Disable horizontal scroll */
-  /*display:none;*/
   border-radius: 12px;
   box-shadow: 9px 9px 9px rgba(0, 0, 0, .125);
+  resize: both;
 }
 
 #sobject_fields{
 	color: black;
 }
 #soqlOverRay {
-/* 
   height: 100%;
   width: 100%;
   position: fixed;
   z-index: 9998;
   left: 0%;
   top: 0%;
-  background-color: white;
-  opacity: 0.8;
-  overflow-x: hidden; 
+  background-color: rgba(0,0,0,0.2);
+  /*background-color: white;*/
+  /*opacity: 0.8;*/
+  overflow-x: hidden;
   display:none;
-  */
+  
 }
+#creatGridArea{
+	font-size:12px;
+}
+.select2-container{
+	/*z-index: 9999;*/
+}
+#separator{
+	color: black;
+}
+
 </style>
 <div id="soqlArea">
 
 	<div id="formArea">
 		<%= form_tag query_path(), :method => :post, :class => "execute-form" do %>
-		<%= text_area_tag :input_soql,"select id from assetpolicy__c", :size => "120x5", :spellcheck => false %>
+		<%= text_area_tag :input_soql,"select id ,name,model__c from rb__c", :size => "120x5", :spellcheck => false %>
 		<br>
 		<%= submit_tag "Execute", :class => "btn btn-sm btn-primary execute-soql" %>
 		&nbsp;&nbsp;<label><input type="checkbox" id="useTooling"/> Use Tooling API</label>
@@ -131,6 +141,17 @@
 					</div>
 					<div>
 						<%= text_area_tag :sobject_fields,"a,b,c", :size => "50x5", :spellcheck => false %>				
+					</div>
+				</div>
+				<div class="row">
+					<div>
+						<%= label_tag 'Separator: ' %>
+					</div>
+					<div>
+						<select id="separator">
+							<option value="comma">Comma</option>
+							<option value="Rb">Rb</option>
+						</select>
 					</div>
 				</div>
 

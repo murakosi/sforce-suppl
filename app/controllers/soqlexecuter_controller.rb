@@ -19,7 +19,9 @@ class SoqlexecuterController < ApplicationController
   end
 
   def update
-    execute_save(params[:sobject], params[:records], params[:soql_info])
+    new_param = params.permit!.to_h
+    
+    execute_save(new_param[:sobject], new_param[:records], new_param[:soql_info])
   end
   
   def delete
@@ -115,13 +117,27 @@ class SoqlexecuterController < ApplicationController
     end
     
     begin
-      execute_upsert(sobject, upserts)
+      if soql_info["soql"].empty?
+        key_map = execute_insert(sobject, sobject_records.keys, upserts)
+        soql_info.store(:key_map, key_map)
+      else
+        execute_upsert(sobject, upserts)
+      end
       render :json => {:done => true, :soql_info => soql_info}, :status => 200
     rescue StandardError => ex
       print_error(ex)
       render :json => {:error => ex.message}, :status => 400
     end
 
+  end
+
+  def execute_insert(sobject, ids, sobject_records)
+    result = Service::SoapSessionService.call(sforce_session).upsert!(sobject, "Id", sobject_records)
+    map = {}
+    ids.each_with_index do |str, i|
+      map.store(str, result[i][:id])
+    end
+    map
   end
   
   def get_update_fields_hash(fields_hash)
@@ -146,23 +162,6 @@ class SoqlexecuterController < ApplicationController
 
   def execute_upsert(sobject, sobject_records)
     Service::SoapSessionService.call(sforce_session).upsert!(sobject, "Id", sobject_records)
-  end
-
-  def execute_update(sobject, sobject_records)
-    if sobject_records.empty?
-      return
-    end
-
-    sobject_records = sobject_records.map{|k,v| {"Id" => k}.merge!(v)}
-    Service::SoapSessionService.call(sforce_session).update!(sobject, sobject_records)
-  end
-
-  def execute_insert(sobject, sobject_records)
-    if sobject_records.empty?
-      return
-    end
-      
-    Service::SoapSessionService.call(sforce_session).create!(sobject, sobject_records)
   end
   
   def execute_delete(ids, soql_info)
@@ -197,6 +196,7 @@ class SoqlexecuterController < ApplicationController
   end
 
   def create
+    sobject = params[:sobject]
     tab_id = params[:tab_id]
     raw_fields = params[:fields]
 
@@ -209,11 +209,11 @@ class SoqlexecuterController < ApplicationController
       id_column_index = fields.index{|field| field == "ID"}
     end
 
-    render :json => create_response_json(tab_id, fields, id_column_index), :status => 200
+    render :json => create_response_json(sobject, tab_id, fields, id_column_index), :status => 200
 
   end
 
-  def create_response_json(tab_id, columns, id_column_index)
+  def create_response_json(sobject, tab_id, columns, id_column_index)
     
     column_options = []
     columns.each do |column|
@@ -226,7 +226,7 @@ class SoqlexecuterController < ApplicationController
 
     {
       :soql_info => soql_info("", "0", false, false, tab_id),
-      :sobject => "temp",
+      :sobject => sobject,
       :records => {
                   :columns => columns,
                   :rows => [],
