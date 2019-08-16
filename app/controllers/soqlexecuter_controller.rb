@@ -89,14 +89,24 @@ class SoqlexecuterController < ApplicationController
     }
   end
 
-  def soql_info(soql, record_count, tooling, query_all, tab_id)
-    {
-      :timestamp => record_count + " rows @" + Time.now.strftime(Time_format) +  "\r\n",
-      :soql => soql,
-      :tooling => tooling,
-      :query_all => query_all,
-      :tab_id => tab_id
-    }
+  def soql_info(soql, record_count, tooling, query_all, tab_id, sobject = nil)
+    if sobject.nil?
+      {
+        :timestamp => record_count + " rows @" + Time.now.strftime(Time_format),
+        :soql => soql,
+        :tooling => tooling,
+        :query_all => query_all,
+        :tab_id => tab_id
+      }
+    else
+      {
+        :timestamp => "sObject : " + sobject,
+        :soql => soql,
+        :tooling => tooling,
+        :query_all => query_all,
+        :tab_id => tab_id
+      }
+    end
   end
 
   def execute_save(sobject, records, soql_info)
@@ -225,7 +235,7 @@ class SoqlexecuterController < ApplicationController
     end
 
     {
-      :soql_info => soql_info("", "0", false, false, tab_id),
+      :soql_info => soql_info("", "0", false, false, tab_id, sobject),
       :sobject => sobject,
       :records => {
                   :columns => columns,

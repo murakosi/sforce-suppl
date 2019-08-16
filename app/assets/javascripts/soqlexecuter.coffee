@@ -211,7 +211,7 @@ coordinates = ->
     hot = grids[elementId]
     ids = getSelectedIds(hot, sobject)
     
-    if ids.length <= 0
+    if !ids || ids.length <= 0
       return false
   
     val = {soql_info:sobject.soql_info, ids: ids}
@@ -240,7 +240,7 @@ coordinates = ->
     hot = grids[elementId]
     ids = getSelectedIds(hot, sobject)
     
-    if ids.length <= 0
+    if !ids || ids.length <= 0
       return false
 
     val = {soql_info:sobject.soql_info, ids: ids}
@@ -252,7 +252,7 @@ coordinates = ->
   #------------------------------------------------
   # Edit on grid
   #------------------------------------------------
-  detectAfterEditOnGrid = (changes, source) ->
+  onAfterChange = (changes, source) ->
 
     if source == 'loadData'
       return
@@ -316,9 +316,13 @@ coordinates = ->
     else
       id
       
-  getSelectedIds = (grid, sobject) ->
+  getSelectedIds = (grid, sobject) ->    
+    selectedCells = grid.getSelected()
+
+    if !selectedCells
+      return null
+
     rows = {}
-    selectedCells = grid.getSelected()   
 
     startRow = 0
     endRow = 0
@@ -337,7 +341,8 @@ coordinates = ->
     ids = []
     for rowIndex in Object.keys(rows)
       id = grid.getDataAtCell(rowIndex, sobject.idColumnIndex)
-      ids.push(id)
+      if id
+        ids.push(id)
      
     return ids
 
@@ -355,15 +360,16 @@ coordinates = ->
     grid = grids[elementId]
     selectedCell = getSelectedCell(grid)
     if !selectedCell || selectedCell.row < 0
-      return
+      selectedCell = {row:0, col:0}
 
     grid.alter('insert_row', selectedCell.row + 1, 1)
     grid.selectCell(selectedCell.row, selectedCell.col)
   
-  onAfterAddRow = (index, amount, source) ->
+  onAfterCreateRow = (index, amount, source) ->
     setTimeout ( ->
       assignTempId(index)
     ), 3
+    return
     
   assignTempId = (rowIndex) ->
     elementId = getActiveGridElementId()
@@ -387,6 +393,7 @@ coordinates = ->
 
     grid = grids[elementId]
     selectedCell = getSelectedCell(grid)
+
     if !selectedCell || selectedCell.row < 0
       return false
 
@@ -394,7 +401,6 @@ coordinates = ->
     grid.selectCell(getValidRowAfterRemove(selectedCell, grid), selectedCell.col)
     
   onBeforeRemoveRow = (index, amount, physicalRows, source) ->
-    console.log(physicalRows)
     if physicalRows.length != 1
       return false
 
@@ -415,15 +421,12 @@ coordinates = ->
     selectedCells = grid.getSelected()
 
     if !selectedCells
-      return {row:0,col:0}
-    
-    if selectedCells.length > 0 && selectedCells[0].length > 0
+      null    
+    else
       {
         row: selectedCells[0][0]
         col: selectedCells[0][1]
       }
-    else
-      null
 
   getValidRowAfterRemove = (selectedCell, grid) ->
     lastRow = grid.countVisibleRows() - 1
@@ -508,12 +511,9 @@ coordinates = ->
       e.stopPropagation()
       return
 
-    createTab()
-    
-  $("#soqlTabs").on "click", (e) ->    
-    return false
-    
-  $(document).on 'click', '.ui-closable-tab', (e) ->
+    createTab()   
+  
+  $(document).on 'click', '#soqlArea .ui-closable-tab', (e) ->
     e.preventDefault()
     tabContainerDiv=$(this).closest("#soqlArea .ui-tabs").attr("id")
     tabCount = $("#soqlArea #" + tabContainerDiv).find(".ui-closable-tab").length
@@ -609,12 +609,13 @@ coordinates = ->
         fillHandle: {autoInsertRow: false},
         #fragmentSelection: true,
         columnSorting: true,
+        #contextMenu: true,
         #colWidths: (i) -> setColWidth(i),
         outsideClickDeselects: false,
         licenseKey: 'non-commercial-and-evaluation',
-        afterChange: (source, changes) -> detectAfterEditOnGrid(source, changes),
+        afterChange: (source, changes) -> onAfterChange(source, changes),
         afterOnCellMouseDown: (event, coords, td) -> onCellClick(event, coords, td),
-        afterCreateRow: (index, amount, source) -> onAfterAddRow(index, amount, source),
+        afterCreateRow: (index, amount, source) -> onAfterCreateRow(index, amount, source),
         beforeRemoveRow: (index, amount, physicalRows, source) -> onBeforeRemoveRow(index, amount, physicalRows, source)
     }
 

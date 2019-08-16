@@ -94,6 +94,9 @@
 	color: black;
 }
 
+#soqlTabs .ui-tabs-anchor{
+	font-size:12px !important;
+}
 </style>
 <div id="soqlArea">
 
@@ -112,8 +115,8 @@
 	
 	<div id="tabArea">
 		<div style="float: left;">
-		<%= button_tag "Export", :type => "button", :id => "exportBtn", :class => "btn btn-xs btn-warning ex-small-btn" %>
-		<%= button_tag "Create", :type => "button", :id => "openCreatGridBtn", :class => "btn btn-xs btn-warning ex-small-btn" %>
+		<%= button_tag "Export", :type => "button", :id => "exportBtn", :class => "btn btn-xs btn-default ex-small-btn" %>
+		<%= button_tag "Create", :type => "button", :id => "openCreatGridBtn", :class => "btn btn-xs btn-default ex-small-btn" %>
 		</div>
 		<div class="right-align">
 			<%= button_tag "Upsert", :type => "button", :id => "upsertBtn", :class => "btn btn-xs btn-warning ex-small-btn" %>

@@ -4,7 +4,9 @@ describe = ->
   defaultDataType = ""  
   defaultContentType = null
   currentTable = null
-
+  grids = {}
+  currentTabIndex = 0
+  selectedTabId = null
 
   #------------------------------------------------
   # Shortcut keys
@@ -45,6 +47,10 @@ describe = ->
     executeDescribe()
 
   executeDescribe = () ->
+    if $.isAjaxBusy()
+      return false
+
+    selectedTabId = getActiveTabElementId()
     val = {selected_sobject: $('#describeArea #selected_sobject').val()}
     action = $('#executeDescribe').attr('action')
     method = $('#executeDescribe').attr('method')
@@ -80,8 +86,8 @@ describe = ->
 
   processSuccessResult = (json) ->
     hideMessageArea()
-    $("#describeArea #method").html(getExecutedMethod(json))
-    createGrid("#describeArea #grid", json)
+    $("#describeArea #overview" + selectedTabId).html(getExecutedMethod(json))
+    createGrid("#describeArea #describeGrid" + selectedTabId, json)
 
   refreshSelectOptions = (result) ->
     $('#sobjectList').html(result)
@@ -98,14 +104,93 @@ describe = ->
     displayError(response)
 
   #------------------------------------------------
+  # Active grid
+  #------------------------------------------------
+  getActiveTabElementId = () ->
+    $("#describeArea #tabArea .ui-tabs-panel:visible").attr("tabId")
+
+  getActiveGridElementId = () ->
+    tabId = $("#describeArea #tabArea .ui-tabs-panel:visible").attr("tabId")
+    "#describeArea #describeGrid" + tabId
+    
+  getActiveGrid = () ->
+    elementId = getActiveGridElementId()
+    grids[elementId]
+
+  #------------------------------------------------
+  # Create tab
+  #------------------------------------------------
+  $("#describeTabs").on "dblclick", (e) ->
+    if e.target != this
+      e.preventDefault()
+      e.stopPropagation()
+      return
+    e.preventDefault()
+    e.stopPropagation()
+    $("#overview1").addClass("noselect")
+    createTab()
+    console.log(1)
+    #$("#overview1").removeClass("noselect")
+
+  $(".resultSoql").on "dblclick", (e) ->
+    console.log(2)
+
+  $(".resultSoql").on "click", (e) ->
+    console.log(2)
+
+  $(document).on 'click', '#describeArea .ui-closable-tab', (e) ->
+    e.preventDefault()
+    tabContainerDiv=$(this).closest("#describeArea .ui-tabs").attr("id")
+    tabCount = $("#describeArea #" + tabContainerDiv).find(".ui-closable-tab").length
+
+    if tabCount <= 1
+      return
+
+    if window.confirm("Close this tab?")
+      panelId = $(this).closest("#describeArea li").remove().attr("aria-controls")
+      $("#describeArea #" + panelId ).remove();
+      $("#describeArea #" + tabContainerDiv).tabs("refresh")
+
+  $('#describeArea #add-tab').on 'click', (e) ->
+    e.preventDefault()
+    createTab()
+  
+  createTab = () ->
+    currentTabIndex = currentTabIndex + 1
+    newTabId = currentTabIndex
+
+    $("#describeArea #tabArea ul").append(
+      "<li class=\"noselect\"><a href=\"#describeTab" + newTabId + "\">Grid" + newTabId + "</a>" +
+      "<span class=\"ui-icon ui-icon-close ui-closable-tab\"></span>" +
+      "</li>"
+    )
+
+    overviewArea = '<div id="overview' + newTabId + '" class="resultSoql" tabId="' + newTabId + '"></div>'    
+    
+    $("#describeArea #tabArea").append(
+      "<div id=\"describeTab" + newTabId + "\" class=\"resultTab\" tabId=\"" + newTabId + "\">" +
+      overviewArea +
+      "<div id=\"describeGrid" + newTabId + "\" class=\"resultGrid\" tabId=\"" + newTabId + "\"></div>" +
+      "</div>"
+    )
+    
+    createGrid("#describeArea #describeGrid" + newTabId)
+    
+    $("#describeArea #tabArea").tabs("refresh")
+    
+    newTabIndex = $("#describeArea #tabArea ul li").length - 1
+    selectedTabId = newTabIndex
+    $("#describeArea #tabArea").tabs({ active: newTabIndex});
+
+  #------------------------------------------------
   # grid
   #------------------------------------------------ 
   createGrid = (elementId, json = null) ->   
     hotElement = document.querySelector(elementId)
     
-    if currentTable
-      currentTable.destroy()
-      currentTable = null
+    if grids[elementId]
+      table = grids[elementId]
+      table.destroy()
 
     header = getColumns(json)
     records = getRows(json)
@@ -131,9 +216,11 @@ describe = ->
         licenseKey: 'non-commercial-and-evaluation'
     }
 
-    currentTable = new Handsontable(hotElement, hotSettings)
-    currentTable.updateSettings afterColumnSort: ->
-      currentTable.render()
+    hot = new Handsontable(hotElement, hotSettings)
+    hot.updateSettings afterColumnSort: ->
+      hot.render()
+
+    grids[elementId] = hot
 
   getColumns = (json) ->
     if !json?
@@ -162,7 +249,8 @@ describe = ->
 
   $("#describeArea #tabArea").tabs()
 
-  createGrid("#describeArea #grid")
+  #createGrid("#describeArea #grid")
+  createTab()
 
 $(document).ready(describe)
 $(document).on('page:load', describe)
