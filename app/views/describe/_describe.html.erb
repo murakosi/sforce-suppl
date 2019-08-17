@@ -3,7 +3,7 @@
 	font-size:12px !important;
 }
 </style>
-<div id="describeArea">
+<div id="describeArea" class="describe">
 		<div id="formArea">
 			<%= form_tag describe_changelist_path(), :id => "filterSObjectList", :method => :post do %>
 				<%= radio_button_tag 'sobjectTypeCheckBox', :all, true, :class => "sobjectTypeCheckBox" %>All&nbsp;&nbsp;
@@ -37,7 +37,7 @@
 				<% end %>
 			</div>	
 
-			<ul id="describeTabs"></ul>
+			<ul id="describeTabs"><li><div id="addTabBtn" class="icon-plus"></div></li></ul>
 		<!--
 			<div id="tab1" class="resultTab">
 				<div id="method" class="resultSoql"></div>

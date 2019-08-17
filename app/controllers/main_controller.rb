@@ -12,6 +12,7 @@ class MainController < ApplicationController
     @response = nil
     @describe_result = nil
     begin
+      raise StandardError.new("aaa")
       describe_global(sforce_session)
       sobjects = session[:global_result].map{|hash| hash[:name]}
       #session[:sobject_list]
@@ -27,7 +28,11 @@ class MainController < ApplicationController
   end
 
   def prepare
-    render :json => @response
+    if session[:describe_message].nil?
+      render :json => {:status => 200}
+    else
+      render :json => {:error => session[:describe_message], :status => 400}
+    end
   end
 
   def check

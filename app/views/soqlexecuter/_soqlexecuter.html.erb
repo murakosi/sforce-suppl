@@ -1,19 +1,7 @@
 <style type="text/css">
-	.right-align{
-		/*float: right;*/
-		text-align: right;
-		margin-bottom: 2px;
-	}
-
-.right_label_block{
-    display:table-cell;
-    padding-top: 2px;
-    padding-bottom: 2px;
-    padding-right: 10px;
-    border: 0px solid black;
-    width: 40px;
-    text-align: right;
-    vertical-align: middle;	
+.right-align{
+	text-align: right;
+	margin-bottom: 2px;
 }
 
 .tbl{
@@ -24,44 +12,44 @@
     color: white;
     margin: 0 auto;
 }
+
 .row {
     display:table-row;
-    }
+}
+
 .row>div {
     display:table-cell;
-    /*margin:15px;
-    padding:15px;
-    border:10px solid;
-    background-color:#eee;*/
 }
+
 .label_col{
     padding-right: 10px;
     text-align: right;
     vertical-align: middle;
 }
+
 .label_col2{
     padding-right: 10px;
     text-align: right;
     vertical-align: top;
 }
+
 .input-sm2 {
     height: 30px;
-    /* padding: 5px 10px; */
     font-size: 12px;
     line-height: 1.5;
     border-radius: 3px;
 }
+
 .create-dialog {
-  /* Height & width depends on how you want to reveal the overlay (see JS below) */    
   height: 40%;
   width: 30%;
-  position: fixed; /* Stay in place */
+  position: fixed;
   z-index: 9999; 
   left: 30%;
   top: 20%;
   background-color: #408080;
   /*opacity: 0.8;*/
-  overflow-x: hidden; /* Disable horizontal scroll */
+  overflow-x: hidden;
   border-radius: 12px;
   box-shadow: 9px 9px 9px rgba(0, 0, 0, .125);
   resize: both;
@@ -70,6 +58,7 @@
 #sobject_fields{
 	color: black;
 }
+
 #soqlOverRay {
   height: 100%;
   width: 100%;
@@ -84,12 +73,11 @@
   display:none;
   
 }
+
 #creatGridArea{
 	font-size:12px;
 }
-.select2-container{
-	/*z-index: 9999;*/
-}
+
 #separator{
 	color: black;
 }
@@ -97,6 +85,7 @@
 #soqlTabs .ui-tabs-anchor{
 	font-size:12px !important;
 }
+
 </style>
 <div id="soqlArea">
 
@@ -123,11 +112,11 @@
 			<%= button_tag "Delete", :type => "button", :id => "deleteBtn", :class => "btn btn-xs btn-warning ex-small-btn" %>
 			<%= button_tag "Undelete", :type => "button", :id => "undeleteBtn", :class => "btn btn-xs btn-warning ex-small-btn" %>
 		</div>
-		<ul id="soqlTabs"></ul>
+		<ul id="soqlTabs"><li><div id="addTabBtn" class="icon-plus"></div></li></ul>
 	</div>
 	
 	<div id="soqlOverRay">
-		<div id="creatGridArea" class="create-dialog">
+		<div id="creatGridArea" class="create-dialog describe">
 			<div class="tbl">
 				<div class="row">
 					<div class="label_col">

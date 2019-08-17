@@ -74,22 +74,11 @@ mains = ->
     containerCssClass: ':all:'
   })
       
-###
   action = "prepare"
   $.get action, (json) ->
-    console.log("done")
-    $("div.sobject-list").html(json.content)
     if json.status != 200
-      targetDiv = "#describeContent"
+      targetDiv = ".describe"
       createErrorDiv(json.error)
-    else
-      $(".selectlist").select2({
-        dropdownAutoWidth : true,
-        width: 'resolve',
-        containerCssClass: ':all:'
-      })
-###
-
 
 $(document).ready(mains)
 $(document).on('page:load', mains)

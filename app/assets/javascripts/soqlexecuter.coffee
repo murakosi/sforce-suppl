@@ -47,8 +47,8 @@ coordinates = ->
       if e.target.id == "input_soql"        
         executeSoql()
 
-    if e.keyCode == 27 && $("#creatGridArea").is(":visible")
-      $("#creatGridArea").hide()
+    if e.keyCode == 27 && $("#soqlOverRay").is(":visible")
+      $("#soqlOverRay").hide()
   
   #------------------------------------------------
   # Execute SOQL
@@ -505,14 +505,14 @@ coordinates = ->
   #------------------------------------------------
   # Create tab
   #------------------------------------------------
-  $("#soqlTabs").on "dblclick", (e) ->
-    if e.target != this
-      e.preventDefault()
-      e.stopPropagation()
-      return
+  #$("#soqlTabs").on "dblclick", (e) ->
+  #  if e.target != this
+  #    return
 
-    createTab()   
-  
+  #  createTab()
+  $("#soqlArea #addTabBtn").on 'click', (e) ->
+    createTab()
+
   $(document).on 'click', '#soqlArea .ui-closable-tab', (e) ->
     e.preventDefault()
     tabContainerDiv=$(this).closest("#soqlArea .ui-tabs").attr("id")
@@ -534,7 +534,8 @@ coordinates = ->
     currentTabIndex = currentTabIndex + 1
     newTabId = currentTabIndex
 
-    $("#soqlArea #tabArea ul").append(
+    #$("#soqlArea #tabArea ul").append(
+    $("#soqlArea #tabArea ul li:last").before(
       "<li class=\"noselect\"><a href=\"#tab" + newTabId + "\">Grid" + newTabId + "</a>" +
       "<span class=\"ui-icon ui-icon-close ui-closable-tab\"></span>" +
       "</li>"
@@ -566,7 +567,7 @@ coordinates = ->
     
     $("#soqlArea #tabArea").tabs("refresh")
     
-    newTabIndex = $("#soqlArea #tabArea ul li").length - 1
+    newTabIndex = $("#soqlArea #tabArea ul li").length - 2
     selectedTabId = newTabIndex
     $("#soqlArea #tabArea").tabs({ active: newTabIndex, activate: onTabSelect});
 
@@ -675,7 +676,6 @@ coordinates = ->
   # page load actions
   #------------------------------------------------
   $("#soqlArea #tabArea").tabs() 
-  
   createTab()
 
 $(document).ready(coordinates)

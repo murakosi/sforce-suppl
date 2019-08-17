@@ -120,23 +120,8 @@ describe = ->
   #------------------------------------------------
   # Create tab
   #------------------------------------------------
-  $("#describeTabs").on "dblclick", (e) ->
-    if e.target != this
-      e.preventDefault()
-      e.stopPropagation()
-      return
-    e.preventDefault()
-    e.stopPropagation()
-    $("#overview1").addClass("noselect")
+  $("#describeArea #addTabBtn").on 'click', (e) ->
     createTab()
-    console.log(1)
-    #$("#overview1").removeClass("noselect")
-
-  $(".resultSoql").on "dblclick", (e) ->
-    console.log(2)
-
-  $(".resultSoql").on "click", (e) ->
-    console.log(2)
 
   $(document).on 'click', '#describeArea .ui-closable-tab', (e) ->
     e.preventDefault()
@@ -159,7 +144,7 @@ describe = ->
     currentTabIndex = currentTabIndex + 1
     newTabId = currentTabIndex
 
-    $("#describeArea #tabArea ul").append(
+    $("#describeArea #tabArea ul li:last").before(
       "<li class=\"noselect\"><a href=\"#describeTab" + newTabId + "\">Grid" + newTabId + "</a>" +
       "<span class=\"ui-icon ui-icon-close ui-closable-tab\"></span>" +
       "</li>"
@@ -178,7 +163,7 @@ describe = ->
     
     $("#describeArea #tabArea").tabs("refresh")
     
-    newTabIndex = $("#describeArea #tabArea ul li").length - 1
+    newTabIndex = $("#describeArea #tabArea ul li").length - 2
     selectedTabId = newTabIndex
     $("#describeArea #tabArea").tabs({ active: newTabIndex});
 

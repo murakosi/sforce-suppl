@@ -363,3 +363,40 @@ span.select2-selection.select2-selection--single {
 #menus li:hover > a {
     background: #fff;
 }
+
+.icon-plus {
+    border:1px solid #aaa;
+    background-color: #fff;
+    border-top-right-radius: 4px;
+    border-top-left-radius: 4px;
+    width: 27px;
+    height: 20px;
+    position: relative;
+    top: 8px;
+    left: 0px;
+    margin-bottom:0px;
+    border-bottom: 0px;
+    cursor: pointer;
+}
+
+.icon-plus:after {
+    background-color: #aaa;
+    width: 16px;
+    height: 2px;
+    border-radius: 1px;
+    position: absolute;
+    top:9px;
+    left: 5px;
+    content:"";
+}
+
+.icon-plus:before {
+    background-color: #aaa;
+    width: 2px;
+    height: 16px;
+    border-radius: 1px;
+    position: absolute;
+    top:2px;
+    left: 12px;
+    content:"";
+}
