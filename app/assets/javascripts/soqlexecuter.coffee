@@ -20,9 +20,10 @@ coordinates = ->
   $("#creatGridArea #createGridBtn").on 'click', (e) ->
     rawFields = $("#creatGridArea #sobject_fields").val()
     sobject = $('#creatGridArea #selected_sobject').val()
+    separator = $('#creatGridArea #separator').val()
     if rawFields
       action = "create"
-      val = {sobject: sobject, fields: rawFields, tab_id: getActiveTabElementId()}
+      val = {sobject: sobject, fields: rawFields, separator: separator, tab_id: getActiveTabElementId()}
       $.get action, val, (json) ->
         displayQueryResult(json)
         $("#soqlOverRay").hide()
@@ -252,14 +253,16 @@ coordinates = ->
   #------------------------------------------------
   # Edit on grid
   #------------------------------------------------
+  on1AfterChange = (changes, source) ->
+  
   onAfterChange = (changes, source) ->
-
     if source == 'loadData'
       return
-
+    
     if changes.length > 1
-      for change of changes
+      for change in changes
         storeChanges(change)
+      return
     else
       storeChanges(changes)
 
@@ -492,7 +495,7 @@ coordinates = ->
     
     elementId = getActiveGridElementId()
     
-    if sObjects[elementId]
+    if sObjects[elementId] && sObjects[elementId].soql_info.soql
       width = 750
       height = 400
       left =(screen.width - width) / 2

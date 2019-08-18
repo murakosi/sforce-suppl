@@ -223,7 +223,13 @@
 
   
     <div id="soqlexecuterContent"><%= render "soqlexecuter/soqlexecuter" %></div>
-    <div id="describeContent"><%= render "describe/describe" %></div>
+    <div id="describeContent">
+      <% if @describe_error.nil? %>
+        <%= render "describe/describe" %>
+      <% else %>
+        <div style="text-align:center; white-space: pre; color:red; font-weight:bold;"><%= @describe_error %></div>
+      <% end %>
+    </div>
     <div id="metadataContent"><%= render "metadata/metadata" %></div>	
     <div id="apexContent"><%= render "apex/apex" %></div>
   </div>

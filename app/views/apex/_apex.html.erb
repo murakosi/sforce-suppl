@@ -34,16 +34,7 @@
 	<div id="dummyArea"></div>
 	
 	<div id="tabArea">
-		<%= button_tag "Add tab", :type => "button", :id => "add-tab", :class => "btn btn-xs btn-default" %>
-		<%= button_tag "Download", :type => "button", :id => "download-log", :class => "btn btn-xs btn-default" %>
-		<ul>
-			<li class="noselect"><a href="#tab1">Log1</a>
-			<span class="ui-icon ui-icon-close ui-closable-tab"></span>
-			</li>
-		</ul>
-		<div id="tab1" class="resultTab" tabId="1">
-			<div id="soql1" class="resultSoql" tabId="1"></div>
-			<div id="grid1" class="resultGrid" tabId="1"></div>
-		</div>
+		<%= button_tag "Export", :type => "button", :id => "download-log", :class => "btn btn-xs btn-default" %>
+		<ul id="apexTabs"><li><div id="addTabBtn" class="icon-plus"></div></li></ul>
 	</div>
 </div>

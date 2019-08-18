@@ -209,8 +209,13 @@ class SoqlexecuterController < ApplicationController
     sobject = params[:sobject]
     tab_id = params[:tab_id]
     raw_fields = params[:fields]
+    separator = params[:separator]
 
-    fields = raw_fields.split(",").map(&:strip).map(&:upcase)
+    if separator == "comma"
+      fields = raw_fields.split(",").map(&:strip).map(&:upcase)
+    else
+      fields = raw_fields.split("\n").map(&:strip).map(&:upcase)
+    end
 
     id_column_index = 0
     if !fields.include?("ID")

@@ -232,10 +232,11 @@ describe = ->
     else
       null
 
-  $("#describeArea #tabArea").tabs()
+  if $("#describeArea").length
+    $("#describeArea #tabArea").tabs()
 
-  #createGrid("#describeArea #grid")
-  createTab()
+    #createGrid("#describeArea #grid")
+    createTab()
 
 $(document).ready(describe)
 $(document).on('page:load', describe)

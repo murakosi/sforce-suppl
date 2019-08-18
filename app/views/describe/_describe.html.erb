@@ -1,9 +1,4 @@
-<style>
-#describeTabs .ui-tabs-anchor{
-	font-size:12px !important;
-}
-</style>
-<div id="describeArea" class="describe">
+<div id="describeArea">
 		<div id="formArea">
 			<%= form_tag describe_changelist_path(), :id => "filterSObjectList", :method => :post do %>
 				<%= radio_button_tag 'sobjectTypeCheckBox', :all, true, :class => "sobjectTypeCheckBox" %>All&nbsp;&nbsp;
@@ -32,7 +27,6 @@
 			<br>
 			<div id="exportButtonArea">
 				<%= form_tag describe_download_path(), :id => "exportForm", :method => :post, :remote => false do %>
-					<%= button_tag "Add tab", :id => "add-tab", :class => "btn btn-xs btn-default ex-small-btn" %>
 					<%= button_tag "Export", :id => "csv-expprt", :class => "btn btn-xs btn-default ex-small-btn" %>
 				<% end %>
 			</div>	

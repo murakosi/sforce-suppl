@@ -9,29 +9,16 @@ class MainController < ApplicationController
     @deploy_metadata_options = Metadata::Deployer.deploy_options
     @default_debug_levels = Constants::DefaultLogLevel
     @debug_options = Constants::LogCategory.map{|cat| {cat => Constants::LogCategoryLevel} }
-    @response = nil
+    @describe_error = nil
     @describe_result = nil
+
     begin
-      raise StandardError.new("aaa")
       describe_global(sforce_session)
       sobjects = session[:global_result].map{|hash| hash[:name]}
-      #session[:sobject_list]
       html_content = render_to_string :partial => 'sobjectlist', :locals => {:data_source => sobjects}
       @describe_result = html_content
-      session[:describe_message] = nil
-      #render :json => {:target => "#sobjectList", :content => html_content, :error => nil, :status => 200}
-    rescue StandardError => ex
-      session[:describe_message] = ex.message
-       #html_content = render_to_string :partial => 'sobjectlist', :locals => {:data_source => []}
-       #render :json => {:target => "#sobjectList", :content => html_content, :error => ex.message, :status => 400}
-    end
-  end
-
-  def prepare
-    if session[:describe_message].nil?
-      render :json => {:status => 200}
-    else
-      render :json => {:error => session[:describe_message], :status => 400}
+    rescue StandardError => ex      
+      @describe_error = ex.message
     end
   end
 

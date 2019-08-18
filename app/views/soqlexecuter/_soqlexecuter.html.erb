@@ -82,8 +82,8 @@
 	color: black;
 }
 
-#soqlTabs .ui-tabs-anchor{
-	font-size:12px !important;
+.select2-container{
+	z-index: 9999;
 }
 
 </style>
@@ -91,7 +91,7 @@
 
 	<div id="formArea">
 		<%= form_tag query_path(), :method => :post, :class => "execute-form" do %>
-		<%= text_area_tag :input_soql,"select id ,name,model__c from rb__c", :size => "120x5", :spellcheck => false %>
+		<%= text_area_tag :input_soql,"", :size => "120x5", :spellcheck => false %>
 		<br>
 		<%= submit_tag "Execute", :class => "btn btn-sm btn-primary execute-soql" %>
 		&nbsp;&nbsp;<label><input type="checkbox" id="useTooling"/> Use Tooling API</label>
@@ -105,7 +105,9 @@
 	<div id="tabArea">
 		<div style="float: left;">
 		<%= button_tag "Export", :type => "button", :id => "exportBtn", :class => "btn btn-xs btn-default ex-small-btn" %>
-		<%= button_tag "Create", :type => "button", :id => "openCreatGridBtn", :class => "btn btn-xs btn-default ex-small-btn" %>
+		<% if @describe_error.nil? %>
+			<%= button_tag "Create", :type => "button", :id => "openCreatGridBtn", :class => "btn btn-xs btn-default ex-small-btn" %>
+		<% end %>
 		</div>
 		<div class="right-align">
 			<%= button_tag "Upsert", :type => "button", :id => "upsertBtn", :class => "btn btn-xs btn-warning ex-small-btn" %>
@@ -116,7 +118,7 @@
 	</div>
 	
 	<div id="soqlOverRay">
-		<div id="creatGridArea" class="create-dialog describe">
+		<div id="creatGridArea" class="create-dialog">
 			<div class="tbl">
 				<div class="row">
 					<div class="label_col">
@@ -132,7 +134,7 @@
 						<%= label_tag 'Fields: ' %>
 					</div>
 					<div>
-						<%= text_area_tag :sobject_fields,"a,b,c", :size => "50x5", :spellcheck => false %>				
+						<%= text_area_tag :sobject_fields,"", :size => "50x5", :spellcheck => false %>				
 					</div>
 				</div>
 				<div class="row">
@@ -142,7 +144,7 @@
 					<div>
 						<select id="separator">
 							<option value="comma">Comma</option>
-							<option value="Rb">Rb</option>
+							<option value="newline">New line</option>
 						</select>
 					</div>
 				</div>

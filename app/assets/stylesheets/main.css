@@ -145,6 +145,10 @@ button:disabled {
     margin: 0 auto;   
 }
 
+#mainArea .ui-tabs-anchor{
+    font-size:12px !important;
+}
+
 #tree, .treeView{
     font-size:12px;
     font-family: Verdana;

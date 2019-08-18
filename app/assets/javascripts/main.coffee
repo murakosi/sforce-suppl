@@ -55,7 +55,7 @@ mains = ->
     $("div#mainArea").prop("class", target)
 
     if target == "metadata"
-      targetSelect2 = "div#" + target + "Area .selectlist"
+      targetSelect2 = "div#metadataArea .selectlist"
       $(targetSelect2).select2({
         dropdownAutoWidth : true,
         width: 'resolve',
@@ -63,22 +63,12 @@ mains = ->
         })
     
     $(document).trigger("displayChange", [{targetArea: target + "Area"}]);
-    
-  createErrorDiv = (message) ->
-    html = "<div style='text-align:center; white-space: pre; color:red; font-weight:bold;'>" + message  + "</div>"
-    $(targetDiv).html(html)
 
   $(".selectlist").select2({
     dropdownAutoWidth : true,
     width: 'resolve',
     containerCssClass: ':all:'
   })
-      
-  action = "prepare"
-  $.get action, (json) ->
-    if json.status != 200
-      targetDiv = ".describe"
-      createErrorDiv(json.error)
 
 $(document).ready(mains)
 $(document).on('page:load', mains)
