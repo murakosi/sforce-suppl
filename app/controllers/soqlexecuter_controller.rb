@@ -142,7 +142,7 @@ class SoqlexecuterController < ApplicationController
   end
 
   def execute_insert(sobject, ids, sobject_records)
-    result = Service::SoapSessionService.call(sforce_session).upsert!(sobject, "Id", sobject_records)
+    p result = Service::SoapSessionService.call(sforce_session).upsert!(sobject, "Id", sobject_records)
     map = {}
     ids.each_with_index do |str, i|
       map.store(str, result[i][:id])
