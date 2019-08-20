@@ -69,6 +69,8 @@ mains = ->
     width: 'resolve',
     containerCssClass: ':all:'
   })
+  $('#soqlArea .selectlist').on "select2:open", (e) ->
+    alert("open");
 
 $(document).ready(mains)
 $(document).on('page:load', mains)
