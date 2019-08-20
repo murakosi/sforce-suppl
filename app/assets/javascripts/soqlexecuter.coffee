@@ -258,20 +258,16 @@ coordinates = ->
 
   #------------------------------------------------
   # Edit on grid
-  #------------------------------------------------
-  on1AfterChange = (changes, source) ->
-  
+  #------------------------------------------------ 
   onAfterChange = (changes, source) ->
-    console.log("here")
+
     if source == 'loadData'
       return
-    console.log(changes)
-    if changes.length > 1
-      for change in changes
-        storeChanges(change)
-      return
-    else
-      storeChanges(changes)
+
+    for change in changes
+      storeChanges(change)
+      
+    return
 
   storeChanges = (change) ->
     rowIndex = change[0]
