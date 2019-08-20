@@ -59,7 +59,8 @@ mains = ->
       $(targetSelect2).select2({
         dropdownAutoWidth : true,
         width: 'resolve',
-        containerCssClass: ':all:'
+        containerCssClass: ':all:',
+        allowClear: true
         })
     
     $(document).trigger("displayChange", [{targetArea: target + "Area"}]);
@@ -67,7 +68,8 @@ mains = ->
   $(".selectlist").select2({
     dropdownAutoWidth : true,
     width: 'resolve',
-    containerCssClass: ':all:'
+    containerCssClass: ':all:',
+    allowClear: true
   })
 
 $(document).ready(mains)
