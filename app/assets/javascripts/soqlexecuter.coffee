@@ -28,7 +28,7 @@ coordinates = ->
         displayQueryResult(json)
         $("#soqlOverRay").hide()
   
-  $("#soqlArea .selectlist").on "select2:opening", (e) ->
+  $("#soqlArea .selectlist").on "select2:open", (e) ->
     $(".select2-container--open").css("z-index","3000")
     
   $("#soqlArea .selectlist").on "select2:close", (e) ->
