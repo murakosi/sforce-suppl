@@ -27,7 +27,13 @@ coordinates = ->
       $.get action, val, (json) ->
         displayQueryResult(json)
         $("#soqlOverRay").hide()
-
+  
+  $("#soqlArea .selectlist").on "select2:opening", (e) ->
+    $(".select2-container--open").css("z-index","3000")
+    
+  $("#soqlArea .selectlist").on "select2:close", (e) ->
+    $(".select2-container--open").css("z-index","1051")
+    
   #------------------------------------------------
   # Event on menu change
   #------------------------------------------------
