@@ -323,7 +323,7 @@ span.select2-selection.select2-selection--single {
     /*position: relative;*/
     position: fixed;
     top:5px;
-    z-index: 1000;
+    z-index: 3000;
     background: #d3cbdb;
     display: flex;
     font-size:10pt;
