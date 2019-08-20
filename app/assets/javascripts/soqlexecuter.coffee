@@ -29,7 +29,7 @@ coordinates = ->
         $("#soqlOverRay").hide()
   
   $("#soqlArea .selectlist").on "select2:open", (e) ->
-    $(".select2-container--open").css("z-index","3000")
+    $(".select2-container--open").css("z-index","4010")
     
   $("#soqlArea .selectlist").on "select2:close", (e) ->
     $(".select2-container--open").css("z-index","1051")
