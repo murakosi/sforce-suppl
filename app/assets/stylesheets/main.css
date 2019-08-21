@@ -216,6 +216,10 @@ span.select2-selection.select2-selection--single {
     overflow-y: auto;
 }
 
+.select2-container--default .select2-selection--single .select2-selection__clear {
+    margin-left: 10px !important;
+}
+
 .ex-small-btn{
     font-size: 12px !important;
 }
