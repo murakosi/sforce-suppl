@@ -70,7 +70,7 @@ mains = ->
     dropdownAutoWidth : true,
     width: 'resolve',
     containerCssClass: ':all:',
-    placeholder: "Select an sObject",
+    #placeholder: "Select an sObject",
     allowClear: true
   })
 
