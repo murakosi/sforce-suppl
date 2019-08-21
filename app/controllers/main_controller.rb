@@ -15,7 +15,8 @@ class MainController < ApplicationController
     begin
       describe_global(sforce_session)
       sobjects = session[:global_result].map{|hash| hash[:name]}
-      html_content = render_to_string :partial => 'sobjectlist', :locals => {:data_source => sobjects}
+      placeholder = "Select an sObject"
+      html_content = render_to_string :partial => 'sobjectlist', :locals => {:data_source => sobjects, :placeholder => placeholder}
       @describe_result = html_content
     rescue StandardError => ex      
       @describe_error = ex.message
