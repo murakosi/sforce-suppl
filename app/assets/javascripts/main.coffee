@@ -60,6 +60,7 @@ mains = ->
         dropdownAutoWidth : true,
         width: 'resolve',
         containerCssClass: ':all:',
+        placeholder: "Select metadata type",
         allowClear: true
         })
     
@@ -69,6 +70,7 @@ mains = ->
     dropdownAutoWidth : true,
     width: 'resolve',
     containerCssClass: ':all:',
+    placeholder: "Select sObject",
     allowClear: true
   })
 
