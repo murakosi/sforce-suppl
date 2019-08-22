@@ -68,7 +68,7 @@ mains = ->
 
   $(".selectlist").select2({
     dropdownAutoWidth : true,
-    width: 'resolve',
+    width: 'element',
     containerCssClass: ':all:',
     placeholder: "Select an sObject",
     allowClear: true
