@@ -221,11 +221,12 @@ coordinates = ->
     if !ids || ids.length <= 0
       return false
   
-    val = {soql_info:sobject.soql_info, ids: ids}
-    action = "/delete"
-    method = "post"
-    options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
-    executeCrud(options)
+    if window.confirm("Are you sure?")
+      val = {soql_info:sobject.soql_info, ids: ids}
+      action = "/delete"
+      method = "post"
+      options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
+      executeCrud(options)
       
   #------------------------------------------------
   # Undelete
@@ -249,12 +250,13 @@ coordinates = ->
     
     if !ids || ids.length <= 0
       return false
-
-    val = {soql_info:sobject.soql_info, ids: ids}
-    action = "/undelete"
-    method = "post"
-    options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
-    executeCrud(options)
+    
+    if window.confirm("Are you sure?")
+      val = {soql_info:sobject.soql_info, ids: ids}
+      action = "/undelete"
+      method = "post"
+      options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
+      executeCrud(options)
 
   #------------------------------------------------
   # Edit on grid
