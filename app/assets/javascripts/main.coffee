@@ -74,5 +74,7 @@ mains = ->
     allowClear: true
   })
 
+  $("a#soqlexecuter").trigger("click");
+
 $(document).ready(mains)
 $(document).on('page:load', mains)

@@ -18,10 +18,13 @@ coordinates = ->
     $("#soqlOverRay").hide()
 
   $("#creatGridArea #createGridBtn").on 'click', (e) ->
+    createSObjectGrid()
+
+  createSObjectGrid = () ->
     rawFields = $("#creatGridArea #sobject_fields").val()
     sobject = $('#creatGridArea #selected_sobject').val()
     separator = $('#creatGridArea #separator').val()
-    if rawFields
+    if sobject && rawFields
       action = "create"
       val = {sobject: sobject, fields: rawFields, separator: separator, tab_id: getActiveTabElementId()}
       $.get action, val, (json) ->
@@ -51,8 +54,12 @@ coordinates = ->
     
     if e.ctrlKey && (e.key == 'r' || e.keyCode == 13)
       e.preventDefault()
+
       if e.target.id == "input_soql"        
         executeSoql()
+
+      if $("#soqlOverRay").is(":visible")
+        createSObjectGrid()
 
     if e.keyCode == 27 && $("#soqlOverRay").is(":visible")
       $("#soqlOverRay").hide()
@@ -109,6 +116,10 @@ coordinates = ->
       id = grid.getCellMeta(row, sobject.idColumnIndex).tempId
       value = keyMap[id]
       grid.setDataAtCell(row, sobject.idColumnIndex, value, "loadData")
+      grid.removeCellMeta(row, sobject.idColumnIndex, 'tempId')
+    sObjects[elementId].editions = {}
+    sObjects[elementId].editable = false
+    grid.updateSettings({readOnly:true})
     grid.render()
 
 
@@ -513,11 +524,6 @@ coordinates = ->
   #------------------------------------------------
   # Create tab
   #------------------------------------------------
-  #$("#soqlTabs").on "dblclick", (e) ->
-  #  if e.target != this
-  #    return
-
-  #  createTab()
   $("#soqlArea #addTabBtn").on 'click', (e) ->
     createTab()
 
@@ -533,16 +539,11 @@ coordinates = ->
       panelId = $(this).closest("#soqlArea li").remove().attr("aria-controls")
       $("#soqlArea #" + panelId ).remove();
       $("#soqlArea #" + tabContainerDiv).tabs("refresh")
-
-  $('#soqlArea #add-tab').on 'click', (e) ->
-    e.preventDefault()
-    createTab()
   
   createTab = () ->
     currentTabIndex = currentTabIndex + 1
     newTabId = currentTabIndex
 
-    #$("#soqlArea #tabArea ul").append(
     $("#soqlArea #tabArea ul li:last").before(
       "<li class=\"noselect\"><a href=\"#tab" + newTabId + "\">Grid" + newTabId + "</a>" +
       "<span class=\"ui-icon ui-icon-close ui-closable-tab\"></span>" +

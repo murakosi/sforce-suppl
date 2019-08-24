@@ -71,7 +71,8 @@ gem 'hashie'
 
 gem "rack", ">= 2.0.6"
 
-gem "nokogiri", ">= 1.8.5"
+#gem "nokogiri", ">= 1.8.5"
+gem "nokogiri", ">= 1.10.4"
 
 gem 'parslet'
 
