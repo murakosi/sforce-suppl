@@ -81,7 +81,7 @@ coordinates = ->
       queryAll = params.soql_info.query_all
       tabId = params.soql_info.tab_id
       if params.soql_info.key_map
-        updateGrid(tabId, params.soql_info.key_map)
+        updateGrid(tabId, params.soql_info)
     else
       tabId = getActiveTabElementId();
       soql = $('#soqlArea #input_soql').val()
@@ -107,21 +107,27 @@ coordinates = ->
 
     $.executeAjax(options, callbacks)
   
-  updateGrid = (tabId, keyMap) ->
+  updateGrid = (tabId, soql_info) ->
     elementId = "#soqlArea #grid" + tabId
     grid = grids[elementId]
     sobject = sObjects[elementId]
+
+    columnOptions = []
+    colcnt = sobject.columns.length
+    for col in [0...colcnt]
+      columnOptions.push({readOnly:true, type:"text"})
+
     cnt = grid.countRows()
     for row in [0...cnt]
       id = grid.getCellMeta(row, sobject.idColumnIndex).tempId
-      value = keyMap[id]
+      value = soql_info.key_map[id]
       grid.setDataAtCell(row, sobject.idColumnIndex, value, "loadData")
       grid.removeCellMeta(row, sobject.idColumnIndex, 'tempId')
-    sObjects[elementId].editions = {}
-    sObjects[elementId].editable = false
-    grid.updateSettings({readOnly:true})
-    grid.render()
 
+    delete sObjects[elementId]
+    grid.updateSettings({columns:columnOptions})
+    grid.render()
+    return
 
   #------------------------------------------------
   # Query callbacks

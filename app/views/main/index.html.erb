@@ -24,8 +24,8 @@
 #progress{
     visibility: hidden;
     height: 2px;
-    position: fixed;
-    top: 50px;
+    /*position: fixed;
+    top: 50px;*/
     width: 100%;
 }
 
@@ -189,8 +189,11 @@
     <div class="loader"></div>
   </div>
 
-  <div class="header"></div>
-
+  <div class="header">
+  <div id="progress">
+    <div id="progress-line"></div>
+  </div>
+  </div>
   <div id="menuList">    
     <div class="btn-group">
       <button id="userInfoButton" class="btn btn-secondary btn-sm dropdown-toggle dropdown-btn paper-raise" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -214,9 +217,7 @@
     </ul>
   </div>  
 
-  <div id="progress">
-    <div id="progress-line"></div>
-  </div>
+
 <div id="contentsArea">
 
   <div id="spaceArea" style="height:20px;"></div>
