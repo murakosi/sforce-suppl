@@ -7,14 +7,19 @@ class DescribeController < ApplicationController
     protect_from_forgery :except => [:change, :describe, :download]
 
     def show
-        begin
-            sobjects = get_sobject_names(sforce_session, Describe::SobjectType::Custom)
-            html_content = render_to_string :partial => 'sobjectlist', :locals => {:data_source => sobjects}
-            render :json => {:target => "#sobjectList", :content => html_content, :error => nil, :status => 200}
-        rescue StandardError => ex
-            html_content = render_to_string :partial => 'sobjectlist', :locals => {:data_source => []}
-            render :json => {:target => "#sobjectList", :content => html_content, :error => ex.message, :status => 400}
-        end
+        #begin
+        #    sobjects = get_sobject_names(sforce_session, Describe::SobjectType::Custom)
+        #    html_content = render_to_string :partial => 'sobjectlist', :locals => {:data_source => sobjects}
+        #    render :json => {:target => "#sobjectList", :content => html_content, :error => nil, :status => 200}
+        #rescue StandardError => ex
+        #    html_content = render_to_string :partial => 'sobjectlist', :locals => {:data_source => []}
+        #    render :json => {:target => "#sobjectList", :content => html_content, :error => ex.message, :status => 400}
+        #end
+        #if session[:describe_message].nil?
+        #    render :json => {:status => 200}
+        #else
+        #    render :json => {:error => session[:describe_message], :status => 400}
+        #end
     end
 
     def change
@@ -55,9 +60,9 @@ class DescribeController < ApplicationController
     end
 
     def get_sobject_info(describe_result)
-        info = "表示ラベル：" + describe_result[:label].to_s + "\n" +
-              "API参照名：" + describe_result[:name].to_s + "\n" +
-              "プレフィックス：" + describe_result[:key_prefix].to_s
+        info = "Label：" + describe_result[:label].to_s + "\n" +
+              "API Name：" + describe_result[:name].to_s + "\n" +
+              "Prefix：" + describe_result[:key_prefix].to_s
     end
   
     def download
@@ -66,7 +71,7 @@ class DescribeController < ApplicationController
         begin
             describe_result = describe_field(sforce_session, sobject)
             formatted_result = format_field_result(sobject, describe_result[:fields])
-            try_download(params[:dl_format], sobject, formatted_result)
+            try_download("csv", sobject, formatted_result)
             set_download_success_cookie(response)
         rescue StandardError => ex
             print_error(ex)

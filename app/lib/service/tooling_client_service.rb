@@ -1,5 +1,4 @@
 require 'logger'
-require "soapforce"
 
 module Service
     class ToolingClientService
@@ -7,7 +6,6 @@ module Service
     
         def call(params)
             client = Tooling::Client.new(client_options(params))
-            #client = Soapforce::Client.new(client_options(params))
             client.authenticate(soap_session(params))
             client
         end
@@ -20,6 +18,7 @@ module Service
                     :host => Utils::SforceApiUtils.sforce_host(params),
                     :ssl_version => Constants::SSLVersion,
                     :ssl_ca_cert_file => Utils::SforceApiUtils.ssl_certificate,
+                    :tag_style => params[:tag_style],
                     :logger => set_temp_logger,
                     :log => true
                 }                
@@ -37,9 +36,6 @@ module Service
             end
 
             def soap_session(params)
-                #api_version = params[:api_version] || Constants::DefaultApiVersion
-                #server_url = params[:server_url].gsub(/Soap\/.*\/.*/, "Soap/T/" + api_version)
-                #{:session_id => params[:session_id], :server_url => server_url}
                 {:session_id => params[:session_id], :server_url => params[:server_url]}
             end
     end

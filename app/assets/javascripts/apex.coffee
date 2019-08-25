@@ -1,10 +1,9 @@
 coordinates = ->
   
-  selectedTabId = 1
-  currentTabIndex = 1
+  selectedTabId = 0
+  currentTabIndex = 0
   grids = {}
   logNames = {}
-  jqXHR = null
   defaultDataType = ""
   defaultContentType = null
   eventColumnIndex = 1
@@ -14,10 +13,22 @@ coordinates = ->
   # Shortcut keys
   #------------------------------------------------
   $(window).on 'keydown', (e) ->
-    if e.ctrlKey && e.key == 'r'
-      e.preventDefault()
-      if e.target.id == "apex_code"
+    if e.target.id == "apex_code"
+
+      if e.ctrlKey && (e.key == 'r' || e.keyCode == 13)
+        e.preventDefault()       
         executeAnonymous()
+        return false
+
+      if e.keyCode is 9
+        e.preventDefault()
+        elem = e.target
+        start = elem.selectionStart
+        end = elem.selectionEnd
+        value = elem.value
+        elem.value = "#{value.substring 0, start}\t#{value.substring end}"
+        elem.selectionStart = elem.selectionEnd = start + 1
+        return false
 
   #------------------------------------------------
   # Debug options
@@ -35,15 +46,15 @@ coordinates = ->
   #------------------------------------------------
   $('#apexArea #download-log').on 'click', (e) ->
     tabId = $("#apexArea #tabArea .ui-tabs-panel:visible").attr("tabId")
-    elementId = "#apexArea #grid" + tabId
+    elementId = "#apexArea #apexGrid" + tabId
     if logNames[elementId]
       hotElement =grids[elementId]
       hotElement.getPlugin('exportFile').downloadFile('csv', {
-        bom: false,
+        bom: true,
         columnDelimiter: ',',
         columnHeaders: true,
-        exportHiddenColumns: true,
-        exportHiddenRows: true,
+        exportHiddenColumns: false,
+        exportHiddenRows: false,
         fileExtension: 'csv',
         filename: logNames[elementId],
         mimeType: 'text/csv',
@@ -62,7 +73,7 @@ coordinates = ->
 
   filterLog = () ->
     tabId = $("#apexArea #tabArea .ui-tabs-panel:visible").attr("tabId")
-    elementId = "#apexArea #grid" + tabId
+    elementId = "#apexArea #apexGrid" + tabId
     hotElement =grids[elementId]    
     filtersPlugin = hotElement.getPlugin('filters');
     filtersPlugin.removeConditions(eventColumnIndex);
@@ -73,7 +84,7 @@ coordinates = ->
 
   clearFilter = () ->
     tabId = $("#apexArea #tabArea .ui-tabs-panel:visible").attr("tabId")
-    elementId = "#apexArea #grid" + tabId
+    elementId = "#apexArea #apexGrid" + tabId
     hotElement =grids[elementId]
     filtersPlugin = hotElement.getPlugin('filters');
     filtersPlugin.clearConditions();
@@ -109,18 +120,22 @@ coordinates = ->
     $.executeAjax(options, callbacks)
   
   processSuccessResult = (json) ->
-    elementId = "#apexArea #grid" + selectedTabId
+    elementId = "#apexArea #apexGrid" + selectedTabId
     logNames[elementId] = json.log_name    
-    $("#apexArea #soql" + selectedTabId).html(getLogResult(json))
+    $("#apexArea #logInfo" + selectedTabId).html(getLogResult(json))
     createGrid(elementId, json)
 
   getLogResult = (json) ->
     json.log_name + #<label><input type="checkbox" /> Label text</label>
     '&nbsp;&nbsp;<label><input type="checkbox" class="debugOnly"/> Debug only</label>'
+
   #------------------------------------------------
-  # Tab events
+  # Create tab
   #------------------------------------------------
-  $(document).on 'click', 'span', (e) ->
+  $("#apexArea #addTabBtn").on 'click', (e) ->
+    createTab()
+
+  $(document).on 'click', '#apexArea .ui-closable-tab', (e) ->
     e.preventDefault()
     tabContainerDiv=$(this).closest("#apexArea .ui-tabs").attr("id")
     tabCount = $("#apexArea #" + tabContainerDiv).find(".ui-closable-tab").length
@@ -128,35 +143,41 @@ coordinates = ->
     if tabCount <= 1
       return
 
-    panelId = $(this).closest("#apexArea li").remove().attr("aria-controls")
-    $("#apexArea #" + panelId ).remove();
-    $("#apexArea #" + tabContainerDiv).tabs("refresh")
+    if window.confirm("Close this tab?")
+      panelId = $(this).closest("#apexArea li").remove().attr("aria-controls")
+      $("#apexArea #" + panelId ).remove();
+      $("#apexArea #" + tabContainerDiv).tabs("refresh")
 
   $('#apexArea #add-tab').on 'click', (e) ->
     e.preventDefault()
+    createTab()
+  
+  createTab = () ->
     currentTabIndex = currentTabIndex + 1
     newTabId = currentTabIndex
 
-    $("#apexArea #tabArea ul").append(
-      "<li class=\"noselect\"><a href=\"#tab" + newTabId + "\">Log" + newTabId + "</a>" +
+    $("#apexArea #tabArea ul li:last").before(
+      "<li class=\"noselect\"><a href=\"#apexTab" + newTabId + "\">Grid" + newTabId + "</a>" +
       "<span class=\"ui-icon ui-icon-close ui-closable-tab\"></span>" +
       "</li>"
     )
 
+    logInfoArea = '<div id="logInfo' + newTabId + '" class="resultSoql" tabId="' + newTabId + '"></div>'    
+    
     $("#apexArea #tabArea").append(
-      "<div id=\"tab" + newTabId + "\" class=\"resultTab\" tabId=\"" + newTabId + "\">" +
-      "<div id=\"soql" + newTabId + "\" class=\"resultSoql\" tabId=\"" + newTabId + "\"></div>" +
-      "<div id=\"grid" + newTabId + "\" class=\"resultGrid\" tabId=\"" + newTabId + "\"></div>" +
+      "<div id=\"apexTab" + newTabId + "\" class=\"resultTab\" tabId=\"" + newTabId + "\">" +
+      logInfoArea +
+      "<div id=\"apexGrid" + newTabId + "\" class=\"resultGrid\" tabId=\"" + newTabId + "\"></div>" +
       "</div>"
     )
     
-    createGrid("#apexArea #grid" + newTabId)
+    createGrid("#apexArea #apexGrid" + newTabId)
     
     $("#apexArea #tabArea").tabs("refresh")
     
-    newTabIndex = $("#apexArea #tabArea ul li").length - 1
+    newTabIndex = $("#apexArea #tabArea ul li").length - 2
     selectedTabId = newTabIndex
-    $("#apexArea #tabArea").tabs({ active: newTabIndex });
+    $("#apexArea #tabArea").tabs({ active: newTabIndex});
       
   #------------------------------------------------
   # Create grid
@@ -232,9 +253,8 @@ coordinates = ->
   #------------------------------------------------
   # page load actions
   #------------------------------------------------
-  selectedTabId = 1
-
   $("#apexArea #tabArea").tabs()
+  createTab()
 
 $(document).ready(coordinates)
 $(document).on('page:load', coordinates)

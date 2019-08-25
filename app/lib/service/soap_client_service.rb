@@ -1,4 +1,5 @@
 #require "soapforce"
+require 'logger'
 
 module Service
     class SoapClientService
@@ -18,8 +19,10 @@ module Service
                     :host => Utils::SforceApiUtils.sforce_host(params),
                     :ssl_version => Constants::SSLVersion,
                     :ssl_ca_cert_file => Utils::SforceApiUtils.ssl_certificate,
-                    :proxy => proxy
-                    #:logger => Logger.new(STDOUT)
+                    :proxy => proxy,
+                    :tag_style => params[:tag_style],
+                    :logger => set_temp_logger,
+                    :log => false
                 }                
             end
 
@@ -31,6 +34,17 @@ module Service
                 else
                     nil
                 end
+            end
+
+            def set_temp_logger
+                file_name = File.expand_path("log/" + "soap_log.txt", Rails.root)
+                if File.exist?(file_name)                  
+                    File.open(file_name, 'w') do |file|
+                        file.close
+                    end
+
+                end
+                Logger.new(file_name)
             end
     end
 end

@@ -6,7 +6,7 @@ Rails.application.routes.draw do
   post    'check',                  to: 'main#check'
 
   get     'main',                   to: 'main#index'
-  post    'main',                   to: 'main#switch'
+  get     'prepare',                to: 'main#prepare'
 
   get     'login',                  to: 'login#new'
   post    'login',                  to: 'login#create'
@@ -32,7 +32,12 @@ Rails.application.routes.draw do
   post    'metadata/deploy_check',  to: 'metadata#check_deploy_status'
 
   get     'soql',                   to: 'soqlexecuter#show'
-  post    'soql',                   to: 'soqlexecuter#execute'
+  get     'create',                 to: 'soqlexecuter#create'
+  post    'query',                  to: 'soqlexecuter#query'
+  post    'update',                 to: 'soqlexecuter#update'
+  post    'delete',                 to: 'soqlexecuter#delete'
+  post    'undelete',               to: 'soqlexecuter#undelete'
+  post    'parse',                  to: 'soqlexecuter#parse'
 
   get     'tooling',                to: 'tooling#show'
   post    'tooling',                to: 'tooling#execute'

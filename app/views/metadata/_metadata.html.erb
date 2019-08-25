@@ -6,17 +6,6 @@
     padding: 5px;
 }
 
-.btn-info{
-    font-size: 8pt !important;
-    font-family:Arial;
-}
-
-
-.ex-small-btn{
-    font-size: 8pt !important;
-    font-family:Arial;
-}
-
 .crudForm{
 	float:left;
 	margin-right:5px;
@@ -53,17 +42,16 @@
 		<ul>
 			<li class="noselect" id="list"><a href="#list-tab">List</a></li>
 			<li class="noselect" id="edit"><a href="#edit-tab">Read/Edit</a></li>
-			<!--<li class="noselect" id="create"><a href="#create-tab">Create</a></li>-->
 			<li class="noselect" id="deploy"><a href="#deploy-tab">Deploy</a></li>
 		</ul>
 
 		<div id="list-tab" class="resultTab">
 			<div id="list-overview" class="inButtonArea">
 				<%= form_tag metadata_crud_path(), :id => "listForm", :method => :post, :class => "crudForm" do %>
-					<%= button_tag "Delete", :id => "deleteButton", :class => "btn btn-warning btn-xs" %>
+					<%= button_tag "Delete", :id => "deleteButton", :class => "btn btn-warning btn-xs ex-small-btn" %>
 				<% end %>
 				<%= form_tag metadata_retrieve_path(), :id => "retrieveForm", :method => :post do %>
-					<%= button_tag "Retrieve metadata", :id => "retrieveButton", :class => "btn btn-warning btn-xs exp" %>
+					<%= button_tag "Retrieve metadata", :id => "retrieveButton", :class => "btn btn-warning btn-xs exp ex-small-btn" %>
 				<% end %>
 			</div>
 			<div id="grid" class="resultGrid"></div>
@@ -72,7 +60,7 @@
 		<div id="edit-tab" class="resultTab" action="<%= metadata_read_path() %>" method="POST">
 			<div id="edit-overview" class="inButtonArea">
 				<%= form_tag metadata_crud_path(), :id => "editForm", :method => :post, :class => "crudForm" do %>
-					<%= button_tag "Update", :id => "updateButton", :class => "btn btn-warning btn-xs" %>
+					<%= button_tag "Update", :id => "updateButton", :class => "btn btn-warning btn-xs ex-small-btn" %>
 				<% end %>
 				<input type="button" value="Expand" id="expand" class="btn btn-info btn-xs" />
 				<input type="button" value="Collapse" id="collapse" class="btn btn-info btn-xs" />
@@ -80,26 +68,12 @@
 			<div id="editTree" action="<%= metadata_edit_path() %>" method="POST" class="treeView"></div>
 		</div>
 
-		<!--
-		<div id="create-tab" class="resultTab">
-			<div id="create-overview" class="inButtonArea">-->
-				<%#= form_tag metadata_crud_path(), :id => "createForm", :method => :post, :class => "crudForm" do %>
-					<%#= button_tag "Create", :id => "createButton", :class => "btn btn-warning ex-small-btn" %>
-				<%# end %>
-				<!--
-				<input type="button" value="Add row" id="addRow" class="btn btn-info" />
-				<input type="button" value="Remove row" id ="removeRow" class="btn btn-info" />
-				<input type="button" value="Clear" id="clearGrid" class="btn btn-info" />
-			</div>
-			<div id="createGrid" class="resultGrid"></div>
-		</div>
-		-->
 
 		<div id="deploy-tab" class="resultTab">
 			<div id="deploy-form" class="inButtonArea">
 				<%= form_tag metadata_deploy_path(), :id => "deployForm", :method => :post, :multipart => true, :class => "crudForm" do %>
 					<div id="createGrid" class="resultGrid">
-						<%= button_tag "Deploy", :id => "deployButton", :class => "btn btn-warning btn-xs" %>
+						<%= button_tag "Deploy", :id => "deployButton", :class => "btn btn-warning btn-xs ex-small-btn" %>
 						<%= file_field_tag :zipFile, :class => "btn ex-small-btn"  %>
 					</div>
 					<div id="deployOptions">

@@ -14,8 +14,7 @@
               'describe', 
               'metadata',
               'tooling',
-              'apex',
-              'soqlgrids'
+              'apex'
 %>
 <style>
 
@@ -24,9 +23,6 @@
 #progress{
     visibility: hidden;
     height: 2px;
-    position: fixed;
-    top: 50px;
-    width: 100%;
 }
 
 .progress-line, .progress-line:before {
@@ -70,7 +66,7 @@
   height: 100%;
   width: 100%;
   position: fixed; /* Stay in place */
-  z-index: 9999; /* Sit on top */
+  z-index: 999; /* Sit on top */
   left: 0;
   top: 0;
   background-color: #408080;
@@ -152,63 +148,104 @@
   }
 }
 
-.header{
-  height:5px;
-  z-index: 3000;
-  background-color: white;
-  width: 100%;
-  position: fixed;
-  top: 0;
+/*
+.loader,
+.loader:before,
+.loader:after {
+  border-radius: 50%;
 }
-
-
-.dropdown-btn{
-  /*display: inline-block;*/
-  text-decoration: none;
-  /*background: #f7f7f7;*/
-  /*border-left: solid 10px #ff7c5c;*/
-  color: black;
-  /*background-color: #d3cbdb;*/
-  background-color: white;
-  border-radius: 12px;
-  border: #aaa 1px solid;
-  /*box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.29);  */
-  box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
+.loader {
+  color: #80ffff;
+  font-size: 11px;
+  text-indent: -99999em;
+  margin: 55px auto;
+  position: relative;
+  width: 10em;
+  height: 10em;
+  box-shadow: inset 0 0 0 1em;
+  -webkit-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  transform: translateZ(0);
 }
-
-.dropdown-btn:hover{
-  color: black;
+.loader:before,
+.loader:after {
+  position: absolute;
+  content: '';
 }
-
+.loader:before {
+  width: 5.2em;
+  height: 10.2em;
+  background: #80ffff;
+  border-radius: 10.2em 0 0 10.2em;
+  top: -0.1em;
+  left: -0.1em;
+  -webkit-transform-origin: 5.2em 5.1em;
+  transform-origin: 5.2em 5.1em;
+  -webkit-animation: load2 2s infinite ease 1.5s;
+  animation: load2 2s infinite ease 1.5s;
+}
+.loader:after {
+  width: 5.2em;
+  height: 10.2em;
+  background: #80ffff;
+  border-radius: 0 10.2em 10.2em 0;
+  top: -0.1em;
+  left: 5.1em;
+  -webkit-transform-origin: 0px 5.1em;
+  transform-origin: 0px 5.1em;
+  -webkit-animation: load2 2s infinite ease;
+  animation: load2 2s infinite ease;
+}
+@-webkit-keyframes load2 {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@keyframes load2 {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+*/
 </style>
 
 <div id="mainArea">
+
 
   <div id="overlay" class="requesting-overlay">
     <div id="overlay-content" class="overlay-content noselect">Requesting...</div>
     <div class="loader"></div>
   </div>
 
-  <div class="header"></div>
-
-  <div id="menuList">    
+  <div id="userInfo" style="text-align:right; padding-right:20px;margin:0px;height:20px;">
     <div class="btn-group">
-      <button id="userInfoButton" class="btn btn-secondary btn-sm dropdown-toggle dropdown-btn paper-raise" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <button id="userInfoButton" class="btn btn-secondary btn-sm dropdown-toggle" style="float: right;border-radius: 12px;" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <%= @current_user.name %>
       </button>
-
-      <ul class="dropdown-menu">
+      <ul class="dropdown-menu dropdown-menu-right">
         <li><%= link_to "Logout", logout_path, method: :delete, id: "logoutLink" %></li>
-        <li><a href="#">Describe global</a></li>
-        <li><a href="#">Swith user</a></li>
+        <li><a href="#">Another action</a></li>
+        <li><a href="#">Something else here</a></li>
         <li role="separator" class="divider"></li>
         <li><a href="#">Separated link</a></li>
       </ul>
     </div>
+  </div>
+
+  <div id="menuList"> 
     <ul id="menus">
       <li><a id="soqlexecuter" href="" class="menus" method="GET" loadTarget="#soqlexecuterContent" action="">SOQL</a></li>
-  		<!--<li><a id="describe" href="#" class="menus" method="GET" loadTarget="#describeContent" action="describe">Describe</a></li>-->
-      <li><a id="describe" href="#" class="menus" method="GET" loadTarget="#describeContent" action="">Describe</a></li>
+  		<li><a id="describe" href="#" class="menus" method="GET" loadTarget="#describeContent" action="describe">Describe</a></li>
   		<li><a id="metadata" href="#" class="menus" method="GET" loadTarget="#metadataContent" action="metadata">Metadata</a></li>
       <li><a id="apex" href="" class="menus" method="GET" loadTarget="#apexContent" action="">Apex</a></li>
     </ul>
@@ -217,19 +254,12 @@
   <div id="progress">
     <div id="progress-line"></div>
   </div>
-<div id="contentsArea">
 
   <div id="spaceArea" style="height:20px;"></div>
 
-  
+  <div id="contentsArea">
     <div id="soqlexecuterContent"><%= render "soqlexecuter/soqlexecuter" %></div>
-    <div id="describeContent">
-      <% if @describe_error.nil? %>
-        <%= render "describe/describe" %>
-      <% else %>
-        <div style="text-align:center; white-space: pre; color:red; font-weight:bold;"><%= @describe_error %></div>
-      <% end %>
-    </div>
+    <div id="describeContent"><%= render "describe/describe" %></div>
     <div id="metadataContent"><%= render "metadata/metadata" %></div>	
     <div id="apexContent"><%= render "apex/apex" %></div>
   </div>

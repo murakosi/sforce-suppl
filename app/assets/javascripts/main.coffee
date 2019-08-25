@@ -7,8 +7,9 @@ mains = ->
   defaultDetatype = ""
   defaultContentType = null
   anchorObject = null
+  describeFault = false
 
-  $("#menuList").on "click", "a", (e) ->
+  $("#menus").on "click", "a", (e) ->
     clickedAnchor = ($(this).prop("id"))
 
     if selectedAnchor == clickedAnchor
@@ -53,17 +54,27 @@ mains = ->
 
     $("div#mainArea").prop("class", target)
 
-    targetSelect2 = "div#" + target + "Area .selectlist"
-    $(targetSelect2).select2({
-      dropdownAutoWidth : true,
-      width: 'resolve',
-      containerCssClass: ':all:'
-      })
+    if target == "metadata"
+      targetSelect2 = "div#metadataArea .selectlist"
+      $(targetSelect2).select2({
+        dropdownAutoWidth : true,
+        width: 'resolve',
+        containerCssClass: ':all:',
+        placeholder: "Select a metadata type",
+        allowClear: true
+        })
     
-  createErrorDiv = (message) ->
-    html = "<div style='text-align:center; white-space: pre; color:red; font-weight:bold;'>" + message  + "</div>"
-    $(targetDiv).html(html)
-  
+    $(document).trigger("displayChange", [{targetArea: target + "Area"}]);
+
+  $(".selectlist").select2({
+    dropdownAutoWidth : true,
+    width: 'element',
+    containerCssClass: ':all:',
+    placeholder: "Select an sObject",
+    allowClear: true
+  })
+
+  $("a#soqlexecuter").trigger("click");
 
 $(document).ready(mains)
 $(document).on('page:load', mains)

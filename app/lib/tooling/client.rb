@@ -98,9 +98,7 @@ module Tooling
             end
         end
 
-        def call_tooling_api(method, message_hash={})
-            
-            @response_header = nil
+        def call_tooling_api(method, message_hash={})          
 
             response = @client.call(method.to_sym) do |locals|
                 locals.message message_hash
