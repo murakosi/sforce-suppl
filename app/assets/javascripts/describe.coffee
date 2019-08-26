@@ -92,11 +92,11 @@ describe = ->
   refreshSelectOptions = (result) ->
     $('#describeArea #sobjectList').html(result)
     $('#describeArea .selectlist').select2({
-      dropdownAutoWidth : true,
-      width: 'resolve',
-      containerCssClass: ':all:',
-      placeholder: "Select an sObject"
-      allowClear: true
+        dropdownAutoWidth : true,
+        width: 'element',
+        containerCssClass: ':all:',
+        placeholder: "Select an sObject",
+        allowClear: true
       })
 
   downloadDone = (url) ->
