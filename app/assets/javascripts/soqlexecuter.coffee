@@ -541,10 +541,10 @@ coordinates = ->
     if tabCount <= 1
       return
 
-    if window.confirm("Close this tab?")
-      panelId = $(this).closest("#soqlArea li").remove().attr("aria-controls")
-      $("#soqlArea #" + panelId ).remove();
-      $("#soqlArea #" + tabContainerDiv).tabs("refresh")
+    #if window.confirm("Close this tab?")
+    panelId = $(this).closest("#soqlArea li").remove().attr("aria-controls")
+    $("#soqlArea #" + panelId ).remove();
+    $("#soqlArea #" + tabContainerDiv).tabs("refresh")
   
   createTab = () ->
     currentTabIndex = currentTabIndex + 1
