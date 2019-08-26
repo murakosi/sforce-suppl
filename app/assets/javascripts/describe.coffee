@@ -90,11 +90,13 @@ describe = ->
     createGrid("#describeArea #describeGrid" + selectedTabId, json)
 
   refreshSelectOptions = (result) ->
-    $('#sobjectList').html(result)
-    $('.selectlist').select2({
+    $('#describeArea #sobjectList').html(result)
+    $('#describeArea .selectlist').select2({
       dropdownAutoWidth : true,
       width: 'resolve',
-      containerCssClass: ':all:'
+      containerCssClass: ':all:',
+      placeholder: "Select an sObject"
+      allowClear: true
       })
 
   downloadDone = (url) ->
