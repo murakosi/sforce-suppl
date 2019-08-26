@@ -35,7 +35,7 @@ class DescribeController < ApplicationController
             raise StandardError.new("Invalid object type parameter")
         end  
 
-        render :partial => 'sobjectlist', :locals => {:data_source => sobjects}
+        render :partial => 'main/sobjectlist', :locals => {:data_source => sobjects}
     end
 
     def describe
