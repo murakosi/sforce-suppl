@@ -181,10 +181,11 @@ describe = ->
     header = getColumns(json)
     records = getRows(json)
     columnsOption = getColumnsOption(json)
+    height = if json then 500 else 0
 
     hotSettings = {
         data: records,
-        height: 500,
+        height: height,
         #stretchH: 'all',
         autoWrapRow: true,
         manualRowResize: false,
