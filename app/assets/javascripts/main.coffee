@@ -7,7 +7,6 @@ mains = ->
   defaultDetatype = ""
   defaultContentType = null
   anchorObject = null
-  describeFault = false
 
   $("#menus").on "click", "a", (e) ->
     clickedAnchor = ($(this).prop("id"))
@@ -73,10 +72,6 @@ mains = ->
     placeholder: "Select an sObject",
     allowClear: true
   })
-  
-  $.get "prepare", (json) ->
-    if json.status == 200
-      $(document).trigger("afterDescribeGlobal", [{describeResult: json.describe_result}]);
       
   $("a#soqlexecuter").trigger("click");
 
