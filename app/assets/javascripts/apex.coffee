@@ -192,10 +192,11 @@ coordinates = ->
     header = getColumns(json)
     records = getRows(json)
     columnsOption = getColumnsOption(json)
+    height = if json then 500 else 0
 
     hotSettings = {
         data: records,
-        height: 500,
+        height: height,
         stretchH: 'last',
         autoWrapRow: true,
         manualRowResize: false,
