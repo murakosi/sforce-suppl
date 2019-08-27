@@ -7,7 +7,11 @@ describe = ->
   grids = {}
   currentTabIndex = 0
   selectedTabId = null
+  sObjectNames  = null
 
+  $(document).on 'afterDescribeGlobal', (e, param) ->
+    sObjectNames = param.describeResult
+    
   #------------------------------------------------
   # Shortcut keys
   #------------------------------------------------
