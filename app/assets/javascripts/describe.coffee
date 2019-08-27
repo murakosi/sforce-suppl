@@ -7,10 +7,6 @@ describe = ->
   grids = {}
   currentTabIndex = 0
   selectedTabId = null
-  sObjectNames  = null
-
-  $(document).on 'afterDescribeGlobal', (e, param) ->
-    sObjectNames = param.describeResult
     
   #------------------------------------------------
   # Shortcut keys
@@ -29,7 +25,6 @@ describe = ->
   #------------------------------------------------
   $('.sobjectTypeCheckBox').on 'click', (e) ->
     if $.isAjaxBusy()
-      e.preventDefault
       return false
   
   $('.sobjectTypeCheckBox').on 'change', (e) ->
