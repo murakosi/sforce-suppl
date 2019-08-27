@@ -22,14 +22,6 @@ class MainController < ApplicationController
       @describe_error = ex.message
     end
   end
-  
-  def prepare
-    if session[:global_result].nil?
-      render :json => {:describe_result => nil}, :status => 400
-    else
-      render :json => {:describe_result => session[:global_result]}, :status => 200
-    end
-  end
 
   def check
   	render :plain => "ok", :status => 200
