@@ -73,7 +73,11 @@ mains = ->
     placeholder: "Select an sObject",
     allowClear: true
   })
-
+  
+  $.get "prepare", (json) ->
+    if json.status == 200
+      $(document).trigger("afterDescribeGlobal", [{describeResult: json.describe_result}]);
+      
   $("a#soqlexecuter").trigger("click");
 
 $(document).ready(mains)
