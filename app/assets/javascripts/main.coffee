@@ -10,7 +10,7 @@ mains = ->
 
   $("#menus").on "click", "a", (e) ->
     if $("#dropdown-menu").is(":visible")
-      $("#dropdown-menu").hide()
+      $("#userInfoButton").trigger("click")
       
     clickedAnchor = ($(this).prop("id"))
 
