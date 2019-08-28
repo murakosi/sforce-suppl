@@ -67,6 +67,7 @@ mains = ->
 
   $("a#refreshDescribe").on "click", (e) ->
     alert("refresh")
+    return false
   
   $(".selectlist").select2({
     dropdownAutoWidth : true,
