@@ -65,6 +65,9 @@ mains = ->
     
     $(document).trigger("displayChange", [{targetArea: target + "Area"}]);
 
+  $("a#refreshDescribe").on "click", (e) ->
+    alert("refresh")
+  
   $(".selectlist").select2({
     dropdownAutoWidth : true,
     width: 'element',
