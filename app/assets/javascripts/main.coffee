@@ -9,6 +9,9 @@ mains = ->
   anchorObject = null
 
   $("#menus").on "click", "a", (e) ->
+    if $("#dropdown-menu").is(":visible")
+      $("#dropdown-menu").hide()
+      
     clickedAnchor = ($(this).prop("id"))
 
     if selectedAnchor == clickedAnchor
