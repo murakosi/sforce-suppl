@@ -652,7 +652,7 @@ coordinates = ->
     else
       count = coords[3] - coords[1]
     
-    console.log(count)
+    console.log(coords)
     console.log(sobject.columns.length)
     
   setColWidth = (i) ->
