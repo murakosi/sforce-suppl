@@ -581,11 +581,11 @@ coordinates = ->
     createGrid("#soqlArea #grid" + newTabId)
     
     $("#soqlArea #tabArea").tabs("refresh")
-    
-    $("#soqlTabs").sortable();
-    console.log($("#soqlTabs li" ).length)
-    if $("#soqlTabs li" ).length <= 2
-      $("#soqlTabs").sortable('disable');
+        
+    if $("#soqlTabs li" ).length > 2
+      $("#soqlTabs").sortable("enable")
+    else
+      $("#soqlTabs").sortable('disable')
     
     newTabIndex = $("#soqlArea #tabArea ul li").length - 2
     selectedTabId = newTabIndex
@@ -710,6 +710,7 @@ coordinates = ->
   # page load actions
   #------------------------------------------------
   $("#soqlArea #tabArea").tabs() 
+  $("#soqlTabs").sortable();
   createTab()
 
 $(document).ready(coordinates)
