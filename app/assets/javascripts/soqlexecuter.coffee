@@ -580,12 +580,14 @@ coordinates = ->
     
     createGrid("#soqlArea #grid" + newTabId)
     
-    $("#soqlArea #tabArea").tabs("refresh")
+    #$("#soqlArea #tabArea").tabs("refresh")
     
     if $("#soqlTabs li" ).length > 2
       $("#soqlTabs").sortable();
     else
       $("#soqlTabs").sortable('disable');
+      
+    $("#soqlArea #tabArea").tabs("refresh")
     
     newTabIndex = $("#soqlArea #tabArea ul li").length - 2
     selectedTabId = newTabIndex
