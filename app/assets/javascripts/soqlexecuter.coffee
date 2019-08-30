@@ -647,13 +647,13 @@ coordinates = ->
     elementId = getActiveGridElementId()
     sobject = sObjects[elementId]
     count = 0
-    if coords[1] >= coords[3]
-      count = coords[1] - coords[3]
-    else
-      count = coords[3] - coords[1]
+    target = coords[0]
+    count = (target.endCol - target.startCol) + 1
     
-    console.log(coords)
-    console.log(sobject.columns.length)
+    if count == sobject.columns.length
+      data.unshift(sobject.columns)
+      return
+    return
     
   setColWidth = (i) ->
     if i == 0
