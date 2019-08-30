@@ -584,7 +584,6 @@ coordinates = ->
     
     $("#soqlTabs").sortable();
     console.log($("#soqlTabs li" ).length)
-    console.log($("#soqlTabs li" ).length())
     if $("#soqlTabs li" ).length <= 2
       $("#soqlTabs").sortable('disable');
     
