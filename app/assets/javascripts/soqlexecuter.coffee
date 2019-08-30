@@ -714,7 +714,7 @@ coordinates = ->
   # page load actions
   #------------------------------------------------
   $("#soqlArea #tabArea").tabs() 
-  $("#soqlTabs").sortable();
+  $("#soqlTabs").sortable({items: '#soqlTabs li:not(.fixed-tab)'});
   createTab()
 
 $(document).ready(coordinates)
