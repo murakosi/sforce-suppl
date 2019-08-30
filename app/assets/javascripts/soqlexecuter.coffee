@@ -545,6 +545,7 @@ coordinates = ->
     panelId = $(this).closest("#soqlArea li").remove().attr("aria-controls")
     $("#soqlArea #" + panelId ).remove();
     $("#soqlArea #" + tabContainerDiv).tabs("refresh")
+    setSortableAttribute()
   
   createTab = () ->
     currentTabIndex = currentTabIndex + 1
@@ -582,10 +583,7 @@ coordinates = ->
     
     $("#soqlArea #tabArea").tabs("refresh")
         
-    if $("#soqlTabs li" ).length > 2
-      $("#soqlTabs").sortable("enable")
-    else
-      $("#soqlTabs").sortable('disable')
+    setSortableAttribute()
     
     newTabIndex = $("#soqlArea #tabArea ul li").length - 2
     selectedTabId = newTabIndex
@@ -596,6 +594,12 @@ coordinates = ->
     elementId = "#soqlArea #grid" + tabId
     grids[elementId].render()
 
+  setSortableAttribute = () ->
+    if $("#soqlTabs li" ).length > 2
+      $("#soqlTabs").sortable("enable")
+    else
+      $("#soqlTabs").sortable('disable')
+      
   #------------------------------------------------
   # Create grid
   #------------------------------------------------
