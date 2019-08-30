@@ -633,7 +633,8 @@ coordinates = ->
         afterChange: (source, changes) -> onAfterChange(source, changes),
         afterOnCellMouseDown: (event, coords, td) -> onCellClick(event, coords, td),
         afterCreateRow: (index, amount, source) -> onAfterCreateRow(index, amount, source),
-        beforeRemoveRow: (index, amount, physicalRows, source) -> onBeforeRemoveRow(index, amount, physicalRows, source)
+        beforeRemoveRow: (index, amount, physicalRows, source) -> onBeforeRemoveRow(index, amount, physicalRows, source),
+        beforeCopy: (data, coords) -> onBeforeCopy(data, coords)
     }
 
     hot = new Handsontable(hotElement, hotSettings)
@@ -642,6 +643,18 @@ coordinates = ->
 
     grids[elementId] = hot
 
+  onBeforeCopy = (data, coords) ->
+    elementId = getActiveGridElementId()
+    sobject = sObjects[elementId]
+    count = 0
+    if coords[1] >= coords[3]
+      count = coords[1] - coords[3]
+    else
+      count = coords[3] - coords[1]
+    
+    console.log(count)
+    console.log(sobject.columns.length)
+    
   setColWidth = (i) ->
     if i == 0
       30
