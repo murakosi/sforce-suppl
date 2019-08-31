@@ -2,10 +2,6 @@ label {
     font-weight: normal !important;
 }
 
-.displayed{
-    background:white !important;
-}
-
 #soqlexecuterContent,
 #describeContent, 
 #metadataContent, 
@@ -61,31 +57,23 @@ button:disabled {
 }
 
 .ui-tabs .ui-tabs-nav:focus {
-    /*
+    
     padding-left: 0px; 
     background: transparent; 
     border-width: 0px 0px 1px 0px; 
     -moz-border-radius: 0px; 
     -webkit-border-radius: 0px; 
     border-radius: 0px;
-    */
+    
 }
 
-#tabArea ul li a { outline:none; /* outline-color:red */; }
-#tabArea ul li { outline:none; /* outline-color:red */; }
+#tabArea ul li a { outline:none; }
+#tabArea ul li { outline:none; }
 
 .ui-tabs .ui-tabs-nav li.ui-tabs-active .ui-tabs-anchor,
 .ui-tabs .ui-tabs-nav li.ui-state-disabled .ui-tabs-anchor,
 .ui-tabs .ui-tabs-nav li.ui-tabs-loading .ui-tabs-anchor {
-    /* cursor: pointer; */
-}
-
-.ui-tabs-nav .ui-icon { 
-    /*
-    float: right;
-    margin: 0em 0em 0 1em;
-    cursor: pointer;
-    */
+     cursor: pointer; 
 }
 
 .add-tab-li{
@@ -94,15 +82,6 @@ button:disabled {
 /* ------------------------------
    #Handontable
 ------------------------------ */
-/*
-.handsontable span.colHeader{
-    font-size: 10pt;
-}
-
-.handsontable th, .handsontable td{
-    font-size: 10pt;
-}
-*/
 .ht_master tr td {
     font-size:12px;
 }
@@ -114,6 +93,10 @@ button:disabled {
 .handsontable span.data{
     color: black;
     font-style:bold;
+}
+
+.changed-cell-border {
+  box-shadow: inset 0 -2px 0 red;
 }
 
 /* ------------------------------
@@ -142,18 +125,25 @@ button:disabled {
 /* ------------------------------
    #Areas
 ------------------------------ */
-#contentsArea{
-    margin-top:50px;
-}
-
 #mainArea{
-    padding-top: 20px;
-    width:100%;
-    margin: 0 auto;   
+    /*padding-top: 20px;*/
+    /*width:100%;
+    margin: 0 auto;   */
 }
 
 #mainArea .ui-tabs-anchor{
     font-size:12px !important;
+}
+
+#contentsArea{
+    /*margin-top:50px;*/
+    width:100%;
+    position:absolute;
+    top: 45px;
+    left: 0px;
+    bottom: 10px;
+    /*padding-bottom: 10px;*/
+    overflow-y: auto;
 }
 
 #tree, .treeView{
@@ -181,11 +171,9 @@ button:disabled {
 }
 
 #tabArea{
-    /*width: 60%;*/
     width: 80%;
     border: 0px solid lightgray;
     margin: 0 auto;
-    /*float:left;*/
 }
 
 #tabArea li .ui-icon-close {
@@ -236,10 +224,6 @@ span.select2-selection.select2-selection--single {
     margin-right: 5px;
 }
 
-/*.btn-info{
-    font-size: 8pt !important;
-    font-family:Arial;
-}*/
 
 /* ------------------------------
    #tab area
@@ -322,6 +306,97 @@ span.select2-selection.select2-selection--single {
     vertical-align: middle;
 }
 
+/*
+    Overray
+*/
+  
+.requesting-overlay {
+  /* Height & width depends on how you want to reveal the overlay (see JS below) */    
+  height: 100%;
+  width: 100%;
+  position: fixed; /* Stay in place */
+  z-index: 9999; /* Sit on top */
+  left: 0;
+  top: 0;
+  background-color: #408080;
+  opacity: 0.8; /*rgba(0,0,0, 0.9);  Black w/opacity */
+  overflow-x: hidden; /* Disable horizontal scroll */
+  display:none;
+}
+
+/* Position the content inside the overlay */
+.overlay-content {
+  position: relative;
+  top: 42%; /* 25% from the top */
+  width: 100%; /* 100% width */
+  text-align: center; /* Centered text/links */
+  margin-top: 30px; /* 30px top margin to avoid conflict with the close button on smaller screens */
+  color:#80ffff;
+  font-weight: bold;
+}
+
+.loader,
+.loader:before,
+.loader:after {
+  border-radius: 50%;
+  width: 2.5em;
+  height: 2.5em;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+  -webkit-animation: load7 1.8s infinite ease-in-out;
+  animation: load7 1.8s infinite ease-in-out;
+}
+.loader {
+  color: #80ffff;
+  font-size: 10px;
+  margin: auto;
+  position:absolute;
+  top:0px;
+  right:0px;
+  left:0px;
+  bottom:0px;
+  text-indent: -9999em;
+  -webkit-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-animation-delay: -0.16s;
+  animation-delay: -0.16s;
+}
+.loader:before,
+.loader:after {
+  content: '';
+  position: absolute;
+  top: 0;
+}
+.loader:before {
+  left: -3.5em;
+  -webkit-animation-delay: -0.32s;
+  animation-delay: -0.32s;
+}
+.loader:after {
+  left: 3.5em;
+}
+@-webkit-keyframes load7 {
+  0%,
+  80%,
+  100% {
+    box-shadow: 0 2.5em 0 -1.3em;
+  }
+  40% {
+    box-shadow: 0 2.5em 0 0;
+  }
+}
+@keyframes load7 {
+  0%,
+  80%,
+  100% {
+    box-shadow: 0 2.5em 0 -1.3em;
+  }
+  40% {
+    box-shadow: 0 2.5em 0 0;
+  }
+}
+
 /* ------------------------------
    #menuList
 ------------------------------ */
@@ -329,21 +404,22 @@ span.select2-selection.select2-selection--single {
     /*margin-top: 15px;*/
     width: 100%;
     height: 45px;
-    border-top: #aaa 1px solid;
+    /*border-top: #aaa 1px solid;*/
     border-bottom: #aaa 1px solid;
     /*position: relative;*/
-    position: fixed;
-    top:5px;
     z-index: 3000;
-    background: #d3cbdb;
+    /*background: #d3cbdb;*/
+    background-color: #0c549c;
     display: flex;
     font-size:10pt;
-    box-shadow: 0 3px 6px rgba(0,0,0,.175)
+    /*box-shadow: 0 3px 6px rgba(0,0,0,.175)*/
+    box-shadow: 0 3px 6px rgba(0,0,0,.225)
 }
 /*#menuList ul*/
 #userInfoButton{
     margin-left:10px;
     margin-top:7px;
+    line-height: 1.35 !important;
 }
 
 #menus {
@@ -373,10 +449,17 @@ span.select2-selection.select2-selection--single {
     text-align: center;
     transition: all 0.2s linear;
     text-decoration: none;
+    color: #fff;
 }
 
 #menus li:hover > a {
-    background: #fff;
+    /*background: #fff;*/
+    background-color: #1579c0;
+}
+
+.displayed{
+    /*background:white !important;*/
+    background-color: #1579c0;
 }
 
 .icon-plus {
