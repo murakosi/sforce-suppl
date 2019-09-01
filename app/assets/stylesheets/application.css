@@ -18,6 +18,6 @@
  *= require handsontable.full
  *= require select2
  *= require chosen
- *= require main
+ *= require common
  *= require_tree .
  */

@@ -14,89 +14,69 @@
               'describe', 
               'metadata',
               'tooling',
-              'apex',
-              'soqlgrids'
+              'apex'
 %>
 <style>
-
-/* Progress Bar */
-
-#progress{
-    visibility: hidden;
-    height: 2px;
-    /*position: fixed;
-    top: 50px;*/
-    width: 100%;
-    position: fixed;
-    top: 0px;
-    left: 0px;
-    z-index: 3500;
-}
-
-.progress-line, .progress-line:before {
-  height: 2px;
-  width: 100%;
-  margin: 0;
-}
-.progress-line {
-  /*background-color: #b3d4fc;*/
-  display: -webkit-flex;
-  display: flex;
-}
-.progress-line:before {
-  /*background-color: #3f51b5;*/
-  /*background-color: #337ab7;*/
-  background-color: #f0ad4e;
-  content: '';
-  -webkit-animation: running-progress 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-  animation: running-progress 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-}
-@-webkit-keyframes running-progress {
-  0% { margin-left: 0px; margin-right: 100%; }
-  50% { margin-left: 25%; margin-right: 0%; }
-  100% { margin-left: 100%; margin-right: 0; }
-}
-@keyframes running-progress {
-  0% { margin-left: 0px; margin-right: 100%; }
-  50% { margin-left: 25%; margin-right: 0%; }
-  100% { margin-left: 100%; margin-right: 0; }
-}
-  
-.dropdown-item-font{
-  font-size: 0.875rem;
+#allOrNone{
+    padding-left: 2px !important;
+    padding-bottom: 0px !important;
+    padding-top: 0px !important;
+    margin-top: -2px;
   }
-
-.dropdown-btn:hover{
-  color: black;
+.checkmark input[type="checkbox"] {
+    opacity: 0;
+    width: 0px;
 }
 
-.header{
-  position: fixed;
-  top:0px;
-  height: 45px;
-  z-index: 3000;
-  width: 100%;
+.checkmark label {
+    position: relative;
+    display: inline-block;
+    padding-left: 20px;
 }
 
-.dropdown-btn{
-  /*display: inline-block;*/
-  text-decoration: none;
-  /*background: #f7f7f7;*/
-  /*border-left: solid 10px #ff7c5c;*/
-  color: black;
-  /*background-color: #d3cbdb;*/
-  background-color: white;
-  border-radius: 12px;
-  border: #aaa 1px solid;
-  /*box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.29);  */
-  /*box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);*/
-  box-shadow: inset 0 3px 5px rgba(0, 0, 0, .175);
+.checkmark label::before,
+.checkmark label::after {
+    position: absolute;
+    content: "";
+    display: inline-block;
 }
 
+/*Outer box of the fake checkbox*/
+.checkmark label::before{
+    height: 5px;
+    width: 9px;
+    border-left: 2px solid #aaa;
+    border-bottom: 2px solid #aaa;
+    
+    transform: rotate(-45deg);
+    
+    left: 4px;
+    top: 4px;
+}
 
+/*Checkmark of the fake checkbox*/
+.checkmark label::after {
+    height: 5px;
+    width: 9px;
+    border-left: 2px solid;
+    border-bottom: 2px solid;
+    
+    transform: rotate(-45deg);
+    
+    left: 4px;
+    top: 4px;
+}
 
+/*Hide the checkmark by default*/
+.checkmark input[type="checkbox"] + label::after {
+    content: none;
+}
+
+/*Unhide on the checked state*/
+.checkmark input[type="checkbox"]:checked + label::after {
+    content: "";
+}
 </style>
-
 <div id="mainArea">
 
   <div id="overlay" class="requesting-overlay">
@@ -120,7 +100,14 @@
           <li><a id="refreshDescribe" href="#">Describe global</a></li>
           <li><a id="refreshSession" href="#">Swith user</a></li>
           <li role="separator" class="divider"></li>
-          <li><a id="allOrNone" href="#">AllOrNoneHeader</a></li>
+          <li>
+            <a id="allOrNone" href="#">
+              <div class="checkmark">
+                <input type="checkbox" id="allOrNoneChk"/>
+                <label for="allOrNoneChk">AllOrNoneHeader</label>
+              </div>
+            </a>
+          </li>
         </ul>
       </div>
       <ul id="menus">

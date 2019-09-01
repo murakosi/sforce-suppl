@@ -464,10 +464,10 @@ coordinates = ->
   # Active grid
   #------------------------------------------------
   getActiveTabElementId = () ->
-    $("#soqlArea #tabArea .ui-tabs-panel:visible").attr("tabId")
+    $("#soqlArea .tabArea .ui-tabs-panel:visible").attr("tabId")
 
   getActiveGridElementId = () ->
-    tabId = $("#soqlArea #tabArea .ui-tabs-panel:visible").attr("tabId")
+    tabId = $("#soqlArea .tabArea .ui-tabs-panel:visible").attr("tabId")
     "#soqlArea #grid" + tabId
     
   getActiveGrid = () ->
@@ -478,19 +478,20 @@ coordinates = ->
   # CSV Download
   #------------------------------------------------
   $('#soqlArea #exportBtn').on 'click', (e) ->
-    hotElement = getActiveGrid()
-    hotElement.getPlugin('exportFile').downloadFile('csv', {
-      bom: false,
-      columnDelimiter: ',',
-      columnHeaders: true,
-      exportHiddenColumns: false,
-      exportHiddenRows: false,
-      fileExtension: 'csv',
-      filename: 'soql_result',
-      mimeType: 'text/csv',
-      rowDelimiter: '\r\n',
-      rowHeaders: false
-    })
+    if grids.length
+      hotElement = getActiveGrid()
+      hotElement.getPlugin('exportFile').downloadFile('csv', {
+        bom: false,
+        columnDelimiter: ',',
+        columnHeaders: true,
+        exportHiddenColumns: false,
+        exportHiddenRows: false,
+        fileExtension: 'csv',
+        filename: 'soql_result',
+        mimeType: 'text/csv',
+        rowDelimiter: '\r\n',
+        rowHeaders: false
+      })
 
   #------------------------------------------------
   # Rerun SOQL
@@ -535,23 +536,21 @@ coordinates = ->
 
   $(document).on 'click', '#soqlArea .ui-closable-tab', (e) ->
     e.preventDefault()
-    tabContainerDiv=$(this).closest("#soqlArea .ui-tabs").attr("id")
-    tabCount = $("#soqlArea #" + tabContainerDiv).find(".ui-closable-tab").length
 
-    if tabCount <= 1
+    if $("#soqlArea .tabArea ul li").length <= 2
       return
 
     #if window.confirm("Close this tab?")
     panelId = $(this).closest("#soqlArea li").remove().attr("aria-controls")
     $("#soqlArea #" + panelId ).remove();
-    $("#soqlArea #" + tabContainerDiv).tabs("refresh")
+    $("#soqlArea .tabArea").tabs("refresh")
     setSortableAttribute()
   
   createTab = () ->
     currentTabIndex = currentTabIndex + 1
     newTabId = currentTabIndex
 
-    $("#soqlArea #tabArea ul li:last").before(
+    $("#soqlArea .tabArea ul li:last").before(
       "<li class=\"noselect\"><a href=\"#tab" + newTabId + "\">Grid" + newTabId + "</a>" +
       "<span class=\"ui-icon ui-icon-close ui-closable-tab\"></span>" +
       "</li>"
@@ -571,7 +570,7 @@ coordinates = ->
     soqlArea += '<div id="soql-info' + newTabId + '">0 rows</div>'
     soqlArea += '</div>'
     
-    $("#soqlArea #tabArea").append(
+    $("#soqlArea .tabArea").append(
       "<div id=\"tab" + newTabId + "\" class=\"resultTab\" tabId=\"" + newTabId + "\">" +
       #inputArea + 
       soqlArea +
@@ -581,13 +580,13 @@ coordinates = ->
     
     createGrid("#soqlArea #grid" + newTabId)
     
-    $("#soqlArea #tabArea").tabs("refresh")
+    $("#soqlArea .tabArea").tabs("refresh")
         
     setSortableAttribute()
     
-    newTabIndex = $("#soqlArea #tabArea ul li").length - 2
+    newTabIndex = $("#soqlArea .tabArea ul li").length - 2
     selectedTabId = newTabIndex
-    $("#soqlArea #tabArea").tabs({ active: newTabIndex, activate: onTabSelect});
+    $("#soqlArea .tabArea").tabs({ active: newTabIndex, activate: onTabSelect});
 
   onTabSelect = (event, ui) ->
     tabId = ui.newPanel.attr("tabId")
@@ -703,17 +702,17 @@ coordinates = ->
   # message
   #------------------------------------------------
   displayError = (json) ->
-    $("#soqlArea #messageArea").html(json.error)
-    $("#soqlArea #messageArea").show()
+    $("#soqlArea .messageArea").html(json.error)
+    $("#soqlArea .messageArea").show()
   
   hideMessageArea = () ->
-    $("#soqlArea #messageArea").empty()
-    $("#soqlArea #messageArea").hide()
+    $("#soqlArea .messageArea").empty()
+    $("#soqlArea .messageArea").hide()
 
   #------------------------------------------------
   # page load actions
   #------------------------------------------------
-  $("#soqlArea #tabArea").tabs() 
+  $("#soqlArea .tabArea").tabs() 
   $("#soqlTabs").sortable({items: 'li:not(.add-tab-li)', delay: 150});
   createTab()
 

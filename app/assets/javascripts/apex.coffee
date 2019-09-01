@@ -45,7 +45,7 @@ coordinates = ->
   # CSV Download
   #------------------------------------------------
   $('#apexArea #download-log').on 'click', (e) ->
-    tabId = $("#apexArea #tabArea .ui-tabs-panel:visible").attr("tabId")
+    tabId = $("#apexArea .tabArea .ui-tabs-panel:visible").attr("tabId")
     elementId = "#apexArea #apexGrid" + tabId
     if logNames[elementId]
       hotElement =grids[elementId]
@@ -72,7 +72,7 @@ coordinates = ->
       clearFilter()
 
   filterLog = () ->
-    tabId = $("#apexArea #tabArea .ui-tabs-panel:visible").attr("tabId")
+    tabId = $("#apexArea .tabArea .ui-tabs-panel:visible").attr("tabId")
     elementId = "#apexArea #apexGrid" + tabId
     hotElement =grids[elementId]    
     filtersPlugin = hotElement.getPlugin('filters');
@@ -83,7 +83,7 @@ coordinates = ->
 
 
   clearFilter = () ->
-    tabId = $("#apexArea #tabArea .ui-tabs-panel:visible").attr("tabId")
+    tabId = $("#apexArea .tabArea .ui-tabs-panel:visible").attr("tabId")
     elementId = "#apexArea #apexGrid" + tabId
     hotElement =grids[elementId]
     filtersPlugin = hotElement.getPlugin('filters');
@@ -105,7 +105,7 @@ coordinates = ->
   executeAnonymous = () ->    
 
     hideMessageArea()
-    selectedTabId = $("#apexArea #tabArea .ui-tabs-panel:visible").attr("tabId")
+    selectedTabId = $("#apexArea .tabArea .ui-tabs-panel:visible").attr("tabId")
     debugOptions = {}
     $('#debugOptions option:selected').each () ->
       category = $(this).parent().attr("id")
@@ -137,16 +137,13 @@ coordinates = ->
 
   $(document).on 'click', '#apexArea .ui-closable-tab', (e) ->
     e.preventDefault()
-    tabContainerDiv=$(this).closest("#apexArea .ui-tabs").attr("id")
-    tabCount = $("#apexArea #" + tabContainerDiv).find(".ui-closable-tab").length
 
-    if tabCount <= 1
+    if $("#apexArea .tabArea ul li").length <= 2
       return
 
-    if window.confirm("Close this tab?")
-      panelId = $(this).closest("#apexArea li").remove().attr("aria-controls")
-      $("#apexArea #" + panelId ).remove();
-      $("#apexArea #" + tabContainerDiv).tabs("refresh")
+    panelId = $(this).closest("#apexArea li").remove().attr("aria-controls")
+    $("#apexArea #" + panelId ).remove();
+    $("#apexArea .tabArea").tabs("refresh")
 
   $('#apexArea #add-tab').on 'click', (e) ->
     e.preventDefault()
@@ -156,7 +153,7 @@ coordinates = ->
     currentTabIndex = currentTabIndex + 1
     newTabId = currentTabIndex
 
-    $("#apexArea #tabArea ul li:last").before(
+    $("#apexArea .tabArea ul li:last").before(
       "<li class=\"noselect\"><a href=\"#apexTab" + newTabId + "\">Grid" + newTabId + "</a>" +
       "<span class=\"ui-icon ui-icon-close ui-closable-tab\"></span>" +
       "</li>"
@@ -164,7 +161,7 @@ coordinates = ->
 
     logInfoArea = '<div id="logInfo' + newTabId + '" class="resultSoql" tabId="' + newTabId + '"></div>'    
     
-    $("#apexArea #tabArea").append(
+    $("#apexArea .tabArea").append(
       "<div id=\"apexTab" + newTabId + "\" class=\"resultTab\" tabId=\"" + newTabId + "\">" +
       logInfoArea +
       "<div id=\"apexGrid" + newTabId + "\" class=\"resultGrid\" tabId=\"" + newTabId + "\"></div>" +
@@ -173,12 +170,20 @@ coordinates = ->
     
     createGrid("#apexArea #apexGrid" + newTabId)
     
-    $("#apexArea #tabArea").tabs("refresh")
+    $("#apexArea .tabArea").tabs("refresh")
+
+    setSortableAttribute()
     
-    newTabIndex = $("#apexArea #tabArea ul li").length - 2
+    newTabIndex = $("#apexArea .tabArea ul li").length - 2
     selectedTabId = newTabIndex
-    $("#apexArea #tabArea").tabs({ active: newTabIndex});
-      
+    $("#apexArea .tabArea").tabs({ active: newTabIndex});
+
+  setSortableAttribute = () ->
+    if $("#apexTabs li" ).length > 2
+      $("#apexTabs").sortable("enable")
+    else
+      $("#apexTabs").sortable('disable')
+
   #------------------------------------------------
   # Create grid
   #------------------------------------------------
@@ -244,17 +249,18 @@ coordinates = ->
   # message
   #------------------------------------------------
   displayError = (json) ->
-    $("#apexArea #messageArea").html(json.error)
-    $("#apexArea #messageArea").show()
+    $("#apexArea .messageArea").html(json.error)
+    $("#apexArea .messageArea").show()
   
   hideMessageArea = () ->
-    $("#apexArea #messageArea").empty()
-    $("#apexArea #messageArea").hide()
+    $("#apexArea .messageArea").empty()
+    $("#apexArea .messageArea").hide()
     
   #------------------------------------------------
   # page load actions
   #------------------------------------------------
-  $("#apexArea #tabArea").tabs()
+  $("#apexArea .tabArea").tabs()
+  $("#apexTabs").sortable({items: 'li:not(.add-tab-li)', delay: 150});
   createTab()
 
 $(document).ready(coordinates)

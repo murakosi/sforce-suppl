@@ -68,17 +68,20 @@ mains = ->
     
     $(document).trigger("displayChange", [{targetArea: target + "Area"}]);
 
+  refreshSObjectLists = () ->
+    $(".selectlist").select2({
+      dropdownAutoWidth : true,
+      width: 'element',
+      containerCssClass: ':all:',
+      placeholder: "Select an sObject",
+      allowClear: true
+    })
+
   $("a#refreshDescribe").on "click", (e) ->
     alert("refresh")
     return false
   
-  $(".selectlist").select2({
-    dropdownAutoWidth : true,
-    width: 'element',
-    containerCssClass: ':all:',
-    placeholder: "Select an sObject",
-    allowClear: true
-  })
+  refreshSObjectLists()
       
   $("a#soqlexecuter").trigger("click");
 

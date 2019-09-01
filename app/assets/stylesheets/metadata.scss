@@ -1,3 +1,22 @@
-// Place all the styles related to the metadata controller here.
-// They will automatically be included in application.css.
-// You can use Sass (SCSS) here: http://sass-lang.com/
+/* ------------------------------
+   #jstree
+------------------------------ */
+.jstree-default a { 
+    white-space:normal !important; height: auto; 
+}
+
+.jstree-anchor {
+    height: auto !important;
+}
+
+.jstree-default li > ins { 
+    vertical-align:top; 
+}
+
+.jstree-leaf {
+    height: auto;
+}
+
+.jstree-leaf a{
+    height: auto !important;
+}

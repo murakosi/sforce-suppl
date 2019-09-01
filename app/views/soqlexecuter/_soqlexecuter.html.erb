@@ -1,120 +1,37 @@
-<style type="text/css">
-.right-align{
-	text-align: right;
-	margin-bottom: 2px;
-}
-
-.tbl{
-	display:table;
-    position: relative;
-    top: 25%;
-    /*color: #80ffff;*/
-    color: white;
-    margin: 0 auto;
-}
-
-.row {
-    display:table-row;
-}
-
-.row>div {
-    display:table-cell;
-}
-
-.label_col{
-    padding-right: 10px;
-    text-align: right;
-    vertical-align: middle;
-}
-
-.label_col2{
-    padding-right: 10px;
-    text-align: right;
-    vertical-align: top;
-}
-
-.input-sm2 {
-    height: 30px;
-    font-size: 12px;
-    line-height: 1.5;
-    border-radius: 3px;
-}
-
-.create-dialog {
-  /*height: 40%;
-  width: 30%;*/
-  width: 600px;
-  /*position: fixed;*/
-  position: relative;
-  z-index: 4005; 
-  /*left: 30%;*/
-  top: 20%;
-  background-color: #408080;
-  /*opacity: 0.8;*/
-  overflow-x: auto;
-  border-radius: 12px;
-  box-shadow: 9px 9px 9px rgba(0, 0, 0, .125);
-  /*resize: both;*/
-  padding: 35px;
-  margin: 0 auto;
-}
-
-#sobject_fields{
-	color: black;
-}
-
-#soqlOverRay {
-  height: 100%;
-  width: 100%;
-  position: fixed;
-  z-index: 4000;
-  left: 0%;
-  top: 0%;
-  background-color: rgba(0,0,0,0.2);
-  /*background-color: white;*/
-  /*opacity: 0.8;*/
-  overflow-x: hidden;
-  display:none;
-  
-}
-
-#creatGridArea{
-	font-size:12px;
-}
-
-#separator{
-	color: black;
-}
-
-</style>
 <div id="soqlArea">
 
-	<div id="formArea">
+	<div class="formArea">
 		<%= form_tag query_path(), :method => :post, :class => "execute-form" do %>
-		<%= text_area_tag :input_soql,"select id from assetpolicy__c", :size => "120x5", :spellcheck => false %>
-		<br>
-		<%= submit_tag "Execute", :class => "btn btn-sm btn-primary execute-soql" %>
-		&nbsp;&nbsp;<label><input type="checkbox" id="useTooling"/> Use Tooling API</label>
-		&nbsp;&nbsp;<label><input type="checkbox" id="queryAll"/> Query all</label>
+			<div>
+				<%= text_area_tag :input_soql,"select id from assetpolicy__c", :size => "120x5", :spellcheck => false %>
+			</div>
+			<div>
+				<%= submit_tag "Execute", :class => "btn btn-sm btn-primary execute-soql" %>
+				<label class="soqlOptions"><input type="checkbox" id="useTooling"/> Use Tooling API</label>
+				<label class="soqlOptions"><input type="checkbox" id="queryAll"/> Query all</label>
+			</div>
 		<% end %>
-		<p><div id="messageArea"></div></p>
+		
+		<p><div class="messageArea"></div></p>
 	</div>
-
-	<div id="dummyArea"></div>
 	
-	<div id="tabArea">
-		<div style="float: left;">
+	<div class="tabArea">
+		<div class="left-align-btn">
 		<%= button_tag "Export", :type => "button", :id => "exportBtn", :class => "btn btn-xs btn-default ex-small-btn" %>
 		<% if @describe_error.nil? %>
 			<%= button_tag "Create", :type => "button", :id => "openCreatGridBtn", :class => "btn btn-xs btn-default ex-small-btn" %>
 		<% end %>
 		</div>
-		<div class="right-align">
+		<div class="right-align-btn">
 			<%= button_tag "Upsert", :type => "button", :id => "upsertBtn", :class => "btn btn-xs btn-warning ex-small-btn" %>
 			<%= button_tag "Delete", :type => "button", :id => "deleteBtn", :class => "btn btn-xs btn-warning ex-small-btn" %>
 			<%= button_tag "Undelete", :type => "button", :id => "undeleteBtn", :class => "btn btn-xs btn-warning ex-small-btn" %>
 		</div>
-		<ul id="soqlTabs"><li class="add-tab-li"><div id="addTabBtn" class="icon-plus"></div></li></ul>
+		<ul id="soqlTabs">
+			<li class="add-tab-li">
+				<div id="addTabBtn" class="icon-plus"></div>
+			</li>
+		</ul>
 	</div>
 	
 	<div id="soqlOverRay">
@@ -134,7 +51,7 @@
 						<%= label_tag 'Fields: ' %>
 					</div>
 					<div>
-						<%= text_area_tag :sobject_fields,"", :style => "width: 400px; height: 150px;", :spellcheck => false %>				
+						<%= text_area_tag :sobject_fields,"", :class => "sobjectFieldsTextarea", :spellcheck => false %>				
 					</div>
 				</div>
 				<div class="row">
@@ -154,7 +71,7 @@
 				<div class="row">
 					<div></div>
 					<div>
-						<%= button_tag "Create", :type => "button", :id => "createGridBtn", :style => "margin-right:5px;", :class => "btn btn-xs btn-info ex-small-btn" %>
+						<%= button_tag "Create", :type => "button", :id => "createGridBtn", :class => "btn btn-xs btn-info ex-small-btn" %>
 						<%= button_tag "Cancel", :type => "button", :id => "cancelCreateBtn", :class => "btn btn-xs btn-info ex-small-btn" %>
 					</div>
 				</div>

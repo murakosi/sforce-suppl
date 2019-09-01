@@ -1,0 +1,254 @@
+/* ------------------------------
+   Overrides
+------------------------------ */
+label {
+    font-weight: normal !important;
+}
+
+button:disabled {
+  cursor: default !important;
+}
+
+/* ------------------------------
+   #JQuery UI
+------------------------------ */
+.ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button{
+    font-size: 9.5pt;
+    font-family:Arial;
+    margin-bottom: 2px;
+}
+.ui-tabs .ui-tabs-panel {
+    padding: 0;
+    margin: 0;
+}
+
+.ui-tabs .ui-tabs-nav li a {
+    font-size:10pt !important;
+}
+
+.noselect {
+    -webkit-user-select: none; /* Safari */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+}
+
+#soqlArea .ui-tabs .ui-tabs-nav .ui-tabs-anchor,
+#describeArea .ui-tabs .ui-tabs-nav .ui-tabs-anchor,
+#apexArea .ui-tabs .ui-tabs-nav .ui-tabs-anchor
+{
+    float: left;
+    padding: .5em .5em .5em 1em;
+    text-decoration: none;
+}
+
+.ui-tabs .ui-tabs-nav:focus {
+    
+    padding-left: 0px; 
+    background: transparent; 
+    border-width: 0px 0px 1px 0px; 
+    -moz-border-radius: 0px; 
+    -webkit-border-radius: 0px; 
+    border-radius: 0px;
+    
+}
+
+.tabArea ul li a { outline:none; }
+.tabArea ul li { outline:none; }
+
+.ui-tabs .ui-tabs-nav li.ui-tabs-active .ui-tabs-anchor,
+.ui-tabs .ui-tabs-nav li.ui-state-disabled .ui-tabs-anchor,
+.ui-tabs .ui-tabs-nav li.ui-tabs-loading .ui-tabs-anchor {
+     cursor: pointer; 
+}
+
+.add-tab-li{
+    height: 28px;
+}
+/* ------------------------------
+   #Handontable
+------------------------------ */
+.ht_master tr td {
+    font-size:12px;
+}
+
+.handsontable th {
+    font-size:12px;
+}
+
+.handsontable span.data{
+    color: black;
+    font-style:bold;
+}
+
+.changed-cell-border {
+  box-shadow: inset 0 -2px 0 red;
+}
+
+/* ------------------------------
+   #Areas
+------------------------------ */
+#tree, .treeView{
+    font-size:12px;
+    font-family: Verdana;
+    height:500px;
+    overflow:auto;
+}
+
+.formArea{
+    width: 80%;
+    margin: 0 auto;
+}
+
+.formArea .exportButtonArea .btn{
+    font-size:9.5pt;
+    display: inline;
+}
+
+.messageArea{
+    width: 100%;
+    display: none;
+    color: red;
+    white-space: pre-wrap;
+}
+
+.tabArea{
+    width: 80%;
+    border: 0px solid lightgray;
+    margin: 0 auto;
+}
+
+.tabArea li .ui-icon-close {
+    float: left;
+    margin: 0.4em 0.2em 0 0;
+    cursor: pointer; 
+}
+
+
+/* ------------------------------
+   #select2
+------------------------------ */
+.input-sm{
+    display:inline;
+    vertical-align: center;
+}
+
+.select2-results__options{
+        font-size:12px !important;
+        -webkit-box-shadow: none !important;
+        box-shadow:none !important;
+ }
+
+span.select2-selection.select2-selection--single {
+        outline: none;
+ }
+
+.select2-results {
+    max-height: 290px;
+}
+
+.select2-container--default .select2-results > .select2-results__options {
+    max-height: 290px;
+    min-height: 150px;
+    overflow-y: auto;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__clear {
+    margin-left: 10px !important;
+}
+
+.ex-small-btn{
+    font-size: 12px !important;
+}
+
+.in-btn{
+    font-size: 12px !important;
+    margin-right: 5px;
+}
+
+
+/* ------------------------------
+   #tab area
+------------------------------ */
+.resultTab{
+    padding-right: 7px;
+}
+
+.resultSoql{
+    border: 1px solid lightgray;
+    font-size: 9pt;
+    font-family:Arial;
+    padding: 4px;
+    margin-bottom: 2px;
+    margin-top: 2px;
+    white-space: pre-wrap;
+}
+
+.resultGrid {
+    background: white;
+    outline: 0;
+    border: 0px solid gray;
+}
+
+.button_to,
+.button_to div {
+    display: inline;
+}
+
+/* ------------------------------
+   #block
+------------------------------ */
+.left_block{
+    display: table;
+    border: 0px solid black;
+    width: auto;
+    vertical-align: left;
+}
+
+.combined_block{
+    display:table-cell;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    padding-right: 10px;
+    border: 0px solid black;
+    width: 100%;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.label_block{
+    display:table-cell;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    padding-right: 10px;
+    border: 0px solid black;
+    width: 40%;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.element_block{
+    display:table-cell;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    border: 0px solid black;
+    width: 60%;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.center_button_block{
+    display:table-cell;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    padding-right: 10px;
+    border: 0px solid black;
+    width: 40%;
+    text-align: left;
+    vertical-align: middle;
+}
+
+
+
+
