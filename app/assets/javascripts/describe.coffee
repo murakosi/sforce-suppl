@@ -194,7 +194,7 @@ describe = ->
 
     hotSettings = {
         data: records,
-        height: height,
+        #height: height,
         #stretchH: 'all',
         autoWrapRow: true,
         manualRowResize: false,
