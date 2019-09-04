@@ -36,6 +36,24 @@ coordinates = ->
     
   $("#soqlArea .selectlist").on "select2:close", (e) ->
     $(".select2-container--open").css("z-index","1051")
+  
+  #------------------------------------------------
+  # SOQL History
+  #------------------------------------------------
+  $("#soqlArea #historyBtn").on "click", (e) ->
+    if $("#soqlHistory").is(":visible")
+      $("#soqlHistory").attr("width", "0")
+    else
+      $("#soqlHistory").attr("width", "250px")
+      
+  $("#soqlHistory .closebtn").on "click", (e) ->
+    $("#soqlHistory").attr("width", "0")
+    
+  $('#soqlHistory').on 'mouseover', 'li', (e) ->
+    $(this).attr("title", $(this).text())
+    
+  $('#soqlHistory').on 'mouseover', 'li', (e) ->
+    $(this).attr("title", "")
     
   #------------------------------------------------
   # Event on menu change
@@ -157,6 +175,8 @@ coordinates = ->
                           }
 
     createGrid(elementId, json.records)
+    
+    $("#soqlHistory .sidenav ul").append('<li>' + json.soql_info.soql + '</li>')
 
     if json.records.size <= 0
       grid = grids[elementId]
