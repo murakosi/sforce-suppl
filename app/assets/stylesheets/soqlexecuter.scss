@@ -120,6 +120,86 @@
 }
 
 /* ------------------------------
+   Side navigation
+------------------------------ */  
+.sidenav {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #fafafb;
+    overflow-x: hidden;
+    padding-top: 10px;
+    transition: 0.2s;  
+    border-right: 1px solid #aaa;
+    z-index: 1;
+}
+
+.sidenav ul{
+    list-style-type: none;
+    margin-top: 10px;
+    padding: 0;
+}
+
+.sidenav li{
+    padding: 0 15px;
+    text-decoration: none;
+    font-size: 12px;
+    color: #000;
+    display: block;
+    overflow:hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;	
+}
+
+.sidenav a{
+    text-decoration: none;
+}
+
+.sidenav li:hover {
+    background-color: #efe9e9;
+}
+
+.sidenav .closebtn {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    font-size: 30px;
+    color: #000;
+    background-color: Transparent;
+    background-repeat:no-repeat;
+    border: none;
+    cursor:pointer;
+    overflow: hidden;
+    outline:none;
+    z-index: 2;
+    padding:0;
+    line-height: 20px
+}
+
+.sidenav .soql-history-title{
+    position: relative;
+    top: 5px;
+    font-size: 16px;
+    color: #000;
+    border-bottom:1px solid #ccc;
+    padding-left: 15px;
+    padding-bottom: 5px;
+    margin:0;
+}
+
+@media screen and (max-height: 450px) {
+    .sidenav {padding-top: 15px;}
+    .sidenav li { font-size: 12px;}    
+}
+
+/* ------------------------------
    Loading
 ------------------------------ */  
 .loader,
