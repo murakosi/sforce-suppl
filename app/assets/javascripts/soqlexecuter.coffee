@@ -41,13 +41,13 @@ coordinates = ->
   # SOQL History
   #------------------------------------------------
   $("#soqlArea #historyBtn").on "click", (e) ->
-    if $("#soqlHistory").is(":visible")
-      $("#soqlHistory").attr("width", "0")
+    if $("#soqlHistory").width() > 0
+      $("#soqlHistory").width("0")
     else
-      $("#soqlHistory").attr("width", "250px")
+      $("#soqlHistory").width("250px")
       
   $("#soqlHistory .closebtn").on "click", (e) ->
-    $("#soqlHistory").attr("width", "0")
+    $("#soqlHistory").width("0")
     
   $('#soqlHistory').on 'mouseover', 'li', (e) ->
     $(this).attr("title", $(this).text())
