@@ -43,11 +43,14 @@ coordinates = ->
   $("#soqlArea #historyBtn").on "click", (e) ->
     if $("#soqlHistory").width() > 0
       $("#soqlHistory").width("0")
+      $("#soqlArea").css("margin-left","0")
     else
       $("#soqlHistory").width("250px")
+      $("#soqlArea").css("margin-left","250px")
       
   $("#soqlHistory .closebtn").on "click", (e) ->
     $("#soqlHistory").width("0")
+    $("#soqlArea").css("margin-left","0")
     
   $('#soqlHistory').on 'mouseover', 'li', (e) ->
     $(this).attr("title", $(this).text())
@@ -176,7 +179,7 @@ coordinates = ->
 
     createGrid(elementId, json.records)
     
-    $("#soqlHistory .sidenav ul").append('<li>' + json.soql_info.soql + '</li>')
+    $("#soqlHistory ul").append('<li>' + json.soql_info.soql + '</li>')
 
     if json.records.size <= 0
       grid = grids[elementId]
