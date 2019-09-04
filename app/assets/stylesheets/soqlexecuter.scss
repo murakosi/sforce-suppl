@@ -125,7 +125,7 @@
 .sidenav {
     height: 100%;
     width: 0;
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     background-color: #fafafb;
@@ -192,6 +192,7 @@
     padding-left: 15px;
     padding-bottom: 5px;
     margin:0;
+    font-family: Meiryo;
 }
 
 @media screen and (max-height: 450px) {
