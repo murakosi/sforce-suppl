@@ -21,6 +21,7 @@
 		<% if @describe_error.nil? %>
 			<%= button_tag "Create", :type => "button", :id => "openCreatGridBtn", :class => "btn btn-xs btn-default ex-small-btn" %>
 		<% end %>
+		<%= button_tag "History", :type => "button", :id => "historyBtn", :class => "btn btn-xs btn-default ex-small-btn" %>
 		</div>
 		<div class="right-align-btn">
 			<%= button_tag "Upsert", :type => "button", :id => "upsertBtn", :class => "btn btn-xs btn-warning ex-small-btn" %>
@@ -31,6 +32,13 @@
 			<li class="add-tab-li">
 				<div id="addTabBtn" class="icon-plus"></div>
 			</li>
+		</ul>
+	</div>
+	
+	<div id="soqlHistory" class="sidenav">
+		<div class="soql-history-title noselect">SOQL History</div>
+		<button class="closebtn" onclick="closeNav()">&times;</button>		
+		<ul>	
 		</ul>
 	</div>
 	
