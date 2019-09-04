@@ -1,6 +1,12 @@
 /* ------------------------------
    Overray
 ------------------------------ */  
+#soqlArea{
+	position:absolute;
+	top:0;
+	right:0;
+}
+
 #soqlOverRay {
   height: 100%;
   width: 100%;
@@ -130,6 +136,7 @@
     left: 0;
     background-color: #fafafb;
     overflow-x: hidden;
+    overflow-y: auto;
     padding-top: 10px;
     transition: 0.2s;  
     border-right: 1px solid #aaa;
