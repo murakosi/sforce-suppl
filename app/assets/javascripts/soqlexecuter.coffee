@@ -55,7 +55,7 @@ coordinates = ->
   $('#soqlHistory').on 'mouseover', 'li', (e) ->
     $(this).attr("title", $(this).text())
     
-  $('#soqlHistory').on 'mouseover', 'li', (e) ->
+  $('#soqlHistory').on 'mouseout', 'li', (e) ->
     $(this).attr("title", "")
     
   #------------------------------------------------
