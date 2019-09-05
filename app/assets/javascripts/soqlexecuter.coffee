@@ -46,7 +46,7 @@ coordinates = ->
       $("#soqlArea").css("margin-left","0")
     else
       $("#soqlHistory").width("250px")
-      $("#soqlArea").css("margin-left","20px")
+      $("#soqlArea").css("margin-left","200px")
       
   $("#soqlHistory .closebtn").on "click", (e) ->
     $("#soqlHistory").width("0")
