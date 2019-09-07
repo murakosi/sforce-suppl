@@ -3,7 +3,9 @@
     border: 1px solid lightgray;
     display: inline-block;
     width: 100%;
-    padding: 5px;
+    padding: 4px;
+    margin-top: 2px;
+    margin-bottom: 2px;   
 }
 
 .crudForm{
@@ -13,6 +15,10 @@
 
 #deployOptions{
 	font-size: 9pt; font-family:Arial;
+}
+
+.file-field{
+	padding-left: 0;
 }
 
 </style>
@@ -31,12 +37,10 @@
 			</div>
 		</div>
 		<% end %>
-		<div id="messageArea"></div>
+		<div class="messageArea"></div>
 	</div>
-
-	<div id="dummyArea"></div>
 	
-	<div id="tabArea">
+	<div class="tabArea">
 		<br>
 
 		<ul>
@@ -54,7 +58,7 @@
 					<%= button_tag "Retrieve metadata", :id => "retrieveButton", :class => "btn btn-warning btn-xs exp ex-small-btn" %>
 				<% end %>
 			</div>
-			<div id="grid" class="resultGrid"></div>
+			<div id="metadataGrid" class="resultGrid"></div>
 		</div>
 
 		<div id="edit-tab" class="resultTab" action="<%= metadata_read_path() %>" method="POST">
@@ -72,9 +76,9 @@
 		<div id="deploy-tab" class="resultTab">
 			<div id="deploy-form" class="inButtonArea">
 				<%= form_tag metadata_deploy_path(), :id => "deployForm", :method => :post, :multipart => true, :class => "crudForm" do %>
-					<div id="createGrid" class="resultGrid">
+					<div>
 						<%= button_tag "Deploy", :id => "deployButton", :class => "btn btn-warning btn-xs ex-small-btn" %>
-						<%= file_field_tag :zipFile, :class => "btn ex-small-btn"  %>
+						<%= file_field_tag :zipFile, :class => "btn ex-small-btn file-field"  %>
 					</div>
 					<div id="deployOptions">
 							
@@ -87,7 +91,7 @@
 					</div>
 				<% end %>
 			</div>		
-			<div id="deployResultGrid" class="treeView"></div>	
+			<div id="deployResultTree"></div>	
 		</div>
 
 	</div>

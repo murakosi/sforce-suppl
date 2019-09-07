@@ -8,17 +8,12 @@ coordinates = ->
   selectedNode = null
   fieldNames = null
   fieldTypes = null
-  #selectedCellOnCreateGrid = null
   deployId = null
   retrieveId = null
   checkInterval = 2000
   checkCount = 0;
 
   disableButtons = () ->
-    #$("#createButton").prop("disabled", true)
-    #$("#addRow").prop("disabled", true)
-    #$("#removeRow").prop("disabled", true)
-    #$("#clearGrid").prop("disabled", true)
     $("#updateButton").prop("disabled", true)
     $("#deleteButton").prop("disabled", true)
     $("#expand").prop("disabled", true)
@@ -33,9 +28,6 @@ coordinates = ->
 
   getSelectedFullNames = () ->
     JSON.stringify(Object.keys(selectedFullNames))
-
-  #getDataOnCreateGrid = () ->
-  #  JSON.stringify(grids["#metadataArea #createGrid"].getData())
 
   #------------------------------------------------
   # list metadata
@@ -58,8 +50,7 @@ coordinates = ->
     if $.isAjaxBusy()
       $.abortAjax()
 
-    createGrid("#metadataArea #grid")
-    #createGrid("#metadataArea #createGrid")
+    createGrid("#metadataArea #metadataGrid")
     $('#metadataArea #editTree').jstree(true).settings.core.data = null
     $('#metadataArea #editTree').jstree(true).refresh()
     selectedRecords = {}
@@ -68,7 +59,6 @@ coordinates = ->
     fieldTypes = null
     selectedFullNames = {}
     selectedNode = null
-    #selectedCellOnCreateGrid = null
 
   processListError = (json) ->
     disableButtons()
@@ -80,14 +70,9 @@ coordinates = ->
     changeButtonStyles(json.crud_info)
     fieldNames = json.create_grid.field_names
     fieldTypes = json.create_grid.field_types
-    createGrid("#metadataArea #grid", json.list_grid)
-    #createGrid("#metadataArea #createGrid", json.create_grid)
+    createGrid("#metadataArea #metadataGrid", json.list_grid)
 
   changeButtonStyles = (json) ->
-    #$("#createButton").prop("disabled", !json.api_creatable)
-    #$("#addRow").prop("disabled", !json.api_creatable)
-    #$("#removeRow").prop("disabled", !json.api_creatable)
-    #$("#clearGrid").prop("disabled", !json.api_creatable)
     $("#updateButton").prop("disabled", !json.api_updatable)
     $("#deleteButton").prop("disabled", !json.api_deletable)
     $("#expand").prop("disabled", !json.api_readable)
@@ -181,8 +166,8 @@ coordinates = ->
     file = $('#zipFile')[0].files[0]
 
     if file instanceof Blob
-      $('#metadataArea #deployResultGrid').jstree(true).settings.core.data = null
-      $('#metadataArea #deployResultGrid').jstree(true).refresh()
+      $('#metadataArea #deployResultTree').jstree(true).settings.core.data = null
+      $('#metadataArea #deployResultTree').jstree(true).refresh()
       getBase64(file)
     else
       displayError( {error: "Select file to deploy"} )
@@ -225,15 +210,10 @@ coordinates = ->
       callbacks = $.getAjaxCallbacks(checkDeployStatus, displayError, null)
       $.executeAjax(options, callbacks)
 
-  sleep = (waitMsec) ->
-    startMsec = new Date()
-    while new Date - startMsec < waitMsec
-      return
-
   deployDone = (json) ->
     deployId = null
-    $('#metadataArea #deployResultGrid').jstree(true).settings.core.data = json.result
-    $('#metadataArea #deployResultGrid').jstree(true).refresh()
+    $('#metadataArea #deployResultTree').jstree(true).settings.core.data = json.result
+    $('#metadataArea #deployResultTree').jstree(true).refresh()
     hideMessageArea()
 
   #------------------------------------------------
@@ -272,14 +252,12 @@ coordinates = ->
     $.executeAjax(options, callbacks)
 
   $("#expand").on "click", (e) ->
-    if selectedNode == null
-      return false
-    $("#metadataArea #editTree").jstree(true).open_all(selectedNode)
+    if selectedNode
+      $("#metadataArea #editTree").jstree(true).open_all(selectedNode)
 
   $("#collapse").on "click", (e) ->
-    if selectedNode == null
-      return false
-    $("#metadataArea #editTree").jstree(true).close_all(selectedNode)
+    if selectedNode
+      $("#metadataArea #editTree").jstree(true).close_all(selectedNode)
 
   editComplete = (json) ->
     fullName = json.full_name
@@ -294,51 +272,6 @@ coordinates = ->
   treeChecker = (operation, node, node_parent, node_position, more) ->    
     if operation == 'edit' && !node.li_attr.editable
         return false
-
-  #------------------------------------------------
-  # Create metadata
-  #------------------------------------------------
-  $("#createButton").on "click", (e) ->
-    e.preventDefault()
-    val = {
-           crud_type: "create",
-           metadata_type: getSelectedMetadata(),
-           field_headers: fieldNames,
-           field_types: fieldTypes,
-           field_values: getDataOnCreateGrid()
-          }
-    action = $(".crudForm").attr("action")
-    method = $(".crudForm").attr("method")
-    options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
-    callbacks = $.getAjaxCallbacks(saveSuccess, displayError, null)
-    $.executeAjax(options, callbacks)
-
-  $("#clearGrid").on "click", (e) ->
-    grid = grids["#metadataArea #createGrid"]
-    grid.clear()
-
-  $("#addRow").on "click", (e) ->
-    grid = grids["#metadataArea #createGrid"]
-    if !selectedCellOnCreateGrid? || selectedCellOnCreateGrid.row < 0
-      return false
-    else
-      grid.alter('insert_row', selectedCellOnCreateGrid.row + 1, 1)
-      grid.selectCell(selectedCellOnCreateGrid.row, selectedCellOnCreateGrid.col)
-
-  $("#removeRow").on "click", (e) ->
-    grid = grids["#metadataArea #createGrid"]
-    if !selectedCellOnCreateGrid? || selectedCellOnCreateGrid.row < 0
-      return false
-    else
-      grid.alter('remove_row', selectedCellOnCreateGrid.row, 1)
-      grid.selectCell(getValidRowAfterRemove(grid), selectedCellOnCreateGrid.col)
-
-  getValidRowAfterRemove = (grid) ->
-    lastRow = grid.countVisibleRows() - 1
-    if selectedCellOnCreateGrid.row > lastRow
-      selectedCellOnCreateGrid.row = lastRow
-    else
-      selectedCellOnCreateGrid.row
 
   #------------------------------------------------
   # Delete metadata
@@ -368,12 +301,12 @@ coordinates = ->
   displayError = (json) ->
     retrieveId = null
     deployId = null
-    $("#metadataArea #messageArea").html(json.error)
-    $("#metadataArea #messageArea").show()
+    $("#metadataArea .messageArea").html(json.error)
+    $("#metadataArea .messageArea").show()
   
   hideMessageArea = () ->
-    $("#metadataArea #messageArea").empty()
-    $("#metadataArea #messageArea").hide()
+    $("#metadataArea .messageArea").empty()
+    $("#metadataArea .messageArea").hide()
 
   #------------------------------------------------
   # HandsonTable
@@ -392,9 +325,6 @@ coordinates = ->
     rowHeaderOption = getRowHeaderOption(elementId, json)
     rowHeaderWidth = getRowHeaderWidth(elementId, json)
     minRow = getMinRow(json)
-    allowSort = getAllowSort(elementId)
-    beforeChangeFunc = getBeforeChangeFunc(elementId)
-    onClickFunc = getOnClickFunc(elementId, json)
 
     hotSettings = {
         data: records,
@@ -404,7 +334,6 @@ coordinates = ->
         allowRemoveColumn: false,
         manualRowResize: false,
         manualColumnResize: true,
-        #rowHeaders: true,
         rowHeaders: rowHeaderOption,
         rowHeaderWidth: rowHeaderWidth,
         colHeaders: header,
@@ -415,10 +344,8 @@ coordinates = ->
         minSpareCols: 0,
         fillHandle: {autoInsertRow: false},
         fragmentSelection: true,
-        columnSorting: allowSort,
+        columnSorting: true,
         licenseKey: 'non-commercial-and-evaluation'
-        beforeChange: (source, changes) -> beforeChangeFunc(source, changes),
-        afterOnCellMouseDown: (event, coords, td) -> onClickFunc(event, coords, td)
     }
 
     hot = new Handsontable(hotElement, hotSettings)
@@ -481,39 +408,6 @@ coordinates = ->
     else
       0
 
-  getAllowSort = (elementId) ->
-    if elementId == "#metadataArea #createGrid"
-      false
-    else
-      true
-
-  getBeforeChangeFunc = (elementId) ->
-    if elementId != "#metadataArea #grid"
-      return (source, changes) ->
-
-    return detectBeforeEditOnGrid
-
-  detectBeforeEditOnGrid = (source, changes) ->
-    if changes != 'edit'
-      return
-
-    rowIndex = source[0][0]
-    checked = source[0][3]
-
-    if checked
-        selectedRecords[rowIndex] = grids["#metadataArea #grid"].getDataAtRow(rowIndex)
-    else
-      delete selectedRecords[rowIndex]
-
-  getOnClickFunc = (elementId, json) ->
-    if !json? || elementId != "#metadataArea #createGrid"
-      return (event, coords, td) ->
-  
-    return onCellClick
-
-  onCellClick = (event, coords, td) ->
-    selectedCellOnCreateGrid = coords
-
   #------------------------------------------------
   # Custom renderer
   #------------------------------------------------
@@ -546,12 +440,8 @@ coordinates = ->
   #------------------------------------------------
   disableButtons()
 
-  $("#metadataArea #tabArea").tabs()
-
-  #Handsontable.renderers.registerRenderer('customDropdownRenderer', customDropdownRenderer);
-
-  createGrid("#metadataArea #grid")
-  #createGrid("#metadataArea #createGrid")
+  $("#metadataArea .tabArea").tabs()
+  createGrid("#metadataArea #metadataGrid")
 
   $('#metadataArea #editTree').jstree({
     
@@ -565,7 +455,7 @@ coordinates = ->
     "plugins": ["dropdown"]
   })
 
-  $('#metadataArea #deployResultGrid').jstree({
+  $('#metadataArea #deployResultTree').jstree({
     
     'core' : {
       'data' : [],
@@ -575,8 +465,7 @@ coordinates = ->
     }
   })
 
-  #$("#metadataArea #tabArea").tabs({ active: 2 });
-  $("#metadataArea #tabArea").tabs();
+  #$("#metadataArea #tabArea").tabs();
 
 $(document).ready(coordinates)
 $(document).on('page:load', coordinates)
