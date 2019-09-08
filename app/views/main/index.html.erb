@@ -14,174 +14,69 @@
               'describe', 
               'metadata',
               'tooling',
-              'apex',
-              'soqlgrids'
+              'apex'
 %>
 <style>
-
-/* Progress Bar */
-
-#progress{
-    visibility: hidden;
-    height: 2px;
-    position: fixed;
-    top: 50px;
-    width: 100%;
-}
-
-.progress-line, .progress-line:before {
-  height: 2px;
-  width: 100%;
-  margin: 0;
-}
-.progress-line {
-  /*background-color: #b3d4fc;*/
-  display: -webkit-flex;
-  display: flex;
-}
-.progress-line:before {
-  /*background-color: #3f51b5;*/
-  background-color: #337ab7;
-  content: '';
-  -webkit-animation: running-progress 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-  animation: running-progress 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-}
-@-webkit-keyframes running-progress {
-  0% { margin-left: 0px; margin-right: 100%; }
-  50% { margin-left: 25%; margin-right: 0%; }
-  100% { margin-left: 100%; margin-right: 0; }
-}
-@keyframes running-progress {
-  0% { margin-left: 0px; margin-right: 100%; }
-  50% { margin-left: 25%; margin-right: 0%; }
-  100% { margin-left: 100%; margin-right: 0; }
-}
-  
-.dropdown-item-font{
-  font-size: 0.875rem;
+#allOrNone{
+    padding-left: 2px !important;
+    padding-bottom: 0px !important;
+    padding-top: 0px !important;
+    margin-top: -2px;
   }
-
-.changed-cell-border {
-  box-shadow: inset 0 -2px 0 red;
-}
-  
-.requesting-overlay {
-  /* Height & width depends on how you want to reveal the overlay (see JS below) */    
-  height: 100%;
-  width: 100%;
-  position: fixed; /* Stay in place */
-  z-index: 9999; /* Sit on top */
-  left: 0;
-  top: 0;
-  background-color: #408080;
-  opacity: 0.8; /*rgba(0,0,0, 0.9);  Black w/opacity */
-  overflow-x: hidden; /* Disable horizontal scroll */
-  display:none;
+.checkmark input[type="checkbox"] {
+    opacity: 0;
+    width: 0px;
 }
 
-/* Position the content inside the overlay */
-.overlay-content {
-  position: relative;
-  top: 42%; /* 25% from the top */
-  width: 100%; /* 100% width */
-  text-align: center; /* Centered text/links */
-  margin-top: 30px; /* 30px top margin to avoid conflict with the close button on smaller screens */
-  color:#80ffff;
-  font-weight: bold;
+.checkmark label {
+    position: relative;
+    display: inline-block;
+    padding-left: 20px;
 }
 
-.loader,
-.loader:before,
-.loader:after {
-  border-radius: 50%;
-  width: 2.5em;
-  height: 2.5em;
-  -webkit-animation-fill-mode: both;
-  animation-fill-mode: both;
-  -webkit-animation: load7 1.8s infinite ease-in-out;
-  animation: load7 1.8s infinite ease-in-out;
-}
-.loader {
-  color: #80ffff;
-  font-size: 10px;
-  margin: auto;
-  position:absolute;
-  top:0px;
-  right:0px;
-  left:0px;
-  bottom:0px;
-  text-indent: -9999em;
-  -webkit-transform: translateZ(0);
-  -ms-transform: translateZ(0);
-  transform: translateZ(0);
-  -webkit-animation-delay: -0.16s;
-  animation-delay: -0.16s;
-}
-.loader:before,
-.loader:after {
-  content: '';
-  position: absolute;
-  top: 0;
-}
-.loader:before {
-  left: -3.5em;
-  -webkit-animation-delay: -0.32s;
-  animation-delay: -0.32s;
-}
-.loader:after {
-  left: 3.5em;
-}
-@-webkit-keyframes load7 {
-  0%,
-  80%,
-  100% {
-    box-shadow: 0 2.5em 0 -1.3em;
-  }
-  40% {
-    box-shadow: 0 2.5em 0 0;
-  }
-}
-@keyframes load7 {
-  0%,
-  80%,
-  100% {
-    box-shadow: 0 2.5em 0 -1.3em;
-  }
-  40% {
-    box-shadow: 0 2.5em 0 0;
-  }
+.checkmark label::before,
+.checkmark label::after {
+    position: absolute;
+    content: "";
+    display: inline-block;
 }
 
-.header{
-  height:5px;
-  z-index: 3000;
-  background-color: white;
-  width: 100%;
-  position: fixed;
-  top: 0;
+/*Outer box of the fake checkbox*/
+.checkmark label::before{
+    height: 5px;
+    width: 9px;
+    border-left: 2px solid #aaa;
+    border-bottom: 2px solid #aaa;
+    
+    transform: rotate(-45deg);
+    
+    left: 4px;
+    top: 4px;
 }
 
-
-.dropdown-btn{
-  /*display: inline-block;*/
-  text-decoration: none;
-  /*background: #f7f7f7;*/
-  /*border-left: solid 10px #ff7c5c;*/
-  color: black;
-  /*background-color: #d3cbdb;*/
-  background-color: white;
-  border-radius: 12px;
-  border: #aaa 1px solid;
-  /*box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.29);  */
-  box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
+/*Checkmark of the fake checkbox*/
+.checkmark label::after {
+    height: 5px;
+    width: 9px;
+    border-left: 2px solid;
+    border-bottom: 2px solid;
+    
+    transform: rotate(-45deg);
+    
+    left: 4px;
+    top: 4px;
 }
 
-.dropdown-btn:hover{
-  color: black;
+/*Hide the checkmark by default*/
+.checkmark input[type="checkbox"] + label::after {
+    content: none;
 }
 
+/*Unhide on the checked state*/
+.checkmark input[type="checkbox"]:checked + label::after {
+    content: "";
+}
 </style>
-
 <div id="mainArea">
 
   <div id="overlay" class="requesting-overlay">
@@ -189,37 +84,45 @@
     <div class="loader"></div>
   </div>
 
-  <div class="header"></div>
-
-  <div id="menuList">    
-    <div class="btn-group">
-      <button id="userInfoButton" class="btn btn-secondary btn-sm dropdown-toggle dropdown-btn paper-raise" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <%= @current_user.name %>
-      </button>
-
-      <ul class="dropdown-menu">
-        <li><%= link_to "Logout", logout_path, method: :delete, id: "logoutLink" %></li>
-        <li><a href="#">Describe global</a></li>
-        <li><a href="#">Swith user</a></li>
-        <li role="separator" class="divider"></li>
-        <li><a href="#">Separated link</a></li>
-      </ul>
+  <div class="header">
+    <div id="progress">
+      <div id="progress-line" class="progress-line"></div>
     </div>
-    <ul id="menus">
-      <li><a id="soqlexecuter" href="" class="menus" method="GET" loadTarget="#soqlexecuterContent" action="">SOQL</a></li>
-  		<!--<li><a id="describe" href="#" class="menus" method="GET" loadTarget="#describeContent" action="describe">Describe</a></li>-->
-      <li><a id="describe" href="#" class="menus" method="GET" loadTarget="#describeContent" action="">Describe</a></li>
-  		<li><a id="metadata" href="#" class="menus" method="GET" loadTarget="#metadataContent" action="metadata">Metadata</a></li>
-      <li><a id="apex" href="" class="menus" method="GET" loadTarget="#apexContent" action="">Apex</a></li>
-    </ul>
-  </div>  
 
-  <div id="progress">
-    <div id="progress-line"></div>
+    <div id="menuList">    
+      <div class="btn-group">
+        <button id="userInfoButton" class="btn btn-secondary btn-sm dropdown-toggle dropdown-btn paper-raise" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <%= @current_user.name %>
+        </button>
+
+        <ul id="dropdown-menu" class="dropdown-menu">
+          <li><%= link_to "Logout", logout_path, method: :delete, id: "logoutLink" %></li>
+          <li><a id="refreshDescribe" href="#">Describe global</a></li>
+          <li><a id="refreshSession" href="#">Swith user</a></li>
+          <li role="separator" class="divider"></li>
+          <li>
+            <a id="allOrNone" href="javascript:void(0)">
+              <div class="checkmark">
+                <input type="checkbox" id="allOrNoneChk"/>
+                <label for="allOrNoneChk">AllOrNoneHeader</label>
+              </div>
+            </a>
+          </li>
+        </ul>
+      </div>
+      <ul id="menus">
+        <li><a id="soqlexecuter" href="" class="menus" method="GET" loadTarget="#soqlexecuterContent" action="">SOQL</a></li>
+    		<!--<li><a id="describe" href="#" class="menus" method="GET" loadTarget="#describeContent" action="describe">Describe</a></li>-->
+        <li><a id="describe" href="#" class="menus" method="GET" loadTarget="#describeContent" action="">Describe</a></li>
+    		<li><a id="metadata" href="#" class="menus" method="GET" loadTarget="#metadataContent" action="metadata">Metadata</a></li>
+        <li><a id="apex" href="" class="menus" method="GET" loadTarget="#apexContent" action="">Apex</a></li>
+      </ul>
+    </div>  
   </div>
+
 <div id="contentsArea">
 
-  <div id="spaceArea" style="height:20px;"></div>
+  <div id="spaceArea" style="height:30px;"></div>
 
   
     <div id="soqlexecuterContent"><%= render "soqlexecuter/soqlexecuter" %></div>

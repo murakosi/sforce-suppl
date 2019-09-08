@@ -1,25 +1,8 @@
+/* ------------------------------
+   Overrides
+------------------------------ */
 label {
     font-weight: normal !important;
-}
-
-.displayed{
-    background:white !important;
-}
-
-#soqlexecuterContent,
-#describeContent, 
-#metadataContent, 
-#toolingContent,
-#apexContent{
- display:none;   
-}
-
-.soqlexecuter #soqlexecuterContent, 
-.describe #describeContent, 
-.metadata #metadataContent, 
-.tooling #toolingContent,
-.apex #apexContent{
- display:block;   
 }
 
 button:disabled {
@@ -51,51 +34,41 @@ button:disabled {
                                   supported by Chrome and Opera */
 }
 
-.ui-tabs .ui-tabs-nav .ui-tabs-anchor {
+#soqlArea .ui-tabs .ui-tabs-nav .ui-tabs-anchor,
+#describeArea .ui-tabs .ui-tabs-nav .ui-tabs-anchor,
+#apexArea .ui-tabs .ui-tabs-nav .ui-tabs-anchor
+{
     float: left;
     padding: .5em .5em .5em 1em;
     text-decoration: none;
 }
+
 .ui-tabs .ui-tabs-nav:focus {
-    /*
+    
     padding-left: 0px; 
     background: transparent; 
     border-width: 0px 0px 1px 0px; 
     -moz-border-radius: 0px; 
     -webkit-border-radius: 0px; 
     border-radius: 0px;
-    */
+    
 }
 
-#tabArea ul li a { outline:none; /* outline-color:red */; }
-#tabArea ul li { outline:none; /* outline-color:red */; }
+.tabArea ul li a { outline:none; }
+.tabArea ul li { outline:none; }
 
 .ui-tabs .ui-tabs-nav li.ui-tabs-active .ui-tabs-anchor,
 .ui-tabs .ui-tabs-nav li.ui-state-disabled .ui-tabs-anchor,
 .ui-tabs .ui-tabs-nav li.ui-tabs-loading .ui-tabs-anchor {
-    /* cursor: pointer; */
+     cursor: pointer; 
 }
 
-.ui-tabs-nav .ui-icon { 
-    /*
-    float: right;
-    margin: 0em 0em 0 1em;
-    cursor: pointer;
-    */
+.add-tab-li{
+    height: 28px;
 }
-
 /* ------------------------------
    #Handontable
 ------------------------------ */
-/*
-.handsontable span.colHeader{
-    font-size: 10pt;
-}
-
-.handsontable th, .handsontable td{
-    font-size: 10pt;
-}
-*/
 .ht_master tr td {
     font-size:12px;
 }
@@ -109,46 +82,13 @@ button:disabled {
     font-style:bold;
 }
 
-/* ------------------------------
-   #jstree
------------------------------- */
-.jstree-default a { 
-    white-space:normal !important; height: auto; 
-}
-
-.jstree-anchor {
-    height: auto !important;
-}
-
-.jstree-default li > ins { 
-    vertical-align:top; 
-}
-
-.jstree-leaf {
-    height: auto;
-}
-
-.jstree-leaf a{
-    height: auto !important;
+.changed-cell-border {
+  box-shadow: inset 0 -2px 0 red;
 }
 
 /* ------------------------------
    #Areas
 ------------------------------ */
-#contentsArea{
-    margin-top:50px;
-}
-
-#mainArea{
-    padding-top: 20px;
-    width:100%;
-    margin: 0 auto;   
-}
-
-#mainArea .ui-tabs-anchor{
-    font-size:12px !important;
-}
-
 #tree, .treeView{
     font-size:12px;
     font-family: Verdana;
@@ -156,32 +96,30 @@ button:disabled {
     overflow:auto;
 }
 
-#formArea{
+.formArea{
     width: 80%;
     margin: 0 auto;
 }
 
-#formArea #exportButtonArea .btn{
+.formArea .exportButtonArea .btn{
     font-size:9.5pt;
     display: inline;
 }
 
-#messageArea{
+.messageArea{
     width: 100%;
     display: none;
     color: red;
     white-space: pre-wrap;
 }
 
-#tabArea{
-    /*width: 60%;*/
+.tabArea{
     width: 80%;
     border: 0px solid lightgray;
     margin: 0 auto;
-    /*float:left;*/
 }
 
-#tabArea li .ui-icon-close {
+.tabArea li .ui-icon-close {
     float: left;
     margin: 0.4em 0.2em 0 0;
     cursor: pointer; 
@@ -229,10 +167,6 @@ span.select2-selection.select2-selection--single {
     margin-right: 5px;
 }
 
-.btn-info{
-    font-size: 8pt !important;
-    font-family:Arial;
-}
 
 /* ------------------------------
    #tab area
@@ -255,6 +189,8 @@ span.select2-selection.select2-selection--single {
     background: white;
     outline: 0;
     border: 0px solid gray;
+    min-height: 500px;
+    overflow: hidden;
 }
 
 .button_to,
@@ -315,96 +251,6 @@ span.select2-selection.select2-selection--single {
     vertical-align: middle;
 }
 
-/* ------------------------------
-   #menuList
------------------------------- */
-#menuList {
-    /*margin-top: 15px;*/
-    width: 100%;
-    height: 45px;
-    border-top: #aaa 1px solid;
-    border-bottom: #aaa 1px solid;
-    /*position: relative;*/
-    position: fixed;
-    top:5px;
-    z-index: 3000;
-    background: #d3cbdb;
-    display: flex;
-    font-size:10pt;
-    box-shadow: 0 3px 6px rgba(0,0,0,.175)
-}
-/*#menuList ul*/
-#userInfoButton{
-    margin-left:10px;
-    margin-top:7px;
-}
 
-#menus {
-    height: 45px;
-    /*margin-left:70%;*/
-    margin-left: auto;
-    list-style: none;
-    padding-right: 10px;
-}
- 
-#menus li {
-    width: 120px;
-    height: 44px;
-    float: left;
-    border-left: #aaa 1px solid;
-    box-sizing: border-box;
-}
- 
-#menus li:last-child {
-    border-right: #aaa 1px solid;
-}
- 
-#menus li a {
-    height: 43px;    
-    line-height: 43px;
-    display: block;
-    text-align: center;
-    transition: all 0.2s linear;
-    text-decoration: none;
-}
 
-#menus li:hover > a {
-    background: #fff;
-}
 
-.icon-plus {
-    border:1px solid #aaa;
-    background-color: #fff;
-    border-top-right-radius: 4px;
-    border-top-left-radius: 4px;
-    width: 27px;
-    height: 20px;
-    position: relative;
-    top: 8px;
-    left: 0px;
-    margin-bottom:0px;
-    border-bottom: 0px;
-    cursor: pointer;
-}
-
-.icon-plus:after {
-    background-color: #aaa;
-    width: 16px;
-    height: 2px;
-    border-radius: 1px;
-    position: absolute;
-    top:9px;
-    left: 5px;
-    content:"";
-}
-
-.icon-plus:before {
-    background-color: #aaa;
-    width: 2px;
-    height: 16px;
-    border-radius: 1px;
-    position: absolute;
-    top:2px;
-    left: 12px;
-    content:"";
-}

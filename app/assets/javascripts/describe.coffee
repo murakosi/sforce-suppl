@@ -7,7 +7,7 @@ describe = ->
   grids = {}
   currentTabIndex = 0
   selectedTabId = null
-
+    
   #------------------------------------------------
   # Shortcut keys
   #------------------------------------------------
@@ -25,7 +25,6 @@ describe = ->
   #------------------------------------------------
   $('.sobjectTypeCheckBox').on 'click', (e) ->
     if $.isAjaxBusy()
-      e.preventDefault
       return false
   
   $('.sobjectTypeCheckBox').on 'change', (e) ->
@@ -51,20 +50,24 @@ describe = ->
       return false
 
     selectedTabId = getActiveTabElementId()
-    val = {selected_sobject: $('#describeArea #selected_sobject').val()}
-    action = $('#executeDescribe').attr('action')
-    method = $('#executeDescribe').attr('method')
-    options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
-    callbacks = $.getAjaxCallbacks(processSuccessResult, displayError, null)
-    $.executeAjax(options, callbacks)
+    sobject = $('#describeArea #selected_sobject').val()    
+    if sobject
+      val = {selected_sobject: sobject}
+      action = $('#executeDescribe').attr('action')
+      method = $('#executeDescribe').attr('method')
+      options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
+      callbacks = $.getAjaxCallbacks(processSuccessResult, displayError, null)
+      $.executeAjax(options, callbacks)
 
   #------------------------------------------------
   # export
   #------------------------------------------------
   $("#describeArea #csv-expprt").on "click", (e) ->
     e.preventDefault()
-    options = getDownloadOptions(this)
-    $.ajaxDownload(options)
+
+    if grids.length
+      options = getDownloadOptions(this)
+      $.ajaxDownload(options)
 
   getDownloadOptions = (target) ->
     url = $("#describeArea #exportForm").attr('action')
@@ -77,12 +80,12 @@ describe = ->
   # callbacks
   #------------------------------------------------  
   displayError = (json) ->
-    $("#describeArea #messageArea").html(json.error)
-    $("#describeArea #messageArea").show()
+    $("#describeArea .messageArea").html(json.error)
+    $("#describeArea .messageArea").show()
   
   hideMessageArea = () ->
-    $("#describeArea #messageArea").empty()
-    $("#describeArea #messageArea").hide()
+    $("#describeArea .messageArea").empty()
+    $("#describeArea .messageArea").hide()
 
   processSuccessResult = (json) ->
     hideMessageArea()
@@ -90,11 +93,13 @@ describe = ->
     createGrid("#describeArea #describeGrid" + selectedTabId, json)
 
   refreshSelectOptions = (result) ->
-    $('#sobjectList').html(result)
-    $('.selectlist').select2({
-      dropdownAutoWidth : true,
-      width: 'resolve',
-      containerCssClass: ':all:'
+    $('#describeArea #sobjectList').html(result)
+    $('#describeArea .selectlist').select2({
+        dropdownAutoWidth : true,
+        width: 'element',
+        containerCssClass: ':all:',
+        placeholder: "Select an sObject",
+        allowClear: true
       })
 
   downloadDone = (url) ->
@@ -107,10 +112,10 @@ describe = ->
   # Active grid
   #------------------------------------------------
   getActiveTabElementId = () ->
-    $("#describeArea #tabArea .ui-tabs-panel:visible").attr("tabId")
+    $("#describeArea .tabArea .ui-tabs-panel:visible").attr("tabId")
 
   getActiveGridElementId = () ->
-    tabId = $("#describeArea #tabArea .ui-tabs-panel:visible").attr("tabId")
+    tabId = $("#describeArea .tabArea .ui-tabs-panel:visible").attr("tabId")
     "#describeArea #describeGrid" + tabId
     
   getActiveGrid = () ->
@@ -125,16 +130,13 @@ describe = ->
 
   $(document).on 'click', '#describeArea .ui-closable-tab', (e) ->
     e.preventDefault()
-    tabContainerDiv=$(this).closest("#describeArea .ui-tabs").attr("id")
-    tabCount = $("#describeArea #" + tabContainerDiv).find(".ui-closable-tab").length
 
-    if tabCount <= 1
+    if $("#describeArea .tabArea ul li").length <= 2
       return
 
-    if window.confirm("Close this tab?")
-      panelId = $(this).closest("#describeArea li").remove().attr("aria-controls")
-      $("#describeArea #" + panelId ).remove();
-      $("#describeArea #" + tabContainerDiv).tabs("refresh")
+    panelId = $(this).closest("#describeArea li").remove().attr("aria-controls")
+    $("#describeArea #" + panelId ).remove();
+    $("#describeArea .tabArea").tabs("refresh")
 
   $('#describeArea #add-tab').on 'click', (e) ->
     e.preventDefault()
@@ -144,7 +146,7 @@ describe = ->
     currentTabIndex = currentTabIndex + 1
     newTabId = currentTabIndex
 
-    $("#describeArea #tabArea ul li:last").before(
+    $("#describeArea .tabArea ul li:last").before(
       "<li class=\"noselect\"><a href=\"#describeTab" + newTabId + "\">Grid" + newTabId + "</a>" +
       "<span class=\"ui-icon ui-icon-close ui-closable-tab\"></span>" +
       "</li>"
@@ -152,7 +154,7 @@ describe = ->
 
     overviewArea = '<div id="overview' + newTabId + '" class="resultSoql" tabId="' + newTabId + '"></div>'    
     
-    $("#describeArea #tabArea").append(
+    $("#describeArea .tabArea").append(
       "<div id=\"describeTab" + newTabId + "\" class=\"resultTab\" tabId=\"" + newTabId + "\">" +
       overviewArea +
       "<div id=\"describeGrid" + newTabId + "\" class=\"resultGrid\" tabId=\"" + newTabId + "\"></div>" +
@@ -161,11 +163,19 @@ describe = ->
     
     createGrid("#describeArea #describeGrid" + newTabId)
     
-    $("#describeArea #tabArea").tabs("refresh")
+    $("#describeArea .tabArea").tabs("refresh")
+
+    setSortableAttribute()
     
-    newTabIndex = $("#describeArea #tabArea ul li").length - 2
+    newTabIndex = $("#describeArea .tabArea ul li").length - 2
     selectedTabId = newTabIndex
-    $("#describeArea #tabArea").tabs({ active: newTabIndex});
+    $("#describeArea .tabArea").tabs({ active: newTabIndex});
+
+  setSortableAttribute = () ->
+    if $("#describeTabs li" ).length > 2
+      $("#describeTabs").sortable("enable")
+    else
+      $("#describeTabs").sortable('disable')
 
   #------------------------------------------------
   # grid
@@ -180,10 +190,11 @@ describe = ->
     header = getColumns(json)
     records = getRows(json)
     columnsOption = getColumnsOption(json)
+    height = if json then 500 else 0
 
     hotSettings = {
         data: records,
-        height: 500,
+        #height: height,
         #stretchH: 'all',
         autoWrapRow: true,
         manualRowResize: false,
@@ -233,9 +244,8 @@ describe = ->
       null
 
   if $("#describeArea").length
-    $("#describeArea #tabArea").tabs()
-
-    #createGrid("#describeArea #grid")
+    $("#describeArea .tabArea").tabs()
+    $("#describeTabs").sortable({items: 'li:not(.add-tab-li)', delay: 150});
     createTab()
 
 $(document).ready(describe)

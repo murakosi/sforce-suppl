@@ -1,40 +1,32 @@
-<style>
-#debugOptions{
-    display: none;
-    padding-top: 10px;
-    margin-bottom: 20px;
-    font-size:12px;
-}
-
-.debugOnly{
-	vertical-align: bottom;
-}
-
-</style>
 <div id="apexArea">
-	<div id="formArea">
+	<div class="formArea">
 		<%= form_tag apex_path(), :method => :post, :class => "execute-form" do %>
-		<%= text_area_tag :apex_code,"", :size => "120x5" %>
-		<br>
-		<%= submit_tag "Execute Anonymous", :class => "btn btn-sm btn-primary execute-anonymous" %>
-		<%= button_tag "Debug options", :type => "button", :id => "debug-opt-btn", :class => "btn btn-xs btn-default" %>
-		<div id="debugOptions">
-		<% @debug_options.each_with_index do |options, idx| %>
-		    <% options.each do |k, v| %>
-		        <label><%= k %></label>
-			    <%= select_tag k, options_for_select(v, :selected => @default_debug_levels[idx]), :id => k, :multiple => false %>
-			<% end %>
-		<% end %>
-		</div>
+			<div>
+				<%= text_area_tag :apex_code,"", :size => "120x5", :spellcheck => false %>
+			</div>
+			<div>
+				<%= submit_tag "Execute Anonymous", :class => "btn btn-sm btn-primary execute-anonymous" %>
+				<%= button_tag "Debug options", :type => "button", :id => "debug-opt-btn", :class => "btn btn-xs btn-default" %>
+			</div>
+			<div id="debugOptions">
+				<% @debug_options.each_with_index do |options, idx| %>
+				    <% options.each do |k, v| %>
+				        <label><%= k %></label>
+					    <%= select_tag k, options_for_select(v, :selected => @default_debug_levels[idx]), :id => k, :multiple => false %>
+					<% end %>
+				<% end %>
+			</div>
 		<% end %>
 		
-		<p><div id="messageArea"></div></p>
+		<p><div class="messageArea"></div></p>
 	</div>
-
-	<div id="dummyArea"></div>
 	
-	<div id="tabArea">
+	<div class="tabArea">
 		<%= button_tag "Export", :type => "button", :id => "download-log", :class => "btn btn-xs btn-default" %>
-		<ul id="apexTabs"><li><div id="addTabBtn" class="icon-plus"></div></li></ul>
+		<ul id="apexTabs">
+			<li class="add-tab-li">
+				<div id="addTabBtn" class="icon-plus"></div>
+			</li>
+		</ul>
 	</div>
 </div>

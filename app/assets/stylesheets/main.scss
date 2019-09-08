@@ -1,3 +1,229 @@
-// Place all the styles related to the main controller here.
-// They will automatically be included in application.css.
-// You can use Sass (SCSS) here: http://sass-lang.com/
+/* ------------------------------
+   #Areas
+------------------------------ */
+#mainArea{
+    /*padding-top: 20px;*/
+    /*width:100%;
+    margin: 0 auto;   */
+}
+
+#mainArea .ui-tabs-anchor{
+    font-size:12px !important;
+}
+
+#contentsArea{
+    /*margin-top:50px;*/
+    width:100%;
+    position:absolute;
+    top: 45px;
+    left: 0px;
+    bottom: 10px;
+    /*padding-bottom: 10px;*/
+    overflow-y: auto;
+}
+
+/* ------------------------------
+   Menu display
+------------------------------ */
+#soqlexecuterContent,
+#describeContent, 
+#metadataContent, 
+#toolingContent,
+#apexContent{
+    display:none;   
+}
+
+.soqlexecuter #soqlexecuterContent, 
+.describe #describeContent, 
+.metadata #metadataContent, 
+.tooling #toolingContent,
+.apex #apexContent{
+    display:block;   
+}
+
+/* ------------------------------
+   MenuList
+------------------------------ */
+#menuList {
+    /*margin-top: 15px;*/
+    width: 100%;
+    height: 45px;
+    /*border-top: #aaa 1px solid;*/
+    border-bottom: #aaa 1px solid;
+    /*position: relative;*/
+    z-index: 3000;
+    /*background: #d3cbdb;*/
+    background-color: #0c549c;
+    display: flex;
+    font-size:10pt;
+    /*box-shadow: 0 3px 6px rgba(0,0,0,.175)*/
+    box-shadow: 0 3px 6px rgba(0,0,0,.225)
+}
+
+#userInfoButton{
+    margin-left:10px;
+    margin-top:7px;
+    line-height: 1.35 !important;
+}
+
+#menus {
+    height: 45px;
+    /*margin-left:70%;*/
+    margin-left: auto;
+    list-style: none;
+    padding-right: 10px;
+}
+ 
+#menus li {
+    width: 120px;
+    height: 44px;
+    float: left;
+    border-left: #aaa 1px solid;
+    box-sizing: border-box;
+}
+ 
+#menus li:last-child {
+    border-right: #aaa 1px solid;
+}
+ 
+#menus li a {
+    height: 44px;
+    line-height: 44px;
+    display: block;
+    text-align: center;
+    transition: all 0.2s linear;
+    text-decoration: none;
+    color: #fff;
+}
+
+#menus li:hover > a {
+    /*background: #fff;*/
+    background-color: #1579c0;
+}
+
+.displayed{
+    /*background:white !important;*/
+    background-color: #1579c0;
+}
+
+/* ------------------------------
+    Add tab button
+------------------------------ */
+.icon-plus {
+    border:1px solid #aaa;
+    background-color: #fff;
+    border-top-right-radius: 4px;
+    border-top-left-radius: 4px;
+    width: 27px;
+    height: 20px;
+    position: relative;
+    top: 8px;
+    left: 0px;
+    margin-bottom:0px;
+    border-bottom: 0px;
+    cursor: pointer;
+}
+
+.icon-plus:after {
+    background-color: #aaa;
+    width: 16px;
+    height: 2px;
+    border-radius: 1px;
+    position: absolute;
+    top:9px;
+    left: 5px;
+    content:"";
+}
+
+.icon-plus:before {
+    background-color: #aaa;
+    width: 2px;
+    height: 16px;
+    border-radius: 1px;
+    position: absolute;
+    top:2px;
+    left: 12px;
+    content:"";
+}
+
+/* ------------------------------
+    Progress bar
+------------------------------ */
+#progress{
+      visibility: hidden;
+      height: 2px;
+      /*position: fixed;
+      top: 50px;*/
+      width: 100%;
+      position: fixed;
+      top: 0px;
+      left: 0px;
+      z-index: 3500;
+}
+
+.progress-line, .progress-line:before {
+    height: 2px;
+    width: 100%;
+    margin: 0;
+}
+
+.progress-line {
+    /*background-color: #b3d4fc;*/
+    display: -webkit-flex;
+    display: flex;
+}
+
+.progress-line:before {
+    /*background-color: #3f51b5;*/
+    /*background-color: #337ab7;*/
+    background-color: #f0ad4e;
+    content: '';
+    -webkit-animation: running-progress 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    animation: running-progress 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    }
+
+    @-webkit-keyframes running-progress {
+    0% { margin-left: 0px; margin-right: 100%; }
+    50% { margin-left: 25%; margin-right: 0%; }
+    100% { margin-left: 100%; margin-right: 0; }
+    }
+
+    @keyframes running-progress {
+    0% { margin-left: 0px; margin-right: 100%; }
+    50% { margin-left: 25%; margin-right: 0%; }
+    100% { margin-left: 100%; margin-right: 0; }
+}
+
+/* ------------------------------
+   UserInfo Dropdown
+------------------------------ */
+.dropdown-item-font{
+  font-size: 0.875rem;
+  }
+
+.dropdown-btn:hover{
+  color: black;
+}
+
+.header{
+  position: fixed;
+  top:0px;
+  height: 45px;
+  z-index: 3000;
+  width: 100%;
+}
+
+.dropdown-btn{
+  /*display: inline-block;*/
+  text-decoration: none;
+  /*background: #f7f7f7;*/
+  /*border-left: solid 10px #ff7c5c;*/
+  color: black;
+  /*background-color: #d3cbdb;*/
+  background-color: white;
+  border-radius: 12px;
+  border: #aaa 1px solid;
+  /*box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.29);  */
+  /*box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);*/
+  box-shadow: inset 0 3px 5px rgba(0, 0, 0, .175);
+}

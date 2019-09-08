@@ -7,9 +7,11 @@ mains = ->
   defaultDetatype = ""
   defaultContentType = null
   anchorObject = null
-  describeFault = false
 
   $("#menus").on "click", "a", (e) ->
+    if $("#dropdown-menu").is(":visible")
+      $("#userInfoButton").trigger("click")
+      
     clickedAnchor = ($(this).prop("id"))
 
     if selectedAnchor == clickedAnchor
@@ -66,14 +68,21 @@ mains = ->
     
     $(document).trigger("displayChange", [{targetArea: target + "Area"}]);
 
-  $(".selectlist").select2({
-    dropdownAutoWidth : true,
-    width: 'element',
-    containerCssClass: ':all:',
-    placeholder: "Select an sObject",
-    allowClear: true
-  })
+  refreshSObjectLists = () ->
+    $(".selectlist").select2({
+      dropdownAutoWidth : true,
+      width: 'element',
+      containerCssClass: ':all:',
+      placeholder: "Select an sObject",
+      allowClear: true
+    })
 
+  $("a#refreshDescribe").on "click", (e) ->
+    alert("refresh")
+    return false
+  
+  refreshSObjectLists()
+      
   $("a#soqlexecuter").trigger("click");
 
 $(document).ready(mains)

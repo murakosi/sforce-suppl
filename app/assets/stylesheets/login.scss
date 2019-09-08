@@ -1,3 +1,73 @@
-// Place all the styles related to the login controller here.
-// They will automatically be included in application.css.
-// You can use Sass (SCSS) here: http://sass-lang.com/
+
+#loginFormArea{
+    padding-top: 20px;
+    margin: 0 auto;
+}
+
+#flashMessage{
+    float:center;
+    text-align:center;
+    padding:5px;
+    display:block;
+}
+
+.block{
+    display: table;
+    margin: 0;
+    border: 0px solid black;
+    table-layout: fixed;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.block_label{
+    display:table-cell;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    padding-right: 10px;
+    border: 0px solid black;
+    width: 40%;
+    text-align: right;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.block_element{
+    display:table-cell;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    border: 0px solid black;
+    width: 60%;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.inner_left_block_element{
+    display:table-cell;
+    width:auto;
+}
+
+.inner_right_block_element{
+    display:table-cell;
+    width:auto;
+}
+
+.login-button{
+    display:table-cell;
+    padding-top: 10px;
+    padding-bottom: 2px;
+    border: 0px solid black;
+    width: 60%;
+    text-align: left;
+    vertical-align: middle;
+}
+
+#loginSpaceArea{
+    /*margin-top: 50px;*/
+    height:50px;
+}
+
+select{
+    width: inherit;
+    font:inherit;
+}

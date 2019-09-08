@@ -36,6 +36,27 @@ coordinates = ->
     
   $("#soqlArea .selectlist").on "select2:close", (e) ->
     $(".select2-container--open").css("z-index","1051")
+  
+  #------------------------------------------------
+  # SOQL History
+  #------------------------------------------------
+  $("#soqlArea #historyBtn").on "click", (e) ->
+    if $("#soqlHistory").width() > 0
+      $("#soqlHistory").width("0")
+      $("#soqlArea").css("margin-left","0")
+    else
+      $("#soqlHistory").width("250px")
+      $("#soqlArea").css("margin-left","150px")
+      
+  $("#soqlHistory .closebtn").on "click", (e) ->
+    $("#soqlHistory").width("0")
+    $("#soqlArea").css("margin-left","0")
+    
+  $('#soqlHistory').on 'mouseover', 'li', (e) ->
+    $(this).attr("title", $(this).text())
+    
+  $('#soqlHistory').on 'mouseout', 'li', (e) ->
+    $(this).attr("title", "")
     
   #------------------------------------------------
   # Event on menu change
@@ -81,7 +102,7 @@ coordinates = ->
       queryAll = params.soql_info.query_all
       tabId = params.soql_info.tab_id
       if params.soql_info.key_map
-        updateGrid(tabId, params.soql_info.key_map)
+        updateGrid(tabId, params.soql_info)
     else
       tabId = getActiveTabElementId();
       soql = $('#soqlArea #input_soql').val()
@@ -107,21 +128,27 @@ coordinates = ->
 
     $.executeAjax(options, callbacks)
   
-  updateGrid = (tabId, keyMap) ->
+  updateGrid = (tabId, soql_info) ->
     elementId = "#soqlArea #grid" + tabId
     grid = grids[elementId]
     sobject = sObjects[elementId]
+
+    columnOptions = []
+    colcnt = sobject.columns.length
+    for col in [0...colcnt]
+      columnOptions.push({readOnly:true, type:"text"})
+
     cnt = grid.countRows()
     for row in [0...cnt]
       id = grid.getCellMeta(row, sobject.idColumnIndex).tempId
-      value = keyMap[id]
+      value = soql_info.key_map[id]
       grid.setDataAtCell(row, sobject.idColumnIndex, value, "loadData")
       grid.removeCellMeta(row, sobject.idColumnIndex, 'tempId')
-    sObjects[elementId].editions = {}
-    sObjects[elementId].editable = false
-    grid.updateSettings({readOnly:true})
-    grid.render()
 
+    delete sObjects[elementId]
+    grid.updateSettings({columns:columnOptions})
+    grid.render()
+    return
 
   #------------------------------------------------
   # Query callbacks
@@ -151,6 +178,8 @@ coordinates = ->
                           }
 
     createGrid(elementId, json.records)
+    
+    $("#soqlHistory ul").append('<li>' + json.soql_info.soql + '</li>')
 
     if json.records.size <= 0
       grid = grids[elementId]
@@ -458,10 +487,10 @@ coordinates = ->
   # Active grid
   #------------------------------------------------
   getActiveTabElementId = () ->
-    $("#soqlArea #tabArea .ui-tabs-panel:visible").attr("tabId")
+    $("#soqlArea .tabArea .ui-tabs-panel:visible").attr("tabId")
 
   getActiveGridElementId = () ->
-    tabId = $("#soqlArea #tabArea .ui-tabs-panel:visible").attr("tabId")
+    tabId = $("#soqlArea .tabArea .ui-tabs-panel:visible").attr("tabId")
     "#soqlArea #grid" + tabId
     
   getActiveGrid = () ->
@@ -472,19 +501,20 @@ coordinates = ->
   # CSV Download
   #------------------------------------------------
   $('#soqlArea #exportBtn').on 'click', (e) ->
-    hotElement = getActiveGrid()
-    hotElement.getPlugin('exportFile').downloadFile('csv', {
-      bom: false,
-      columnDelimiter: ',',
-      columnHeaders: true,
-      exportHiddenColumns: false,
-      exportHiddenRows: false,
-      fileExtension: 'csv',
-      filename: 'soql_result',
-      mimeType: 'text/csv',
-      rowDelimiter: '\r\n',
-      rowHeaders: false
-    })
+    if grids.length
+      hotElement = getActiveGrid()
+      hotElement.getPlugin('exportFile').downloadFile('csv', {
+        bom: false,
+        columnDelimiter: ',',
+        columnHeaders: true,
+        exportHiddenColumns: false,
+        exportHiddenRows: false,
+        fileExtension: 'csv',
+        filename: 'soql_result',
+        mimeType: 'text/csv',
+        rowDelimiter: '\r\n',
+        rowHeaders: false
+      })
 
   #------------------------------------------------
   # Rerun SOQL
@@ -529,22 +559,21 @@ coordinates = ->
 
   $(document).on 'click', '#soqlArea .ui-closable-tab', (e) ->
     e.preventDefault()
-    tabContainerDiv=$(this).closest("#soqlArea .ui-tabs").attr("id")
-    tabCount = $("#soqlArea #" + tabContainerDiv).find(".ui-closable-tab").length
 
-    if tabCount <= 1
+    if $("#soqlArea .tabArea ul li").length <= 2
       return
 
-    if window.confirm("Close this tab?")
-      panelId = $(this).closest("#soqlArea li").remove().attr("aria-controls")
-      $("#soqlArea #" + panelId ).remove();
-      $("#soqlArea #" + tabContainerDiv).tabs("refresh")
+    #if window.confirm("Close this tab?")
+    panelId = $(this).closest("#soqlArea li").remove().attr("aria-controls")
+    $("#soqlArea #" + panelId ).remove();
+    $("#soqlArea .tabArea").tabs("refresh")
+    setSortableAttribute()
   
   createTab = () ->
     currentTabIndex = currentTabIndex + 1
     newTabId = currentTabIndex
 
-    $("#soqlArea #tabArea ul li:last").before(
+    $("#soqlArea .tabArea ul li:last").before(
       "<li class=\"noselect\"><a href=\"#tab" + newTabId + "\">Grid" + newTabId + "</a>" +
       "<span class=\"ui-icon ui-icon-close ui-closable-tab\"></span>" +
       "</li>"
@@ -564,7 +593,7 @@ coordinates = ->
     soqlArea += '<div id="soql-info' + newTabId + '">0 rows</div>'
     soqlArea += '</div>'
     
-    $("#soqlArea #tabArea").append(
+    $("#soqlArea .tabArea").append(
       "<div id=\"tab" + newTabId + "\" class=\"resultTab\" tabId=\"" + newTabId + "\">" +
       #inputArea + 
       soqlArea +
@@ -574,17 +603,25 @@ coordinates = ->
     
     createGrid("#soqlArea #grid" + newTabId)
     
-    $("#soqlArea #tabArea").tabs("refresh")
+    $("#soqlArea .tabArea").tabs("refresh")
+        
+    setSortableAttribute()
     
-    newTabIndex = $("#soqlArea #tabArea ul li").length - 2
+    newTabIndex = $("#soqlArea .tabArea ul li").length - 2
     selectedTabId = newTabIndex
-    $("#soqlArea #tabArea").tabs({ active: newTabIndex, activate: onTabSelect});
+    $("#soqlArea .tabArea").tabs({ active: newTabIndex, activate: onTabSelect});
 
   onTabSelect = (event, ui) ->
     tabId = ui.newPanel.attr("tabId")
     elementId = "#soqlArea #grid" + tabId
     grids[elementId].render()
 
+  setSortableAttribute = () ->
+    if $("#soqlTabs li" ).length > 2
+      $("#soqlTabs").sortable("enable")
+    else
+      $("#soqlTabs").sortable('disable')
+      
   #------------------------------------------------
   # Create grid
   #------------------------------------------------
@@ -603,7 +640,7 @@ coordinates = ->
 
     hotSettings = {
         data: records,
-        height: height,
+        #height: height,
         #stretchH: stretch,
         autoWrapCol: false,
         autoWrapRow: false,
@@ -627,7 +664,8 @@ coordinates = ->
         afterChange: (source, changes) -> onAfterChange(source, changes),
         afterOnCellMouseDown: (event, coords, td) -> onCellClick(event, coords, td),
         afterCreateRow: (index, amount, source) -> onAfterCreateRow(index, amount, source),
-        beforeRemoveRow: (index, amount, physicalRows, source) -> onBeforeRemoveRow(index, amount, physicalRows, source)
+        beforeRemoveRow: (index, amount, physicalRows, source) -> onBeforeRemoveRow(index, amount, physicalRows, source),
+        beforeCopy: (data, coords) -> onBeforeCopy(data, coords)
     }
 
     hot = new Handsontable(hotElement, hotSettings)
@@ -636,6 +674,18 @@ coordinates = ->
 
     grids[elementId] = hot
 
+  onBeforeCopy = (data, coords) ->
+    elementId = getActiveGridElementId()
+    sobject = sObjects[elementId]
+    count = 0
+    target = coords[0]
+    count = (target.endCol - target.startCol) + 1
+    
+    if count == sobject.columns.length
+      data.unshift(sobject.columns)
+      return
+    return
+    
   setColWidth = (i) ->
     if i == 0
       30
@@ -675,17 +725,18 @@ coordinates = ->
   # message
   #------------------------------------------------
   displayError = (json) ->
-    $("#soqlArea #messageArea").html(json.error)
-    $("#soqlArea #messageArea").show()
+    $("#soqlArea .messageArea").html(json.error)
+    $("#soqlArea .messageArea").show()
   
   hideMessageArea = () ->
-    $("#soqlArea #messageArea").empty()
-    $("#soqlArea #messageArea").hide()
+    $("#soqlArea .messageArea").empty()
+    $("#soqlArea .messageArea").hide()
 
   #------------------------------------------------
   # page load actions
   #------------------------------------------------
-  $("#soqlArea #tabArea").tabs() 
+  $("#soqlArea .tabArea").tabs() 
+  $("#soqlTabs").sortable({items: 'li:not(.add-tab-li)', delay: 150});
   createTab()
 
 $(document).ready(coordinates)

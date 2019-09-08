@@ -13,12 +13,16 @@ class MainController < ApplicationController
     @describe_result = nil
 
     begin
-      describe_global(sforce_session)
+      if session[:global_result].nil?
+        describe_global(sforce_session)
+      end
       sobjects = session[:global_result].map{|hash| hash[:name]}
       placeholder = "Select an sObject"
       html_content = render_to_string :partial => 'sobjectlist', :locals => {:data_source => sobjects, :placeholder => placeholder}
       @describe_result = html_content
-    rescue StandardError => ex      
+    rescue StandardError => ex
+      print_error(ex)
+      session[:global_result] = nil
       @describe_error = ex.message
     end
   end
@@ -28,12 +32,8 @@ class MainController < ApplicationController
   end
 
   def describe_global(sforce_session)
-    begin
-      result = Service::SoapSessionService.call(sforce_session).describe_global()
-      session[:global_result] = result[:sobjects].map { |sobject| {:name => sobject[:name], :is_custom => sobject[:custom]} }
-    rescue StandardError => ex
-      session[:global_result] = nil
-    end
+    result = Service::SoapSessionService.call(sforce_session).describe_global()
+    session[:global_result] = result[:sobjects].map { |sobject| {:name => sobject[:name], :is_custom => sobject[:custom]} }
   end
 
 end
