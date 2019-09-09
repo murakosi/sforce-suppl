@@ -32,8 +32,13 @@ module Describe
                 add_missing_key(raw_hash)
 
                 translate_key = raw_hash[:type].to_sym
-                type = get_type_name(raw_hash, @translation[translate_key][:label])
-                length = get_length_name(raw_hash, @translation[translate_key][:type])
+                if @translation.has_key?(translate_key)
+                    type = get_type_name(raw_hash, @translation[translate_key][:label])
+                    length = get_length_name(raw_hash, @translation[translate_key][:type])
+                else
+                    type = raw_hash[:type]
+                    length = nil
+                end
 
                 if raw_hash[:type] == "picklist"
                     picklist_values = raw_hash[:picklist_values]                    

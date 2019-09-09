@@ -69,7 +69,7 @@ mains = ->
     $(document).trigger("displayChange", [{targetArea: target + "Area"}]);
 
   refreshSObjectLists = () ->
-    $(".selectlist").select2({
+    $(".sobject-select-list").select2({
       dropdownAutoWidth : true,
       width: 'element',
       containerCssClass: ':all:',

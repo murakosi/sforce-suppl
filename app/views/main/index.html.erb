@@ -121,10 +121,7 @@
   </div>
 
 <div id="contentsArea">
-
-  <div id="spaceArea" style="height:30px;"></div>
-
-  
+  <div id="contents">
     <div id="soqlexecuterContent"><%= render "soqlexecuter/soqlexecuter" %></div>
     <div id="describeContent">
       <% if @describe_error.nil? %>
@@ -136,5 +133,6 @@
     <div id="metadataContent"><%= render "metadata/metadata" %></div>	
     <div id="apexContent"><%= render "apex/apex" %></div>
   </div>
+</div>
 
 </div>

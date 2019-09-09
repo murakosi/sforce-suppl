@@ -31,12 +31,25 @@ describe = ->
     e.stopPropagation()
     e.preventDefault()
 
+    disableOptions()
     val = {object_type: e.target.value}
     action = $('#filterSObjectList').attr('action')
     method = $('#filterSObjectList').attr('method')
     options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType, false)
     callbacks = $.getAjaxCallbacks(refreshSelectOptions, displayError, null)
     $.executeAjax(options, callbacks, true)
+
+  disableOptions = () ->
+    $("#describeArea .sobject-select-list").prop("disabled", true)
+    $("#sobjectTypeCheckBox_all").prop("disabled", true);
+    $("#sobjectTypeCheckBox_standard").prop("disabled", true);
+    $("#sobjectTypeCheckBox_custom").prop("disabled", true);
+
+  enableOptions = () ->
+    $("#describeArea .sobject-select-list").prop("disabled", false)
+    $("#sobjectTypeCheckBox_all").prop("disabled", false);
+    $("#sobjectTypeCheckBox_standard").prop("disabled", false);
+    $("#sobjectTypeCheckBox_custom").prop("disabled", false);
 
   #------------------------------------------------
   # describe
@@ -50,8 +63,9 @@ describe = ->
       return false
 
     selectedTabId = getActiveTabElementId()
-    sobject = $('#describeArea #selected_sobject').val()    
+    sobject = $('#describeArea .sobject-select-list').val()    
     if sobject
+      disableOptions()
       val = {selected_sobject: sobject}
       action = $('#executeDescribe').attr('action')
       method = $('#executeDescribe').attr('method')
@@ -72,7 +86,7 @@ describe = ->
   getDownloadOptions = (target) ->
     url = $("#describeArea #exportForm").attr('action')
     method = $("#describeArea #exportForm").attr('method')
-    selected_sobject = $('#describeArea #selected_sobject').val()
+    selected_sobject = $('#describeArea .sobject-select-list').val()
     data = {selected_sobject: selected_sobject}
     $.getAjaxDownloadOptions(url, method, data, downloadDone, downloadFail, ->)
 
@@ -82,10 +96,12 @@ describe = ->
   displayError = (json) ->
     $("#describeArea .messageArea").html(json.error)
     $("#describeArea .messageArea").show()
+    enableOptions()
   
   hideMessageArea = () ->
     $("#describeArea .messageArea").empty()
     $("#describeArea .messageArea").hide()
+    enableOptions()
 
   processSuccessResult = (json) ->
     hideMessageArea()
@@ -93,14 +109,15 @@ describe = ->
     createGrid("#describeArea #describeGrid" + selectedTabId, json)
 
   refreshSelectOptions = (result) ->
-    $('#describeArea #sobjectList').html(result)
-    $('#describeArea .selectlist').select2({
+    $('#describeArea .sobject-select-list').html(result)
+    $('#describeArea .sobject-select-list').select2({
         dropdownAutoWidth : true,
         width: 'element',
         containerCssClass: ':all:',
         placeholder: "Select an sObject",
         allowClear: true
       })
+    enableOptions()
 
   downloadDone = (url) ->
     hideMessageArea()

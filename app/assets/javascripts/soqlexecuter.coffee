@@ -31,10 +31,10 @@ coordinates = ->
         displayQueryResult(json)
         $("#soqlOverRay").hide()
   
-  $("#soqlArea .selectlist").on "select2:open", (e) ->
+  $("#soqlArea .sobject-select-list").on "select2:open", (e) ->
     $(".select2-container--open").css("z-index","4010")
     
-  $("#soqlArea .selectlist").on "select2:close", (e) ->
+  $("#soqlArea .sobject-select-list").on "select2:close", (e) ->
     $(".select2-container--open").css("z-index","1051")
   
   #------------------------------------------------
@@ -552,11 +552,8 @@ coordinates = ->
       popup.document.write("<pre>" + sObjects[elementId].soql_info.soql  + "</pre>")
       
   #------------------------------------------------
-  # Create tab
+  # Close tab
   #------------------------------------------------
-  $("#soqlArea #addTabBtn").on 'click', (e) ->
-    createTab()
-
   $(document).on 'click', '#soqlArea .ui-closable-tab', (e) ->
     e.preventDefault()
 
@@ -568,6 +565,12 @@ coordinates = ->
     $("#soqlArea #" + panelId ).remove();
     $("#soqlArea .tabArea").tabs("refresh")
     setSortableAttribute()
+
+  #------------------------------------------------
+  # Create tab
+  #------------------------------------------------
+  $("#soqlArea #addTabBtn").on 'click', (e) ->
+    createTab()
   
   createTab = () ->
     currentTabIndex = currentTabIndex + 1
@@ -640,7 +643,7 @@ coordinates = ->
 
     hotSettings = {
         data: records,
-        #height: height,
+        height: height,
         #stretchH: stretch,
         autoWrapCol: false,
         autoWrapRow: false,

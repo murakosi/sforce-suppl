@@ -96,7 +96,9 @@ coordinates = ->
   #------------------------------------------------
   $('#apexArea .execute-anonymous').on 'click', (e) ->
     if $.isAjaxBusy()
-      e.preventDefault()
+      return false
+
+    if !$('#apexArea #apex_code').val()
       return false
 
     e.preventDefault()
