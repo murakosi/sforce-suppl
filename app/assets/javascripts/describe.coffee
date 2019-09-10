@@ -35,7 +35,7 @@ describe = ->
     val = {object_type: e.target.value}
     action = $('#filterSObjectList').attr('action')
     method = $('#filterSObjectList').attr('method')
-    options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType, false)
+    options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
     callbacks = $.getAjaxCallbacks(refreshSelectOptions, displayError, null)
     $.executeAjax(options, callbacks, true)
 
