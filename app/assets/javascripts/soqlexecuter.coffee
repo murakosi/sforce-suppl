@@ -643,7 +643,7 @@ coordinates = ->
 
     hotSettings = {
         data: records,
-        height: height,
+        #height: height,
         #stretchH: stretch,
         autoWrapCol: false,
         autoWrapRow: false,
