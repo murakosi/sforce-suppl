@@ -604,7 +604,7 @@ coordinates = ->
       "</div>"
     )
     
-    createGrid("#soqlArea #grid" + newTabId)
+    #createGrid("#soqlArea #grid" + newTabId)
     
     $("#soqlArea .tabArea").tabs("refresh")
         
