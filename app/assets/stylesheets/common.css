@@ -189,7 +189,8 @@ span.select2-selection.select2-selection--single {
     background: white;
     outline: 0;
     border: 0px solid gray;
-    min-height: 500px;
+    /*min-height: 500px;*/
+    max-height:1000px;
     overflow: hidden;
 }
 
