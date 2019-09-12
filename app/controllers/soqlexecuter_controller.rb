@@ -90,7 +90,6 @@ class SoqlexecuterController < ApplicationController
   end
 
   def soql_info(soql, record_count, tooling, query_all, tab_id, sobject = nil)
-    p Time.zone
     if sobject.nil?
       {
         :timestamp => record_count + " rows @" + Time.now.in_time_zone('Tokyo').strftime(Time_format),
