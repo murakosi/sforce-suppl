@@ -82,8 +82,25 @@ coordinates = ->
       if $("#soqlOverRay").is(":visible")
         createSObjectGrid()
 
-    if e.keyCode == 27 && $("#soqlOverRay").is(":visible")
-      $("#soqlOverRay").hide()
+    if e.keyCode == 27
+      if $("#soqlOverRay").is(":visible")
+        $("#soqlOverRay").hide()
+  
+    if e.keyCode is 9
+      if e.target.id == "input_soql"
+        insertTab(e)
+  #---
+  #
+  #---
+  insertTab = (e) ->
+    e.preventDefault()
+    elem = e.target
+    start = elem.selectionStart
+    end = elem.selectionEnd
+    value = elem.value
+    elem.value = "#{value.substring 0, start}\t#{value.substring end}"
+    elem.selectionStart = elem.selectionEnd = start + 1
+    return false
   
   #------------------------------------------------
   # Execute SOQL
