@@ -251,6 +251,12 @@ span.select2-selection.select2-selection--single {
     vertical-align: middle;
 }
 
+/* ------------------------------
+   Textarea
+------------------------------ */
+.code-input{
+	font-family: Consolas;
+}
 
 
 
