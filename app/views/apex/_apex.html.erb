@@ -2,7 +2,7 @@
 	<div class="formArea">
 		<%= form_tag apex_path(), :method => :post, :class => "execute-form" do %>
 			<div>
-				<%= text_area_tag :apex_code,"", :size => "120x5", :spellcheck => false %>
+				<%= text_area_tag :apex_code,"", :size => "120x5", :class => "code-input", :spellcheck => false %>
 			</div>
 			<div>
 				<%= submit_tag "Execute Anonymous", :class => "btn btn-sm btn-primary execute-anonymous" %>
