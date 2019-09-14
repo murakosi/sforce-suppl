@@ -16,121 +16,59 @@
               'tooling',
               'apex'
 %>
-<style>
-#allOrNone{
-    padding-left: 2px !important;
-    padding-bottom: 0px !important;
-    padding-top: 0px !important;
-    margin-top: -2px;
-  }
-.checkmark input[type="checkbox"] {
-    opacity: 0;
-    width: 0px;
-}
-
-.checkmark label {
-    position: relative;
-    display: inline-block;
-    padding-left: 20px;
-}
-
-.checkmark label::before,
-.checkmark label::after {
-    position: absolute;
-    content: "";
-    display: inline-block;
-}
-
-/*Outer box of the fake checkbox*/
-.checkmark label::before{
-    height: 5px;
-    width: 9px;
-    border-left: 2px solid #aaa;
-    border-bottom: 2px solid #aaa;
-    
-    transform: rotate(-45deg);
-    
-    left: 4px;
-    top: 4px;
-}
-
-/*Checkmark of the fake checkbox*/
-.checkmark label::after {
-    height: 5px;
-    width: 9px;
-    border-left: 2px solid;
-    border-bottom: 2px solid;
-    
-    transform: rotate(-45deg);
-    
-    left: 4px;
-    top: 4px;
-}
-
-/*Hide the checkmark by default*/
-.checkmark input[type="checkbox"] + label::after {
-    content: none;
-}
-
-/*Unhide on the checked state*/
-.checkmark input[type="checkbox"]:checked + label::after {
-    content: "";
-}
-</style>
 <div id="mainArea">
 
-  <div id="overlay" class="requesting-overlay">
-    <div id="overlay-content" class="overlay-content noselect">Requesting...</div>
-    <div class="loader"></div>
-  </div>
-
-  <div class="header">
-    <div id="progress">
-      <div id="progress-line" class="progress-line"></div>
+    <div id="overlay" class="requesting-overlay">
+        <div id="overlay-content" class="overlay-content noselect">Requesting...</div>
+        <div class="loader"></div>
     </div>
 
-    <div id="menuList">    
-      <div class="btn-group">
-        <button id="userInfoButton" class="btn btn-secondary btn-sm dropdown-toggle dropdown-btn paper-raise" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <%= @current_user.name %>
-        </button>
+    <div class="header">
+        <div id="progress">
+            <div id="progress-line" class="progress-line"></div>
+        </div>
 
-        <ul id="dropdown-menu" class="dropdown-menu">
-          <li><%= link_to "Logout", logout_path, method: :delete, id: "logoutLink" %></li>
-          <li><a id="refreshDescribe" href="#">Describe global</a></li>
-          <li><a id="refreshSession" href="#">Swith user</a></li>
-          <li role="separator" class="divider"></li>
-          <li>
-            <a id="allOrNone" href="javascript:void(0)">
-              <div class="checkmark">
-                <input type="checkbox" id="allOrNoneChk"/>
-                <label for="allOrNoneChk">AllOrNoneHeader</label>
-              </div>
-            </a>
-          </li>
-        </ul>
-      </div>
-      <ul id="menus">
-        <li><a id="soqlexecuter" href="" class="menus" method="GET" loadTarget="#soqlexecuterContent" action="">SOQL</a></li>
-    		<!--<li><a id="describe" href="#" class="menus" method="GET" loadTarget="#describeContent" action="describe">Describe</a></li>-->
-        <li><a id="describe" href="#" class="menus" method="GET" loadTarget="#describeContent" action="">Describe</a></li>
-    		<li><a id="metadata" href="#" class="menus" method="GET" loadTarget="#metadataContent" action="metadata">Metadata</a></li>
-        <li><a id="apex" href="" class="menus" method="GET" loadTarget="#apexContent" action="">Apex</a></li>
-      </ul>
-    </div>  
-  </div>
+        <div id="menuList">    
+            <div class="btn-group">
+                <button id="userInfoButton" class="btn btn-secondary btn-sm dropdown-toggle dropdown-btn paper-raise" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <%= @current_user.name %>
+                </button>
 
-<div id="contentsArea">
-    <div id="soqlexecuterContent"><%= render "soqlexecuter/soqlexecuter" %></div>
-    <div id="describeContent">
-      <% if @describe_error.nil? %>
-        <%= render "describe/describe" %>
-      <% else %>
-        <div style="text-align:center; white-space: pre; color:red; font-weight:bold;"><%= @describe_error %></div>
-      <% end %>
+                <ul id="dropdown-menu" class="dropdown-menu">
+                    <li><%= link_to "Logout", logout_path, method: :delete, id: "logoutLink" %></li>
+                    <li><a id="refreshDescribe" href="#">Refresh sObjects</a></li>
+                    <li><a id="refreshMetadata" href="#">Refresh Metadata</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li>
+                        <a id="allOrNone" href="javascript:void(0)">
+                            <div class="checkmark">
+                                <input type="checkbox" id="allOrNoneChk"/>
+                                <label for="allOrNoneChk">AllOrNoneHeader</label>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <ul id="menus">
+                <li><a id="soqlexecuter" href="" class="menus" method="GET" loadTarget="#soqlexecuterContent" action="">SOQL</a></li>
+                <li><a id="describe" href="#" class="menus" method="GET" loadTarget="#describeContent" action="">Describe</a></li>
+        		<li><a id="metadata" href="#" class="menus" method="GET" loadTarget="#metadataContent" action="metadata">Metadata</a></li>
+                <li><a id="apex" href="" class="menus" method="GET" loadTarget="#apexContent" action="">Apex</a></li>
+            </ul>
+        </div>  
     </div>
-    <div id="metadataContent"><%= render "metadata/metadata" %></div>	
-    <div id="apexContent"><%= render "apex/apex" %></div>
-</div>
+
+    <div id="contentsArea">
+        <div id="soqlexecuterContent"><%= render "soqlexecuter/soqlexecuter" %></div>
+        <div id="describeContent">
+            <% if @describe_error.nil? %>
+                <%= render "describe/describe" %>
+            <% else %>
+                <div class="errorPage"><%= @describe_error %></div>
+            <% end %>
+        </div>
+        <div id="metadataContent"><%= render "metadata/metadata" %></div>	
+        <div id="apexContent"><%= render "apex/apex" %></div>
+    </div>
 
 </div>

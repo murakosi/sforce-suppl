@@ -35,7 +35,7 @@ describe = ->
     val = {object_type: e.target.value}
     action = $('#filterSObjectList').attr('action')
     method = $('#filterSObjectList').attr('method')
-    options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
+    options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType, false)
     callbacks = $.getAjaxCallbacks(refreshSelectOptions, displayError, null)
     $.executeAjax(options, callbacks, true)
 
@@ -54,7 +54,7 @@ describe = ->
   #------------------------------------------------
   # describe
   #------------------------------------------------
-  $('#executeDescribe').on 'click', (e) ->
+  $('#executeDescribeBtn').on 'click', (e) ->
     e.preventDefault()
     executeDescribe()
 
@@ -142,7 +142,7 @@ describe = ->
   #------------------------------------------------
   # Create tab
   #------------------------------------------------
-  $("#describeArea #addTabBtn").on 'click', (e) ->
+  $("#describeArea .add-tab-btn").on 'click', (e) ->
     createTab()
 
   $(document).on 'click', '#describeArea .ui-closable-tab', (e) ->

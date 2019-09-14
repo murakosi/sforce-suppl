@@ -1,6 +1,17 @@
-// Place all the styles related to the describer controller here.
-// They will automatically be included in application.css.
-// You can use Sass (SCSS) here: http://sass-lang.com/
+#executeDescribeBtn{
+	margin-top: 5px;
+}
+
+.describe-sobject-label{
+    text-align: left;
+    vertical-align: middle;	
+}
+.describe-sobject-list{
+    text-align: left;
+    vertical-align: middle;
+    padding-left: 0;
+}
+
 .sobjectTypeCheckBox{
 	margin-right: 2px !important;
 }

@@ -9,12 +9,6 @@ module Soql
         Records = "records"
         Type = "type"
         Id = "ID"
-        #From_with_space = " from "
-        #Select_with_space = "select "
-        #Select = "select"
-        #Where_with_space = " where "
-
-        attr_reader :query_result
 
         def execute_query(sforce_session, soql, tooling, query_all)
             if soql.strip.include?(";")
@@ -77,8 +71,8 @@ module Soql
             end
 
             results.each do |result|
-                
-                if result.has_key?(Type) && @sobject_type.nil?
+
+                if result.has_key?(Type)
                     @sobject_type = result[Type]
                 end
 

@@ -22,8 +22,9 @@ coordinates = ->
 
   createSObjectGrid = () ->
     rawFields = $("#creatGridArea #sobject_fields").val()
-    sobject = $('#creatGridArea #selected_sobject').val()
-    separator = $('#creatGridArea #separator').val()
+    sobject = $('#creatGridArea #sobject_selection').val()
+    separator = $('#creatGridArea #sobjectFieldsSeparator').val()
+
     if sobject && rawFields
       action = "create"
       val = {sobject: sobject, fields: rawFields, separator: separator, tab_id: getActiveTabElementId()}
@@ -40,7 +41,7 @@ coordinates = ->
   #------------------------------------------------
   # SOQL History
   #------------------------------------------------
-  $("#soqlArea #historyBtn").on "click", (e) ->
+  $("#soqlArea #soqlHistoryBtn").on "click", (e) ->
     if $("#soqlHistory").width() > 0
       $("#soqlHistory").width("0")
       $("#soqlArea").css("margin-left","0")
@@ -89,9 +90,9 @@ coordinates = ->
     if e.keyCode is 9
       if e.target.id == "input_soql"
         insertTab(e)
-  #---
-  #
-  #---
+  #------------------------------------------------
+  # Insert Tab
+  #------------------------------------------------
   insertTab = (e) ->
     e.preventDefault()
     elem = e.target
@@ -123,7 +124,6 @@ coordinates = ->
     else
       tabId = getActiveTabElementId();
       soql = $('#soqlArea #input_soql').val()
-      #soql = $('#soqlArea #input_soql' + tabId).val()
       tooling = $('#soqlArea #useTooling').is(':checked')
       queryAll = $('#soqlArea #queryAll').is(':checked')      
     
@@ -134,8 +134,8 @@ coordinates = ->
     hideMessageArea()
     
     val = {soql: soql, tooling: tooling, query_all: queryAll, tab_id: tabId}
-    action = $('#soqlArea .execute-form').attr('action')
-    method = $('#soqlArea .execute-form').attr('method')
+    action = $('#soqlArea .soql-form').attr('action')
+    method = $('#soqlArea .soql-form').attr('method')
     options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
 
     if params && params.afterCrud
@@ -517,7 +517,7 @@ coordinates = ->
   #------------------------------------------------
   # CSV Download
   #------------------------------------------------
-  $('#soqlArea #exportBtn').on 'click', (e) ->
+  $('#soqlArea .export-btn').on 'click', (e) ->
     if grids.length
       hotElement = getActiveGrid()
       hotElement.getPlugin('exportFile').downloadFile('csv', {
@@ -586,7 +586,7 @@ coordinates = ->
   #------------------------------------------------
   # Create tab
   #------------------------------------------------
-  $("#soqlArea #addTabBtn").on 'click', (e) ->
+  $("#soqlArea .add-tab-btn").on 'click', (e) ->
     createTab()
   
   createTab = () ->

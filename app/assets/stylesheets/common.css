@@ -10,6 +10,21 @@ button:disabled {
 }
 
 /* ------------------------------
+    Table
+------------------------------ */
+.tbl{
+    display:table;
+}
+
+.row {
+    display:table-row;
+}
+
+.row>div {
+    display:table-cell;
+}
+
+/* ------------------------------
    #JQuery UI
 ------------------------------ */
 .ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button{
@@ -196,59 +211,6 @@ span.select2-selection.select2-selection--single {
 .button_to,
 .button_to div {
     display: inline;
-}
-
-/* ------------------------------
-   #block
------------------------------- */
-.left_block{
-    display: table;
-    border: 0px solid black;
-    width: auto;
-    vertical-align: left;
-}
-
-.combined_block{
-    display:table-cell;
-    padding-top: 2px;
-    padding-bottom: 2px;
-    padding-right: 10px;
-    border: 0px solid black;
-    width: 100%;
-    text-align: left;
-    vertical-align: middle;
-}
-
-.label_block{
-    display:table-cell;
-    padding-top: 2px;
-    padding-bottom: 2px;
-    padding-right: 10px;
-    border: 0px solid black;
-    width: 40%;
-    text-align: left;
-    vertical-align: middle;
-}
-
-.element_block{
-    display:table-cell;
-    padding-top: 2px;
-    padding-bottom: 2px;
-    border: 0px solid black;
-    width: 60%;
-    text-align: left;
-    vertical-align: middle;
-}
-
-.center_button_block{
-    display:table-cell;
-    padding-top: 2px;
-    padding-bottom: 2px;
-    padding-right: 10px;
-    border: 0px solid black;
-    width: 40%;
-    text-align: left;
-    vertical-align: middle;
 }
 
 /* ------------------------------
