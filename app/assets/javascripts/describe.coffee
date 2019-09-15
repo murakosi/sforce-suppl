@@ -3,7 +3,7 @@ describe = ->
   
   defaultDataType = ""  
   defaultContentType = null
-  currentTable = null
+  sObjects = {}
   grids = {}
   currentTabIndex = 0
   selectedTabId = null
@@ -63,32 +63,36 @@ describe = ->
       return false
 
     selectedTabId = getActiveTabElementId()
-    sobject = $('#describeArea .sobject-select-list').val()    
+    sobject = $('#describeArea #sobject_selection').val()
     if sobject
       disableOptions()
       val = {selected_sobject: sobject}
-      action = $('#executeDescribe').attr('action')
-      method = $('#executeDescribe').attr('method')
+      action = $('#executeDescribeBtn').attr('action')
+      method = $('#executeDescribeBtn').attr('method')
       options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
       callbacks = $.getAjaxCallbacks(processSuccessResult, displayError, null)
       $.executeAjax(options, callbacks)
 
   #------------------------------------------------
-  # export
+  # CSV Download
   #------------------------------------------------
-  $("#describeArea #csv-expprt").on "click", (e) ->
-    e.preventDefault()
-
-    if grids.length
-      options = getDownloadOptions(this)
-      $.ajaxDownload(options)
-
-  getDownloadOptions = (target) ->
-    url = $("#describeArea #exportForm").attr('action')
-    method = $("#describeArea #exportForm").attr('method')
-    selected_sobject = $('#describeArea .sobject-select-list').val()
-    data = {selected_sobject: selected_sobject}
-    $.getAjaxDownloadOptions(url, method, data, downloadDone, downloadFail, ->)
+  $('#describeArea .export-btn').on 'click', (e) ->
+    elementId = getActiveGridElementId()
+    sobjectName = sObjects[elementId]
+    if sobjectName
+      hotElement = getActiveGrid()
+      hotElement.getPlugin('exportFile').downloadFile('csv', {
+        bom: false,
+        columnDelimiter: ',',
+        columnHeaders: true,
+        exportHiddenColumns: false,
+        exportHiddenRows: false,
+        fileExtension: 'csv',
+        filename: sobjectName,
+        mimeType: 'text/csv',
+        rowDelimiter: '\r\n',
+        rowHeaders: false
+      })
 
   #------------------------------------------------
   # callbacks
@@ -106,7 +110,9 @@ describe = ->
   processSuccessResult = (json) ->
     hideMessageArea()
     $("#describeArea #overview" + selectedTabId).html(getExecutedMethod(json))
-    createGrid("#describeArea #describeGrid" + selectedTabId, json)
+    elementId = "#describeArea #describeGrid" + selectedTabId
+    sObjects[elementId] = json.sobject_name
+    createGrid(elementId, json)
 
   refreshSelectOptions = (result) ->
     $('#describeArea .sobject-select-list').html(result)
@@ -118,12 +124,6 @@ describe = ->
         allowClear: true
       })
     enableOptions()
-
-  downloadDone = (url) ->
-    hideMessageArea()
-  
-  downloadFail = (response, url, error) ->
-    displayError(response)
 
   #------------------------------------------------
   # Active grid

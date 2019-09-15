@@ -12,7 +12,7 @@
 				<div class="describe-sobject-label">
 					<%= label_tag :sobjects, 'sObjects: ' %>							
 				</div>
-				<div id="sobjectList" class="sobject-list describe-sobject-list input-sm select2-single">
+				<div class="sobject-list describe-sobject-list input-sm select2-single">
 					<%= @describe_result %>							
 				</div>
 			</div>
@@ -28,9 +28,7 @@
 	
 	<div class="tabArea">
 		<div class="exportButtonArea">
-			<%= form_tag describe_download_path(), :id => "exportForm", :method => :post, :remote => false do %>
-				<%= button_tag "Export", :id => "csv-expprt", :class => "btn btn-xs btn-default ex-small-btn" %>
-			<% end %>
+			<%= button_tag "Export", :class => "btn btn-xs btn-default ex-small-btn export-btn" %>
 		</div>	
 
 		<ul id="describeTabs">

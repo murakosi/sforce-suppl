@@ -518,7 +518,7 @@ coordinates = ->
   # CSV Download
   #------------------------------------------------
   $('#soqlArea .export-btn').on 'click', (e) ->
-    if grids.length
+    if Object.keys(grids.length) > 0
       hotElement = getActiveGrid()
       hotElement.getPlugin('exportFile').downloadFile('csv', {
         bom: false,

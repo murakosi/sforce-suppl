@@ -29,11 +29,50 @@ coordinates = ->
         elem.value = "#{value.substring 0, start}\t#{value.substring end}"
         elem.selectionStart = elem.selectionEnd = start + 1
         return false
+  #------------------------------------------------
+  # Execute Anonymous
+  #------------------------------------------------
+  $('#apexArea #executeAnonymousBtm').on 'click', (e) ->
+    if $.isAjaxBusy()
+      return false
+
+    if !$('#apexArea #apex_code').val()
+      return false
+
+    e.preventDefault()
+    executeAnonymous()
+    
+  executeAnonymous = () ->    
+
+    hideMessageArea()
+    selectedTabId = $("#apexArea .tabArea .ui-tabs-panel:visible").attr("tabId")
+    debugOptions = {}
+    $('#debugOptions option:selected').each () ->
+      category = $(this).parent().attr("id")
+      level = $(this).val()
+      debugOptions[category] = level
+      
+    val = {code: $('#apexArea #apex_code').val(), debug_options: debugOptions}
+    action = $('#apexArea .execute-anonymous-form').attr('action')
+    method = $('#apexArea .execute-anonymous-form').attr('method')
+    options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
+    callbacks = $.getAjaxCallbacks(processSuccessResult, displayError, null)
+    $.executeAjax(options, callbacks)
+  
+  processSuccessResult = (json) ->
+    elementId = "#apexArea #apexGrid" + selectedTabId
+    logNames[elementId] = json.log_name    
+    $("#apexArea #logInfo" + selectedTabId).html(getLogResult(json))
+    createGrid(elementId, json)
+
+  getLogResult = (json) ->
+    json.log_name + #<label><input type="checkbox" /> Label text</label>
+    '&nbsp;&nbsp;<label><input type="checkbox" class="debugOnly"/>&nbsp;Debug only</label>'
 
   #------------------------------------------------
   # Debug options
   #------------------------------------------------  
-  $('#apexArea #debug-opt-btn').on 'click', (e) ->
+  $('#apexArea #debugOptionBtn').on 'click', (e) ->
     e.preventDefault()
     area = $('#debugOptions')
     if area.css('display') == 'none'
@@ -44,7 +83,7 @@ coordinates = ->
   #------------------------------------------------
   # CSV Download
   #------------------------------------------------
-  $('#apexArea #download-log').on 'click', (e) ->
+  $('#apexArea #downloadLogBtn').on 'click', (e) ->
     tabId = $("#apexArea .tabArea .ui-tabs-panel:visible").attr("tabId")
     elementId = "#apexArea #apexGrid" + tabId
     if logNames[elementId]
@@ -92,51 +131,8 @@ coordinates = ->
     hotElement.render()
 
   #------------------------------------------------
-  # Execute Anonymous
-  #------------------------------------------------
-  $('#apexArea .execute-anonymous').on 'click', (e) ->
-    if $.isAjaxBusy()
-      return false
-
-    if !$('#apexArea #apex_code').val()
-      return false
-
-    e.preventDefault()
-    executeAnonymous()
-    
-  executeAnonymous = () ->    
-
-    hideMessageArea()
-    selectedTabId = $("#apexArea .tabArea .ui-tabs-panel:visible").attr("tabId")
-    debugOptions = {}
-    $('#debugOptions option:selected').each () ->
-      category = $(this).parent().attr("id")
-      level = $(this).val()
-      debugOptions[category] = level
-      
-    val = {code: $('#apexArea #apex_code').val(), debug_options: debugOptions}
-    action = $('#apexArea .execute-form').attr('action')
-    method = $('#apexArea .execute-form').attr('method')
-    options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
-    callbacks = $.getAjaxCallbacks(processSuccessResult, displayError, null)
-    $.executeAjax(options, callbacks)
-  
-  processSuccessResult = (json) ->
-    elementId = "#apexArea #apexGrid" + selectedTabId
-    logNames[elementId] = json.log_name    
-    $("#apexArea #logInfo" + selectedTabId).html(getLogResult(json))
-    createGrid(elementId, json)
-
-  getLogResult = (json) ->
-    json.log_name + #<label><input type="checkbox" /> Label text</label>
-    '&nbsp;&nbsp;<label><input type="checkbox" class="debugOnly"/> Debug only</label>'
-
-  #------------------------------------------------
   # Create tab
   #------------------------------------------------
-  $("#apexArea #addTabBtn").on 'click', (e) ->
-    createTab()
-
   $(document).on 'click', '#apexArea .ui-closable-tab', (e) ->
     e.preventDefault()
 
@@ -147,7 +143,7 @@ coordinates = ->
     $("#apexArea #" + panelId ).remove();
     $("#apexArea .tabArea").tabs("refresh")
 
-  $('#apexArea #add-tab').on 'click', (e) ->
+  $('#apexArea .add-tab-btn').on 'click', (e) ->
     e.preventDefault()
     createTab()
   

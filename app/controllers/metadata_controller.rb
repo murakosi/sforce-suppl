@@ -7,21 +7,18 @@ class MetadataController < ApplicationController
 
     before_action :require_sign_in!
 
-    protect_from_forgery :except => [:list, :read, :prepare, :edit, :crud, :retrieve, :check_retrieve_status, :retrieve_result, :deploy, :check_deploy_status]
+    protect_from_forgery :except => [:list, :edit, :crud, :retrieve, :check_retrieve_status, :retrieve_result, :deploy, :check_deploy_status]
 
     Full_name_index = 4
     
-    #----------------------------------
-    # Responses select options of metadata types
-    #----------------------------------
     def show
         begin
             metadata_types = get_metadata_types(sforce_session)
             html_content = render_to_string :partial => 'metadatalist', :locals => {:data_source => metadata_types}
-            render :json => {:target => "#metadata_list", :content => html_content, :error => nil, :status => 200}
+            render :json => {:target => "#metadataList", :content => html_content, :error => nil, :status => 200}
         rescue StandardError => ex
             html_content = render_to_string :partial => 'metadatalist', :locals => {:data_source => []}
-            render :json => {:target => "#metadata_list", :content => html_content, :error => ex.message, :status => 400}
+            render :json => {:target => "#metadataList", :content => html_content, :error => ex.message, :status => 400}
         end        
     end
 
@@ -46,7 +43,7 @@ class MetadataController < ApplicationController
             formatted_list = format_metadata_list(metadata_list)
         end
 
-        field_types = get_field_value_types(sforce_session, metadata_type)
+        field_types = get_metadata_value_type(sforce_session, metadata_type)
         formatted_field_types = format_field_type_result(sforce_session, metadata_type, field_types)
         crud_info = api_crud_info(field_types)
         parent_tree_nodes = format_parent_tree_nodes(crud_info, formatted_list)            
@@ -60,25 +57,8 @@ class MetadataController < ApplicationController
             :fullName => metadata_type,
             :list_grid => list_grid_column_options(formatted_list),
             :tree => parent_tree_nodes,
-            :create_grid => create_grid_options(metadata_type, crud_info, field_types),
             :crud_info => crud_info
         }
-    end
-
-    def read
-        metadata_type = params[:metadata_type]
-        full_name = params[:name]
-
-        begin
-            raise_when_type_unmached(metadata_type)
-            result = read_metadata(sforce_session, metadata_type, full_name)
-            tree_data = format_read_result(full_name, result, current_metadata_field_types)
-            try_save_session(metadata_type, full_name, result)
-            render :json => {:tree => tree_data}, :status => 200            
-        rescue StandardError => ex
-            print_error(ex)
-            render :json => {:error => ex.message}, :status => 400
-        end
     end
 
     def edit
@@ -105,27 +85,46 @@ class MetadataController < ApplicationController
         crud_type = params[:crud_type]
         metadata_type = params[:metadata_type]
 
+        case crud_type
+        when Metadata::CrudType::Read
+            try_read(metadata_type)
+        when Metadata::CrudType::Update
+        when Metadata::CrudType::Delete
+            change_metadata(crud_type, metadata_type)
+        else
+            raise StandardError.new("Invalid crud type")
+        end 
+    end
+
+    def change_metadata(crud_type, metadata_type)
         begin
             raise_when_type_unmached(metadata_type)
-            result = change_metadata(crud_type, metadata_type)
+            case crud_type
+            when Metadata::CrudType::Update
+                result = try_update(metadata_type)
+            when Metadata::CrudType::Delete
+                result ~ try_delete(metadata_type)
+            end                 
             render :json => {:message => result[:message], :refresh_required => result[:refresh_required]}, :status => 200
         rescue StandardError => ex
             print_error(ex)
             render :json => {:error => ex.message}, :status => 400
-        end
+        end        
     end
 
-    def change_metadata(crud_type, metadata_type)
-        case crud_type
-        when Metadata::CrudType::Create
-            try_create(metadata_type)
-        when Metadata::CrudType::Update
-            try_update(metadata_type)
-        when Metadata::CrudType::Delete
-            try_delete(metadata_type)
-        else
-            raise StandardError.new("Invalid crud type")
-        end 
+    def try_read(metadata_type)
+        full_name = params[:name]
+
+        begin
+            raise_when_type_unmached(metadata_type)
+            result = read_metadata(sforce_session, metadata_type, full_name)
+            tree_data = format_read_result(full_name, result, current_metadata_field_types)
+            try_save_session(metadata_type, full_name, result)
+            render :json => {:tree => tree_data}, :status => 200            
+        rescue StandardError => ex
+            print_error(ex)
+            render :json => {:error => ex.message}, :status => 400
+        end
     end
 
     def try_update(metadata_type)
@@ -141,13 +140,6 @@ class MetadataController < ApplicationController
         selected_records = JSON.parse(params[:selected_records])
         full_names = extract_full_names(selected_records)
         delete_metadata(sforce_session, metadata_type, full_names)      
-    end
-
-    def try_create(metadata_type)
-        field_headers = params[:field_headers]
-        field_types = params[:field_types]
-        field_values = JSON.parse(params[:field_values])
-        create_metadata(sforce_session, metadata_type, field_headers, field_types, field_values)
     end
 
     def retrieve

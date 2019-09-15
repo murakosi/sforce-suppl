@@ -22,7 +22,7 @@ class DescribeController < ApplicationController
             raise StandardError.new("Invalid object type parameter")
         end  
 
-        render :partial => 'main/sobjectlist', :locals => {:data_source => sobjects}
+        render :partial => "main/sobjectlist", :locals => {:data_source => sobjects}
     end
 
     def describe
@@ -40,6 +40,7 @@ class DescribeController < ApplicationController
 
     def response_json(describe_result, formatted_result)
         {
+            :sobject_name => describe_result[:name],
             :method => get_sobject_info(describe_result),
             :columns => formatted_result.first.keys,
             :rows => formatted_result.each{ |hash| hash.values}

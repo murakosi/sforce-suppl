@@ -1,7 +1,7 @@
 coordinates = ->
   
   selectedRecords = {}
-  grids = {}
+  grid = null
   defaultDataType = ""
   defaultContentType = null
   selectedFullNames = {}
@@ -14,11 +14,11 @@ coordinates = ->
   checkCount = 0;
 
   disableButtons = () ->
-    $("#updateButton").prop("disabled", true)
-    $("#deleteButton").prop("disabled", true)
-    $("#expand").prop("disabled", true)
-    $("#collapse").prop("disabled", true)
-    $("#retrieveButton").prop("disabled", true)
+    $("#updateMetadataBtn").prop("disabled", true)
+    $("#deleteMetadataBtn").prop("disabled", true)
+    $("#readMetadaBtn").prop("disabled", true)
+    $("#collapseMetadataTree").prop("disabled", true)
+    $("#retrieveMetadataBtn").prop("disabled", true)
 
   getSelectedMetadata = () ->
     $('#metadataArea #selected_directory').val()
@@ -32,7 +32,7 @@ coordinates = ->
   #------------------------------------------------
   # list metadata
   #------------------------------------------------
-  $("#metadataArea .execute-metadata").on "click", (e) ->
+  $("#metadataArea #executListMetadataBtn").on "click", (e) ->
     e.preventDefault()
     listMetadate()
 
@@ -51,10 +51,9 @@ coordinates = ->
       $.abortAjax()
 
     createGrid("#metadataArea #metadataGrid")
-    $('#metadataArea #editTree').jstree(true).settings.core.data = null
-    $('#metadataArea #editTree').jstree(true).refresh()
+    $('#metadataArea #editMetadataTree').jstree(true).settings.core.data = null
+    $('#metadataArea #editMetadataTree').jstree(true).refresh()
     selectedRecords = {}
-    grids = {}
     fieldNames = null
     fieldTypes = null
     selectedFullNames = {}
@@ -68,29 +67,27 @@ coordinates = ->
     hideMessageArea()
     refreshTree(json.tree)
     changeButtonStyles(json.crud_info)
-    fieldNames = json.create_grid.field_names
-    fieldTypes = json.create_grid.field_types
     createGrid("#metadataArea #metadataGrid", json.list_grid)
 
   changeButtonStyles = (json) ->
-    $("#updateButton").prop("disabled", !json.api_updatable)
-    $("#deleteButton").prop("disabled", !json.api_deletable)
-    $("#expand").prop("disabled", !json.api_readable)
-    $("#collapse").prop("disabled", !json.api_readable)
-    $("#retrieveButton").prop("disabled", false)
+    $("#updateMetadataBtn").prop("disabled", !json.api_updatable)
+    $("#deleteMetadataBtn").prop("disabled", !json.api_deletable)
+    $("#readMetadaBtn").prop("disabled", !json.api_readable)
+    $("#collapseMetadataTree").prop("disabled", !json.api_readable)
+    $("#retrieveMetadataBtn").prop("disabled", false)
 
   refreshTree = (json) ->
-    $('#metadataArea #editTree').jstree(true).settings.core.data = json
-    $('#metadataArea #editTree').jstree(true).refresh()
-    $('#metadataArea #editTree').jstree(true).settings.core.data = (node, callback) -> callReadMetadata(node, callback)
+    $('#metadataArea #editMetadataTree').jstree(true).settings.core.data = json
+    $('#metadataArea #editMetadataTree').jstree(true).refresh()
+    $('#metadataArea #editMetadataTree').jstree(true).settings.core.data = (node, callback) -> callReadMetadata(node, callback)
 
   #------------------------------------------------
   # Read metadata
   #------------------------------------------------
   callReadMetadata = (node, callback) ->
-    val = {metadata_type: getSelectedMetadata(), name: node.id}
-    action = $("#edit-tab").attr("action")
-    method = $("#edit-tab").attr("method")
+    val = {crud_type: "read", metadata_type: getSelectedMetadata(), name: node.id}
+    action = $("#readMetadataBtn").attr("action")
+    method = "POST"
     options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType, false)
     callbacks = $.getAjaxCallbacks(processReadSuccess, processReadError, callback)
     $.executeAjax(options, callbacks)
@@ -106,7 +103,7 @@ coordinates = ->
   #------------------------------------------------
   # retrieve
   #------------------------------------------------
-  $("#metadataArea #retrieveButton").on "click", (e) ->
+  $("#metadataArea #retrieveMetadataBtn").on "click", (e) ->
     if retrieveId
       return false
     
@@ -116,8 +113,8 @@ coordinates = ->
     selected_type = getSelectedMetadata()
     selected_records = getSelectedRecords()
     val = {selected_type: selected_type, selected_records: selected_records}
-    action = $("#metadataArea #retrieveForm").attr('action')
-    method = $("#metadataArea #retrieveForm").attr('method')
+    action = $("#metadataArea #retrieveMetadataBtn").attr('action')
+    method ="POST"
     options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
     callbacks = $.getAjaxCallbacks(checkRetrieveStatus, displayError, null)
     $.executeAjax(options, callbacks)
@@ -131,7 +128,7 @@ coordinates = ->
       sleep(checkInterval * checkCount);      
       val = {id: retrieveId}
       action = "metadata/retrieve_check"
-      method = "post"
+      method = "POST"
       options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
       callbacks = $.getAjaxCallbacks(checkRetrieveStatus, displayError, null)
       $.executeAjax(options, callbacks)
@@ -157,20 +154,20 @@ coordinates = ->
   #------------------------------------------------
   # deploy
   #------------------------------------------------
-  $("#metadataArea #deployButton").on "click", (e) ->
+  $("#metadataArea #deployMetadataBtn").on "click", (e) ->
     if deployId
       return false
 
     e.preventDefault()
     
-    file = $('#zipFile')[0].files[0]
+    file = $('#metadataZipFile')[0].files[0]
 
     if file instanceof Blob
-      $('#metadataArea #deployResultTree').jstree(true).settings.core.data = null
-      $('#metadataArea #deployResultTree').jstree(true).refresh()
+      $('#metadataArea #deployMetadataResultTree').jstree(true).settings.core.data = null
+      $('#metadataArea #deployMetadataResultTree').jstree(true).refresh()
       getBase64(file)
     else
-      displayError( {error: "Select file to deploy"} )
+      displayError( {error: "Select a zip file to deploy"} )
 
 
   getBase64 = (file) ->
@@ -184,14 +181,14 @@ coordinates = ->
     checkCount = 0
     deploy_options = {}
 
-    $("#metadataArea #deployOptions input[type=checkbox]").each ->
+    $("#metadataArea #deployMetadataOptions input[type=checkbox]").each ->
       key = $(this).val()
       value = $(this).prop("checked")
       deploy_options[key] = value
 
     val = {options: JSON.stringify(deploy_options), zip_file: file}
-    action = $("#metadataArea #deployForm").attr('action')
-    method = $("#metadataArea #deployForm").attr('method')
+    action = $("#metadataArea #deployMetadataBtn").attr('action')
+    method = "POST"
     options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
     callbacks = $.getAjaxCallbacks(checkDeployStatus, displayError, null)
     $.executeAjax(options, callbacks)
@@ -205,34 +202,34 @@ coordinates = ->
       sleep(checkInterval * checkCount);      
       val = {id: deployId}
       action = "metadata/deploy_check"
-      method = "post"
+      method = "POST"
       options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
       callbacks = $.getAjaxCallbacks(checkDeployStatus, displayError, null)
       $.executeAjax(options, callbacks)
 
   deployDone = (json) ->
     deployId = null
-    $('#metadataArea #deployResultTree').jstree(true).settings.core.data = json.result
-    $('#metadataArea #deployResultTree').jstree(true).refresh()
+    $('#metadataArea #deployMetadataResultTree').jstree(true).settings.core.data = json.result
+    $('#metadataArea #deployMetadataResultTree').jstree(true).refresh()
     hideMessageArea()
 
   #------------------------------------------------
   # edit/update
   #------------------------------------------------
-  $("#updateButton").on "click", (e) ->
+  $("#updateMetadataBtn").on "click", (e) ->
     e.preventDefault()
     if window.confirm("Update Metadata?")
       val = {crud_type: "update", metadata_type: getSelectedMetadata(), full_names: getSelectedFullNames()}
-      action = $(".crudForm").attr("action")
-      method = $(".crudForm").attr("method")
+      action = $("#metadataArea #updateMetadataBtn").attr("action")
+      method = "POST"
       options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
       callbacks = $.getAjaxCallbacks(saveSuccess, displayError, null)
       $.executeAjax(options, callbacks)
 
-  $("#metadataArea #editTree").on 'select_node.jstree', (e, data) ->
+  $("#metadataArea #editMetadataTree").on 'select_node.jstree', (e, data) ->
     selectedNode = data.node
 
-  $("#metadataArea #editTree").on 'rename_node.jstree', (e, data) ->
+  $("#metadataArea #editMetadataTree").on 'rename_node.jstree', (e, data) ->
     if data.text == data.old
       return
 
@@ -245,19 +242,19 @@ coordinates = ->
            old_value: data.old,
            data_type: data.node.li_attr.data_type
           }
-    action = $("#metadataArea #editTree").attr("action")
-    method = $("#metadataArea #editTree").attr("method")
+    action = $("#metadataArea #editMetadataTree").attr("action")
+    method = "POST"
     options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType, false)
     callbacks = $.getAjaxCallbacks(editComplete, undoEdit, null)
     $.executeAjax(options, callbacks)
 
-  $("#expand").on "click", (e) ->
+  $("#readMetadaBtn").on "click", (e) ->
     if selectedNode
-      $("#metadataArea #editTree").jstree(true).open_all(selectedNode)
+      $("#metadataArea #editMetadataTree").jstree(true).open_all(selectedNode)
 
-  $("#collapse").on "click", (e) ->
+  $("#collapseMetadataTree").on "click", (e) ->
     if selectedNode
-      $("#metadataArea #editTree").jstree(true).close_all(selectedNode)
+      $("#metadataArea #editMetadataTree").jstree(true).close_all(selectedNode)
 
   editComplete = (json) ->
     fullName = json.full_name
@@ -265,8 +262,8 @@ coordinates = ->
     hideMessageArea()
     
   undoEdit = (json) ->
-    node = $("#metadataArea #editTree").jstree(true).get_node(json.node_id)
-    $("#metadataArea #editTree").jstree(true).edit(node, json.old_text)
+    node = $("#metadataArea #editMetadataTree").jstree(true).get_node(json.node_id)
+    $("#metadataArea #editMetadataTree").jstree(true).edit(node, json.old_text)
     displayError(json)
 
   treeChecker = (operation, node, node_parent, node_position, more) ->    
@@ -276,12 +273,12 @@ coordinates = ->
   #------------------------------------------------
   # Delete metadata
   #------------------------------------------------
-  $("#deleteButton").on "click", (e) ->
+  $("#deleteMetadataBtn").on "click", (e) ->
     e.preventDefault()
     if window.confirm("Delete Metadata?")
       val = {crud_type: "delete", metadata_type: getSelectedMetadata(), selected_records: getSelectedRecords()}
-      action = $(".crudForm").attr("action")
-      method = $(".crudForm").attr("method")
+      action = $("#metadataArea #deleteMetadataBtn").attr("action")
+      method = "POST"
       options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType)
       callbacks = $.getAjaxCallbacks(saveSuccess, displayError, null)
       $.executeAjax(options, callbacks)
@@ -309,22 +306,33 @@ coordinates = ->
     $("#metadataArea .messageArea").hide()
 
   #------------------------------------------------
+  # Events on table
+  #------------------------------------------------
+  onAfterChange = (source, changes) ->
+    if changes != 'edit'
+      return
+
+    rowIndex = source[0][0]
+    checked = source[0][3]
+
+    if checked
+        selectedRecords[rowIndex] = grid.getDataAtRow(rowIndex)
+    else
+      delete selectedRecords[rowIndex]
+
+  #------------------------------------------------
   # HandsonTable
   #------------------------------------------------
   createGrid = (elementId, json = null) ->   
     hotElement = document.querySelector(elementId)
 
-    if grids[elementId]
-      table = grids[elementId]
-      table.destroy()
+    if grid
+      grid.destroy()
 
     header = getColumns(json)
     records = getRows(json)
     columnsOption = getColumnsOption(json)
     contextMenu = getContextMenuOption(json)
-    rowHeaderOption = getRowHeaderOption(elementId, json)
-    rowHeaderWidth = getRowHeaderWidth(elementId, json)
-    minRow = getMinRow(json)
 
     hotSettings = {
         data: records,
@@ -334,17 +342,14 @@ coordinates = ->
         allowRemoveColumn: false,
         manualRowResize: false,
         manualColumnResize: true,
-        rowHeaders: rowHeaderOption,
-        rowHeaderWidth: rowHeaderWidth,
+        rowHeaders: true,
         colHeaders: header,
         columns: columnsOption,
         startRows: 0,
-        minRows: minRow,
-        minSpareRows: 0,
-        minSpareCols: 0,
         fillHandle: {autoInsertRow: false},
         fragmentSelection: true,
         columnSorting: true,
+        afterChange: (source, changes) -> onAfterChange(source, changes),
         licenseKey: 'non-commercial-and-evaluation'
     }
 
@@ -352,7 +357,7 @@ coordinates = ->
     hot.updateSettings afterColumnSort: ->
       hot.render()
 
-    grids[elementId] = hot
+    grid = hot
 
   getColumns = (json) ->
     if !json
@@ -374,66 +379,11 @@ coordinates = ->
     else 
       null
 
-  getRowHeaderOption = (elementId, json) ->
-    if json && json.profiles
-      json.profiles
-    else
-      null
-
-  getRowHeaderWidth = (elementId, json) ->
-    if !json || !json.profiles
-      return null
-      
-    widths = []
-    for value in json.profiles
-      widths.push(getTextWidth(value, "10pt Verdana,Arial,sans-serif"))
-    Math.max.apply(null, widths)
-
-  getTextWidth = (text, font) ->
-    canvas = getTextWidth.canvas || (getTextWidth.canvas = document.createElement("canvas"));
-    context = canvas.getContext("2d");
-    context.font = font;
-    metrics = context.measureText(text);
-    return metrics.width;
-
   getContextMenuOption = (json) ->
     if json && json.context_menu
       ["row_above", "row_below", "---------", "remove_row", "---------", "undo", "redo", "---------", "alignment"]
     else
       false
-
-  getMinRow = (json) ->
-    if json && json.min_row
-      json.min_row
-    else
-      0
-
-  #------------------------------------------------
-  # Custom renderer
-  #------------------------------------------------
-  customDropdownRenderer = (instance, td, row, col, prop, value, cellProperties) ->
-    optionsList = cellProperties.chosenOptions.data
-    splitter = cellProperties.chosenOptions.splitter
-    
-    if(typeof optionsList == "undefined" || typeof optionsList.length == "undefined" || !optionsList.length)
-      Handsontable.TextCell.renderer(instance, td, row, col, prop, value, cellProperties);
-      return td;
-    
-    valueArray = $.map((value + '').split(splitter), $.trim)
-    newValue = []
-    index = 0
-
-    while index < optionsList.length
-      if valueArray.indexOf(optionsList[index].id + '') > -1
-        newValue.push optionsList[index].label
-      index++
-
-    if newValue.length
-      value = newValue.join(splitter + " ")
-
-    Handsontable.renderers.TextRenderer.apply(this, arguments);
-
-    return td
 
   #------------------------------------------------
   # page load actions
@@ -443,7 +393,7 @@ coordinates = ->
   $("#metadataArea .tabArea").tabs()
   createGrid("#metadataArea #metadataGrid")
 
-  $('#metadataArea #editTree').jstree({
+  $('#metadataArea #editMetadataTree').jstree({
     
     'core' : {
       'check_callback' : (operation, node, node_parent, node_position, more) -> treeChecker(operation, node, node_parent, node_position, more),
@@ -455,7 +405,7 @@ coordinates = ->
     "plugins": ["dropdown"]
   })
 
-  $('#metadataArea #deployResultTree').jstree({
+  $('#metadataArea #deployMetadataResultTree').jstree({
     
     'core' : {
       'data' : [],
@@ -464,8 +414,6 @@ coordinates = ->
       "themes": {"icons":false}
     }
   })
-
-  #$("#metadataArea #tabArea").tabs();
 
 $(document).ready(coordinates)
 $(document).on('page:load', coordinates)

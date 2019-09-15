@@ -1,12 +1,12 @@
 <div id="apexArea">
 	<div class="formArea">
-		<%= form_tag apex_path(), :method => :post, :class => "execute-form" do %>
+		<%= form_tag apex_path(), :method => :post, :class => "execute-anonymous-form" do %>
 			<div>
 				<%= text_area_tag :apex_code,"", :size => "120x5", :class => "code-input", :spellcheck => false %>
 			</div>
 			<div>
-				<%= submit_tag "Execute Anonymous", :class => "btn btn-sm btn-primary execute-anonymous" %>
-				<%= button_tag "Debug options", :type => "button", :id => "debug-opt-btn", :class => "btn btn-xs btn-default" %>
+				<%= submit_tag "Execute Anonymous", :id => "executeAnonymousBtm", :class => "btn btn-sm btn-primary" %>
+				<%= button_tag "Debug options", :type => "button", :id => "debugOptionBtn", :class => "btn btn-xs btn-default" %>
 			</div>
 			<div id="debugOptions">
 				<% @debug_options.each_with_index do |options, idx| %>
@@ -22,10 +22,10 @@
 	</div>
 	
 	<div class="tabArea">
-		<%= button_tag "Export", :type => "button", :id => "download-log", :class => "btn btn-xs btn-default" %>
+		<%= button_tag "Export", :type => "button", :id => "downloadLogBtn", :class => "btn btn-xs btn-default" %>
 		<ul id="apexTabs">
 			<li class="add-tab-li">
-				<div id="addTabBtn" class="icon-plus"></div>
+				<div class="add-tab-btn icon-plus"></div>
 			</li>
 		</ul>
 	</div>

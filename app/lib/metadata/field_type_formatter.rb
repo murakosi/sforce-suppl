@@ -5,14 +5,13 @@ module Metadata
 
 		def format_field_type(sforce_session, metadata_type, type_fields)
 			@result = []
-			#modified_field_types = Metadata::ValueFieldSupplier.add_missing_fields(metadata_type, type_fields)
-			#@adding = Metadata::ValueFieldSupplier.add_missing_fields(metadata_type, type_fields)
-			custom_type_fields = Metadata::ValueFieldSupplier.add_missing_fields(sforce_session, metadata_type, type_fields)
-			@adding = custom_type_fields["adding"]
-			@removing = custom_type_fields["removing"]
+			
+			#custom_type_fields = Metadata::ValueFieldSupplier.add_missing_fields(sforce_session, metadata_type, type_fields)
+			#@adding = custom_type_fields["adding"]
+			#@removing = custom_type_fields["removing"]
 			modified_field_types = type_fields
 			modified_field_types.each{|hash| parse_field_types(nil, hash)}
-			add_remaining_fields()
+			#add_remaining_fields()
 
 			if !Rails.env.production?
 				validate_result
@@ -54,13 +53,11 @@ module Metadata
                     parse_fields(parent, hash)
                 else
                     if parent.nil?
-                        #@result << {hash[:name] => hash}
-                        #@result << get_type_field_hash(hash[:name], hash)
-                        type_field_hash = get_type_field_hash(hash[:name], hash)
+                        #type_field_hash = get_type_field_hash(hash[:name], hash)
+                        type_field_hash = {hash[:name] => hash}
                     else
-                        #@result << {parent => hash }
-                        #@result << get_type_field_hash(parent, hash)
-                        type_field_hash = get_type_field_hash(parent, hash)
+                        #type_field_hash = get_type_field_hash(parent, hash)
+                        type_field_hash = {parent => hash}
                     end
 
                     @result << type_field_hash unless type_field_hash.nil?
@@ -74,7 +71,6 @@ module Metadata
 				return nil
 			end
 
-			#if @adding.nil? || !@adding.has_key?(key)
 			if !@adding.has_key?(key)
 				return {key => value}
 			end
@@ -91,17 +87,15 @@ module Metadata
 			
 			return {key => new_value}
 		end
-        
+=begin        
 		def add_remaining_fields
-			#if @adding.present?
 				@adding.values.each{|hash| @result << { hash["name"] => hash.deep_symbolize_keys } }
-			#end
 		end
-
+=end
 		def parse_fields(parent, hash)
 		    remnant = hash.delete(:fields)
 			if parent.nil?
-				key = hash[:name]#get_soap(h)
+				key = hash[:name]
 		    else
 		        key = parent
 		    end
@@ -111,7 +105,6 @@ module Metadata
 		    if remnant.present?
 		        remnant = Array[remnant].flatten
 		        remnant.each do |hash|
-		            #parse_field_types(key + "." + hash[:name], hash)		            
 		            parse_field_types(key + "." + hash[:name], hash.merge({:min_occurs => parent_min_occurs}))
 		        end
 		    end
