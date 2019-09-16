@@ -3,6 +3,7 @@
 ------------------------------ */
 label {
     font-weight: normal !important;
+    margin-bottom: 0 !important;
 }
 
 button:disabled {

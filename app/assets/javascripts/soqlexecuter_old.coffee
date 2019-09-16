@@ -518,16 +518,18 @@ coordinates = ->
   # CSV Download
   #------------------------------------------------
   $('#soqlArea .export-btn').on 'click', (e) ->
-    if Object.keys(grids.length) > 0
+    elementId = getActiveGridElementId()
+    sobject = sObjects[elementId]
+    if sobject
       hotElement = getActiveGrid()
       hotElement.getPlugin('exportFile').downloadFile('csv', {
-        bom: false,
+        bom: true,
         columnDelimiter: ',',
         columnHeaders: true,
         exportHiddenColumns: false,
         exportHiddenRows: false,
         fileExtension: 'csv',
-        filename: 'soql_result',
+        filename: 'soql_result(' + sobject.sobject_type + ')',
         mimeType: 'text/csv',
         rowDelimiter: '\r\n',
         rowHeaders: false

@@ -15,13 +15,11 @@ coordinates = ->
   $(window).on 'keydown', (e) ->
     if e.target.id == "apex_code"
 
-      if e.ctrlKey && (e.key == 'r' || e.keyCode == 13)
-        e.preventDefault()       
+      if e.ctrlKey && (e.key == 'r' || e.keyCode == 13)  
         executeAnonymous()
         return false
 
       if e.keyCode is 9
-        e.preventDefault()
         elem = e.target
         start = elem.selectionStart
         end = elem.selectionEnd
@@ -39,14 +37,14 @@ coordinates = ->
     if !$('#apexArea #apex_code').val()
       return false
 
-    e.preventDefault()
     executeAnonymous()
     
   executeAnonymous = () ->    
 
     hideMessageArea()
     selectedTabId = $("#apexArea .tabArea .ui-tabs-panel:visible").attr("tabId")
-    debugOptions = {}
+
+    debugOptions = {}    
     $('#debugOptions option:selected').each () ->
       category = $(this).parent().attr("id")
       level = $(this).val()
@@ -66,27 +64,24 @@ coordinates = ->
     createGrid(elementId, json)
 
   getLogResult = (json) ->
-    json.log_name + #<label><input type="checkbox" /> Label text</label>
-    '&nbsp;&nbsp;<label><input type="checkbox" class="debugOnly"/>&nbsp;Debug only</label>'
+    json.log_name + '&nbsp;&nbsp;<label><input type="checkbox" class="debugOnly"/>&nbsp;Debug only</label>'
 
   #------------------------------------------------
   # Debug options
   #------------------------------------------------  
   $('#apexArea #debugOptionBtn').on 'click', (e) ->
-    e.preventDefault()
-    area = $('#debugOptions')
-    if area.css('display') == 'none'
-      area.css('display', 'block')
+    if $('#debugOptions').is(":visible")
+      $('#debugOptions').hide()
     else
-      area.css('display', 'none')
+      $('#debugOptions').show()
 
   #------------------------------------------------
   # CSV Download
   #------------------------------------------------
   $('#apexArea #downloadLogBtn').on 'click', (e) ->
-    tabId = $("#apexArea .tabArea .ui-tabs-panel:visible").attr("tabId")
-    elementId = "#apexArea #apexGrid" + tabId
-    if logNames[elementId]
+    elementId = getActiveGridElementId()
+    logName = logNames[elementId]
+    if logName
       hotElement =grids[elementId]
       hotElement.getPlugin('exportFile').downloadFile('csv', {
         bom: true,
@@ -95,7 +90,7 @@ coordinates = ->
         exportHiddenColumns: false,
         exportHiddenRows: false,
         fileExtension: 'csv',
-        filename: logNames[elementId],
+        filename: logName,
         mimeType: 'text/csv',
         rowDelimiter: '\r\n',
         rowHeaders: true
@@ -111,9 +106,8 @@ coordinates = ->
       clearFilter()
 
   filterLog = () ->
-    tabId = $("#apexArea .tabArea .ui-tabs-panel:visible").attr("tabId")
-    elementId = "#apexArea #apexGrid" + tabId
-    hotElement =grids[elementId]    
+    elementId = getActiveGridElementId()
+    hotElement = grids[elementId]    
     filtersPlugin = hotElement.getPlugin('filters');
     filtersPlugin.removeConditions(eventColumnIndex);
     filtersPlugin.addCondition(eventColumnIndex, 'eq', [USER_DEBUG]);
@@ -122,9 +116,8 @@ coordinates = ->
 
 
   clearFilter = () ->
-    tabId = $("#apexArea .tabArea .ui-tabs-panel:visible").attr("tabId")
-    elementId = "#apexArea #apexGrid" + tabId
-    hotElement =grids[elementId]
+    elementId = getActiveGridElementId()
+    hotElement = grids[elementId]
     filtersPlugin = hotElement.getPlugin('filters');
     filtersPlugin.clearConditions();
     filtersPlugin.filter()
@@ -152,18 +145,18 @@ coordinates = ->
     newTabId = currentTabIndex
 
     $("#apexArea .tabArea ul li:last").before(
-      "<li class=\"noselect\"><a href=\"#apexTab" + newTabId + "\">Grid" + newTabId + "</a>" +
-      "<span class=\"ui-icon ui-icon-close ui-closable-tab\"></span>" +
-      "</li>"
+      '<li class="noselect"><a href="#apexTab' + newTabId + '">Grid' + newTabId + '</a>' +
+      '<span class="ui-icon ui-icon-close ui-closable-tab"></span>' +
+      '</li>'
     )
 
     logInfoArea = '<div id="logInfo' + newTabId + '" class="resultSoql" tabId="' + newTabId + '"></div>'    
     
     $("#apexArea .tabArea").append(
-      "<div id=\"apexTab" + newTabId + "\" class=\"resultTab\" tabId=\"" + newTabId + "\">" +
+      '<div id="apexTab' + newTabId + '" class="resultTab" tabId="' + newTabId + '">' +
       logInfoArea +
-      "<div id=\"apexGrid" + newTabId + "\" class=\"resultGrid\" tabId=\"" + newTabId + "\"></div>" +
-      "</div>"
+      '<div id="apexGrid' + newTabId + '" class="resultGrid" tabId="' + newTabId + '"></div>' +
+      '</div>'
     )
     
     createGrid("#apexArea #apexGrid" + newTabId)
@@ -181,6 +174,20 @@ coordinates = ->
       $("#apexTabs").sortable("enable")
     else
       $("#apexTabs").sortable('disable')
+
+  #------------------------------------------------
+  # Active grid
+  #------------------------------------------------
+  getActiveTabElementId = () ->
+    $("#apexArea .tabArea .ui-tabs-panel:visible").attr("tabId")
+
+  getActiveGridElementId = () ->
+    tabId = $("#apexArea .tabArea .ui-tabs-panel:visible").attr("tabId")
+    "#apexArea #describeGrid" + tabId
+    
+  getActiveGrid = () ->
+    elementId = getActiveGridElementId()
+    grids[elementId]
 
   #------------------------------------------------
   # Create grid
