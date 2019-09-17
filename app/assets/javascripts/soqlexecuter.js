@@ -779,7 +779,6 @@ const coordinates = function() {
         colHeaders: header,
         columns: columnsOption,
         startRows: 0,
-        minRows: minRow,
         minSpareRows: 0,
         minSpareCols: 0,
         fillHandle: {autoInsertRow: false},
