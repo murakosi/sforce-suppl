@@ -38,12 +38,12 @@ const apex = function() {
     if ($.isAjaxBusy() || !$('#apexArea #apex_code').val()) {
       return false;
     }
-
+  
+    e.preventDefault();
     executeAnonymous();
   });
     
   const executeAnonymous = function() {
-
     hideMessageArea();
     selectedTabId = $("#apexArea .tabArea .ui-tabs-panel:visible").attr("tabId");
 
