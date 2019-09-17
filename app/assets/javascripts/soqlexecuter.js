@@ -11,6 +11,8 @@ const coordinates = function() {
   // CreatGrid Dialog
   //------------------------------------------------
   $("#soqlArea #openCreatGridBtn").on('click', (e) => {
+    console.log(this);
+    console.log($(this));
     $("#soqlOverRay").show();
   });
 
