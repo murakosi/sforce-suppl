@@ -74,8 +74,20 @@ module Soql
         function_call.as(:function) | field_reference
       }
 
+      rule(:left_paren){
+        spaces? >> str(LPAREN) >> spaces?
+      }
+      
+      rule(:right_paren){
+        spaces? >> str(RPAREN) >> spaces?
+      }
+      
       rule(:function_call){
-        identifier >> spaces? >> str(LPAREN) >> spaces? >> field_reference.maybe >> spaces? >> str(RPAREN) >> spaces? >> identifier.as(:function_alias)
+        identifier >> left_paren >> field_reference.maybe >> right_paren >> function_alias.maybe
+      }
+      
+      rule(:function_alias){
+        identifier.as(:function_alias)
       }
 
       rule(:field_reference){
