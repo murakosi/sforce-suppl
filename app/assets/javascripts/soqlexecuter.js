@@ -674,6 +674,10 @@ const coordinates = function() {
   // Close tab
   //------------------------------------------------
   $(document).on('click', '#soqlArea .ui-closable-tab', function(e) {
+    if ($.isAjaxBusy()) {
+      return;
+    }
+    
     e.preventDefault();
 
     if ($("#soqlArea .tabArea ul li").length <= 2) {
