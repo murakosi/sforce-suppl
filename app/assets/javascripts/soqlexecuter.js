@@ -94,10 +94,12 @@ const coordinates = function() {
 
       if (e.target.id === "input_soql") {        
         executeSoql();
+        return false;
       }
 
       if ($("#soqlOverRay").is(":visible")) {
         createSObjectGrid();
+        return false;
       }
     }
 
@@ -110,6 +112,7 @@ const coordinates = function() {
     if (e.keyCode === 9) {
       if (e.target.id === "input_soql") {
         insertTab(e);
+        return false;
       }
     }
   });
@@ -122,8 +125,7 @@ const coordinates = function() {
     const start = elem.selectionStart;
     const end = elem.selectionEnd;
     elem.value = "" + (elem.value.substring(0, start)) + "\t" + (elem.value.substring(end));
-    elem.selectionStart = elem.selectionEnd = start + 1;
-    return false;
+    elem.selectionStart = elem.selectionEnd = start + 1;    
   };
   
   //------------------------------------------------
