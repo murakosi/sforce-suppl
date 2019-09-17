@@ -11,8 +11,6 @@ const coordinates = function() {
   // CreatGrid Dialog
   //------------------------------------------------
   $("#soqlArea #openCreatGridBtn").on('click', (e) => {
-    console.log(this);
-    console.log($(this));
     $("#soqlOverRay").show();
   });
 
@@ -65,11 +63,11 @@ const coordinates = function() {
     $("#soqlArea").css("margin-left","0");
   });
     
-  $('#soqlHistory').on('mouseover', 'li', (e) => {
+  $('#soqlHistory').on('mouseover', 'li', function(e) {
     $(this).attr("title", $(this).text());
   });
     
-  $('#soqlHistory').on('mouseout', 'li', (e) => {
+  $('#soqlHistory').on('mouseout', 'li', function(e) {
     $(this).attr("title", "");
   });
     
@@ -675,7 +673,7 @@ const coordinates = function() {
   //------------------------------------------------
   // Close tab
   //------------------------------------------------
-  $(document).on('click', '#soqlArea .ui-closable-tab', (e) => {
+  $(document).on('click', '#soqlArea .ui-closable-tab', function(e) {
     e.preventDefault();
 
     if ($("#soqlArea .tabArea ul li").length <= 2) {
