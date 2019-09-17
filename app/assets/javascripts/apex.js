@@ -42,7 +42,7 @@ const apex = function() {
     executeAnonymous();
   });
     
-  const executeAnonymous = () => {
+  const executeAnonymous = function() {
 
     hideMessageArea();
     selectedTabId = $("#apexArea .tabArea .ui-tabs-panel:visible").attr("tabId");
