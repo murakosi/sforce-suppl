@@ -75,7 +75,7 @@ module Soql
       }
 
       rule(:function_call){
-        identifier >> spaces? >> str(LPAREN) >> spaces? >> field_reference? >> spaces? >> str(RPAREN) >> spaces? >> identifier.as(:function_alias)
+        identifier >> spaces? >> str(LPAREN) >> spaces? >> field_reference.maybe >> spaces? >> str(RPAREN) >> spaces? >> identifier.as(:function_alias)
       }
 
       rule(:field_reference){
