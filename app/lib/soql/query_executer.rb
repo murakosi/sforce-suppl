@@ -23,7 +23,7 @@ module Soql
                 if query_all
                     query_result = Service::SoapSessionService.call(params).query_all(soql)
                 else
-                    query_result = Service::SoapSessionService.call(params).query(soql)
+                    p query_result = Service::SoapSessionService.call(params).query(soql)
                 end
             end
 
