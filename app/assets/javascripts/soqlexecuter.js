@@ -72,7 +72,7 @@ const coordinates = function() {
   });
   
   $('#soqlHistory').on('dblclick', 'li', function(e) {
-    $("#soalArea #input_soql).val($(this).text());
+    $("#soalArea #input_soql").val($(this).text());
   });
   
   //------------------------------------------------
