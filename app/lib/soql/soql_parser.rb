@@ -87,7 +87,7 @@ module Soql
       }
       
       rule(:count_all){
-        str("COUNT") >> left_paren >> right_paren >> function_alias.maybe
+        str("COUNT") >> left_paren >> right_paren
       }
       
       rule(:function_alias){
