@@ -70,7 +70,11 @@ const coordinates = function() {
   $('#soqlHistory').on('mouseout', 'li', function(e) {
     $(this).attr("title", "");
   });
-    
+  
+  $('#soqlHistory').on('dblclick', 'li', function(e) {
+    $("#soalArea #input_soql).val($(this).text());
+  });
+  
   //------------------------------------------------
   // Event on menu change
   //------------------------------------------------
