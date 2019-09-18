@@ -49,6 +49,7 @@ const coordinates = function() {
   // SOQL History
   //------------------------------------------------
   $("#soqlArea #soqlHistoryBtn").on("click", (e) => {
+    console.log($.isAjaxBusy());
     if ($("#soqlHistory").width() > 0) {
       $("#soqlHistory").width("0");
       $("#soqlArea").css("margin-left","0");
