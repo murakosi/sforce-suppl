@@ -30,7 +30,7 @@ module Soql
 
       rule(:comma) { spaces? >> str(',') >> spaces? }
       rule(:left_paren){ spaces? >> str(LPAREN) >> spaces? }
-      rule(:right_paren){ spaces? >> str(RPAREN) >> spaces? }
+      rule(:right_paren){ spaces? >> str(RPAREN) }
       rule(:anything) {match('.').repeat(1)}
 
       rule(:query){
@@ -68,11 +68,11 @@ module Soql
       }
 
       rule(:query_field){
-        field_expr.as(:name) >> spaces >> identifier.as(:alias) | field_expr.as(:name)
+        field_expr >> spaces >> identifier.as(:alias) | field_expr
       }
 
       rule(:field_expr){
-        function_call | field_reference
+        function_call.as(:func) | field_reference.as(:name)
       }
       
       rule(:function_call){
