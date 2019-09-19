@@ -250,7 +250,11 @@ module Soql
       
       #{:func=>"COUNT(ID)"@7, :alias=>"G"@17}
       rule(:func => simple(:f)){
-        {:function => nil}
+        if f.is_sym?
+          {:function => f}
+        else
+          {:function => nil}
+        end
       }
       
       rule(:func => simple(:f), :alias => simple(:als)){
@@ -258,9 +262,12 @@ module Soql
       }
       
       #:func=>{:count_ast=>"COUNT()"@7}}
-      rule(:func => subtree(:f)){
-        {:function => :count_all}
+      rule(:count_ast => simple(:f)){
+        :count_all
       }
+      #rule(:func => subtree(:f)){
+      #  {:function => :count_all}
+      #}
 
     end
   end
