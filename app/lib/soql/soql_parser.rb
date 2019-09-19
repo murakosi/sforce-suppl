@@ -10,7 +10,7 @@ module Soql
 
       p tree = parser.parse(soql.upcase)
 
-      transformer.apply(tree)
+      p transformer.apply(tree)
 
     end
 
@@ -246,6 +246,14 @@ module Soql
 
       rule(:reference => simple(:ref)){
         {:reference => ref.to_s}
+      }
+      
+      #{:func=>"COUNT(ID)"@7, :alias=>"G"@17}
+      rule(:func => simple(:f)){
+      }
+      
+      rule(:func => simple(:f), :alias => simple(:als)){
+        {:name => als.to_s}
       }
 
     end
