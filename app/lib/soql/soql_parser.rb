@@ -76,7 +76,7 @@ module Soql
       }
       
       rule(:function_call){
-        count_all.as(:count_ast) | identifier >> left_paren >> field_reference >> right_paren >> function_alias.maybe
+        count_all.as(:count_ast) | identifier >> left_paren >> field_reference >> right_paren# >> function_alias.maybe
       }
       
       rule(:count_all){
