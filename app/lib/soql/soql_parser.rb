@@ -249,8 +249,8 @@ module Soql
       }
       
       #{:func=>"COUNT(ID)"@7, :alias=>"G"@17}
-      rule(:func => simple(:f)){
-      }
+      #rule(:func => simple(:f)){
+      #}
       
       rule(:func => simple(:f), :alias => simple(:als)){
         {:name => als.to_s}
