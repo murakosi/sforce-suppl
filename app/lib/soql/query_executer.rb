@@ -33,10 +33,16 @@ module Soql
         def get_parsed_query_result(soql, query_result)
             @sobject_type = nil
             @query_fields = {}
-            parse_soql(soql)
-            @query_keys = @query_fields.keys
-            @executed_soql = soql
-            @record_count = query_result["size"]
+            if parse_soql(soql)
+                @query_keys = @query_fields.keys
+                @executed_soql = soql
+                @record_count = query_result["size"]
+            else
+                @query_keys = @query_fields.keys
+                @executed_soql = soql
+                @record_count = 1
+                query_result.store{"records" => [{"COUNT()" => query_result["size"]}]}
+            end
             records = []
 
             if query_result.nil? || query_result.blank? || !query_result.has_key?(Records)
@@ -207,6 +213,7 @@ module Soql
 
 
         def parse_soql(soql)
+            expr_count = 0
             parse_result = Soql::SoqlParser.parse(soql)
 
             @sobject_type = parse_result[:objects].first[:object_name]
@@ -215,6 +222,17 @@ module Soql
                 if field.has_key?(:sub_query)
                     sub_query = field[:sub_query]
                     @query_fields[sub_query[:object_name]] = :children
+                elsif field.has_key?(:function)
+                    function = field[:function]
+                    if function == :count_all
+                        @query_fields["COUNT()"] = :reference
+                        return false
+                    elsif function.nil?
+                        @query_fields["EXPR" + expr_count.to_s] = :reference
+                        expr_count += 1
+                    else
+                        @query_fields[field_name] = :reference
+                    end
                 else
                     field_name = field[:name]
                     if field_name == Id
@@ -226,6 +244,8 @@ module Soql
                     end
                 end
             end
+            
+            return true
         end
 =begin
         def parse_query_fields(soql)
