@@ -258,9 +258,9 @@ module Soql
       }
       
       #:func=>{:count_ast=>"COUNT()"@7}}
-      rule(:func => subtree(:tree)){
-        {:function => :count_all}
-      }
+      #rule(:func => subtree(:tree)){
+      #  {:function => :count_all}
+      #}
 
     end
   end
