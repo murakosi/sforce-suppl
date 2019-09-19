@@ -41,7 +41,7 @@ module Soql
                 @query_keys = @query_fields.keys
                 @executed_soql = soql
                 @record_count = 1
-                query_result.store{"records" => [{"COUNT()" => query_result["size"]}]}
+                query_result.store("records" => [{"COUNT()" => query_result["size"]}])
             end
             records = []
 
