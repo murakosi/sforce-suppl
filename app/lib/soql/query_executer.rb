@@ -40,7 +40,7 @@ module Soql
             else
                 @query_keys = @query_fields.keys
                 @executed_soql = soql
-                @record_count = 1
+                @record_count = "1"
                 query_result.store(Records, [{"COUNT()" => query_result["size"]}])
             end
             records = []
