@@ -250,7 +250,7 @@ module Soql
       
       #{:func=>"COUNT(ID)"@7, :alias=>"G"@17}
       rule(:func => simple(:f)){
-        if f.is_sym?
+        if f.is_a?(Symbol)
           {:function => f}
         else
           {:function => nil}
