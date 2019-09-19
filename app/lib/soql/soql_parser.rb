@@ -29,7 +29,8 @@ module Soql
       rule(:spaces?) { spaces.maybe }
 
       rule(:comma) { spaces? >> str(',') >> spaces? }
-
+      rule(:left_paren){ spaces? >> str(LPAREN) >> spaces? }
+      rule(:right_paren){ spaces? >> str(RPAREN) >> spaces? }
       rule(:anything) {match('.').repeat(1)}
 
       rule(:query){
@@ -73,21 +74,13 @@ module Soql
       rule(:field_expr){
         function_call.as(:function) | field_reference
       }
-
-      rule(:left_paren){
-        spaces? >> str(LPAREN) >> spaces?
-      }
-      
-      rule(:right_paren){
-        spaces? >> str(RPAREN) >> spaces?
-      }
       
       rule(:function_call){
         count_all.as(:count_ast) | identifier.as(:function_name) >> left_paren >> field_reference >> right_paren >> function_alias.maybe
       }
       
       rule(:count_all){
-        str("COUNT") >> left_paren >> right_paren
+        str(COUNT) >> left_paren >> spaces? >> right_paren
       }
       
       rule(:function_alias){
@@ -190,6 +183,7 @@ module Soql
       TRUE     = "TRUE"
       FALSE    = "FALSE"
       NULL     = "NULL"
+      COUNT    = "COUNT"
 
       # Date Literals
 
