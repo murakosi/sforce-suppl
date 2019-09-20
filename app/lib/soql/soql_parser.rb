@@ -32,17 +32,6 @@ module Soql
       rule(:left_paren){ spaces? >> str(LPAREN) >> spaces? }
       rule(:right_paren){ spaces? >> str(RPAREN) }
       rule(:anything) {match('.').repeat(1)}
-
-      rule(:query){
-        spaces? >> 
-        str(SELECT) >>
-        spaces? >> 
-        query_field_list.as(:fields) >>
-        spaces? >> 
-        from_clause.as(:objects) >>      
-        spaces? >>
-        anything.maybe
-      }
       
       rule(:reserved){
         reserved_word >> match('[0-9a-zA-Z_]').absent?
@@ -54,6 +43,17 @@ module Soql
         str(BY) | str(ORDER) | str(LIMIT) | str(OFFSET) | str(FOR) | 
         str(TRUE) | str(FALSE) | str(NULL)
       }
+      
+      rule(:query){
+        spaces? >> 
+        str(SELECT) >>
+        spaces? >> 
+        query_field_list.as(:fields) >>
+        spaces? >> 
+        from_clause.as(:objects) >>      
+        spaces? >>
+        anything.maybe
+      }      
 
       rule(:query_field_list){
         query_field_list_item >> comma >> query_field_list | query_field_list_item
@@ -72,14 +72,14 @@ module Soql
       }
 
       rule(:field_expr){
-        function_call.as(:func) | field_reference.as(:name)
+        function_call.as(:function) | field_reference.as(:name)
       }
       
       rule(:function_call){
-        count_all.as(:count_ast) | identifier >> left_paren >> field_reference >> right_paren# >> function_alias.maybe
+        count_call.as(:count_call) | identifier >> left_paren >> field_reference >> right_paren
       }
       
-      rule(:count_all){
+      rule(:count_call){
         str(COUNT) >> left_paren >> spaces? >> right_paren
       }
       
@@ -185,45 +185,6 @@ module Soql
       NULL     = "NULL"
       COUNT    = "COUNT"
 
-      # Date Literals
-
-      YESTERDAY = "YESTERDAY"
-      TODAY = "TODAY"
-      TOMORROW = "TOMORROW"
-      LAST_WEEK = "LAST_WEEK"
-      THIS_WEEK = "THIS_WEEK"
-      NEXT_WEEK = "NEXT_WEEK"
-      LAST_MONTH = "LAST_MONTH"
-      THIS_MONTH = "THIS_MONTH"
-      NEXT_MONTH = "NEXT_MONTH"
-      LAST_90_DAYS = "LAST_90_DAYS"
-      NEXT_90_DAYS = "NEXT_90_DAYS"
-      THIS_QUARTER = "THIS_QUARTER"
-      LAST_QUARTER = "LAST_QUARTER"
-      NEXT_QUARTER = "NEXT_QUARTER"
-      THIS_YEAR = "THIS_YEAR"
-      LAST_YEAR = "LAST_YEAR"
-      NEXT_YEAR = "NEXT_YEAR"
-      THIS_FISCAL_QUARTER = "THIS_FISCAL_QUARTER"
-      LAST_FISCAL_QUARTER = "LAST_FISCAL_QUARTER"
-      NEXT_FISCAL_QUARTER = "NEXT_FISCAL_QUARTER"
-      THIS_FISCAL_YEAR = "THIS_FISCAL_YEAR"
-      LAST_FISCAL_YEAR = "LAST_FISCAL_YEAR"
-      NEXT_FISCAL_YEAR = "NEXT_FISCAL_YEAR"
-      LAST_N_DAYS = "LAST_N_DAYS"
-      NEXT_N_DAYS = "NEXT_N_DAYS"
-      NEXT_N_WEEKS = "NEXT_N_WEEKS"
-      LAST_N_WEEKS = "LAST_N_WEEKS"
-      NEXT_N_MONTHS = "NEXT_N_MONTHS"
-      LAST_N_MONTHS = "LAST_N_MONTHS"
-      NEXT_N_QUARTERS = "NEXT_N_QUARTERS"
-      LAST_N_QUARTERS = "LAST_N_QUARTERS"
-      NEXT_N_YEARS = "NEXT_N_YEARS"
-      LAST_N_YEARS = "LAST_N_YEARS"
-      NEXT_N_FISCAL_QUARTERS = "NEXT_N_FISCAL_QUARTERS"
-      LAST_N_FISCAL_QUARTERS = "LAST_N_FISCAL_QUARTERS"
-      NEXT_N_FISCAL_YEARS = "NEXT_N_FISCAL_YEARS"
-      LAST_N_FISCAL_YEARS = "LAST_N_FISCAL_YEARS"
     end
 
     class Transformer < Parslet::Transform
@@ -232,9 +193,12 @@ module Soql
         {:object_name => o.to_s}
       }
 
-      rule(:object_name => simple(:o), :object_alias => simple(:als)) {
-        {:object_name => o.to_s, :object_alias => als.to_s }
+      rule(:object_alias => simple(:als)){
+        {:object_alias => als.to_s}
       }
+      #rule(:object_name => simple(:o), :object_alias => simple(:als)) {
+      #  {:object_name => o.to_s, :object_alias => als.to_s }
+      #}
 
       rule(:name => simple(:f)){
         {:name => f.to_s}
@@ -247,8 +211,11 @@ module Soql
       rule(:reference => simple(:ref)){
         {:reference => ref.to_s}
       }
+
+      rule(:count_call => simple(:f)){
+        :count_all
+      }
       
-      #{:func=>"COUNT(ID)"@7, :alias=>"G"@17}
       rule(:func => simple(:f)){
         if f.is_a?(Symbol)
           {:function => f}
@@ -260,14 +227,6 @@ module Soql
       rule(:func => simple(:f), :alias => simple(:als)){
         {:function => als.to_s}
       }
-      
-      #:func=>{:count_ast=>"COUNT()"@7}}
-      rule(:count_ast => simple(:f)){
-        :count_all
-      }
-      #rule(:func => subtree(:f)){
-      #  {:function => :count_all}
-      #}
 
     end
   end
