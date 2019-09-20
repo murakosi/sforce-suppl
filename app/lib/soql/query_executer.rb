@@ -59,7 +59,7 @@ module Soql
         def get_response_hash(records)
             {
                 :soql => @executed_soql,
-                :sobject => @sobject_type,
+                :sobject => @sobject_type.gsub(/\_\_[a-zA-Z]*\z/, &:downcase),
                 :records => records,
                 :record_count => @record_count,
                 :columns => @query_keys,
