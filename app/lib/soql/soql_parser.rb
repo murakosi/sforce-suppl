@@ -193,12 +193,9 @@ module Soql
         {:object_name => o.to_s}
       }
 
-      rule(:object_alias => simple(:als)){
-        {:object_alias => als.to_s}
+      rule(:object_name => simple(:o), :object_alias => simple(:als)) {
+        {:object_name => o.to_s, :object_alias => als.to_s }
       }
-      #rule(:object_name => simple(:o), :object_alias => simple(:als)) {
-      #  {:object_name => o.to_s, :object_alias => als.to_s }
-      #}
 
       rule(:name => simple(:f)){
         {:name => f.to_s}
