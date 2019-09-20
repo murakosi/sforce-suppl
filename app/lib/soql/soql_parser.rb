@@ -82,10 +82,6 @@ module Soql
       rule(:count_call){
         str(COUNT) >> left_paren >> spaces? >> right_paren
       }
-      
-      rule(:function_alias){
-        identifier.as(:function_alias)
-      }
 
       rule(:field_reference){
          identifier >> str(DOT) >> field_reference | identifier
@@ -221,7 +217,7 @@ module Soql
         end
       }
       
-      rule(:function => simple(:f), :function_alias => simple(:als)){
+      rule(:function => simple(:f), :alias => simple(:als)){
         {:function => als.to_s}
       }
 
