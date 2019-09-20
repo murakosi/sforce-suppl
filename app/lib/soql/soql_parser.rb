@@ -213,7 +213,7 @@ module Soql
         :count_all
       }
       
-      rule(:func => simple(:f)){
+      rule(:function => simple(:f)){
         if f.is_a?(Symbol)
           {:function => f}
         else
@@ -221,7 +221,7 @@ module Soql
         end
       }
       
-      rule(:func => simple(:f), :alias => simple(:als)){
+      rule(:function => simple(:f), :function_alias => simple(:als)){
         {:function => als.to_s}
       }
 
