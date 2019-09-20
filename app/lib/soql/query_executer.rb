@@ -11,6 +11,7 @@ module Soql
         Id = "ID"
         Count_all = "COUNT()"
         EXPR = "EXPR"
+        Aggregate_result = "AggregateResult"
 
         def execute_query(sforce_session, soql, tooling, query_all)
             if soql.strip.include?(";")
@@ -80,7 +81,7 @@ module Soql
 
             results.each do |result|
 
-                if result.has_key?(Type)
+                if result.has_key?(Type) && result[Type] != Aggregate_result
                     @sobject_type = result[Type]
                 end
 
