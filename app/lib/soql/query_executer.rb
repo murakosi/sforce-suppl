@@ -231,7 +231,7 @@ module Soql
                         @query_fields["EXPR" + expr_count.to_s] = :reference
                         expr_count += 1
                     else
-                        @query_fields[field_name] = :reference
+                        @query_fields[function] = :reference
                     end
                 else
                     field_name = field[:name]
