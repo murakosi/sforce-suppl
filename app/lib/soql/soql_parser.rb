@@ -8,9 +8,9 @@ module Soql
       parser = Parser.new
       transformer = Transformer.new
 
-      tree = parser.parse(soql.upcase)
+      p tree = parser.parse(soql.upcase)
 
-      transformer.apply(tree)
+      p transformer.apply(tree)
 
     end
 
