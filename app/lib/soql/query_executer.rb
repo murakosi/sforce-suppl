@@ -9,6 +9,8 @@ module Soql
         Records = "records"
         Type = "type"
         Id = "ID"
+        Count_all = "COUNT()"
+        EXPR = "EXPR"
 
         def execute_query(sforce_session, soql, tooling, query_all)
             if soql.strip.include?(";")
@@ -41,7 +43,7 @@ module Soql
                 @query_keys = @query_fields.keys
                 @executed_soql = soql
                 @record_count = "1"
-                query_result.store(Records, [{"COUNT()" => query_result["size"]}])
+                query_result.store(Records, [{Count_all => query_result["size"]}])
             end
             records = []
 
@@ -221,24 +223,24 @@ module Soql
             parse_result[:fields].each do |field|
                 if field.has_key?(:sub_query)
                     sub_query = field[:sub_query]
-                    @query_fields[sub_query[:object_name]] = :children
+                    @query_fields[sub_query[:object_name]] = :read_only
                 elsif field.has_key?(:function)
                     function = field[:function]
                     if function == :count_all
-                        @query_fields["COUNT()"] = :reference
+                        @query_fields[Count_all] = :read_only
                         return false
                     elsif function.nil?
-                        @query_fields["EXPR" + expr_count.to_s] = :reference
+                        @query_fields[EXPR + expr_count.to_s] = :read_only
                         expr_count += 1
                     else
-                        @query_fields[function] = :reference
+                        @query_fields[function] = :read_only
                     end
                 else
                     field_name = field[:name]
                     if field_name == Id
-                        @query_fields[field_name] = :id
+                        @query_fields[field_name] = :read_only
                     elsif field_name.include?(".")
-                        @query_fields[field_name] = :reference
+                        @query_fields[field_name] = :read_only
                     else
                         @query_fields[field_name] = :text
                     end
@@ -294,7 +296,8 @@ module Soql
             @query_fields.each do |k,v|
                 if !updatable
                     column_options << {:readOnly => true, :type => "text"}
-                elsif v == :id || v == :children || v == :reference
+                #elsif v == :id || v == :children || v == :reference
+                elsif v == :read_only
                     column_options << {:readOnly => true, :type => "text"}
                 else
                     column_options << {:readOnly => false, :type => "text"}
