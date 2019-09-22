@@ -50,17 +50,14 @@ const coordinates = function() {
   //------------------------------------------------
   $("#soqlArea #soqlHistoryBtn").on("click", (e) => {
     if ($("#soqlHistory").width() > 0) {
-      $("#soqlHistory").width("0");
-      $("#soqlArea").css("margin-left","0");
+      closeSoqlHistory();
     } else {
-      $("#soqlHistory").width("250px");
-      $("#soqlArea").css("margin-left","150px");
+      openSoqlHistory();
     }
   });
       
   $("#soqlHistory .closebtn").on("click", (e) => {
-    $("#soqlHistory").width("0");
-    $("#soqlArea").css("margin-left","0");
+    closeSoqlHistory();
   });
     
   $('#soqlHistory').on('mouseover', 'li', function(e) {
@@ -74,6 +71,18 @@ const coordinates = function() {
   $('#soqlHistory').on('dblclick', 'li', function(e) {
     $("#soqlArea #input_soql").val($(this).text());
   });
+
+  const openSoqlHistory = () => {
+    $(".closebtn").show();
+    $("#soqlHistory").width("250px");
+    $("#soqlArea").css("margin-left","150px");
+  };
+
+  const closeSoqlHistory = () => {
+    $(".closebtn").hide();
+    $("#soqlHistory").width("0");
+    $("#soqlArea").css("margin-left","0");    
+  };
   
   //------------------------------------------------
   // Event on menu change
@@ -879,6 +888,7 @@ const coordinates = function() {
   $("#soqlArea .tabArea").tabs(); 
   $("#soqlTabs").sortable({items: 'li:not(.add-tab-li)', delay: 150});
   createTab();
+
 };
 
 $(document).ready(coordinates);

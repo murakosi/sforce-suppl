@@ -113,7 +113,20 @@
 .sidenav {
     height: 100%;
     width: 0;
-    position: fixed;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #fafafb;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    transition: 0.2s;
+    border-right: 1px solid #aaa;
+    z-index: 3000;
+    bottom: 0;
+    /*
+    height: 100%;
+    width: 0;
+    position: absolute;
     top: 45px;
     left: 0;
     background-color: #fafafb;
@@ -123,6 +136,7 @@
     transition: 0.2s;  
     border-right: 1px solid #aaa;
     z-index: 3000;
+    */
 }
 
 .sidenav ul{
@@ -173,15 +187,32 @@
 }
 
 .sidenav .soql-history-title{
+    font-size: 14px;
+    color: #000;
+    border-bottom: 1px solid #ccc;
+    padding-left: 15px;
+    /* padding-bottom: 5px; */
+    margin: 0;
+    font-family: Meiryo;
+    height: 5%;
+    width: 100%;
+    vertical-align: middle;
+    /*
     position: relative;
     top: 5px;
     font-size: 14px;
     color: #000;
     border-bottom:1px solid #ccc;
     padding-left: 15px;
-    padding-bottom: 5px;
+    padding-bottom: 5px;*
     margin:0;
     font-family: Meiryo;
+    */
+}
+
+.soql-list{
+    overflow-y: auto;
+    height: 95%;
 }
 
 @media screen and (max-height: 450px) {

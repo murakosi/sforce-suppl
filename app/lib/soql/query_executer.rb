@@ -196,14 +196,12 @@ module Soql
         
         def skip?(key, value)
             if Exclude_key_names.include?(key.to_s.downcase)
-                return true
+                true
+            elsif key.to_s.upcase == Id && value.nil?
+                true
+            else
+                false
             end
-
-            if key.to_s.upcase == Id && value.nil?
-                return true
-            end
-
-            return false
         end
 
         def remove_duplicate_id(key, value)            
@@ -250,46 +248,7 @@ module Soql
             
             return true
         end
-=begin
-        def parse_query_fields(soql)
 
-            fields = []
-            soql = soql.gsub(/(\r|\n|\r\n)/mi, ' ')
-
-            start_position = soql.index(Select_with_space) + Select.size
-            end_position = soql.rindex(From_with_space) - 1
-            soql = soql[start_position..end_position]
-
-            sub_queries = soql.scan(/\((.*?)\)/mi).flatten
-
-            main_soql = soql.gsub(/\((.*?)\)/mi, "").gsub(/\s+/, '').strip
-
-            main_soql.split(",").reject(&:empty?).each{|str| generate_query_fields(str)}
-
-            if !sub_queries.nil?
-                sub_queries.each{|str| generate_query_fields(str[/#{From_with_space}(.*?)(#{Where_with_space}|$)/mi, 1], :children)}
-            end
-
-            upcase_soql = soql.upcase
-
-            field_type_array = @query_fields.sort{|(k1, v1), (k2, v2)| upcase_soql.index(k1) <=> upcase_soql.index(k2) }
-            @query_fields = Hash[*field_type_array.flatten(1)]
-        end
-
-        def generate_query_fields(field_name, type = nil)
-            field_name.upcase!
-            if !type.nil?
-                @query_fields[field_name] = type
-            elsif field_name == Id
-                @query_fields[field_name] = :id
-            elsif field_name.include?(".")
-                @query_fields[field_name] = :reference
-            else
-                @query_fields[field_name] = :text
-            end
-            
-        end
-=end        
         def generate_column_options
             column_options = []
             updatable = @query_fields.has_key?(Id)
@@ -297,7 +256,6 @@ module Soql
             @query_fields.each do |k,v|
                 if !updatable
                     column_options << {:readOnly => true, :type => "text"}
-                #elsif v == :id || v == :children || v == :reference
                 elsif v == :read_only
                     column_options << {:readOnly => true, :type => "text"}
                 else
