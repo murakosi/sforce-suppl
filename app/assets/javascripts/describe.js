@@ -48,6 +48,7 @@ const describe = () => {
     $("#sobjectTypeCheckBox_all").prop("disabled", true);
     $("#sobjectTypeCheckBox_standard").prop("disabled", true);
     $("#sobjectTypeCheckBox_custom").prop("disabled", true);
+    $("#executeDescribeBtn").prop("disabled", true);
   };
 
   const enableOptions = () => {
@@ -55,6 +56,7 @@ const describe = () => {
     $("#sobjectTypeCheckBox_all").prop("disabled", false);
     $("#sobjectTypeCheckBox_standard").prop("disabled", false);
     $("#sobjectTypeCheckBox_custom").prop("disabled", false);
+    $("#executeDescribeBtn").prop("disabled", false);
   };
 
   //------------------------------------------------

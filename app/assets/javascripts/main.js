@@ -89,7 +89,7 @@ const mains = function() {
   };
 
   $("a#refreshDescribe").on("click", function(e) {
-    return false;
+    
   });
   
   refreshSObjectLists();
