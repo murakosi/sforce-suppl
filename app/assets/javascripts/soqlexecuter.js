@@ -888,6 +888,10 @@ const coordinates = function() {
   $("#soqlArea .tabArea").tabs(); 
   $("#soqlTabs").sortable({items: 'li:not(.add-tab-li)', delay: 150});
   createTab();
+  
+  for(let i = 0; i<200;i++){
+    $("#soqlHistory ul").append('<li>aaaaaaaaaaaaaaaaaaa</li>');
+  }
 
 };
 
