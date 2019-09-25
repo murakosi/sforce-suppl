@@ -182,7 +182,6 @@
     padding-top: 25px;
     width: 100%;
     vertical-align: middle;
-    height: 50px;
     /*
     position: relative;
     top: 5px;
@@ -197,14 +196,8 @@
 }
 
 .soql-list{
-    /*overflow-y: auto;
-    height: 85%;*/
     overflow-y: auto;
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    width: 250px;
-    margin-top: 95px;	
+    height: 85%;	
 }
 
 @media screen and (max-height: 450px) {
