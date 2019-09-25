@@ -179,9 +179,10 @@
     padding-left: 15px;
     margin: 0;
     font-family: Meiryo;
-    padding-top: 25px;
+    /*padding-top: 25px;*/
     width: 100%;
     vertical-align: middle;
+	height:25px;
     /*
     position: relative;
     top: 5px;
@@ -197,7 +198,12 @@
 
 .soql-list{
     overflow-y: auto;
-    height: 85%;	
+    /*height: 85%;	*/
+    overflow-y: auto;
+    position: absolute;
+    top: 35px;
+    bottom: 45px;
+    width: 100%;	
 }
 
 @media screen and (max-height: 450px) {
