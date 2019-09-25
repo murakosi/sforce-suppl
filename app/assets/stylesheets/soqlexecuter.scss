@@ -119,7 +119,7 @@
     background-color: #fafafb;
     overflow-x: hidden;
     overflow-y: auto;
-    padding-top: 10px;
+    /*padding-top: 10px;*/
     transition: 0.2s;  
     border-right: 1px solid #aaa;
     z-index: 3000;
@@ -182,7 +182,7 @@
     /*padding-top: 25px;*/
     width: 100%;
     vertical-align: middle;
-	height:25px;
+	height:40px;
     /*
     position: relative;
     top: 5px;
@@ -201,7 +201,7 @@
     /*height: 85%;	*/
     overflow-y: auto;
     position: absolute;
-    top: 35px;
+    top: 40px;
     bottom: 45px;
     width: 100%;	
 }
