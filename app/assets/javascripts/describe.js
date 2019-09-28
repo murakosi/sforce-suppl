@@ -230,11 +230,13 @@ const describe = () => {
     const records = getRows(json);
     const columnsOption = getColumnsOption(json);
     const height = json ? 500 : 0;
+    const colwidth = getColWidths(json);
 
     const hotSettings = {
         data: records,
         //height: height,
         //stretchH: 'all',
+        colWidths: colwidth,
         autoWrapRow: true,
         manualRowResize: false,
         manualColumnResize: true,
@@ -291,6 +293,28 @@ const describe = () => {
 
     return null;
   };
+
+  const getColWidths = (json) => {
+    if (!json || !json.columns){
+      return null;
+    }
+      
+    let widths = [];
+    for(let column of json.columns){
+      widths.push(getTextWidth(column, "20pt Verdana,Arial,sans-serif"));
+    }
+
+    //return Math.max.apply(null, widths);
+    return widths;
+  };
+
+  const getTextWidth = (text, font) => {
+    const canvas = getTextWidth.canvas || (getTextWidth.canvas = document.createElement("canvas"));
+    const context = canvas.getContext("2d");
+    context.font = font;
+    const metrics = context.measureText(text);
+    return metrics.width;
+  };  
 
   if ($("#describeArea").length) {
     $("#describeArea .tabArea").tabs();

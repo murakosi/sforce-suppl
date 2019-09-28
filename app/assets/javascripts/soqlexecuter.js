@@ -545,7 +545,8 @@ const coordinates = function() {
     
   const removeRow = () => {
     const elementId = getActiveGridElementId();
-    if (!sObjects[elementId] || !sObjects[elementId].editable) {
+    const sobject = sObjects[elementId];
+    if (!sobject || !sobject.editable) {
       return;
     }
 
@@ -556,13 +557,19 @@ const coordinates = function() {
       return false;
     }
 
+    const tempId = grid.getCellMeta(selectedCell.row, sobject.idColumnIndex).tempId;
+
+    if (!tempId) {
+      return false;
+    }
+
     grid.alter('remove_row', selectedCell.row, 1);
     grid.selectCell(getValidRowAfterRemove(selectedCell, grid), selectedCell.col);
   };
     
   const onBeforeRemoveRow = (index, amount, physicalRows, source) => {
     if (physicalRows.length !== 1) {
-      return false;
+      return true;
     }
 
     const rowIndex = physicalRows[0];
@@ -572,13 +579,10 @@ const coordinates = function() {
     const grid = grids[elementId];
     const tempId = grid.getCellMeta(rowIndex, sobject.idColumnIndex).tempId;
 
-    if (!tempId) {
-      return false;
-    }
-
     if (sobject.editions[tempId]) {
       delete sobject.editions[tempId];    
     }
+    return true;
   };
     
   const getSelectedCell = (grid) => {

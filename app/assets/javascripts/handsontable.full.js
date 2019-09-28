@@ -99631,7 +99631,20 @@ function (_BaseUI) {
      * @param {DOMEvent} event
      */
 
-  }, {
+  }, /*{
+    key: "onClearAllClick",
+    value: function onClearAllClick(event) {      
+      event.preventDefault();
+      var filteredItems = (0, _toConsumableArray2.default)(this.items);
+      this.itemsBox.loadData(filteredItems);    
+      (0, _array.arrayEach)(this.itemsBox.getSourceData(), function (row) {
+        row.checked = false;
+      });      
+      this.itemsBox.render();
+    }
+    */
+    // murakoshi
+    {
     key: "onClearAllClick",
     value: function onClearAllClick(event) {      
       event.preventDefault();
@@ -99639,11 +99652,11 @@ function (_BaseUI) {
       var filteredItems = (0, _toConsumableArray2.default)(this.items);
       this.itemsBox.loadData(filteredItems);
       this.reset();
-      /*
+      
       (0, _array.arrayEach)(this.itemsBox.getSourceData(), function (row) {
-        row.checked = false;
+        row.checked = true;
       });
-      */
+      
       this.itemsBox.render();
     }
   }]);
