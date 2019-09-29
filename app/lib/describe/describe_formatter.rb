@@ -8,6 +8,7 @@ module Describe
                     digits scale precision custom unique 
                     case_sensitive nillable inline_help_text 
                     default_value_formula] 
+                    
         Exclude_header = [:byte_length, :creatable, :defaulted_on_create,
                         :deprecated_and_hidden, :filterable, :groupable,
                         :id_lookup,:name_field, :name_pointing, :restricted_picklist,
@@ -16,25 +17,26 @@ module Describe
                         ]
 
         def format(field_result)
-            @translation = Translations::TranslationLocator.instance[:describe_field_result]
-            get_values(field_result)
+            full_path = Service::ResourceLocator.call(:describe_types)
+            @type_mapping = YAML.load_file(full_path).deep_symbolize_keys
+            format_result(field_result)
         end
 
         private
 
-            def get_values(field_result)
-                Array[field_result].flatten.each{ |hash| translate_value(hash) }.map{|hash| hash.slice(*Key_order)}
+            def format_result(field_result)
+                Array[field_result].flatten.each{ |hash| convert_result(hash) }.map{|hash| hash.slice(*Key_order)}
                             .map{|hash| hash.reject{|k,v| Exclude_header.include?(k) } }
             end
 
-            def translate_value(raw_hash)
+            def convert_result(raw_hash)
 
                 add_missing_key(raw_hash)
 
-                translate_key = raw_hash[:type].to_sym
-                if @translation.has_key?(translate_key)
-                    type = get_type_name(raw_hash, @translation[translate_key][:label])
-                    length = get_length_name(raw_hash, @translation[translate_key][:type])
+                map_key = raw_hash[:type].to_sym
+                if @type_mapping.has_key?(map_key)
+                    type = get_type(raw_hash, @type_mapping[map_key][:label])
+                    length = get_length(raw_hash, @type_mapping[map_key][:type])
                 else
                     type = raw_hash[:type]
                     length = nil
@@ -44,15 +46,6 @@ module Describe
                     picklist_values = raw_hash[:picklist_values]                    
                     raw_hash[:picklist_values] = get_picklist_values(picklist_values)
                     raw_hash[:picklist_lables] = get_picklist_labels(picklist_values)
-                end
-
-                if raw_hash[:type] == "reference"
-                    if raw_hash[:reference_to].kind_of?(Array)
-                        reference_value = raw_hash[:reference_to].join("\n")
-                    else
-                        reference_value = raw_hash[:reference_to]
-                    end
-                    raw_hash[:reference_to] = reference_value
                 end
 
                 raw_hash[:type] = type
@@ -124,38 +117,20 @@ module Describe
                 raw_hash
             end
 
-            # unsed
-            def get_type_name(raw_hash, raw_type_name)
+            def get_type(raw_hash, raw_type_name)
 
                 if raw_hash[:auto_number]
-                    return @translation[:auto_number][:label]
+                    return @type_mapping[:auto_number][:label]
                 end
 
                 if raw_hash[:calculated]
-                    return @translation[:formula][:label] + "(" + raw_type_name + ")"
+                    return @type_mapping[:formula][:label] + "(" + raw_type_name + ")"
                 end
 
-                if raw_hash[:external_id]
-                    return @translation[:external_id][:label]
-                end
-=begin
-                if raw_hash[:type] == "reference"
-                    if raw_hash[:reference_to].kind_of?(Array)
-                        reference_value = raw_hash[:reference_to].join(",\n")
-                    else
-                        reference_value = raw_hash[:reference_to]
-                    end
-                    return raw_type_name + "（" + reference_value + "）"
-                end
-=end
                 return raw_type_name
             end
             
-            def get_length_name(raw_hash, data_type)
-
-                if data_type.empty?
-                    return data_type
-                end
+            def get_length(raw_hash, data_type)
 
                 if data_type == "string"
                     return raw_hash[:length].to_s;
@@ -172,7 +147,7 @@ module Describe
                     return size.to_s + ',' + scale.to_s
                 end
 
-                raise StandardError.new("No datatype specified")
+                nil
             end
         end
     end

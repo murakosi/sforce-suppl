@@ -125,10 +125,16 @@ const describe = () => {
 
   const processSuccessResult = (json) => {
     hideMessageArea();
-    $("#describeArea #overview" + selectedTabId).html(getExecutedMethod(json));
+    $("#describeArea #overview" + selectedTabId).html(getDescribeInfo(json));
     const elementId = "#describeArea #describeGrid" + selectedTabId;
     sObjects[elementId] = json.sobject_name;
     createGrid(elementId, json);
+  };
+
+  const getDescribeInfo = (json) => {
+    return '<label class="noselect">Label：</label>' + json.sobject_label + '<br>' +
+           '<label class="noselect">API Name：</label>' + json.sobject_name + '<br>' +
+           '<label class="noselect">Prefix：</label>' + json.sobject_prefix;
   };
 
   const refreshSelectOptions = (result) => {
@@ -158,9 +164,13 @@ const describe = () => {
   };
 
   //------------------------------------------------
-  // Create tab
+  // Close tab
   //------------------------------------------------
   $(document).on('click', '#describeArea .ui-closable-tab', function(e) {
+    if ($.isAjaxBusy()) {
+      return false;
+    }
+
     e.preventDefault();
 
     if ($("#describeArea .tabArea ul li").length <= 2) {
@@ -172,6 +182,9 @@ const describe = () => {
     $("#describeArea .tabArea").tabs("refresh");
   });
 
+  //------------------------------------------------
+  // Create tab
+  //------------------------------------------------
   $('#describeArea .add-tab-btn').on('click', function(e) {
     e.preventDefault();
     createTab();
@@ -230,13 +243,13 @@ const describe = () => {
     const records = getRows(json);
     const columnsOption = getColumnsOption(json);
     const height = json ? 500 : 0;
-    const colwidth = getColWidths(json);
+    //const colwidth = getColWidths(json);
 
     const hotSettings = {
         data: records,
         //height: height,
         //stretchH: 'all',
-        colWidths: colwidth,
+        colWidths: "200px",
         autoWrapRow: true,
         manualRowResize: false,
         manualColumnResize: true,
@@ -278,14 +291,6 @@ const describe = () => {
     return null;
   };
 
-  const getExecutedMethod = (json) => {
-    if (json && json.method){
-      return json.method;
-    }
-
-    return null;
-  };
-
   const getColumnsOption = (json) => {
     if (json && json.column_options) {
       return json.column_options
@@ -304,7 +309,6 @@ const describe = () => {
       widths.push(getTextWidth(column, "20pt Verdana,Arial,sans-serif"));
     }
 
-    //return Math.max.apply(null, widths);
     return widths;
   };
 

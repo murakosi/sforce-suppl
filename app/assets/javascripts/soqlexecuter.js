@@ -836,14 +836,6 @@ const coordinates = function() {
       data.unshift(sobject.columns);
     }
   };
-    
-  const setColWidth = (i) => {
-    if (i === 0) {
-      return 30;
-    } else {
-      return 200;
-    }
-  };
   
   const getColumns = (json) => {
     if (json && json.columns){

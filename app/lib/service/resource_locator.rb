@@ -22,6 +22,8 @@ module Service
                 file_name = "value_type_mappings.yml"
             when :enums
                 file_name = "enums.yml"
+            when :describe_types
+                file_name = "describe_label_type_map.yml"
         	else
         		file_name = param
         	end

@@ -4,10 +4,7 @@ class DescribeController < ApplicationController
   
     before_action :require_sign_in!
 
-    protect_from_forgery :except => [:change, :describe, :download]
-
-    def show
-    end
+    protect_from_forgery :except => [:change, :describe]
 
     def change
         sobject_type = params[:object_type]
@@ -41,21 +38,14 @@ class DescribeController < ApplicationController
     def response_json(describe_result, formatted_result)
         {
             :sobject_name => describe_result[:name],
-            :method => get_sobject_info(describe_result),
+            :sobject_label => describe_result[:label].to_s,
+            :sobject_prefix => describe_result[:key_prefix].to_s,
             :columns => formatted_result.first.keys,
             :rows => formatted_result.each{ |hash| hash.values}
         }
     end
 
-    def get_sobject_info(describe_result)
-        #info = "<label class=\"noselect\">Label：</label>" + describe_result[:label].to_s + "\n" +
-        #      "<label class=\"noselect\">API Name：</label>" + describe_result[:name].to_s + "\n" +
-        #      "<label class=\"noselect\">Prefix：</label>" + describe_result[:key_prefix].to_s
-        info = "<label class=\"noselect\">Label：</label>" + describe_result[:label].to_s + "<br>" +
-              "<label class=\"noselect\">API Name：</label>" + describe_result[:name].to_s + "<br>" +
-              "<label class=\"noselect\">Prefix：</label>" + describe_result[:key_prefix].to_s       
-    end
-  
+=begin  
     def download
         sobject = params[:selected_sobject]
 
@@ -109,4 +99,6 @@ class DescribeController < ApplicationController
             :status => 200
         )
     end
+=end
+
 end
