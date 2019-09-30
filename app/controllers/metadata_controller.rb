@@ -1,9 +1,9 @@
+require "cgi"
 
 class MetadataController < ApplicationController
     include Metadata::Formatter
     include Metadata::Crud
     include Metadata::SessionController
-    include Generator::GridDataGenerator
 
     before_action :require_sign_in!
 
@@ -45,21 +45,43 @@ class MetadataController < ApplicationController
 
         field_types = get_metadata_value_type(sforce_session, metadata_type)
         formatted_field_types = format_field_type_result(sforce_session, metadata_type, field_types)
-        crud_info = api_crud_info(field_types)
-        parent_tree_nodes = format_parent_tree_nodes(crud_info, formatted_list)            
+        crud_info = get_crud_info(field_types)
+        parent_tree_nodes = format_parent_tree_nodes(crud_info, formatted_list)
         clear_session(metadata_type, formatted_field_types)
 
-        list_response_json(metadata_type, formatted_list, parent_tree_nodes, formatted_field_types, crud_info)
+        get_list_response(metadata_type, formatted_list, parent_tree_nodes, formatted_field_types, crud_info)
     end
 
-    def list_response_json(metadata_type, formatted_list, parent_tree_nodes, field_types, crud_info)
+    def get_list_response(metadata_type, formatted_list, parent_tree_nodes, field_types, crud_info)
         {
             :fullName => metadata_type,
-            :list_grid => list_grid_column_options(formatted_list),
+            :metadata_list => get_list_result(formatted_list),
             :tree => parent_tree_nodes,
             :crud_info => crud_info
         }
     end
+
+    def get_list_result(metadata_list)
+        column_options = [{:type => "checkbox", :readOnly => false, :className => "htCenter htMiddle"}]
+        metadata_list.first.keys.size.times{column_options << {type: "text", readOnly: true}}
+        {
+            :rows => metadata_list.map{|hash| [false] + hash.values.map{|value| unescape(value)}},
+            :column_options => column_options,
+            :columns => [""] + metadata_list.first.keys
+        }
+    end
+
+    def get_crud_info(type_fields)
+        type_fields.reject{|k, v| k == :value_type_fields}
+    end
+
+    def unescape(value)
+        if value.is_a?(Nori::StringWithAttributes) || value.is_a?(String)
+            CGI.unescape(value)
+        else
+            value
+        end
+    end    
 
     def edit
         metadata_type = params[:metadata_type]
@@ -89,10 +111,11 @@ class MetadataController < ApplicationController
         when Metadata::CrudType::Read
             try_read(metadata_type)
         when Metadata::CrudType::Update
+            change_metadata(crud_type, metadata_type)
         when Metadata::CrudType::Delete
             change_metadata(crud_type, metadata_type)
         else
-            raise StandardError.new("Invalid crud type")
+            render :json => {:error => "Invalid crud type"}, :status => 400
         end 
     end
 
@@ -103,13 +126,13 @@ class MetadataController < ApplicationController
             when Metadata::CrudType::Update
                 result = try_update(metadata_type)
             when Metadata::CrudType::Delete
-                result ~ try_delete(metadata_type)
+                result = try_delete(metadata_type)
             end                 
             render :json => {:message => result[:message], :refresh_required => result[:refresh_required]}, :status => 200
         rescue StandardError => ex
             print_error(ex)
             render :json => {:error => ex.message}, :status => 400
-        end        
+        end
     end
 
     def try_read(metadata_type)
@@ -192,7 +215,6 @@ class MetadataController < ApplicationController
     end
 
     def check_deploy_status
-
         begin
             deploy_result = Metadata::Deployer.check_deploy_status(true)
             render :json => {:id => deploy_result[:id], :done => deploy_result[:done], :result => deploy_result[:result], :details => deploy_result[:details]}, :status => 200

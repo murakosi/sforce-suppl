@@ -10,11 +10,11 @@ const describe = () => {
   //------------------------------------------------
   // Shortcut keys
   //------------------------------------------------
-  $(window).on('keydown', function(e) {
+  $(window).on("keydown", (e) => {
 
     if ($("#describeArea").is(":visible")) {
 
-      if (e.ctrlKey && (e.key === 'r' || e.keyCode === 13)) {
+      if (e.ctrlKey && (e.key === "r" || e.keyCode === 13)) {
         executeDescribe();
         return false;
       }
@@ -24,20 +24,20 @@ const describe = () => {
   //------------------------------------------------
   // change custom/standard
   //------------------------------------------------
-  $('.sobjectTypeCheckBox').on('click', function(e) {
+  $(".sobjectTypeCheckBox").on("click", (e) => {
     if ($.isAjaxBusy()) {
       return false;
     }
   });
   
-  $('.sobjectTypeCheckBox').on('change', function(e) {
+  $(".sobjectTypeCheckBox").on("change", (e) => {
     e.stopPropagation();
     e.preventDefault();
 
     disableOptions();
     const val = {object_type: e.target.value};
-    const action = $('#filterSObjectList').attr('action');
-    const method = $('#filterSObjectList').attr('method');
+    const action = $("#filterSObjectList").attr("action");
+    const method = $("#filterSObjectList").attr("method");
     const options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType, false);
     const callbacks = $.getAjaxCallbacks(refreshSelectOptions, displayError, null);
     $.executeAjax(options, callbacks, true);
@@ -62,7 +62,7 @@ const describe = () => {
   //------------------------------------------------
   // describe
   //------------------------------------------------
-  $('#executeDescribeBtn').on('click', function(e) {
+  $("#executeDescribeBtn").on("click", (e) => {
     e.preventDefault();
     executeDescribe();
   });
@@ -72,13 +72,14 @@ const describe = () => {
       return false;
     }
 
+    hideMessageArea();
     selectedTabId = getActiveTabElementId();
-    const sobject = $('#describeArea #sobject_selection').val();
+    const sobject = $("#describeArea #sobject_selection").val();
     if (sobject) {
       disableOptions();
       const val = {selected_sobject: sobject};
-      const action = $('#executeDescribeBtn').attr('action');
-      const method = $('#executeDescribeBtn').attr('method');
+      const action = $("#executeDescribeBtn").attr("action");
+      const method = $("#executeDescribeBtn").attr("method");
       const options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType);
       const callbacks = $.getAjaxCallbacks(processSuccessResult, displayError, null);
       $.executeAjax(options, callbacks);
@@ -88,21 +89,21 @@ const describe = () => {
   //------------------------------------------------
   // CSV Download
   //------------------------------------------------
-  $('#describeArea .export-btn').on('click', function(e) {
+  $("#describeArea .export-btn").on("click", (e) => {
     const elementId = getActiveGridElementId();
     const sobjectName = sObjects[elementId];
     if (sobjectName) {
       const hotElement = getActiveGrid();
-      hotElement.getPlugin('exportFile').downloadFile('csv', {
+      hotElement.getPlugin("exportFile").downloadFile("csv", {
           bom: false,
-          columnDelimiter: ',',
+          columnDelimiter: ",",
           columnHeaders: true,
           exportHiddenColumns: false,
           exportHiddenRows: false,
-          fileExtension: 'csv',
+          fileExtension: "csv",
           filename: sobjectName,
-          mimeType: 'text/csv',
-          rowDelimiter: '\r\n',
+          mimeType: "text/csv",
+          rowDelimiter: "\r\n",
           rowHeaders: false
       });
     }
@@ -120,11 +121,9 @@ const describe = () => {
   const hideMessageArea = () => {
     $("#describeArea .messageArea").empty();
     $("#describeArea .messageArea").hide();
-    enableOptions();
   };
 
   const processSuccessResult = (json) => {
-    hideMessageArea();
     $("#describeArea #overview" + selectedTabId).html(getDescribeInfo(json));
     const elementId = "#describeArea #describeGrid" + selectedTabId;
     sObjects[elementId] = json.sobject_name;
@@ -138,11 +137,11 @@ const describe = () => {
   };
 
   const refreshSelectOptions = (result) => {
-    $('#describeArea .sobject-select-list').html(result);
-    $('#describeArea .sobject-select-list').select2({
+    $("#describeArea .sobject-select-list").html(result);
+    $("#describeArea .sobject-select-list").select2({
         dropdownAutoWidth : true,
-        width: 'element',
-        containerCssClass: ':all:',
+        width: "element",
+        containerCssClass: ":all:",
         placeholder: "Select an sObject",
         allowClear: true
       });
@@ -166,7 +165,7 @@ const describe = () => {
   //------------------------------------------------
   // Close tab
   //------------------------------------------------
-  $(document).on('click', '#describeArea .ui-closable-tab', function(e) {
+  $(document).on("click", "#describeArea .ui-closable-tab", function(e) {
     if ($.isAjaxBusy()) {
       return false;
     }
@@ -185,7 +184,7 @@ const describe = () => {
   //------------------------------------------------
   // Create tab
   //------------------------------------------------
-  $('#describeArea .add-tab-btn').on('click', function(e) {
+  $("#describeArea .add-tab-btn").on("click", (e) => {
     e.preventDefault();
     createTab();
   });
@@ -243,27 +242,23 @@ const describe = () => {
     const records = getRows(json);
     const columnsOption = getColumnsOption(json);
     const height = json ? 500 : 0;
-    //const colwidth = getColWidths(json);
 
     const hotSettings = {
         data: records,
-        //height: height,
-        //stretchH: 'all',
         colWidths: "200px",
         autoWrapRow: true,
         manualRowResize: false,
         manualColumnResize: true,
         rowHeaders: true,
         colHeaders: header,
-        //columns: columnsOption,
         contextMenu: false,
         readOnly: true,
         startRows: 0,
-        fragmentSelection: 'cell',
+        fragmentSelection: "cell",
         columnSorting: true,
         filters: true,
-        dropdownMenu: ['filter_action_bar', 'filter_by_value'],
-        licenseKey: 'non-commercial-and-evaluation'
+        dropdownMenu: ["filter_action_bar", "filter_by_value"],
+        licenseKey: "non-commercial-and-evaluation"
     };
 
     const hot = new Handsontable(hotElement, hotSettings);
@@ -322,10 +317,10 @@ const describe = () => {
 
   if ($("#describeArea").length) {
     $("#describeArea .tabArea").tabs();
-    $("#describeTabs").sortable({items: 'li:not(.add-tab-li)', delay: 150});
+    $("#describeTabs").sortable({items: "li:not(.add-tab-li)", delay: 150});
     createTab();
   }
 };
 
 $(document).ready(describe);
-$(document).on('page:load', describe);
+$(document).on("page:load", describe);

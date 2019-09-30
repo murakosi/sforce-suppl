@@ -22,11 +22,25 @@
 }
 
 #deployMetadataOptions{
-    font-size: 9pt; font-family:Arial;
+    font-size: 9pt;
+    font-family:Arial;
 }
 
 .metadata-file-field{
     padding-left: 0;
+}
+
+.metadata-file-field.focus, .metadata-file-field:focus{
+    outline: 0 !important;
+    box-shadow: none !important;
+}
+
+.deploy-option-lable{
+    margin-right: 5px;
+}
+
+.deploy-option{
+    vertical-align: bottom;
 }
 
 /* ------------------------------

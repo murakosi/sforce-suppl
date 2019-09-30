@@ -1,4 +1,4 @@
-const coordinates = function() {
+const soql = function() {
   
   let currentTabIndex = 0;
   const grids = {};
@@ -8,24 +8,70 @@ const coordinates = function() {
   const defaultContentType = null;
 
   //------------------------------------------------
+  // Event on menu change
+  //------------------------------------------------
+  $(document).on("displayChange", (e, param) => {
+    if (param.targetArea = THIS_AREA) {
+      const elementId = getActiveGridElementId();
+      const grid = grids[elementId];
+      if (grid) {
+        grid.render();
+      }
+    }
+  });
+    
+  //------------------------------------------------
+  // Shortcut keys
+  //------------------------------------------------
+  $(window).on("keydown", (e) => {
+    
+    if (e.ctrlKey && (e.key === "r" || e.keyCode === 13)) {
+      e.preventDefault();
+
+      if (e.target.id === "input_soql") {        
+        executeSoql();
+        return false;
+      }
+
+      if ($("#soqlOverRay").is(":visible")) {
+        createSObjectGrid();
+        return false;
+      }
+    }
+
+    if (e.keyCode === 27) {
+      if ($("#soqlOverRay").is(":visible")) {
+        $("#soqlOverRay").hide();
+      }
+    }
+  
+    if (e.keyCode === 9) {
+      if (e.target.id === "input_soql") {
+        insertTab(e);
+        return false;
+      }
+    }
+  });
+
+  //------------------------------------------------
   // CreatGrid Dialog
   //------------------------------------------------
-  $("#soqlArea #openCreatGridBtn").on('click', (e) => {
+  $("#soqlArea #openCreatGridBtn").on("click", (e) => {
     $("#soqlOverRay").show();
   });
 
-  $("#creatGridArea #cancelCreateBtn").on('click', (e) => {
+  $("#creatGridArea #cancelCreateBtn").on("click", (e) => {
     $("#soqlOverRay").hide();
   });
 
-  $("#creatGridArea #createGridBtn").on('click', (e) => {
+  $("#creatGridArea #createGridBtn").on("click", (e) => {
     createSObjectGrid();
   });
 
   const createSObjectGrid = () => {
     const rawFields = $("#creatGridArea #sobject_fields").val();
-    const sobject = $('#creatGridArea #sobject_selection').val();
-    const separator = $('#creatGridArea #sobjectFieldsSeparator').val();
+    const sobject = $("#creatGridArea #sobject_selection").val();
+    const separator = $("#creatGridArea #sobjectFieldsSeparator").val();
 
     if (sobject && rawFields) {
       const action = "create";
@@ -60,15 +106,15 @@ const coordinates = function() {
     closeSoqlHistory();
   });
     
-  $('#soqlHistory').on('mouseover', 'li', function(e) {
+  $("#soqlHistory").on("mouseover", "li", function(e) {
     $(this).attr("title", $(this).text());
   });
     
-  $('#soqlHistory').on('mouseout', 'li', function(e) {
+  $("#soqlHistory").on("mouseout", "li", function(e) {
     $(this).attr("title", "");
   });
   
-  $('#soqlHistory').on('dblclick', 'li', function(e) {
+  $("#soqlHistory").on("dblclick", "li", function(e) {
     $("#soqlArea #input_soql").val($(this).text());
   });
 
@@ -85,52 +131,6 @@ const coordinates = function() {
   };
   
   //------------------------------------------------
-  // Event on menu change
-  //------------------------------------------------
-  $(document).on('displayChange', (e, param) => {
-    if (param.targetArea = THIS_AREA) {
-      const elementId = getActiveGridElementId();
-      const grid = grids[elementId];
-      if (grid) {
-        grid.render();
-      }
-    }
-  });
-    
-  //------------------------------------------------
-  // Shortcut keys
-  //------------------------------------------------
-  $(window).on('keydown', (e) => {
-    
-    if (e.ctrlKey && (e.key === 'r' || e.keyCode === 13)) {
-      e.preventDefault();
-
-      if (e.target.id === "input_soql") {        
-        executeSoql();
-        return false;
-      }
-
-      if ($("#soqlOverRay").is(":visible")) {
-        createSObjectGrid();
-        return false;
-      }
-    }
-
-    if (e.keyCode === 27) {
-      if ($("#soqlOverRay").is(":visible")) {
-        $("#soqlOverRay").hide();
-      }
-    }
-  
-    if (e.keyCode === 9) {
-      if (e.target.id === "input_soql") {
-        insertTab(e);
-        return false;
-      }
-    }
-  });
-
-  //------------------------------------------------
   // Insert Tab
   //------------------------------------------------
   const insertTab = (e) => {
@@ -144,7 +144,7 @@ const coordinates = function() {
   //------------------------------------------------
   // Execute SOQL
   //------------------------------------------------
-  $('#soqlArea .execute-soql').on('click', (e) => {
+  $("#soqlArea .execute-soql").on("click", (e) => {
     e.preventDefault();
     executeSoql();
   });
@@ -164,13 +164,13 @@ const coordinates = function() {
         updateGrid(tabId, params.soql_info);
       }
     } else {
-      soql = $('#soqlArea #input_soql').val();
-      tooling = $('#soqlArea #useTooling').is(':checked');
-      queryAll = $('#soqlArea #queryAll').is(':checked');      
+      soql = $("#soqlArea #input_soql").val();
+      tooling = $("#soqlArea #useTooling").is(":checked");
+      queryAll = $("#soqlArea #queryAll").is(":checked");      
       tabId = getActiveTabElementId();
     }
     
-    if (soql === null || soql === 'undefined' || soql === "") {
+    if (soql === null || soql === "undefined" || soql === "") {
       endCrud();
       return false;
     }
@@ -178,8 +178,8 @@ const coordinates = function() {
     hideMessageArea();
     
     const val = {soql, tooling, query_all: queryAll, tab_id: tabId};
-    const action = $('#soqlArea .soql-form').attr('action');
-    const method = $('#soqlArea .soql-form').attr('method');
+    const action = $("#soqlArea .soql-form").attr("action");
+    const method = $("#soqlArea .soql-form").attr("method");
     const options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType);
 
     if (params && params.afterCrud) {
@@ -207,7 +207,7 @@ const coordinates = function() {
       const id = grid.getCellMeta(row, sobject.idColumnIndex).tempId;
       const value = soql_info.key_map[id];
       grid.setDataAtCell(row, sobject.idColumnIndex, value, "loadData");
-      grid.removeCellMeta(row, sobject.idColumnIndex, 'tempId');
+      grid.removeCellMeta(row, sobject.idColumnIndex, "tempId");
     }
 
     delete sObjects[elementId];
@@ -248,7 +248,7 @@ const coordinates = function() {
 
     if (json.records.size <= 0) {
       const grid = grids[elementId];
-      grid.getPlugin('AutoColumnSize').recalculateAllColumnsWidth();
+      grid.getPlugin("AutoColumnSize").recalculateAllColumnsWidth();
       grid.render();
     }
   };
@@ -287,7 +287,7 @@ const coordinates = function() {
   //------------------------------------------------
   // Upsert
   //------------------------------------------------
-  $('#soqlArea #upsertBtn').on('click', (e) => {
+  $("#soqlArea #upsertBtn").on("click", (e) => {
     e.preventDefault();
     executeUpsert();
   });
@@ -314,7 +314,7 @@ const coordinates = function() {
   //------------------------------------------------
   // Delete
   //------------------------------------------------
-  $('#soqlArea #deleteBtn').on('click', (e) => {
+  $("#soqlArea #deleteBtn").on("click", (e) => {
     e.preventDefault();
     executeDelete();
   });
@@ -350,7 +350,7 @@ const coordinates = function() {
   //------------------------------------------------
   // Undelete
   //------------------------------------------------
-  $('#soqlArea #undeleteBtn').on('click', (e) => { 
+  $("#soqlArea #undeleteBtn").on("click", (e) => { 
     e.preventDefault();
     executeUndelete();
   });
@@ -388,7 +388,7 @@ const coordinates = function() {
   //------------------------------------------------ 
   const onAfterChange = (changes, source) => {
 
-    if (source === 'loadData') {
+    if (source === "loadData") {
       return;
     }
 
@@ -442,9 +442,9 @@ const coordinates = function() {
     }
     
     if (isRestored) {
-      grid.removeCellMeta(rowIndex, columnIndex, 'className');
+      grid.removeCellMeta(rowIndex, columnIndex, "className");
     } else {
-      grid.setCellMeta(rowIndex, columnIndex, 'className', 'changed-cell-border');
+      grid.setCellMeta(rowIndex, columnIndex, "className", "changed-cell-border");
     }
 
     grid.render();
@@ -502,7 +502,7 @@ const coordinates = function() {
   //------------------------------------------------
   // Add row
   //------------------------------------------------
-  $('#soqlArea').on('click', ' .add-row', (e) => {
+  $("#soqlArea").on("click", ".add-row", (e) => {
     addRow();
   });
     
@@ -518,7 +518,7 @@ const coordinates = function() {
       selectedCell = {row: 0, col: 0};
     }
 
-    grid.alter('insert_row', selectedCell.row + 1, 1);
+    grid.alter("insert_row", selectedCell.row + 1, 1);
     grid.selectCell(selectedCell.row, selectedCell.col);
   };
   
@@ -533,13 +533,13 @@ const coordinates = function() {
     const newIndex = sobject.assignedIndex + 1;
     const tempId = sobject.tempIdPrefix + newIndex;
     sobject.assignedIndex = newIndex;
-    grid.setCellMeta(rowIndex, sobject.idColumnIndex, 'tempId', tempId);
+    grid.setCellMeta(rowIndex, sobject.idColumnIndex, "tempId", tempId);
   };
 
   //------------------------------------------------
   // Remove row
   //------------------------------------------------
-  $('#soqlArea').on('click', ' .remove-row', (e) => {
+  $("#soqlArea").on("click", ".remove-row", (e) => {
     removeRow();
   });
     
@@ -563,7 +563,7 @@ const coordinates = function() {
       return false;
     }
 
-    grid.alter('remove_row', selectedCell.row, 1);
+    grid.alter("remove_row", selectedCell.row, 1);
     grid.selectCell(getValidRowAfterRemove(selectedCell, grid), selectedCell.col);
   };
     
@@ -626,21 +626,21 @@ const coordinates = function() {
   //------------------------------------------------
   // CSV Download
   //------------------------------------------------
-  $('#soqlArea .export-btn').on('click', (e) => {
+  $("#soqlArea .export-btn").on("click", (e) => {
     const elementId = getActiveGridElementId();
     const sobject = sObjects[elementId];
     if (sobject) {
       const hotElement = getActiveGrid();
-      hotElement.getPlugin('exportFile').downloadFile('csv', {
+      hotElement.getPlugin("exportFile").downloadFile("csv", {
           bom: true,
-          columnDelimiter: ',',
+          columnDelimiter: ",",
           columnHeaders: true,
           exportHiddenColumns: false,
           exportHiddenRows: false,
-          fileExtension: 'csv',
-          filename: 'soql_result(' + sobject.sobject_type + ')',
-          mimeType: 'text/csv',
-          rowDelimiter: '\r\n',
+          fileExtension: "csv",
+          filename: "soql_result(" + sobject.sobject_type + ")",
+          mimeType: "text/csv",
+          rowDelimiter: "\r\n",
           rowHeaders: false
       });
     }
@@ -649,7 +649,7 @@ const coordinates = function() {
   //------------------------------------------------
   // Rerun SOQL
   //------------------------------------------------
-  $('#soqlArea').on('click', '.rerun', (e) => {
+  $("#soqlArea").on("click", ".rerun", (e) => {
     if ($.isAjaxBusy()) {
       return false;
     }
@@ -666,7 +666,7 @@ const coordinates = function() {
   //------------------------------------------------
   // Show Query
   //------------------------------------------------
-  $('#soqlArea').on('click', '.show-query', (e) => {
+  $("#soqlArea").on("click", ".show-query", (e) => {
     if ($.isAjaxBusy()) {
       return false;
     }
@@ -690,7 +690,7 @@ const coordinates = function() {
   //------------------------------------------------
   // Close tab
   //------------------------------------------------
-  $(document).on('click', '#soqlArea .ui-closable-tab', function(e) {
+  $(document).on("click", "#soqlArea .ui-closable-tab", function(e) {
     if ($.isAjaxBusy()) {
       return;
     }
@@ -710,7 +710,7 @@ const coordinates = function() {
   //------------------------------------------------
   // Create tab
   //------------------------------------------------
-  $("#soqlArea .add-tab-btn").on('click', (e) => {
+  $("#soqlArea .add-tab-btn").on("click", (e) => {
     createTab();
   });
   
@@ -735,7 +735,7 @@ const coordinates = function() {
     soqlArea += '<button name="remRowBtn" type="button" class="remove-row btn btn-xs btn-default in-btn">Remove row</button>';
     soqlArea += '<button name="rerunBtn" type="button" class="rerun btn btn-xs btn-default in-btn">Rerun</button>';
     soqlArea += '</div>';
-    soqlArea += '<div id="soql-info' + newTabId + '">0 rows</div>';
+    soqlArea += '<div id="soql-info" + newTabId + "">0 rows</div>';
     soqlArea += '</div>';
     
     $("#soqlArea .tabArea").append(
@@ -767,7 +767,7 @@ const coordinates = function() {
     if ($("#soqlTabs li" ).length > 2) {
       $("#soqlTabs").sortable("enable");
     } else {
-      $("#soqlTabs").sortable('disable');
+      $("#soqlTabs").sortable("disable");
     }
   };
       
@@ -808,9 +808,8 @@ const coordinates = function() {
         //contextMenu: true,
         //colWidths: (i) -> setColWidth(i),
         outsideClickDeselects: false,
-        licenseKey: 'non-commercial-and-evaluation',
-        afterChange(source, changes) { return onAfterChange(source, changes); },
-        afterOnCellMouseDown(event, coords, td) { return onCellClick(event, coords, td); },
+        licenseKey: "non-commercial-and-evaluation",
+        afterChange(changes, source) { return onAfterChange(changes, source); },
         afterCreateRow(index, amount, source) { return onAfterCreateRow(index, amount, source); },
         beforeRemoveRow(index, amount, physicalRows, source) { return onBeforeRemoveRow(index, amount, physicalRows, source); },
         beforeCopy(data, coords) { return onBeforeCopy(data, coords); }
@@ -860,10 +859,6 @@ const coordinates = function() {
 
     return [[]];
   };
-
-  const onCellClick = (event, coords, td) => {
-    //selectedCell = coords
-  };
       
   //------------------------------------------------
   // message
@@ -882,10 +877,10 @@ const coordinates = function() {
   // page load actions
   //------------------------------------------------
   $("#soqlArea .tabArea").tabs(); 
-  $("#soqlTabs").sortable({items: 'li:not(.add-tab-li)', delay: 150});
+  $("#soqlTabs").sortable({items: "li:not(.add-tab-li)", delay: 150});
   createTab();
 
 };
 
-$(document).ready(coordinates);
-$(document).on('page:load', coordinates);
+$(document).ready(soql);
+$(document).on("page:load", soql);

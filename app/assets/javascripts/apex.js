@@ -12,10 +12,10 @@ const apex = function() {
   //------------------------------------------------
   // Shortcut keys
   //------------------------------------------------
-  $(window).on('keydown', function(e) {
+  $(window).on("keydown", function(e) {
     if (e.target.id === "apex_code") {
 
-      if (e.ctrlKey && (e.key === 'r' || e.keyCode === 13)) {  
+      if (e.ctrlKey && (e.key === "r" || e.keyCode === 13)) {  
         executeAnonymous();
         return false;
       }
@@ -34,8 +34,8 @@ const apex = function() {
   //------------------------------------------------
   // Execute Anonymous
   //------------------------------------------------
-  $('#apexArea #executeAnonymousBtm').on('click', function(e) {
-    if ($.isAjaxBusy() || !$('#apexArea #apex_code').val()) {
+  $("#apexArea #executeAnonymousBtm").on("click", function(e) {
+    if ($.isAjaxBusy() || !$("#apexArea #apex_code").val()) {
       return false;
     }
   
@@ -48,15 +48,15 @@ const apex = function() {
     selectedTabId = $("#apexArea .tabArea .ui-tabs-panel:visible").attr("tabId");
 
     const debugOptions = {};    
-    $('#debugOptions option:selected').each(function() {
+    $("#debugOptions option:selected").each(function() {
       const category = $(this).parent().attr("id");
       const level = $(this).val();
       debugOptions[category] = level;
     });
       
-    const val = {code: $('#apexArea #apex_code').val(), debug_options: debugOptions};
-    const action = $('#apexArea .execute-anonymous-form').attr('action');
-    const method = $('#apexArea .execute-anonymous-form').attr('method');
+    const val = {code: $("#apexArea #apex_code").val(), debug_options: debugOptions};
+    const action = $("#apexArea .execute-anonymous-form").attr("action");
+    const method = $("#apexArea .execute-anonymous-form").attr("method");
     const options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType);
     const callbacks = $.getAjaxCallbacks(processSuccessResult, displayError, null);
     $.executeAjax(options, callbacks);
@@ -76,32 +76,32 @@ const apex = function() {
   //------------------------------------------------
   // Debug options
   //------------------------------------------------  
-  $('#apexArea #debugOptionBtn').on('click', function(e) {
-    if ($('#debugOptions').is(":visible")) {
-      $('#debugOptions').hide();
+  $("#apexArea #debugOptionBtn").on("click", function(e) {
+    if ($("#debugOptions").is(":visible")) {
+      $("#debugOptions").hide();
     } else {
-      $('#debugOptions').show();
+      $("#debugOptions").show();
     }
   });
 
   //------------------------------------------------
   // CSV Download
   //------------------------------------------------
-  $('#apexArea #downloadLogBtn').on('click', function(e) {
+  $("#apexArea #downloadLogBtn").on("click", function(e) {
     const elementId = getActiveGridElementId();
     const logName = logNames[elementId];
     if (logName) {
       const hotElement = grids[elementId];
-      hotElement.getPlugin('exportFile').downloadFile('csv', {
+      hotElement.getPlugin("exportFile").downloadFile("csv", {
               bom: true,
-              columnDelimiter: ',',
+              columnDelimiter: ",",
               columnHeaders: true,
               exportHiddenColumns: false,
               exportHiddenRows: false,
-              fileExtension: 'csv',
+              fileExtension: "csv",
               filename: logName,
-              mimeType: 'text/csv',
-              rowDelimiter: '\r\n',
+              mimeType: "text/csv",
+              rowDelimiter: "\r\n",
               rowHeaders: true
       });
     }
@@ -121,9 +121,9 @@ const apex = function() {
   const filterLog = () => {
     const elementId = getActiveGridElementId();
     const hotElement = grids[elementId];    
-    const filtersPlugin = hotElement.getPlugin('filters');
+    const filtersPlugin = hotElement.getPlugin("filters");
     filtersPlugin.removeConditions(eventColumnIndex);
-    filtersPlugin.addCondition(eventColumnIndex, 'eq', [USER_DEBUG]);
+    filtersPlugin.addCondition(eventColumnIndex, "eq", [USER_DEBUG]);
     filtersPlugin.filter();
     hotElement.render();
   };
@@ -132,7 +132,7 @@ const apex = function() {
   const clearFilter = () => {
     const elementId = getActiveGridElementId();
     const hotElement = grids[elementId];
-    const filtersPlugin = hotElement.getPlugin('filters');
+    const filtersPlugin = hotElement.getPlugin("filters");
     filtersPlugin.clearConditions();
     filtersPlugin.filter();
     hotElement.render();
@@ -141,7 +141,7 @@ const apex = function() {
   //------------------------------------------------
   // Create tab
   //------------------------------------------------
-  $(document).on('click', '#apexArea .ui-closable-tab', function(e) {
+  $(document).on("click", "#apexArea .ui-closable-tab", function(e) {
 
     if ($("#apexArea .tabArea ul li").length <= 2) {
       return false;
@@ -233,19 +233,19 @@ const apex = function() {
     const hotSettings = {
         data: records,
         //height: height,
-        stretchH: 'last',
+        stretchH: "last",
         autoWrapRow: true,
         manualRowResize: false,
         manualColumnResize: true,
         rowHeaders: true,
         colHeaders: header,
-        fragmentSelection: 'cell',
+        fragmentSelection: "cell",
         filters: true,
         contextMenu: false,
         readOnly: true,
         startRows: 0,
         trimWhitespace: false,
-        licenseKey: 'non-commercial-and-evaluation'
+        licenseKey: "non-commercial-and-evaluation"
     };
 
     const hot = new Handsontable(hotElement, hotSettings);
@@ -302,9 +302,9 @@ const apex = function() {
   // page load actions
   //------------------------------------------------
   $("#apexArea .tabArea").tabs();
-  $("#apexTabs").sortable({items: 'li:not(.add-tab-li)', delay: 150});
+  $("#apexTabs").sortable({items: "li:not(.add-tab-li)", delay: 150});
   createTab();
 };
 
 $(document).ready(apex);
-$(document).on('page:load', apex);
+$(document).on("page:load", apex);

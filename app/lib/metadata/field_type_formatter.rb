@@ -5,13 +5,8 @@ module Metadata
 
 		def format_field_type(sforce_session, metadata_type, type_fields)
 			@result = []
-			
-			#custom_type_fields = Metadata::ValueFieldSupplier.add_missing_fields(sforce_session, metadata_type, type_fields)
-			#@adding = custom_type_fields["adding"]
-			#@removing = custom_type_fields["removing"]
 			modified_field_types = type_fields
 			modified_field_types.each{|hash| parse_field_types(nil, hash)}
-			#add_remaining_fields()
 
 			if !Rails.env.production?
 				validate_result
@@ -53,10 +48,8 @@ module Metadata
                     parse_fields(parent, hash)
                 else
                     if parent.nil?
-                        #type_field_hash = get_type_field_hash(hash[:name], hash)
                         type_field_hash = {hash[:name] => hash}
                     else
-                        #type_field_hash = get_type_field_hash(parent, hash)
                         type_field_hash = {parent => hash}
                     end
 
@@ -66,32 +59,6 @@ module Metadata
             end
 		end
 
-		def get_type_field_hash(key, value)
-			if @removing.include?(key)
-				return nil
-			end
-
-			if !@adding.has_key?(key)
-				return {key => value}
-			end
-
-			adding_value = @adding[key].symbolize_keys
-			
-			if adding_value.has_key?(:replace)
-				new_value = adding_value
-			else
-				new_value = @adding[key].symbolize_keys.merge(value)
-			end
-			
-			@adding.delete(key)
-			
-			return {key => new_value}
-		end
-=begin        
-		def add_remaining_fields
-				@adding.values.each{|hash| @result << { hash["name"] => hash.deep_symbolize_keys } }
-		end
-=end
 		def parse_fields(parent, hash)
 		    remnant = hash.delete(:fields)
 			if parent.nil?
@@ -99,6 +66,7 @@ module Metadata
 		    else
 		        key = parent
 		    end
+		    
 		    parent_min_occurs = hash[:min_occurs]
 		    parse_field_types(key, hash.merge({:parent => true}))
 

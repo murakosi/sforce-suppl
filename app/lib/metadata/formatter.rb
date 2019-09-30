@@ -15,8 +15,8 @@ module Metadata
         end
 
         def format_metadata_list(metadata_list)
-            added_metadata_list = add_metadata_list_missing_key(metadata_list)
-            added_metadata_list.map{ |hash| hash.slice(*Key_order)}.sort_by{|hash| hash[:full_name]}
+            formated_metadata_list = add_metadata_list_missing_key(metadata_list)
+            formated_metadata_list.map{ |hash| hash.slice(*Key_order)}.sort_by{|hash| hash[:full_name]}
         end
 
         def add_metadata_list_missing_key(metadata_list)

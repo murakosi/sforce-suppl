@@ -52,8 +52,8 @@
 				</div>
 				<div id="deployMetadataOptions">
 					   	<% @deploy_metadata_options.each do |k, v| %>
-					    	<label>
-					      		<%= check_box_tag k, k,v,id:k %>
+					    	<label class="deploy-option-lable">
+					      		<%= check_box_tag k, k,v, :id => k, :class => "deploy-option" %>
 					      		<%= k %>
 					    	</label>
 					    <% end %>

@@ -104,7 +104,7 @@ module Metadata
 
 		def refresh_required?(crud_type)
 	        case crud_type
-	        when Metadata::CrudType::Create
+	        when Metadata::CrudType::Read
 	            return false
 	        when Metadata::CrudType::Update
 	            return false
