@@ -18,6 +18,14 @@ const describe = () => {
         executeDescribe();
         return false;
       }
+
+      // escape
+      if (e.keyCode === 27) {
+        if ($.isAjaxBusy()) {
+          $.abortAjax();
+        }
+        enableOptions();
+      }      
     }
   });
 

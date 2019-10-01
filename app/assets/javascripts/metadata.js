@@ -26,6 +26,14 @@ const metadata = () => {
         listMetadate();
         return false;
       }
+
+      // escape
+      if (e.keyCode === 27) {
+        if ($.isAjaxBusy()) {
+          $.abortAjax();
+        }
+        unlockForm();
+      }
     }
   });
 
@@ -69,22 +77,19 @@ const metadata = () => {
   };
 
   const processListError = (json) => {
-    $("#metadataArea #selected_directory").prop("disabled", false);
-    $("#metadataArea #executListMetadataBtn").prop("disabled", false);
+    unlockForm();
     displayError(json);
   };
 
   const processListSuccessResult = (json) => {
-    $("#metadataArea #selected_directory").prop("disabled", false);
-    $("#metadataArea #executListMetadataBtn").prop("disabled", false);
+    unlockForm();
     refreshTree(json.tree);
     changeButtonStyles(json.crud_info);
     createGrid("#metadataArea #metadataGrid", json.metadata_list);
   };
 
   const initializeResults = () => {
-    $("#metadataArea #selected_directory").prop("disabled", true);
-    $("#metadataArea #executListMetadataBtn").prop("disabled", true);
+    lockForm();
     disableButtons();
     createGrid("#metadataArea #metadataGrid");
     $("#metadataArea #editMetadataTree").jstree(true).settings.core.data = null;
@@ -94,6 +99,16 @@ const metadata = () => {
     fieldTypes = null;
     selectedFullNames = {};
     selectedNode = null;
+  };
+
+  const lockForm = () => {
+    $("#metadataArea #selected_directory").prop("disabled", true);
+    $("#metadataArea #executListMetadataBtn").prop("disabled", true);    
+  };
+
+  const unlockForm = () => {
+    $("#metadataArea #selected_directory").prop("disabled", false);
+    $("#metadataArea #executListMetadataBtn").prop("disabled", false);    
   };
 
   const changeButtonStyles = (json) => {
@@ -373,7 +388,6 @@ const metadata = () => {
   // Events on table
   //------------------------------------------------
   const onAfterChange = (changes, source) => {
-    console.log(changes);
     if (source !== "edit") {
       return;
     }

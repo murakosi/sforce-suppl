@@ -52,36 +52,28 @@ class MetadataController < ApplicationController
         get_list_response(metadata_type, formatted_list, parent_tree_nodes, formatted_field_types, crud_info)
     end
 
-    def get_list_response(metadata_type, formatted_list, parent_tree_nodes, field_types, crud_info)
+    def get_list_response(metadata_type, metadata_list, parent_tree_nodes, field_types, crud_info)
         {
             :fullName => metadata_type,
-            :metadata_list => get_list_result(formatted_list),
+            :metadata_list =>   {
+                                    :rows => metadata_list.map{|hash| [false] + hash.values},
+                                    :column_options => get_column_options(metadata_list),
+                                    :columns => [""] + metadata_list.first.keys
+                                },
             :tree => parent_tree_nodes,
             :crud_info => crud_info
         }
     end
 
-    def get_list_result(metadata_list)
+    def get_column_options(metadata_list)
         column_options = [{:type => "checkbox", :readOnly => false, :className => "htCenter htMiddle"}]
         metadata_list.first.keys.size.times{column_options << {type: "text", readOnly: true}}
-        {
-            :rows => metadata_list.map{|hash| [false] + hash.values.map{|value| unescape(value)}},
-            :column_options => column_options,
-            :columns => [""] + metadata_list.first.keys
-        }
+        column_options
     end
 
     def get_crud_info(type_fields)
         type_fields.reject{|k, v| k == :value_type_fields}
     end
-
-    def unescape(value)
-        if value.is_a?(Nori::StringWithAttributes) || value.is_a?(String)
-            CGI.unescape(value)
-        else
-            value
-        end
-    end    
 
     def edit
         metadata_type = params[:metadata_type]

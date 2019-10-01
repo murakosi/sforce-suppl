@@ -6,7 +6,7 @@ class MainController < ApplicationController
   protect_from_forgery except: [:check]
 
   def index
-    @deploy_metadata_options = Metadata::Deployer.deploy_options
+    @deploy_metadata_options = Metadata::Deployer.default_deploy_options
     @default_debug_levels = Constants::DefaultLogLevel
     @debug_options = Constants::LogCategory.map{|cat| {cat => Constants::LogCategoryLevel} }
     @describe_error = nil

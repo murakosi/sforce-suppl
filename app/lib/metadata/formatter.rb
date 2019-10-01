@@ -1,6 +1,6 @@
 module Metadata
     module Formatter
-        include Generator::TreeNodeGenerator
+        include Metadata::TreeNodeGenerator
         include Metadata::FieldTypeFormatter
         include Utils::FormatUtils
 

@@ -39,12 +39,14 @@ const soql = function() {
       }
     }
 
+    // escape
     if (e.keyCode === 27) {
       if ($("#soqlOverRay").is(":visible")) {
         $("#soqlOverRay").hide();
       }
     }
   
+    // tab
     if (e.keyCode === 9) {
       if (e.target.id === "input_soql") {
         insertTab(e);

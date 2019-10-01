@@ -73,25 +73,24 @@
             }
         },
 
+        showProgress: function() {
+            $("#progress-line").addClass("progress-line");
+            $("#progress").css("visibility","visible");
+        },
 
+        hideProgress: function() {
+            $("#progress-line").removeClass("progress-line");
+            $("#progress").css("visibility","hidden");            
+        },
 
         executeAjax: function (options, callbacks, raw = false) {
-            function showProgress() {
-                $("#progress-line").addClass("progress-line");
-                $("#progress").css("visibility","visible");
-            };
-
-            function hideProgress() {
-                $("#progress-line").removeClass("progress-line");
-                $("#progress").css("visibility","hidden");            
-            };
 
             if (jqXHR) {
                 return;
             }
 
             if(options.showProgress){
-                showProgress();
+                $.showProgress();
             }
 
             jqXHR = $.ajax({
@@ -117,6 +116,10 @@
             jqXHR.fail(function (xhr, stat, err) {
                 jqXHR = null;
                 console.log({ fail: stat, error: err, xhr: xhr });
+                if (stat === "abort"){
+                    return;
+                }
+
                 if (raw){
                     return callbacks.failCallback(xhr.responseText, callbacks.failCallbackParams);
                 }else{
@@ -128,7 +131,7 @@
                 jqXHR = null;
                 console.log({ always: stat, res1: res1, res2: res2 });
                 if(options.showProgress){
-                    hideProgress();
+                    $.hideProgress();
                 }
                 return callbacks.alwaysCallback(callbacks.alwaysCallbackParams);
             });
