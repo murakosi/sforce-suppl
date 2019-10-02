@@ -1,7 +1,7 @@
 module Metadata
 	class Deployer
 	class << self
-		include Metadata::TreeNodeGenerator
+		include Metadata::TreeNodeBuilder
 
 		Key_order = %i[id done status success error_message error_status_code details 
 			number_component_errors number_components_deployed number_components_total 
@@ -24,7 +24,7 @@ module Metadata
 			{
 				:id => deploy_result[:id],
 				:done => deploy_result[:done],
-				:result => generate_nodes_from_hash(result, "#")
+				:result => build_tree_nodes_from_hash(result, "#")
 			}			
 
 		end

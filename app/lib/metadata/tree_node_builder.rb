@@ -1,10 +1,10 @@
 require "cgi"
 
 module Metadata
-	module TreeNodeGenerator
+	module TreeNodeBuilder
         include Utils::FormatUtils
 
-        def generate_parent_nodes(api_crud_info, metadata_list)
+        def build_parent_nodes(api_crud_info, metadata_list)
             if api_crud_info[:api_readable]
                 has_children = true
             else
@@ -17,6 +17,26 @@ module Metadata
             parent_nodes
         end
 
+        def build_tree_nodes(full_name, read_result, type_info)
+            @full_name = full_name
+            if @full_name.include?("/")
+                @path_full_name = true
+            else
+                @path_full_name = false
+            end
+            @type_info = tree_type_info(type_info)
+            parse_read_result(method(:create_value_node), read_result, full_name)
+        end
+
+        def build_tree_nodes_from_hash(hashes, parent)
+            @full_name = "full_name"
+            @path_full_name = false
+            @type_info = {}
+            parse_read_result(method(:create_key_value_node), hashes, parent)
+        end
+
+        private
+
         def parent_node(hash, has_children)
         	{
         		:id => hash[:full_name],
@@ -25,24 +45,6 @@ module Metadata
         		:children => has_children,
         		:li_attr => {:editable => false} 
         	}
-        end
-
-        def generate_nodes(full_name, read_result, type_info)
-        	@full_name = full_name
-            if @full_name.include?("/")
-                @path_full_name = true
-            else
-                @path_full_name = false
-            end
-        	@type_info = tree_type_info(type_info)
-        	parse_read_result(method(:create_value_node), read_result, full_name)
-        end
-
-        def generate_nodes_from_hash(hashes, parent)
-            @full_name = "full_name"
-            @path_full_name = false
-            @type_info = {}
-            parse_read_result(method(:create_key_value_node), hashes, parent)
         end
 
         def tree_type_info(type_fields)

@@ -136,6 +136,7 @@ const describe = () => {
     const elementId = "#describeArea #describeGrid" + selectedTabId;
     sObjects[elementId] = json.sobject_name;
     createGrid(elementId, json);
+    enableOptions();
   };
 
   const getDescribeInfo = (json) => {

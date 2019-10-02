@@ -1,7 +1,7 @@
 require "cgi"
 
 class MetadataController < ApplicationController
-    include Metadata::Formatter
+    include Metadata::Builder
     include Metadata::Crud
     include Metadata::SessionController
 
@@ -13,7 +13,7 @@ class MetadataController < ApplicationController
     
     def show
         begin
-            metadata_types = get_metadata_types(sforce_session)
+            metadata_types = Service::MetadataClientService.call(sforce_session).describe_metadata_objects()
             html_content = render_to_string :partial => 'metadatalist', :locals => {:data_source => metadata_types}
             render :json => {:target => "#metadataList", :content => html_content, :error => nil, :status => 200}
         rescue StandardError => ex
@@ -35,18 +35,18 @@ class MetadataController < ApplicationController
     end
 
     def execute_list_metadata(metadata_type)
-        metadata_list = list_metadata(sforce_session, metadata_type)
+        metadata_list = Service::MetadataClientService.call(sforce_session).list(metadata_type)
 
         if metadata_list.nil?
             raise StandardError.new("No metadata available")
         else
-            formatted_list = format_metadata_list(metadata_list)
+            formatted_list = build_metadata_list(metadata_list)
         end
 
-        field_types = get_metadata_value_type(sforce_session, metadata_type)
-        formatted_field_types = format_field_type_result(sforce_session, metadata_type, field_types)
-        crud_info = get_crud_info(field_types)
-        parent_tree_nodes = format_parent_tree_nodes(crud_info, formatted_list)
+        field_types = Service::MetadataClientService.call(sforce_session).describe_value_type(metadata_type)
+        formatted_field_types = build_field_type_result(metadata_type, field_types)
+        crud_info = build_crud_info(field_types)
+        parent_tree_nodes = build_parent_nodes(crud_info, formatted_list)
         clear_session(metadata_type, formatted_field_types)
 
         get_list_response(metadata_type, formatted_list, parent_tree_nodes, formatted_field_types, crud_info)
@@ -69,30 +69,6 @@ class MetadataController < ApplicationController
         column_options = [{:type => "checkbox", :readOnly => false, :className => "htCenter htMiddle"}]
         metadata_list.first.keys.size.times{column_options << {type: "text", readOnly: true}}
         column_options
-    end
-
-    def get_crud_info(type_fields)
-        type_fields.reject{|k, v| k == :value_type_fields}
-    end
-
-    def edit
-        metadata_type = params[:metadata_type]
-        node_id = params[:node_id]
-        full_name = params[:full_name]
-        path = params[:path]
-        new_text = params[:new_value]
-        old_text = params[:old_value]
-        data_type = params[:data_type]
-        
-        begin
-            raise_when_type_unmached(metadata_type)
-            edit_result = edit_metadata(read_results[full_name], path, new_text, data_type)
-            try_save_session(metadata_type, full_name, edit_result)
-            render :json => {:full_name => full_name}, :status => 200
-        rescue StandardError => ex
-            print_error(ex)
-            render :json => {:node_id => node_id, :old_text => old_text, :error => ex.message}, :status => 400
-        end
     end
 
     def crud
@@ -133,12 +109,32 @@ class MetadataController < ApplicationController
         begin
             raise_when_type_unmached(metadata_type)
             result = read_metadata(sforce_session, metadata_type, full_name)
-            tree_data = format_read_result(full_name, result, current_metadata_field_types)
+            tree_data = build_read_result(full_name, result, current_metadata_field_types)
             try_save_session(metadata_type, full_name, result)
             render :json => {:tree => tree_data}, :status => 200            
         rescue StandardError => ex
             print_error(ex)
             render :json => {:error => ex.message}, :status => 400
+        end
+    end
+
+    def edit
+        metadata_type = params[:metadata_type]
+        node_id = params[:node_id]
+        full_name = params[:full_name]
+        path = params[:path]
+        new_text = params[:new_value]
+        old_text = params[:old_value]
+        data_type = params[:data_type]
+        
+        begin
+            raise_when_type_unmached(metadata_type)
+            edit_result = edit_metadata(read_results[full_name], path, new_text, data_type)
+            try_save_session(metadata_type, full_name, edit_result)
+            render :json => {:full_name => full_name}, :status => 200
+        rescue StandardError => ex
+            print_error(ex)
+            render :json => {:node_id => node_id, :old_text => old_text, :error => ex.message}, :status => 400
         end
     end
 

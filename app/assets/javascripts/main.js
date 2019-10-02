@@ -1,11 +1,11 @@
 const mains = function() {
 
-  let selectedAnchor = null;
-  let targetDiv = null;
-  let anchorObject = null;  
-  const loadedPartials = {};
-  const defaultDetatype = "";
-  const defaultContentType = null;
+  let _selectedAnchor = null;
+  let _targetDiv = null;
+  let _anchorObject = null;  
+  const _loadedPartials = {};
+  const DEFAULT_DETA_TYPE = "";
+  const DEFAULT_CONTENT_TYPE = null;
 
   $("#menus").on("click", "a", function(e) {
     if ($("#dropdown-menu").is(":visible")) {
@@ -14,20 +14,20 @@ const mains = function() {
       
     const clickedAnchor = $(this).prop("id");
 
-    if (selectedAnchor === clickedAnchor) {
+    if (_selectedAnchor === clickedAnchor) {
       return false;
     }
 
     e.preventDefault();
     e.stopPropagation();
-    selectedAnchor = clickedAnchor;
-    targetDiv = $(this).attr("loadTarget");
-    anchorObject = this;
+    _selectedAnchor = clickedAnchor;
+    _targetDiv = $(this).attr("loadTarget");
+    _anchorObject = this;
 
     const action = $(this).attr('action');
 
-    if (loadedPartials[selectedAnchor] || action === "") {
-      changeDisplayDiv(selectedAnchor);      
+    if (_loadedPartials[_selectedAnchor] || action === "") {
+      changeDisplayDiv(_selectedAnchor);      
       return false;
     }
     
@@ -37,9 +37,9 @@ const mains = function() {
   });
   
   const loadPartials = (json) => {
-    loadedPartials[selectedAnchor] = true;
+    _loadedPartials[_selectedAnchor] = true;
     $("div" + json.target).html(json.content);
-    changeDisplayDiv(selectedAnchor);
+    changeDisplayDiv(_selectedAnchor);
     if (json.status !== 200) {
       createErrorDiv(json.error);
     }
@@ -56,11 +56,11 @@ const mains = function() {
   };
 
   const changeDisplayDiv = (target) => {
-    if ($(anchorObject).hasClass("nochange")) {
+    if ($(_anchorObject).hasClass("nochange")) {
       return;
     }
     
-    changeAnchorClass(anchorObject);
+    changeAnchorClass(_anchorObject);
 
     $("div#mainArea").prop("class", target);
 

@@ -1,19 +1,17 @@
 
 const metadata = () => {
   
-  let currentMetadataType = null;
-  let selectedRecords = {};
-  let grid = null;
-  let selectedFullNames = {};
-  let selectedNode = null;
-  let fieldNames = null;
-  let fieldTypes = null;
-  let deployId = null;
-  let retrieveId = null;
-  let checkCount = 0;  
+  let _currentMetadataType = null;
+  let _selectedRecords = {};
+  let _grid = null;
+  let _selectedFullNames = {};
+  let _selectedNode = null;
+  let _deployId = null;
+  let _retrieveId = null;
+  let _checkCount = 0;  
   const CHECK_INTERVAL = 2000;
-  const defaultDataType = "";
-  const defaultContentType = null;
+  const DEFAULT_DATA_TYPE = "";
+  const DEFAULT_CONTENT_TYPE = null;
 
   //------------------------------------------------
   // Shortcut keys
@@ -40,9 +38,9 @@ const metadata = () => {
   //------------------------------------------------
   // Misc
   //------------------------------------------------
-  const getSelectedRecords = () => JSON.stringify(Object.values(selectedRecords));
+  const get_selectedRecords = () => JSON.stringify(Object.values(_selectedRecords));
 
-  const getSelectedFullNames = () => JSON.stringify(Object.keys(selectedFullNames));
+  const get_selectedFullNames = () => JSON.stringify(Object.keys(_selectedFullNames));
 
   const disableButtons = () => {
     $("#updateMetadataBtn").prop("disabled", true);
@@ -67,11 +65,11 @@ const metadata = () => {
     
     hideMessageArea();
     initializeResults();
-    currentMetadataType = $("#metadataArea #selected_directory").val();
-    const val = {selected_directory: currentMetadataType};
+    _currentMetadataType = $("#metadataArea #selected_directory").val();
+    const val = {selected_directory: _currentMetadataType};
     const action = $("#metadataArea .metadata-form").attr("action");
     const method = $("#metadataArea .metadata-form").attr("method");
-    const options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType);
+    const options = $.getAjaxOptions(action, method, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
     const callbacks = $.getAjaxCallbacks(processListSuccessResult, processListError, null);
     $.executeAjax(options, callbacks);
   };
@@ -85,20 +83,18 @@ const metadata = () => {
     unlockForm();
     refreshTree(json.tree);
     changeButtonStyles(json.crud_info);
-    createGrid("#metadataArea #metadataGrid", json.metadata_list);
+    create_grid("#metadataArea #metadata_grid", json.metadata_list);
   };
 
   const initializeResults = () => {
     lockForm();
     disableButtons();
-    createGrid("#metadataArea #metadataGrid");
+    create_grid("#metadataArea #metadata_grid");
     $("#metadataArea #editMetadataTree").jstree(true).settings.core.data = null;
     $("#metadataArea #editMetadataTree").jstree(true).refresh();
-    selectedRecords = {};
-    fieldNames = null;
-    fieldTypes = null;
-    selectedFullNames = {};
-    selectedNode = null;
+    _selectedRecords = {};
+    _selectedFullNames = {};
+    _selectedNode = null;
   };
 
   const lockForm = () => {
@@ -129,10 +125,10 @@ const metadata = () => {
   // Read metadata
   //------------------------------------------------
   const readMetadata = (node, callback) => {
-    const val = {crud_type: "read", metadata_type: currentMetadataType, name: node.id};
+    const val = {crud_type: "read", metadata_type: _currentMetadataType, name: node.id};
     const action = $("#readMetadataBtn").attr("action");
     const method = "POST";
-    const options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType, false);
+    const options = $.getAjaxOptions(action, method, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE, false);
     const callbacks = $.getAjaxCallbacks(processReadSuccess, processReadError, callback);
     $.executeAjax(options, callbacks);
   };
@@ -151,16 +147,16 @@ const metadata = () => {
   // Retrieve
   //------------------------------------------------
   $("#metadataArea #retrieveMetadataBtn").on("click", (e) => {
-    if (retrieveId) {
+    if (_retrieveId) {
       return false;
     }
     
     hideMessageArea();
-    checkCount = 0;
-    const val = {selected_type: currentMetadataType, selected_records: getSelectedRecords()};
+    _checkCount = 0;
+    const val = {selected_type: _currentMetadataType, selected_records: get_selectedRecords()};
     const action = $("#metadataArea #retrieveMetadataBtn").attr("action");
     const method ="POST";
-    const options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType);
+    const options = $.getAjaxOptions(action, method, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
     const callbacks = $.getAjaxCallbacks(checkRetrieveStatus, onRetrieveError, null);
     $.executeAjax(options, callbacks);
   });
@@ -169,13 +165,13 @@ const metadata = () => {
     if (json.done) {
       onRetrieveDone(json);
     } else {
-      retrieveId = json.id;
-      checkCount++;
-      sleep(CHECK_INTERVAL * checkCount);      
-      const val = {id: retrieveId};
+      _retrieveId = json.id;
+      _checkCount++;
+      sleep(CHECK_INTERVAL * _checkCount);      
+      const val = {id: _retrieveId};
       const action = "metadata/retrieve_check";
       const method = "POST";
-      const options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType);
+      const options = $.getAjaxOptions(action, method, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
       const callbacks = $.getAjaxCallbacks(checkRetrieveStatus, onRetrieveError, null);
       $.executeAjax(options, callbacks);
     }
@@ -187,7 +183,7 @@ const metadata = () => {
   };
 
   const onRetrieveDone = (json) => {
-    retrieveId = null;
+    _retrieveId = null;
     const url = "metadata/retrieve_result";
     const method = "post";
     const options = $.getAjaxDownloadOptions(url, method, null, downloadDone, downloadFail, () => {});
@@ -195,7 +191,7 @@ const metadata = () => {
   };
 
   const onRetrieveError = (json) => {
-    retrieveId = null;
+    _retrieveId = null;
     displayError(json);
   }
     
@@ -207,7 +203,7 @@ const metadata = () => {
   // Deploy
   //------------------------------------------------
   $("#metadataArea #deployMetadataBtn").on("click", (e) => {
-    if (deployId) {
+    if (_deployId) {
       return false;
     }
 
@@ -233,7 +229,7 @@ const metadata = () => {
 
   const uploadFile = (file) => {
 
-    checkCount = 0;
+    _checkCount = 0;
     const deploy_options = {};
 
     $("#metadataArea #deployMetadataOptions input[type=checkbox]").each(function() {
@@ -245,7 +241,7 @@ const metadata = () => {
     const val = {options: JSON.stringify(deploy_options), zip_file: file};
     const action = $("#metadataArea #deployMetadataBtn").attr("action");
     const method = "POST";
-    const options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType);
+    const options = $.getAjaxOptions(action, method, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
     const callbacks = $.getAjaxCallbacks(checkDeployStatus, onDeployError, null);
     $.executeAjax(options, callbacks);
   };
@@ -254,26 +250,26 @@ const metadata = () => {
     if (json.done) {
       onDeployDone(json);
     } else {
-      deployId = json.id;
-      checkCount++;
-      sleep(CHECK_INTERVAL * checkCount);      
-      const val = {id: deployId};
+      _deployId = json.id;
+      _checkCount++;
+      sleep(CHECK_INTERVAL * _checkCount);      
+      const val = {id: _deployId};
       const action = "metadata/deploy_check";
       const method = "POST";
-      const options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType);
+      const options = $.getAjaxOptions(action, method, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
       const callbacks = $.getAjaxCallbacks(checkDeployStatus, onDeployError, null);
       $.executeAjax(options, callbacks);
     }
   };
 
   const onDeployDone = (json) => {
-    deployId = null;
+    _deployId = null;
     $("#metadataArea #deployMetadataResultTree").jstree(true).settings.core.data = json.result;
     $("#metadataArea #deployMetadataResultTree").jstree(true).refresh();    
   };
 
   const onDeployError = (json) => {
-    deployId = null;
+    _deployId = null;
     displayError(json);
   }
 
@@ -283,17 +279,17 @@ const metadata = () => {
   $("#updateMetadataBtn").on("click", (e) => {
     if (window.confirm("Update Metadata?")) {
       hideMessageArea();
-      const val = {crud_type: "update", metadata_type: currentMetadataType, full_names: getSelectedFullNames()};
+      const val = {crud_type: "update", metadata_type: _currentMetadataType, full_names: get_selectedFullNames()};
       const action = $("#metadataArea #updateMetadataBtn").attr("action");
       const method = "POST";
-      const options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType);
+      const options = $.getAjaxOptions(action, method, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
       const callbacks = $.getAjaxCallbacks(processCrudSuccess, displayError, null);
       $.executeAjax(options, callbacks);
     }
   });
 
   $("#metadataArea #editMetadataTree").on("select_node.jstree", (e, data) => {
-    selectedNode = data.node;
+    _selectedNode = data.node;
   });
 
   $("#metadataArea #editMetadataTree").on("rename_node.jstree", (e, data) => {
@@ -303,7 +299,7 @@ const metadata = () => {
 
     hideMessageArea();
     const val = {
-           metadata_type: currentMetadataType,
+           metadata_type: _currentMetadataType,
            node_id: data.node.id,
            full_name: data.node.li_attr.full_name,
            path: data.node.li_attr.path,
@@ -313,25 +309,25 @@ const metadata = () => {
           };
     const action = $("#metadataArea #editMetadataTree").attr("action");
     const method = "POST";
-    const options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType, false);
+    const options = $.getAjaxOptions(action, method, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE, false);
     const callbacks = $.getAjaxCallbacks(onEditDone, undoEdit, null);
     $.executeAjax(options, callbacks);
   });
 
   $("#readMetadaBtn").on("click", (e) => {
-    if (selectedNode) {
-      $("#metadataArea #editMetadataTree").jstree(true).open_all(selectedNode);
+    if (_selectedNode) {
+      $("#metadataArea #editMetadataTree").jstree(true).open_all(_selectedNode);
     }
   });
 
   $("#collapseMetadataTree").on("click", (e) => {
-    if (selectedNode) {
-      $("#metadataArea #editMetadataTree").jstree(true).close_all(selectedNode);
+    if (_selectedNode) {
+      $("#metadataArea #editMetadataTree").jstree(true).close_all(_selectedNode);
     }
   });
 
   const onEditDone = (json) => {
-    selectedFullNames[json.full_name] = true;    
+    _selectedFullNames[json.full_name] = true;    
   };
     
   const undoEdit = (json) => {
@@ -352,10 +348,10 @@ const metadata = () => {
   $("#deleteMetadataBtn").on("click", (e) => {
     if (window.confirm("Delete Metadata?")) {
       hideMessageArea();
-      const val = {crud_type: "delete", metadata_type: currentMetadataType, selected_records: getSelectedRecords()};
+      const val = {crud_type: "delete", metadata_type: _currentMetadataType, selected_records: get_selectedRecords()};
       const action = $("#metadataArea #deleteMetadataBtn").attr("action");
       const method = "POST";
-      const options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType);
+      const options = $.getAjaxOptions(action, method, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
       const callbacks = $.getAjaxCallbacks(processCrudSuccess, displayError, null);
       $.executeAjax(options, callbacks);
     }
@@ -396,20 +392,20 @@ const metadata = () => {
     const checked = changes[0][3];
 
     if (checked) {
-      selectedRecords[rowIndex] = grid.getDataAtRow(rowIndex);
+      _selectedRecords[rowIndex] = _grid.getDataAtRow(rowIndex);
     } else {
-      delete selectedRecords[rowIndex];
+      delete _selectedRecords[rowIndex];
     }
   };
 
   //------------------------------------------------
-  // Create grid
+  // Create _grid
   //------------------------------------------------
-  const createGrid = (elementId, json = null) => {
+  const create_grid = (elementId, json = null) => {
     const hotElement = document.querySelector(elementId);
 
-    if (grid) {
-      grid.destroy();
+    if (_grid) {
+      _grid.destroy();
     }
 
     const header = getColumns(json);
@@ -442,7 +438,7 @@ const metadata = () => {
     }
     });
 
-    grid = hot;
+    _grid = hot;
   };
 
   const getColumns = (json) => {

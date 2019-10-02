@@ -1,7 +1,7 @@
 
 (function ($) {
 
-    var jqXHR = null;
+    var _jqXHR = null;
 
     $.extend({
 
@@ -60,7 +60,7 @@
         },
 
         isAjaxBusy: function () {
-            if (jqXHR) {
+            if (_jqXHR) {
                 return true;
             } else {
                 return false;
@@ -68,8 +68,8 @@
         },
 
         abortAjax: function () {
-            if (jqXHR) {
-                jqXHR.abort();
+            if (_jqXHR) {
+                _jqXHR.abort();
             }
         },
 
@@ -85,7 +85,7 @@
 
         executeAjax: function (options, callbacks, raw = false) {
 
-            if (jqXHR) {
+            if (_jqXHR) {
                 return;
             }
 
@@ -93,7 +93,7 @@
                 $.showProgress();
             }
 
-            jqXHR = $.ajax({
+            _jqXHR = $.ajax({
                 url: options.action,
                 type: options.method,
                 dataType: options.datatype,
@@ -103,8 +103,8 @@
                 cache: false
             });
 
-            jqXHR.done(function (data, stat, xhr) {
-                jqXHR = null;
+            _jqXHR.done(function (data, stat, xhr) {
+                _jqXHR = null;
                 console.log({ done: stat, data: data, xhr: xhr });
                 if (raw){
                     return callbacks.doneCallback(xhr.responseText, callbacks.doneCallbackParams);
@@ -113,8 +113,8 @@
                 }
             });
 
-            jqXHR.fail(function (xhr, stat, err) {
-                jqXHR = null;
+            _jqXHR.fail(function (xhr, stat, err) {
+                _jqXHR = null;
                 console.log({ fail: stat, error: err, xhr: xhr });
                 if (stat === "abort"){
                     return;
@@ -127,8 +127,8 @@
                 }
             });
 
-            jqXHR.always(function (res1, stat, res2) {
-                jqXHR = null;
+            _jqXHR.always(function (res1, stat, res2) {
+                _jqXHR = null;
                 console.log({ always: stat, res1: res1, res2: res2 });
                 if(options.showProgress){
                     $.hideProgress();

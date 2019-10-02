@@ -1,11 +1,11 @@
 const soql = function() {
   
-  let currentTabIndex = 0;
-  const grids = {};
-  const sObjects = {};
+  let _currentTabIndex = 0;
+  const _grids = {};
+  const _sObjects = {};
   const THIS_AREA = "soqlArea";
-  const defaultDataType = "";
-  const defaultContentType = null;
+  const DEFAULT_DATA_TYPE = "";
+  const DEFAULT_CONTENT_TYPE = null;
 
   //------------------------------------------------
   // Event on menu change
@@ -13,7 +13,7 @@ const soql = function() {
   $(document).on("displayChange", (e, param) => {
     if (param.targetArea = THIS_AREA) {
       const elementId = getActiveGridElementId();
-      const grid = grids[elementId];
+      const grid = _grids[elementId];
       if (grid) {
         grid.render();
       }
@@ -182,7 +182,7 @@ const soql = function() {
     const val = {soql, tooling, query_all: queryAll, tab_id: tabId};
     const action = $("#soqlArea .soql-form").attr("action");
     const method = $("#soqlArea .soql-form").attr("method");
-    const options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType);
+    const options = $.getAjaxOptions(action, method, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
 
     if (params && params.afterCrud) {
       callbacks = $.getAjaxCallbacks(processQuerySuccessAfterCrud, displayError, null);
@@ -195,8 +195,8 @@ const soql = function() {
   
   const updateGrid = (tabId, soql_info) => {
     const elementId = "#soqlArea #grid" + tabId;
-    const grid = grids[elementId];
-    const sobject = sObjects[elementId];
+    const grid = _grids[elementId];
+    const sobject = _sObjects[elementId];
 
     const columnOptions = [];
     const colcnt = sobject.columns.length;
@@ -212,7 +212,7 @@ const soql = function() {
       grid.removeCellMeta(row, sobject.idColumnIndex, "tempId");
     }
 
-    delete sObjects[elementId];
+    delete _sObjects[elementId];
     grid.updateSettings({columns:columnOptions});
     grid.render();
   };
@@ -232,7 +232,7 @@ const soql = function() {
     $("#soqlArea #soql-info" + selectedTabId).html(json.soql_info.timestamp);
     const elementId = "#soqlArea #grid" + selectedTabId;
 
-    sObjects[elementId] = {
+    _sObjects[elementId] = {
                             rows: json.records.initial_rows, 
                             columns: json.records.columns,
                             editions:{},
@@ -249,7 +249,7 @@ const soql = function() {
     $("#soqlHistory ul").append('<li>' + json.soql_info.soql + '</li>');
 
     if (json.records.size <= 0) {
-      const grid = grids[elementId];
+      const grid = _grids[elementId];
       grid.getPlugin("AutoColumnSize").recalculateAllColumnsWidth();
       grid.render();
     }
@@ -300,7 +300,7 @@ const soql = function() {
     }
     
     const elementId = getActiveGridElementId();
-    const sobject = sObjects[elementId];
+    const sobject = _sObjects[elementId];
 
     if (!sobject || !sobject.editable || $.isEmptyObject(sobject.editions)) {
       return false;
@@ -309,7 +309,7 @@ const soql = function() {
     const val = {soql_info:sobject.soql_info, sobject: sobject.sobject_type, records: JSON.stringify(sobject.editions)};
     const action = "/update";
     const method = "post";
-    const options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType);
+    const options = $.getAjaxOptions(action, method, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
     executeCrud(options);
   };
     
@@ -327,13 +327,13 @@ const soql = function() {
     }
     
     const elementId = getActiveGridElementId();
-    const sobject = sObjects[elementId];
+    const sobject = _sObjects[elementId];
 
     if (!sobject || !sobject.editable) {
       return false;
     }
 
-    const hot = grids[elementId];
+    const hot = _grids[elementId];
     const ids = getSelectedIds(hot, sobject);
     
     if (!ids || ids.length <= 0) {
@@ -344,7 +344,7 @@ const soql = function() {
       const val = {soql_info:sobject.soql_info, ids};
       const action = "/delete";
       const method = "post";
-      const options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType);
+      const options = $.getAjaxOptions(action, method, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
       executeCrud(options);
     }
   };
@@ -363,13 +363,13 @@ const soql = function() {
     }
     
     const elementId = getActiveGridElementId();
-    const sobject = sObjects[elementId];
+    const sobject = _sObjects[elementId];
 
     if (!sobject || !sobject.editable) {
       return false;
     }
 
-    const hot = grids[elementId];
+    const hot = _grids[elementId];
     const ids = getSelectedIds(hot, sobject);
     
     if (!ids || ids.length <= 0) {
@@ -380,7 +380,7 @@ const soql = function() {
       const val = {soql_info:sobject.soql_info, ids};
       const action = "/undelete";
       const method = "post";
-      const options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType);
+      const options = $.getAjaxOptions(action, method, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
       executeCrud(options);
     }
   };
@@ -414,8 +414,8 @@ const soql = function() {
     let isNewRow = false;
 
     const elementId = getActiveGridElementId();    
-    const grid = grids[elementId];
-    const sobject = sObjects[elementId];
+    const grid = _grids[elementId];
+    const sobject = _sObjects[elementId];
 
     const fieldName = sobject.columns[columnIndex];  
     const id = getSalesforceId(grid, sobject, rowIndex);
@@ -510,11 +510,11 @@ const soql = function() {
     
   const addRow = () => {
     const elementId = getActiveGridElementId();
-    if (!sObjects[elementId] || !sObjects[elementId].editable) {
+    if (!_sObjects[elementId] || !_sObjects[elementId].editable) {
       return;
     }
 
-    const grid = grids[elementId];
+    const grid = _grids[elementId];
     let selectedCell = getSelectedCell(grid);
     if (!selectedCell || selectedCell.row < 0) {
       selectedCell = {row: 0, col: 0};
@@ -530,8 +530,8 @@ const soql = function() {
     
   const assignTempId = (rowIndex) => {
     const elementId = getActiveGridElementId();
-    const grid = grids[elementId];
-    const sobject = sObjects[elementId];
+    const grid = _grids[elementId];
+    const sobject = _sObjects[elementId];
     const newIndex = sobject.assignedIndex + 1;
     const tempId = sobject.tempIdPrefix + newIndex;
     sobject.assignedIndex = newIndex;
@@ -547,12 +547,12 @@ const soql = function() {
     
   const removeRow = () => {
     const elementId = getActiveGridElementId();
-    const sobject = sObjects[elementId];
+    const sobject = _sObjects[elementId];
     if (!sobject || !sobject.editable) {
       return;
     }
 
-    const grid = grids[elementId];
+    const grid = _grids[elementId];
     const selectedCell = getSelectedCell(grid);
 
     if (!selectedCell || selectedCell.row < 0) {
@@ -577,8 +577,8 @@ const soql = function() {
     const rowIndex = physicalRows[0];
 
     const elementId = getActiveGridElementId();
-    const sobject = sObjects[elementId];
-    const grid = grids[elementId];
+    const sobject = _sObjects[elementId];
+    const grid = _grids[elementId];
     const tempId = grid.getCellMeta(rowIndex, sobject.idColumnIndex).tempId;
 
     if (sobject.editions[tempId]) {
@@ -622,7 +622,7 @@ const soql = function() {
     
   const getActiveGrid = () => {
     const elementId = getActiveGridElementId();
-    return grids[elementId];
+    return _grids[elementId];
   };
 
   //------------------------------------------------
@@ -630,7 +630,7 @@ const soql = function() {
   //------------------------------------------------
   $("#soqlArea .export-btn").on("click", (e) => {
     const elementId = getActiveGridElementId();
-    const sobject = sObjects[elementId];
+    const sobject = _sObjects[elementId];
     if (sobject) {
       const hotElement = getActiveGrid();
       hotElement.getPlugin("exportFile").downloadFile("csv", {
@@ -660,8 +660,8 @@ const soql = function() {
     
     const elementId = getActiveGridElementId();
     
-    if (sObjects[elementId]) {
-      executeSoql({soql_info:sObjects[elementId].soql_info, afterCrud: false});
+    if (_sObjects[elementId]) {
+      executeSoql({soql_info:_sObjects[elementId].soql_info, afterCrud: false});
     }
   });
       
@@ -677,7 +677,7 @@ const soql = function() {
     
     const elementId = getActiveGridElementId();
     
-    if (sObjects[elementId] && sObjects[elementId].soql_info.soql) {
+    if (_sObjects[elementId] && _sObjects[elementId].soql_info.soql) {
       const width = 750;
       const height = 400;
       const left =(screen.width - width) / 2;
@@ -685,7 +685,7 @@ const soql = function() {
       let options = "location=0, resizable=1, menubar=0, scrollbars=1";
       options += ", left=" + left + ", top=" + top + ", width=" + width + ", height=" + height;
       const popup = window.open("", "soql", options);
-      popup.document.write("<pre>" + sObjects[elementId].soql_info.soql  + "</pre>");
+      popup.document.write("<pre>" + _sObjects[elementId].soql_info.soql  + "</pre>");
     }
   });
       
@@ -717,8 +717,8 @@ const soql = function() {
   });
   
   const createTab = () => {
-    currentTabIndex = currentTabIndex + 1;
-    const newTabId = currentTabIndex;
+    _currentTabIndex = _currentTabIndex + 1;
+    const newTabId = _currentTabIndex;
 
     $("#soqlArea .tabArea ul li:last").before(
       '<li class="noselect"><a href="#tab' + newTabId + '">Grid' + newTabId + '</a>' +
@@ -760,8 +760,8 @@ const soql = function() {
   const onTabSelect = (event, ui) => {
     const tabId = ui.newPanel.attr("tabId");
     const elementId = "#soqlArea #grid" + tabId;
-    if (grids[elementId]){
-      grids[elementId].render();
+    if (_grids[elementId]){
+      _grids[elementId].render();
     }
   };
 
@@ -779,8 +779,8 @@ const soql = function() {
   const createGrid = (elementId, json = null) => {
     const hotElement = document.querySelector(elementId);
 
-    if (grids[elementId]) {
-      const table = grids[elementId];
+    if (_grids[elementId]) {
+      const table = _grids[elementId];
       table.destroy();
     }
 
@@ -823,12 +823,12 @@ const soql = function() {
     }
     });
 
-    grids[elementId] = hot;
+    _grids[elementId] = hot;
   };
 
   const onBeforeCopy = (data, coords) => {
     const elementId = getActiveGridElementId();
-    const sobject = sObjects[elementId];
+    const sobject = _sObjects[elementId];
     let count = 0;
     const target = coords[0];
     count = (target.endCol - target.startCol) + 1;

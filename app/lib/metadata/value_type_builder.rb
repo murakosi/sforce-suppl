@@ -1,46 +1,18 @@
-require "fileutils"
-
 module Metadata
-	module FieldTypeFormatter
+	module ValueTypeBuilder
 
-		def format_field_type(sforce_session, metadata_type, type_fields)
-			@result = []
-			modified_field_types = type_fields
-			modified_field_types.each{|hash| parse_field_types(nil, hash)}
+	    def build_crud_info(type_fields)
+	        type_fields.reject{|k, v| k == :value_type_fields}
+	    end
 
-			if !Rails.env.production?
-				validate_result
-			end
-
-		    @result
+		def build_value_type(metadata_type, type_fields)
+			@formatted_field_type = []
+			type_fields.each{|hash| parse_field_types(nil, hash)}
+		    @formatted_field_type
 		end
 
-		def validate_result
-			file_name = File.expand_path("log/" + "field_type_validate.log", Rails.root)
 
-			if File.exist?(file_name)
-		    	FileUtils.rm(file_name)
-			end
-			
-		    file = File.open(file_name,'a')
-
-		    @result.each do |h|
-		        file.puts h
-		    end
-		    file.close
-		    
-		    chk = {}
-		    @result.each do |h|
-		        h.each do |k,v|
-		            if chk.has_key?(k)
-		                raise Exception.new("duplicate!! => " + k.to_s)
-		            else
-		                chk[k] = v
-		            end
-		        end
-		    end
-		    chk = {}
-		end
+		private
 
 		def parse_field_types(parent, hash)
             hash.each do |k, v|
@@ -53,7 +25,7 @@ module Metadata
                         type_field_hash = {parent => hash}
                     end
 
-                    @result << type_field_hash unless type_field_hash.nil?
+                    @formatted_field_type << type_field_hash unless type_field_hash.nil?
                 end
                 break
             end
