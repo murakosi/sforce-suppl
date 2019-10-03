@@ -38,7 +38,7 @@
 		<div id="editMetadataTab" class="resultTab">
 			<div id="edit-overview" class="crud-button-area">
 				<%= button_tag "Update", :type => "button", :id => "updateMetadataBtn", :action => metadata_crud_path(), :class => "btn btn-warning btn-xs ex-small-btn" %>
-				<%= button_tag "Expand", :type => "button", :id => "readMetadataBtn", :action => metadata_crud_path(), :class => "btn btn-xs btn-info ex-small-btn" %>
+				<%= button_tag "Expand", :type => "button", :id => "expandMetadataTree", :action => metadata_crud_path(), :class => "btn btn-xs btn-info ex-small-btn" %>
 				<%= button_tag "Collapse", :type => "button", :id => "collapseMetadataTree", :class => "btn btn-xs btn-info ex-small-btn" %>
 			</div>
 			<div id="editMetadataTree" action="<%= metadata_edit_path() %>" class="tree-view"></div>
@@ -59,7 +59,7 @@
 					    <% end %>
 				</div>
 			</div>		
-			<div id="deployMetadataResultTree"></div>	
+			<div id="deployMetadataResultTree" class="tree-view"></div>	
 		</div>
 
 	</div>

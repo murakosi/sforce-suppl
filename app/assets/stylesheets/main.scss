@@ -33,7 +33,7 @@
 /* ------------------------------
    Menu display
 ------------------------------ */
-#soqlexecuterContent,
+#soqlContent,
 #describeContent, 
 #metadataContent, 
 #toolingContent,
@@ -41,7 +41,7 @@
     display:none;   
 }
 
-.soqlexecuter #soqlexecuterContent, 
+.soql #soqlContent, 
 .describe #describeContent, 
 .metadata #metadataContent, 
 .tooling #toolingContent,

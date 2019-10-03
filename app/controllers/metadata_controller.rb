@@ -13,11 +13,16 @@ class MetadataController < ApplicationController
     
     def show
         begin
-            metadata_types = Service::MetadataClientService.call(sforce_session).describe_metadata_objects()
-            html_content = render_to_string :partial => 'metadatalist', :locals => {:data_source => metadata_types}
+            if current_user.metadata_types.empty?
+                metadata_types = Service::MetadataClientService.call(sforce_session).describe_metadata_objects()
+                current_user.update_attributes(:metadata_types => metadata_types)
+            else
+                metadata_types = current_user.metadata_types
+            end
+            html_content = render_to_string :partial => "metadatalist", :locals => {:data_source => metadata_types}
             render :json => {:target => "#metadataList", :content => html_content, :error => nil, :status => 200}
         rescue StandardError => ex
-            html_content = render_to_string :partial => 'metadatalist', :locals => {:data_source => []}
+            html_content = render_to_string :partial => "metadatalist", :locals => {:data_source => []}
             render :json => {:target => "#metadataList", :content => html_content, :error => ex.message, :status => 400}
         end        
     end
@@ -49,10 +54,10 @@ class MetadataController < ApplicationController
         parent_tree_nodes = build_parent_nodes(crud_info, formatted_list)
         clear_session(metadata_type, formatted_field_types)
 
-        get_list_response(metadata_type, formatted_list, parent_tree_nodes, formatted_field_types, crud_info)
+        get_list_response(metadata_type, formatted_list, parent_tree_nodes, crud_info)
     end
 
-    def get_list_response(metadata_type, metadata_list, parent_tree_nodes, field_types, crud_info)
+    def get_list_response(metadata_type, metadata_list, parent_tree_nodes, crud_info)
         {
             :fullName => metadata_type,
             :metadata_list =>   {
@@ -87,6 +92,21 @@ class MetadataController < ApplicationController
         end 
     end
 
+    def try_read(metadata_type)
+        full_name = params[:name]
+
+        begin
+            raise_when_type_unmached(metadata_type)
+            result = read_metadata(sforce_session, metadata_type, full_name)
+            tree_data = build_read_result(full_name, result, current_metadata_field_types)
+            try_save_session(metadata_type, full_name, result)
+            render :json => {:tree => tree_data}, :status => 200            
+        rescue StandardError => ex
+            print_error(ex)
+            render :json => {:error => ex.message}, :status => 400
+        end
+    end
+
     def change_metadata(crud_type, metadata_type)
         begin
             raise_when_type_unmached(metadata_type)
@@ -97,21 +117,6 @@ class MetadataController < ApplicationController
                 result = try_delete(metadata_type)
             end                 
             render :json => {:message => result[:message], :refresh_required => result[:refresh_required]}, :status => 200
-        rescue StandardError => ex
-            print_error(ex)
-            render :json => {:error => ex.message}, :status => 400
-        end
-    end
-
-    def try_read(metadata_type)
-        full_name = params[:name]
-
-        begin
-            raise_when_type_unmached(metadata_type)
-            result = read_metadata(sforce_session, metadata_type, full_name)
-            tree_data = build_read_result(full_name, result, current_metadata_field_types)
-            try_save_session(metadata_type, full_name, result)
-            render :json => {:tree => tree_data}, :status => 200            
         rescue StandardError => ex
             print_error(ex)
             render :json => {:error => ex.message}, :status => 400
@@ -177,9 +182,9 @@ class MetadataController < ApplicationController
         begin
             result = Metadata::Retriever.retrieve_result
             send_data(result[:zip_file],
-              :disposition => 'attachment',
-              :type => 'application/x-compress',
-              :filename => result[:metadta_type] + '.zip',
+              :disposition => "attachment",
+              :type => "application/x-compress",
+              :filename => result[:metadta_type] + ".zip",
               :status => 200
             )        
             set_download_success_cookie(response)

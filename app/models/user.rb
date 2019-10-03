@@ -9,6 +9,7 @@ class User < ApplicationRecord
     attr_encrypted :sforce_session_id, :key => secret_key
     attr_encrypted :sforce_server_url, :key => secret_key
     attr_encrypted :sforce_metadata_server_url, :key => secret_key
+    serialize :metadata_types, Array
 
     def self.new_login_token
         SecureRandom.urlsafe_base64

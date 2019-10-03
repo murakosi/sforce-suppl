@@ -1,18 +1,18 @@
 const apex = function() {
   
-  let selectedTabId = 0;
-  let currentTabIndex = 0;
-  const grids = {};
-  const logNames = {};
-  const defaultDataType = "";
-  const defaultContentType = null;
-  const eventColumnIndex = 1;
+  let _selectedTabId = 0;
+  let _currentTabIndex = 0;
+  const _grids = {};
+  const _logNames = {};
+  const DEFAULT_DATA_TYPE = "";
+  const DEFAULT_CONTENT_TYPE = null;
+  const EVENT_COLUMN_INDEX = 1;
   const USER_DEBUG = "USER_DEBUG";
 
   //------------------------------------------------
   // Shortcut keys
   //------------------------------------------------
-  $(window).on("keydown", function(e) {
+  $(window).on("keydown", (e) => {
     if (e.target.id === "apex_code") {
 
       if (e.ctrlKey && (e.key === "r" || e.keyCode === 13)) {  
@@ -34,7 +34,7 @@ const apex = function() {
   //------------------------------------------------
   // Execute Anonymous
   //------------------------------------------------
-  $("#apexArea #executeAnonymousBtm").on("click", function(e) {
+  $("#apexArea #executeAnonymousBtm").on("click", (e) => {
     if ($.isAjaxBusy() || !$("#apexArea #apex_code").val()) {
       return false;
     }
@@ -43,9 +43,9 @@ const apex = function() {
     executeAnonymous();
   });
     
-  const executeAnonymous = function() {
+  const executeAnonymous = () => {
     hideMessageArea();
-    selectedTabId = $("#apexArea .tabArea .ui-tabs-panel:visible").attr("tabId");
+    _selectedTabId = $("#apexArea .tabArea .ui-tabs-panel:visible").attr("tabId");
 
     const debugOptions = {};    
     $("#debugOptions option:selected").each(function() {
@@ -57,15 +57,15 @@ const apex = function() {
     const val = {code: $("#apexArea #apex_code").val(), debug_options: debugOptions};
     const action = $("#apexArea .execute-anonymous-form").attr("action");
     const method = $("#apexArea .execute-anonymous-form").attr("method");
-    const options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType);
+    const options = $.getAjaxOptions(action, method, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
     const callbacks = $.getAjaxCallbacks(processSuccessResult, displayError, null);
     $.executeAjax(options, callbacks);
   };
   
   const processSuccessResult = (json) => {
-    const elementId = "#apexArea #apexGrid" + selectedTabId;
-    logNames[elementId] = json.log_name;    
-    $("#apexArea #logInfo" + selectedTabId).html(getLogResult(json));
+    const elementId = "#apexArea #apexGrid" + _selectedTabId;
+    _logNames[elementId] = json.log_name;    
+    $("#apexArea #logInfo" + _selectedTabId).html(getLogResult(json));
     createGrid(elementId, json);
   };
 
@@ -76,7 +76,7 @@ const apex = function() {
   //------------------------------------------------
   // Debug options
   //------------------------------------------------  
-  $("#apexArea #debugOptionBtn").on("click", function(e) {
+  $("#apexArea #debugOptionBtn").on("click", (e) => {
     if ($("#debugOptions").is(":visible")) {
       $("#debugOptions").hide();
     } else {
@@ -87,11 +87,11 @@ const apex = function() {
   //------------------------------------------------
   // CSV Download
   //------------------------------------------------
-  $("#apexArea #downloadLogBtn").on("click", function(e) {
+  $("#apexArea #downloadLogBtn").on("click", (e) => {
     const elementId = getActiveGridElementId();
-    const logName = logNames[elementId];
+    const logName = _logNames[elementId];
     if (logName) {
-      const hotElement = grids[elementId];
+      const hotElement = _grids[elementId];
       hotElement.getPlugin("exportFile").downloadFile("csv", {
               bom: true,
               columnDelimiter: ",",
@@ -110,7 +110,7 @@ const apex = function() {
   //------------------------------------------------
   // Filter debug only
   //------------------------------------------------
-  $("#apexArea").on("click", "input.debugOnly", function() {
+  $("#apexArea").on("click", "input.debugOnly", function(e) {
     if ($(this).prop("checked")) {
       filterLog();
     } else {
@@ -120,10 +120,10 @@ const apex = function() {
 
   const filterLog = () => {
     const elementId = getActiveGridElementId();
-    const hotElement = grids[elementId];    
+    const hotElement = _grids[elementId];    
     const filtersPlugin = hotElement.getPlugin("filters");
-    filtersPlugin.removeConditions(eventColumnIndex);
-    filtersPlugin.addCondition(eventColumnIndex, "eq", [USER_DEBUG]);
+    filtersPlugin.removeConditions(EVENT_COLUMN_INDEX);
+    filtersPlugin.addCondition(EVENT_COLUMN_INDEX, "eq", [USER_DEBUG]);
     filtersPlugin.filter();
     hotElement.render();
   };
@@ -131,7 +131,7 @@ const apex = function() {
 
   const clearFilter = () => {
     const elementId = getActiveGridElementId();
-    const hotElement = grids[elementId];
+    const hotElement = _grids[elementId];
     const filtersPlugin = hotElement.getPlugin("filters");
     filtersPlugin.clearConditions();
     filtersPlugin.filter();
@@ -139,7 +139,7 @@ const apex = function() {
   };
 
   //------------------------------------------------
-  // Create tab
+  // Close tab
   //------------------------------------------------
   $(document).on("click", "#apexArea .ui-closable-tab", function(e) {
 
@@ -154,14 +154,16 @@ const apex = function() {
     return false;
   });
 
-  $('#apexArea .add-tab-btn').on('click', function(e) {
+  //------------------------------------------------
+  // Create tab
+  //------------------------------------------------
+  $("#apexArea .add-tab-btn").on("click", (e) => {
     createTab();
-    return false;
   });
   
   const createTab = () => {
-    currentTabIndex = currentTabIndex + 1;
-    const newTabId = currentTabIndex;
+    _currentTabIndex = _currentTabIndex + 1;
+    const newTabId = _currentTabIndex;
 
     $("#apexArea .tabArea ul li:last").before(
       '<li class="noselect"><a href="#apexTab' + newTabId + '">Grid' + newTabId + '</a>' +
@@ -169,7 +171,7 @@ const apex = function() {
       '</li>'
     );
 
-    const logInfoArea = '<div id="logInfo' + newTabId + '" class="resultSoql" tabId="' + newTabId + '"></div>';    
+    const logInfoArea = '<div id="logInfo' + newTabId + '" class="resultSoql" tabId="' + newTabId + '"></div>';
     
     $("#apexArea .tabArea").append(
       '<div id="apexTab' + newTabId + '" class="resultTab" tabId="' + newTabId + '">' +
@@ -185,7 +187,7 @@ const apex = function() {
     setSortableAttribute();
     
     const newTabIndex = $("#apexArea .tabArea ul li").length - 2;
-    selectedTabId = newTabIndex;
+    _selectedTabId = newTabIndex;
     $("#apexArea .tabArea").tabs({ active: newTabIndex});
   };
 
@@ -193,7 +195,7 @@ const apex = function() {
     if ($("#apexTabs li" ).length > 2) {
       $("#apexTabs").sortable("enable");
     } else {
-      $("#apexTabs").sortable('disable');
+      $("#apexTabs").sortable("disable");
     }
   };
 
@@ -210,7 +212,7 @@ const apex = function() {
     
   const getActiveGrid = () => {
     const elementId = getActiveGridElementId();
-    return grids[elementId];
+    return _grids[elementId];
   };
 
   //------------------------------------------------
@@ -220,8 +222,8 @@ const apex = function() {
 
     const hotElement = document.querySelector(elementId);
 
-    if (grids[elementId]) {
-      const table = grids[elementId];
+    if (_grids[elementId]) {
+      const table = _grids[elementId];
       table.destroy();
     }
 
@@ -249,7 +251,7 @@ const apex = function() {
     };
 
     const hot = new Handsontable(hotElement, hotSettings);
-    grids[elementId] = hot;
+    _grids[elementId] = hot;
     hot.render();
   };
 

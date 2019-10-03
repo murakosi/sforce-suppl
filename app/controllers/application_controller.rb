@@ -3,7 +3,7 @@ require 'json'
 class ApplicationController < ActionController::Base
     include Common
 
-    before_action :current_user
+    before_action :validate_current_user
     before_action :require_sign_in!
 
     Redirect_message = "<b>Redirected due to session/connection error</b>.\n\n"
@@ -40,7 +40,7 @@ class ApplicationController < ActionController::Base
             session[:user_token] = login_token
         end
 
-        def current_user
+        def validate_current_user
             user_info = Service::SelectUserService.call(session[:user_token])
             @sforce_session = user_info[:sforce_session]
             @current_user = user_info[:user]
@@ -48,6 +48,10 @@ class ApplicationController < ActionController::Base
         
         def sforce_session
             @sforce_session
+        end
+
+        def current_user
+            @current_user
         end
 
         def sforce_session_alive?

@@ -21,7 +21,7 @@ module Service
                                  :server_url => nil,
                                  :metadata_server_url => nil,
                                  :sandbox => nil,
-                                 :api_version => nil
+                                 :api_version => nil,
                                  }
             }  
         end

@@ -1,11 +1,11 @@
 const describe = () => {
 
-  let currentTabIndex = 0;
-  let selectedTabId = null;  
-  const defaultDataType = "";  
-  const defaultContentType = null;
-  const sObjects = {};
-  const grids = {};
+  let _currentTabIndex = 0;
+  let _selectedTabId = null;  
+  const _sObjects = {};
+  const _grids = {};
+  const DEFAULT_DATA_TYPE = "";  
+  const DEFAULT_CONTENT_TYPE = null;
     
   //------------------------------------------------
   // Shortcut keys
@@ -46,7 +46,7 @@ const describe = () => {
     const val = {object_type: e.target.value};
     const action = $("#filterSObjectList").attr("action");
     const method = $("#filterSObjectList").attr("method");
-    const options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType, false);
+    const options = $.getAjaxOptions(action, method, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE, false);
     const callbacks = $.getAjaxCallbacks(refreshSelectOptions, displayError, null);
     $.executeAjax(options, callbacks, true);
   });
@@ -81,14 +81,14 @@ const describe = () => {
     }
 
     hideMessageArea();
-    selectedTabId = getActiveTabElementId();
+    _selectedTabId = getActiveTabElementId();
     const sobject = $("#describeArea #sobject_selection").val();
     if (sobject) {
       disableOptions();
       const val = {selected_sobject: sobject};
       const action = $("#executeDescribeBtn").attr("action");
       const method = $("#executeDescribeBtn").attr("method");
-      const options = $.getAjaxOptions(action, method, val, defaultDataType, defaultContentType);
+      const options = $.getAjaxOptions(action, method, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
       const callbacks = $.getAjaxCallbacks(processSuccessResult, displayError, null);
       $.executeAjax(options, callbacks);
     }
@@ -99,7 +99,7 @@ const describe = () => {
   //------------------------------------------------
   $("#describeArea .export-btn").on("click", (e) => {
     const elementId = getActiveGridElementId();
-    const sobjectName = sObjects[elementId];
+    const sobjectName = _sObjects[elementId];
     if (sobjectName) {
       const hotElement = getActiveGrid();
       hotElement.getPlugin("exportFile").downloadFile("csv", {
@@ -132,9 +132,9 @@ const describe = () => {
   };
 
   const processSuccessResult = (json) => {
-    $("#describeArea #overview" + selectedTabId).html(getDescribeInfo(json));
-    const elementId = "#describeArea #describeGrid" + selectedTabId;
-    sObjects[elementId] = json.sobject_name;
+    $("#describeArea #overview" + _selectedTabId).html(getDescribeInfo(json));
+    const elementId = "#describeArea #describeGrid" + _selectedTabId;
+    _sObjects[elementId] = json.sobject_name;
     createGrid(elementId, json);
     enableOptions();
   };
@@ -168,7 +168,7 @@ const describe = () => {
     
   const getActiveGrid = () => {
     const elementId = getActiveGridElementId();
-    return grids[elementId];
+    return _grids[elementId];
   };
 
   //------------------------------------------------
@@ -199,8 +199,8 @@ const describe = () => {
   });
   
   const createTab = () => {
-    currentTabIndex = currentTabIndex + 1;
-    const newTabId = currentTabIndex;
+    _currentTabIndex = _currentTabIndex + 1;
+    const newTabId = _currentTabIndex;
 
     $("#describeArea .tabArea ul li:last").before(
       '<li class="noselect"><a href="#describeTab' + newTabId + '">Grid' + newTabId + '</a>' +
@@ -224,7 +224,7 @@ const describe = () => {
     setSortableAttribute();
     
     const newTabIndex = $("#describeArea .tabArea ul li").length - 2;
-    selectedTabId = newTabIndex;
+    _selectedTabId = newTabIndex;
     $("#describeArea .tabArea").tabs({ active: newTabIndex});
   };
 
@@ -242,8 +242,8 @@ const describe = () => {
   const createGrid = (elementId, json = null) => {   
     const hotElement = document.querySelector(elementId);
     
-    if (grids[elementId]) {
-      const table = grids[elementId];
+    if (_grids[elementId]) {
+      const table = _grids[elementId];
       table.destroy();
     }
 
@@ -276,7 +276,7 @@ const describe = () => {
     }
     });
 
-    grids[elementId] = hot;
+    _grids[elementId] = hot;
   };
 
   const getColumns = (json) => {

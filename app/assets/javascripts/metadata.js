@@ -45,7 +45,7 @@ const metadata = () => {
   const disableButtons = () => {
     $("#updateMetadataBtn").prop("disabled", true);
     $("#deleteMetadataBtn").prop("disabled", true);
-    $("#readMetadataBtn").prop("disabled", true);
+    $("#expandMetadataTree").prop("disabled", true);
     $("#collapseMetadataTree").prop("disabled", true);
     $("#retrieveMetadataBtn").prop("disabled", true);
   };
@@ -62,11 +62,16 @@ const metadata = () => {
     if ($.isAjaxBusy()) {
       return false;
     }
+
+    currentMetadataType = $("#metadataArea #selected_directory").val();
+    if(!currentMetadataType){
+      return false;
+    }
     
     hideMessageArea();
     initializeResults();
-    _currentMetadataType = $("#metadataArea #selected_directory").val();
-    const val = {selected_directory: _currentMetadataType};
+    
+    const val = {selected_directory: currentMetadataType};
     const action = $("#metadataArea .metadata-form").attr("action");
     const method = $("#metadataArea .metadata-form").attr("method");
     const options = $.getAjaxOptions(action, method, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
@@ -80,16 +85,17 @@ const metadata = () => {
   };
 
   const processListSuccessResult = (json) => {
+    _currentMetadataType = $("#metadataArea #selected_directory").val();
     unlockForm();
     refreshTree(json.tree);
     changeButtonStyles(json.crud_info);
-    create_grid("#metadataArea #metadata_grid", json.metadata_list);
+    createGrid("#metadataArea #metadataGrid", json.metadata_list);
   };
 
   const initializeResults = () => {
     lockForm();
     disableButtons();
-    create_grid("#metadataArea #metadata_grid");
+    createGrid("#metadataArea #metadataGrid");
     $("#metadataArea #editMetadataTree").jstree(true).settings.core.data = null;
     $("#metadataArea #editMetadataTree").jstree(true).refresh();
     _selectedRecords = {};
@@ -110,7 +116,7 @@ const metadata = () => {
   const changeButtonStyles = (json) => {
     $("#updateMetadataBtn").prop("disabled", !json.api_updatable);
     $("#deleteMetadataBtn").prop("disabled", !json.api_deletable);
-    $("#readMetadataBtn").prop("disabled", !json.api_readable);
+    $("#expandMetadataTree").prop("disabled", !json.api_readable);
     $("#collapseMetadataTree").prop("disabled", !json.api_readable);
     $("#retrieveMetadataBtn").prop("disabled", false);
   };
@@ -126,7 +132,7 @@ const metadata = () => {
   //------------------------------------------------
   const readMetadata = (node, callback) => {
     const val = {crud_type: "read", metadata_type: _currentMetadataType, name: node.id};
-    const action = $("#readMetadataBtn").attr("action");
+    const action = $("#expandMetadataTree").attr("action");
     const method = "POST";
     const options = $.getAjaxOptions(action, method, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE, false);
     const callbacks = $.getAjaxCallbacks(processReadSuccess, processReadError, callback);
@@ -314,7 +320,7 @@ const metadata = () => {
     $.executeAjax(options, callbacks);
   });
 
-  $("#readMetadaBtn").on("click", (e) => {
+  $("#expandMetadataTree").on("click", (e) => {
     if (_selectedNode) {
       $("#metadataArea #editMetadataTree").jstree(true).open_all(_selectedNode);
     }
@@ -399,9 +405,9 @@ const metadata = () => {
   };
 
   //------------------------------------------------
-  // Create _grid
+  // Create grid
   //------------------------------------------------
-  const create_grid = (elementId, json = null) => {
+  const createGrid = (elementId, json = null) => {
     const hotElement = document.querySelector(elementId);
 
     if (_grid) {

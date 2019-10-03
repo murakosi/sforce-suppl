@@ -24,16 +24,15 @@ const mains = function() {
     _targetDiv = $(this).attr("loadTarget");
     _anchorObject = this;
 
-    const action = $(this).attr('action');
+    const action = $(this).attr("action");
 
     if (_loadedPartials[_selectedAnchor] || action === "") {
       changeDisplayDiv(_selectedAnchor);      
       return false;
     }
     
-    $.get(action, function(result){
-      loadPartials(result);
-    });
+    $.get(action, (result) => loadPartials(result));
+
   });
   
   const loadPartials = (json) => {
@@ -42,16 +41,6 @@ const mains = function() {
     changeDisplayDiv(_selectedAnchor);
     if (json.status !== 200) {
       createErrorDiv(json.error);
-    }
-  };
-
-  const changeAnchorClass = (target) => {
-    $(".menus").not(target).removeClass("displayed");
-
-    if ($(target).hasClass("displayed")) {
-      $(target).removeClass("displayed");
-    } else {
-      $(target).addClass("displayed");
     }
   };
 
@@ -68,8 +57,8 @@ const mains = function() {
       const targetSelect2 = "div#metadataArea .selectlist";
       $(targetSelect2).select2({
         dropdownAutoWidth : true,
-        width: 'resolve',
-        containerCssClass: ':all:',
+        width: "resolve",
+        containerCssClass: ":all:",
         placeholder: "Select a metadata type",
         allowClear: true
         });
@@ -78,11 +67,21 @@ const mains = function() {
     $(document).trigger("displayChange", [{targetArea: target + "Area"}]);
   };
 
+  const changeAnchorClass = (target) => {
+    $(".menus").not(target).removeClass("displayed");
+
+    if ($(target).hasClass("displayed")) {
+      $(target).removeClass("displayed");
+    } else {
+      $(target).addClass("displayed");
+    }
+  };
+
   const refreshSObjectLists = () => {
     $(".sobject-select-list").select2({
         dropdownAutoWidth : true,
-        width: 'element',
-        containerCssClass: ':all:',
+        width: "element",
+        containerCssClass: ":all:",
         placeholder: "Select an sObject",
         allowClear: true
         });
@@ -93,9 +92,8 @@ const mains = function() {
   });
   
   refreshSObjectLists();
-      
-  $("a#soqlexecuter").trigger("click");
+
 };
 
 $(document).ready(mains);
-$(document).on('page:load', mains);
+$(document).on("page:load", mains);

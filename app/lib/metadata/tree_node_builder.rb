@@ -59,7 +59,7 @@ module Metadata
                 if hash[:soap_type] == "boolean"
                     types[name] = {:is_picklist => true, :picklist_source => ["true", "false"]}
                 elsif hash.has_key?(:picklist_values)
-                    types[name] = {:is_picklist => true, :picklist_source => hash[:picklist_values].map{|hash| hash[:value]}}
+                    types[name] = {:is_picklist => true, :picklist_source => hash[:picklist_values].map{|values| values[:value]}}
                 elsif enums.has_key?(soap_type)
                     types[name] = {:is_picklist => true, :picklist_source => enums[soap_type]}
                 else
@@ -86,7 +86,7 @@ module Metadata
                 else
                     key_id = get_id(parent, k)
                     value_id = get_id(key_id, "value")
-                    if k == :"@xsi:type"
+                    if k == :"@xsi:type" || k == :full_name
                         create_node.call(parent, key_id, k, value_id, v, true)
                     else
                         create_node.call(parent, key_id, k, value_id, v)
