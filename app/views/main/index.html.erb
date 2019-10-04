@@ -17,57 +17,56 @@
 %>
 <div id="mainArea" class="soql">
 
-    <div id="overlay" class="requesting-overlay">
-        <div id="overlay-content" class="overlay-content noselect">Requesting...</div>
-        <div class="loader"></div>
+  <div id="overlay" class="requesting-overlay">
+    <div id="overlay-content" class="overlay-content noselect">Requesting...</div>
+    <div class="loader"></div>
+  </div>
+
+  <div class="header">
+    <div id="progress">
+      <div id="progress-line" class="progress-line"></div>
     </div>
 
-    <div class="header">
-        <div id="progress">
-            <div id="progress-line" class="progress-line"></div>
-        </div>
+    <div id="menuList">    
+        <div class="btn-group">
+            <button id="userInfoButton" class="btn btn-secondary btn-sm dropdown-toggle dropdown-btn paper-raise" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <%= @current_user.name %>
+            </button>
 
-        <div id="menuList">    
-            <div class="btn-group">
-                <button id="userInfoButton" class="btn btn-secondary btn-sm dropdown-toggle dropdown-btn paper-raise" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <%= @current_user.name %>
-                </button>
-
-                <ul id="dropdown-menu" class="dropdown-menu">
-                    <li><%= link_to "Logout", logout_path, method: :delete, id: "logoutLink" %></li>
-                    <li><a id="refreshDescribe" href="#">Refresh sObjects</a></li>
-                    <li><a id="refreshMetadata" href="#">Refresh Metadata</a></li>
-                    <li role="separator" class="divider"></li>
-                    <li>
-                        <a id="allOrNone" href="javascript:void(0)">
-                            <div class="checkmark">
-                                <input type="checkbox" id="allOrNoneChk"/>
-                                <label for="allOrNoneChk">AllOrNoneHeader</label>
-                            </div>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-            <ul id="menus">
-                <li><a id="soql" href="" class="menus displayed" method="GET" loadTarget="#soqlContent" action="">SOQL</a></li>
-                <li><a id="describe" href="#" class="menus" method="GET" loadTarget="#describeContent" action="">Describe</a></li>
-        		    <li><a id="metadata" href="#" class="menus" method="GET" loadTarget="#metadataContent" action="metadata">Metadata</a></li>
-                <li><a id="apex" href="" class="menus" method="GET" loadTarget="#apexContent" action="">Apex</a></li>
+            <ul id="dropdown-menu" class="dropdown-menu">
+                <li><a id="changeLocale" href="javascript:void(0)">Change Locale</a></li>
+                <li><a id="refreshDescribe" href="javascript:void(0)">Refresh sObjects</a></li>
+                <li><a id="refreshMetadata" href="javascript:void(0)">Refresh Metadata</a></li>
+                <li role="separator" class="divider"></li>
+                <li><%= link_to "Logout", logout_path, method: :delete, id: "logoutLink" %></li>
             </ul>
-        </div>  
-    </div>
-
-    <div id="contentsArea">
-        <div id="soqlContent"><%= render "soqlexecuter/soqlexecuter" %></div>
-        <div id="describeContent">
-            <% if @describe_error.nil? %>
-                <%= render "describe/describe" %>
-            <% else %>
-                <div class="errorPage"><%= @describe_error %></div>
-            <% end %>
         </div>
-        <div id="metadataContent"><%= render "metadata/metadata" %></div>	
-        <div id="apexContent"><%= render "apex/apex" %></div>
+        <ul id="menus">
+          <li><a id="soql" href="#" class="menus displayed">SOQL</a></li>
+          <li><a id="describe" href="#" class="menus">Describe</a></li>
+          <li><a id="metadata" href="#" class="menus">Metadata</a></li>
+          <li><a id="apex" href="" class="menus">Apex</a></li>
+        </ul>
+    </div>  
+  </div>
+
+  <div id="contentsArea">
+    <div id="soqlContent"><%= render "soqlexecuter/soqlexecuter" %></div>
+    <div id="describeContent">
+      <% if @describe_global_error.nil? %>
+        <%= render "describe/describe" %>
+      <% else %>
+        <div class="errorPage"><%= @describe_global_error %></div>
+      <% end %>
     </div>
+    <div id="metadataContent">
+      <% if @describe_metadata_objects_error.nil? %>
+        <%= render "metadata/metadata" %>
+      <% else %>
+        <div class="errorPage"><%= @describe_metadata_objects_error %></div>
+      <% end %>
+    </div>
+    <div id="apexContent"><%= render "apex/apex" %></div>
+  </div>
 
 </div>

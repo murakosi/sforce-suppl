@@ -6,7 +6,7 @@ const soql = function() {
   const THIS_AREA = "soqlArea";
   const DEFAULT_DATA_TYPE = "";
   const DEFAULT_CONTENT_TYPE = null;
-
+  
   //------------------------------------------------
   // Event on menu change
   //------------------------------------------------
@@ -65,6 +65,16 @@ const soql = function() {
   $("#creatGridArea #cancelCreateBtn").on("click", (e) => {
     $("#soqlOverRay").hide();
   });
+
+  /*
+  $("#soqlOverRay").on("click", (e) => {
+    $("#soqlOverRay").hide();
+  });
+
+  $("#creatGridArea").on("click", (e) => {
+    e.stopPropagation();
+  });
+  */
 
   $("#creatGridArea #createGridBtn").on("click", (e) => {
     createSObjectGrid();
@@ -172,7 +182,7 @@ const soql = function() {
       tabId = getActiveTabElementId();
     }
     
-    if (soql === null || soql === "undefined" || soql === "") {
+    if (!soql) {
       endCrud();
       return false;
     }
@@ -640,7 +650,7 @@ const soql = function() {
           exportHiddenColumns: false,
           exportHiddenRows: false,
           fileExtension: "csv",
-          filename: "soql_result(" + sobject.sobject_type + ")",
+          filename: sobject.sobject_type,
           mimeType: "text/csv",
           rowDelimiter: "\r\n",
           rowHeaders: false
@@ -668,6 +678,7 @@ const soql = function() {
   //------------------------------------------------
   // Show Query
   //------------------------------------------------
+  /*
   $("#soqlArea").on("click", ".show-query", (e) => {
     if ($.isAjaxBusy()) {
       return false;
@@ -688,6 +699,7 @@ const soql = function() {
       popup.document.write("<pre>" + _sObjects[elementId].soql_info.soql  + "</pre>");
     }
   });
+  */
       
   //------------------------------------------------
   // Close tab
@@ -732,7 +744,7 @@ const soql = function() {
 
     let soqlArea = '<div class="resultSoql" tabId="' + newTabId + '">';    
     soqlArea += '<div id="soql' + newTabId + '">';
-    soqlArea += '<button name="showQueryBtn" type="button" class="show-query btn btn-xs btn-default in-btn">Query</button>';
+    //soqlArea += '<button name="showQueryBtn" type="button" class="show-query btn btn-xs btn-default in-btn">Query</button>';
     soqlArea += '<button name="insRowBtn" type="button" class="add-row btn btn-xs btn-default in-btn">Insert row</button>';
     soqlArea += '<button name="remRowBtn" type="button" class="remove-row btn btn-xs btn-default in-btn">Remove row</button>';
     soqlArea += '<button name="rerunBtn" type="button" class="rerun btn btn-xs btn-default in-btn">Rerun</button>';

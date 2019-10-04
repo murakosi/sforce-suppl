@@ -12,7 +12,7 @@ class ApplicationController < ActionController::Base
 
     def sign_in(login_params)
         sforce_result = Service::SoapLoginService.call(login_params)
-        login_token = Service::UpdateUserService.call(login_params, sforce_result)
+        login_token = Service::RefreshUserService.call(login_params, sforce_result)
         initialize_session(login_token)
     end
 

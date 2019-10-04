@@ -12,14 +12,14 @@
 
 <div id="loginArea">
     <div id="loginFormArea">      
-        <%= form_for :login_param, url: login_path do |f| %>
+        <%= form_for :login_param, :url => login_path do |f| %>
             <div class="tbl login-form-table">
                 <div class="row">
                     <div class="login-form-label">
                         <%= f.label :user_name, 'User Name:' %>
                     </div>    
                     <div class="login-form-element">
-                        <%= f.text_field :name, value: "" %>
+                        <%= f.text_field :name, :value => "" %>
                     </div>
                 </div>
                 <div class="row">
@@ -27,7 +27,7 @@
                         <%= f.label 'Password:' %>
                     </div>
                     <div class="login-form-element">
-                        <%= f.password_field :password, value: "" %>
+                        <%= f.password_field :password, :value => "" %>
                     </div>
                 </div>
                 <div class="row">

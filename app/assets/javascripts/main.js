@@ -1,9 +1,7 @@
 const mains = function() {
 
   let _selectedAnchor = null;
-  let _targetDiv = null;
   let _anchorObject = null;  
-  const _loadedPartials = {};
   const DEFAULT_DETA_TYPE = "";
   const DEFAULT_CONTENT_TYPE = null;
 
@@ -18,32 +16,14 @@ const mains = function() {
       return false;
     }
 
-    e.preventDefault();
-    e.stopPropagation();
     _selectedAnchor = clickedAnchor;
-    _targetDiv = $(this).attr("loadTarget");
     _anchorObject = this;
 
-    const action = $(this).attr("action");
-
-    if (_loadedPartials[_selectedAnchor] || action === "") {
-      changeDisplayDiv(_selectedAnchor);      
-      return false;
-    }
-    
-    $.get(action, (result) => loadPartials(result));
+    changeDisplayDiv(_selectedAnchor);      
+    return false;    
 
   });
   
-  const loadPartials = (json) => {
-    _loadedPartials[_selectedAnchor] = true;
-    $("div" + json.target).html(json.content);
-    changeDisplayDiv(_selectedAnchor);
-    if (json.status !== 200) {
-      createErrorDiv(json.error);
-    }
-  };
-
   const changeDisplayDiv = (target) => {
     if ($(_anchorObject).hasClass("nochange")) {
       return;
@@ -52,17 +32,6 @@ const mains = function() {
     changeAnchorClass(_anchorObject);
 
     $("div#mainArea").prop("class", target);
-
-    if (target === "metadata") {
-      const targetSelect2 = "div#metadataArea .selectlist";
-      $(targetSelect2).select2({
-        dropdownAutoWidth : true,
-        width: "resolve",
-        containerCssClass: ":all:",
-        placeholder: "Select a metadata type",
-        allowClear: true
-        });
-    }
     
     $(document).trigger("displayChange", [{targetArea: target + "Area"}]);
   };
@@ -87,11 +56,23 @@ const mains = function() {
         });
   };
 
+  const refreshMetadataTypes = () => {
+    const targetSelect2 = "div#metadataArea .selectlist";
+    $(targetSelect2).select2({
+      dropdownAutoWidth : true,
+      width: "resolve",
+      containerCssClass: ":all:",
+      placeholder: "Select a metadata type",
+      allowClear: true
+      });    
+  }
+
   $("a#refreshDescribe").on("click", function(e) {
     
   });
   
   refreshSObjectLists();
+  refreshMetadataTypes();
 
 };
 

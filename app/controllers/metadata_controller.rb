@@ -11,20 +11,7 @@ class MetadataController < ApplicationController
 
     Full_name_index = 4
     
-    def show
-        begin
-            if current_user.metadata_types.empty?
-                metadata_types = Service::MetadataClientService.call(sforce_session).describe_metadata_objects()
-                current_user.update_attributes(:metadata_types => metadata_types)
-            else
-                metadata_types = current_user.metadata_types
-            end
-            html_content = render_to_string :partial => "metadatalist", :locals => {:data_source => metadata_types}
-            render :json => {:target => "#metadataList", :content => html_content, :error => nil, :status => 200}
-        rescue StandardError => ex
-            html_content = render_to_string :partial => "metadatalist", :locals => {:data_source => []}
-            render :json => {:target => "#metadataList", :content => html_content, :error => ex.message, :status => 400}
-        end        
+    def show   
     end
 
     def list
