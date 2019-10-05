@@ -3,7 +3,7 @@
 
     before_action :require_sign_in!
 
-    protect_from_forgery except: [:check]
+    protect_from_forgery except: [:check, :refresh_sobjects]
 
     def index
         @deploy_metadata_options = Metadata::Deployer.default_deploy_options
@@ -25,7 +25,7 @@
     def preprare_sobjects
         begin
             if session[:global_result].nil?
-                describe_global(sforce_session)
+                describe_global()
             end
             sobjects = session[:global_result].map{|hash| hash[:name]}
             html_content = render_to_string :partial => 'sobjectlist', :locals => {:data_source => sobjects}
@@ -37,7 +37,20 @@
         end    
     end
 
-    def describe_global(sforce_session)
+    def refresh_sobjects
+        session[:global_result] = []
+        begin
+            #describe_global()
+            sobjects = session[:global_result].map{|hash| hash[:name]}
+            html_content = render_to_string :partial => 'sobjectlist', :locals => {:data_source => sobjects}
+            render :json => {:result => html_content}, :status => 200
+        rescue StandardError => ex
+            print_error(ex)            
+            render :json => {:error => ex.message}, :status => 400
+        end            
+    end
+
+    def describe_global
         result = Service::SoapSessionService.call(sforce_session).describe_global()
         session[:global_result] = result[:sobjects].map { |sobject| {:name => sobject[:name], :is_custom => sobject[:custom]} }
     end

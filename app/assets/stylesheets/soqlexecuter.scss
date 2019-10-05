@@ -20,29 +20,6 @@
   
 }
 
-.requesting-overlay {  
-    height: 100%;
-    width: 100%;
-    position: fixed;
-    z-index: 9999;
-    left: 0;
-    top: 0;
-    background-color: #408080;
-    opacity: 0.8;
-    overflow-x: hidden;
-    display:none;
-}
-
-.overlay-content {
-    position: relative;
-    top: 42%;
-    width: 100%;
-    text-align: center;
-    margin-top: 30px;
-    color:#80ffff;
-    font-weight: bold;
-}
-
 /* ------------------------------
    Create dialog
 ------------------------------ */ 

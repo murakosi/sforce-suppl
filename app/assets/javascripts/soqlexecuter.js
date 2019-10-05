@@ -19,7 +19,21 @@ const soql = function() {
       }
     }
   });
-    
+
+  $(document).on("afterRefreshSObjects", (e, param) => {
+    refreshSelectOptions(param.result);
+  });
+
+  const refreshSelectOptions = (result) => {
+    $("#soqlArea .sobject-select-list").html(result);
+    $("#soqlArea .sobject-select-list").select2({
+        dropdownAutoWidth : true,
+        width: "element",
+        containerCssClass: ":all:",
+        placeholder: "Select an sObject",
+        allowClear: true
+      });
+  };    
   //------------------------------------------------
   // Shortcut keys
   //------------------------------------------------

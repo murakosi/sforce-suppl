@@ -1,7 +1,8 @@
 const describe = () => {
 
   let _currentTabIndex = 0;
-  let _selectedTabId = null;  
+  let _selectedTabId = null;
+  let _suppressSObjectTypeChange = false;
   const _sObjects = {};
   const _grids = {};
   const DEFAULT_DATA_TYPE = "";  
@@ -27,6 +28,11 @@ const describe = () => {
         enableOptions();
       }      
     }
+  });
+
+  $(document).on("afterRefreshSObjects", (e, param) => {
+    refreshSelectOptions(param.result);
+    $("#sobjectTypeCheckBox_all").prop("checked", true);
   });
 
   //------------------------------------------------

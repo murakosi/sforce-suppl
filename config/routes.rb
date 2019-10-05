@@ -5,7 +5,7 @@ Rails.application.routes.draw do
 
   post    'check',                  to: 'main#check'
   get     'main',                   to: 'main#index'
-  get     'prepare',                to: 'main#prepare'
+  get     'refresh_sobjects',       to: 'main#refresh_sobjects'
 
   get     'login',                  to: 'login#new'
   post    'login',                  to: 'login#create'
