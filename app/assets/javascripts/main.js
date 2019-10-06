@@ -5,9 +5,9 @@ const mains = function() {
   const DEFAULT_DATA_TYPE = "";
   const DEFAULT_CONTENT_TYPE = null;
 
-  //
+  //------------------------------------------------
   // Menu list
-  //
+  //------------------------------------------------
   $("#menus").on("click", "a", function(e) {
     if ($("#dropdown-menu").is(":visible")) {
       $("#userInfoButton").trigger("click");
@@ -49,13 +49,13 @@ const mains = function() {
     }
   };
 
-  //
-  //
-  //
-  const refreshSObjectLists = () => {
+  //------------------------------------------------
+  // sObjects
+  //------------------------------------------------
+  const prepareSObjectLists = () => {
     $(".sobject-select-list").select2({
         dropdownAutoWidth : true,
-        width: "element",
+        width: "auto",
         containerCssClass: ":all:",
         placeholder: "Select an sObject",
         allowClear: true
@@ -63,22 +63,27 @@ const mains = function() {
   };
 
   $("#refreshSObjects").on("click", function(e) {
+    beginRefresh();
     const action = "refresh_sobjects";
     const method = "get";
-    const options = $.getAjaxOptions(action, method, null, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
+    const options = $.getAjaxOptions(action, method, {}, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE, false);
     const callbacks = $.getAjaxCallbacks(onRefreshSObjectsDone, onRefreshError, null);
     $.executeAjax(options, callbacks);
   });
 
   const onRefreshSObjectsDone = (json) => {
     $(document).trigger("afterRefreshSObjects", [{result: json.result}]);
+    endRefresh();
   }
 
-  const refreshMetadataTypes = () => {
+  //------------------------------------------------
+  // Metadata
+  //------------------------------------------------
+  const prepareMetadataTypes = () => {
     const targetSelect2 = "div#metadataArea .selectlist";
     $(targetSelect2).select2({
       dropdownAutoWidth : true,
-      width: "resolve",
+      width: "auto",
       containerCssClass: ":all:",
       placeholder: "Select a metadata type",
       allowClear: true
@@ -86,23 +91,32 @@ const mains = function() {
   }
 
   $("#refreshMetadata").on("click", function(e) {
+    beginRefresh();
     const action = "refresh_metadata";
     const method = "get";
-    const options = $.getAjaxOptions(action, method, null, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
+    const options = $.getAjaxOptions(action, method, {}, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE, false);
     const callbacks = $.getAjaxCallbacks(onRefreshMetadataDone, onRefreshError, null);
     $.executeAjax(options, callbacks);    
   });
 
   const onRefreshMetadataDone = (json) => {
-    $(".sobject-select-list").html(json.sobject_list);
-    refreshSObjectLists();
-    $(document).trigger("afterRefreshSObjects", []);
+    $(document).trigger("afterRefreshMetadataTypes", [{result: json.result}]);
+    endRefresh();
   }
+
+  //------------------------------------------------
+  // Refresh misc
+  //------------------------------------------------
+  const beginRefresh = () => $("#overlay").show();
+  const endRefresh = () => $("#overlay").hide();
 
   const onRefreshError = (json) =>{
-    console.log(json);
+    alert(json.error);
   }
 
+  //------------------------------------------------
+  // Locale
+  //------------------------------------------------
   $(".locale-options a").on("click", function(e){
     if ($(this).hasClass("checkmark")){
       return false;
@@ -111,12 +125,14 @@ const mains = function() {
     $(".locale-options a").not(this).removeClass("checkmark");
     $(this).addClass("checkmark");
 
+    $("#mainArea").attr("local-opt", $(this).attr("local-opt"));
+
     return false;
 
   });
 
-  refreshSObjectLists();
-  refreshMetadataTypes();
+  prepareSObjectLists();
+  prepareMetadataTypes();
 
 };
 

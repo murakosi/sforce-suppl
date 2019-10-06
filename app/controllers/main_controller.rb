@@ -3,7 +3,7 @@
 
     before_action :require_sign_in!
 
-    protect_from_forgery except: [:check, :refresh_sobjects]
+    protect_from_forgery except: [:check, :refresh_sobjects, :refresh_metadata]
 
     def index
         @deploy_metadata_options = Metadata::Deployer.default_deploy_options
@@ -22,26 +22,10 @@
     	render :plain => "ok", :status => 200
     end
 
-    def preprare_sobjects
-        begin
-            if session[:global_result].nil?
-                describe_global()
-            end
-            sobjects = session[:global_result].map{|hash| hash[:name]}
-            html_content = render_to_string :partial => 'sobjectlist', :locals => {:data_source => sobjects}
-            @sobject_list = html_content
-        rescue StandardError => ex
-            print_error(ex)
-            session[:global_result] = nil
-            @describe_global_error = ex.message
-        end    
-    end
-
     def refresh_sobjects
-        session[:global_result] = []
+        session[:global_result] = nil
         begin
-            #describe_global()
-            sobjects = session[:global_result].map{|hash| hash[:name]}
+            sobjects = get_sobject_names(sforce_session, Describe::SobjectType::All)
             html_content = render_to_string :partial => 'sobjectlist', :locals => {:data_source => sobjects}
             render :json => {:result => html_content}, :status => 200
         rescue StandardError => ex
@@ -50,9 +34,28 @@
         end            
     end
 
-    def describe_global
-        result = Service::SoapSessionService.call(sforce_session).describe_global()
-        session[:global_result] = result[:sobjects].map { |sobject| {:name => sobject[:name], :is_custom => sobject[:custom]} }
+    def refresh_metadata
+        current_user.metadata_types = []
+        begin
+            metadata_types = describe_metadata_objects()
+            html_content = render_to_string :partial => "metadatalist", :locals => {:data_source => metadata_types}
+            render :json => {:result => html_content}, :status => 200
+        rescue StandardError => ex
+            print_error(ex)
+            render :json => {:error => ex.message}, :status => 400
+        end
+    end
+
+    def preprare_sobjects
+        begin
+            sobjects = get_sobject_names(sforce_session, Describe::SobjectType::All)
+            html_content = render_to_string :partial => 'sobjectlist', :locals => {:data_source => sobjects}
+            @sobject_list = html_content
+        rescue StandardError => ex
+            print_error(ex)
+            session[:global_result] = nil
+            @describe_global_error = ex.message
+        end    
     end
 
     def prepare_metadata_types

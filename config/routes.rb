@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   post    'check',                  to: 'main#check'
   get     'main',                   to: 'main#index'
   get     'refresh_sobjects',       to: 'main#refresh_sobjects'
+  get     'refresh_metadata',       to: 'main#refresh_metadata'
 
   get     'login',                  to: 'login#new'
   post    'login',                  to: 'login#create'

@@ -15,7 +15,7 @@
               'metadata',
               'apex.js'
 %>
-<div id="mainArea" class="soql">
+<div id="mainArea" class="soql" local-opt="ja">
 
     <div id="overlay" class="requesting-overlay">
         <div id="overlayContent" class="overlay-content noselect">Requesting...</div>
@@ -37,12 +37,20 @@
                     <li class="dropdown-submenu">
                         <a id="changeLocale" href="javascript:void(0)">Change Locale</a>
                         <ul class="dropdown-menu locale-options">
-                            <li><a href="javascript:void(0)" class="checkmark">Japanese</a></li>
-                            <li><a href="javascript:void(0)">English</a></li>
+                            <li><a href="javascript:void(0)" class="checkmark" local-opt="ja">Japanese</a></li>
+                            <li><a href="javascript:void(0)" local-opt="en_US">English</a></li>
                         </ul>
                     </li>
-                    <li><a id="refreshSObjects" href="javascript:void(0)">Refresh sObjects</a></li>
-                    <li><a id="refreshMetadata" href="javascript:void(0)">Refresh Metadata</a></li>
+                    <% if @describe_global_error.nil? %>
+                        <li><a id="refreshSObjects" href="javascript:void(0)">Refresh sObjects</a></li>
+                    <% else %>
+                        <li><a id="invalidRefreshSObjects" href="javascript:void(0)">Refresh sObjects</a></li>
+                    <% end %>
+                    <% if @describe_metadata_objects_error.nil? %>
+                        <li><a id="refreshMetadata" href="javascript:void(0)" >Refresh Metadata</a></li>
+                    <% else %>
+                        <li><a id="invalidRefreshMetadata" href="javascript:void(0)">Refresh Metadata</a></li>
+                    <% end %>                                        
                     <li role="separator" class="divider"></li>
                     <li><%= link_to "Logout", logout_path, method: :delete, id: "logoutLink" %></li>
                 </ul>

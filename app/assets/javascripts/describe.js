@@ -155,7 +155,7 @@ const describe = () => {
     $("#describeArea .sobject-select-list").html(result);
     $("#describeArea .sobject-select-list").select2({
         dropdownAutoWidth : true,
-        width: "element",
+        width: "auto",
         containerCssClass: ":all:",
         placeholder: "Select an sObject",
         allowClear: true
