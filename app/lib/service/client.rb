@@ -104,8 +104,8 @@ module Service
       @headers = @headers.merge(
                     {
                       "tns:SessionHeader" => {"tns:sessionId" => @session_id},
-                      "tns:AllOrNoneHeader" => {"tns:allOrNone" => true}
-                      #{}"tns:LocaleOptions" => {"tns:language" => "ja"}
+                      "tns:AllOrNoneHeader" => {"tns:allOrNone" => true},
+                      "tns:LocaleOptions" => {"tns:language" => options[:language]}
                     }
                 )
 

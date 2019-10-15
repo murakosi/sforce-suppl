@@ -5,7 +5,12 @@ module Service
         def call(login_params, sforce_result)
             user = get_user(login_params)
             login_token = User.new_login_token
-            user.update_attributes(get_attributes(login_token, login_params, sforce_result))
+            if user.language.nil?
+                language = Constants::Default_language
+            else
+                language = user.language
+            end                
+            user.update_attributes(get_attributes(login_token, login_params, sforce_result, language))
             login_token
         end
 
@@ -17,7 +22,7 @@ module Service
             end
         end
 
-        def get_attributes(login_token, login_params, sforce_result)
+        def get_attributes(login_token, login_params, sforce_result, language)
             {
                 :user_token => User.encrypt_token(login_token),
                 :sforce_session_id => sforce_result[:session_id],
@@ -25,7 +30,8 @@ module Service
                 :sforce_query_locator => sforce_result[:query_locator],
                 :sforce_metadata_server_url => sforce_result[:metadata_server_url],
                 :sandbox => login_params[:sandbox],
-                :api_version => login_params[:api_version]
+                :api_version => login_params[:api_version],
+                :language => language
             }
         end        
     end

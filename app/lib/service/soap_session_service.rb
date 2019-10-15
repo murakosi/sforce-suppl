@@ -10,7 +10,7 @@ module Service
 
         private
             def soap_session(params)
-                {:session_id => params[:session_id], :server_url => params[:server_url]}
+                {:session_id => params[:session_id], :server_url => params[:server_url], :language => params[:language]}
             end
     end
 end

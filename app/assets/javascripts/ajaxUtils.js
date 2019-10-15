@@ -25,7 +25,7 @@
 
             if (contentType == null || contentType == undefined) {
                 ajaxContentType = "application/json";
-                data.local_opt = $("#mainArea").attr("local-opt")
+                data.language = $("#mainArea").attr("local-opt")
                 ajaxData = JSON.stringify(data);
             }
 

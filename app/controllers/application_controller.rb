@@ -32,6 +32,13 @@ class ApplicationController < ActionController::Base
         force_redirect unless signed_in?
     end
 
+
+    def update_language(language)
+        if @current_user.language != language
+            Service::UpdateUserService.call(current_user, {:type => :language, :language => language})
+        end
+    end
+
     private
 
         def initialize_session(login_token)

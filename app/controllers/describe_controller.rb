@@ -3,6 +3,7 @@ class DescribeController < ApplicationController
     include Describe::DescribeExecuter
   
     before_action :require_sign_in!
+    before_action -> { update_language(params[:language]) }  
 
     protect_from_forgery :except => [:change, :describe]
 
