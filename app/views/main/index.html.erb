@@ -15,7 +15,7 @@
               'metadata',
               'apex.js'
 %>
-<div id="mainArea" class="soql" local-opt="ja">
+<div id="mainArea" class="soql" current-locale-option="">
 
     <div id="overlay" class="requesting-overlay">
         <div id="overlayContent" class="overlay-content noselect">Requesting...</div>
@@ -32,13 +32,13 @@
                 <button id="userInfoButton" class="btn btn-secondary btn-sm dropdown-toggle dropdown-btn paper-raise" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   <%= @current_user.name %>
                 </button>
-
+                <span id="userLocalOption"><%= @current_user.language %></span>
                 <ul id="dropdown-menu" class="dropdown-menu">
                     <li class="dropdown-submenu">
-                        <a id="changeLocale" href="javascript:void(0)">Change Locale</a>
+                        <a id="changeLocale" href="javascript:void(0)">Locale Option</a>
                         <ul class="dropdown-menu locale-options">
-                            <li><a href="javascript:void(0)" class="checkmark" local-opt="ja">Japanese</a></li>
-                            <li><a href="javascript:void(0)" local-opt="en_US">English</a></li>
+                            <li><a href="javascript:void(0)" locale-option="ja">Japanese</a></li>
+                            <li><a href="javascript:void(0)" locale-option="en_US">English</a></li>
                         </ul>
                     </li>
                     <% if @describe_global_error.nil? %>

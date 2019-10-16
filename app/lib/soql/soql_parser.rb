@@ -72,11 +72,15 @@ module Soql
       }
 
       rule(:field_expr){
-        function_call.as(:function) | field_reference.as(:name)
+        to_label_call | function_call.as(:function) | field_reference.as(:name)
       }
       
       rule(:function_call){
         count_call.as(:count_call) | identifier >> left_paren >> field_reference >> right_paren
+      }
+
+      rule(:to_label_call){
+        str(TOLABEL) >> left_paren >> field_reference.as(:name) >> right_paren
       }
       
       rule(:count_call){
@@ -180,6 +184,7 @@ module Soql
       FALSE    = "FALSE"
       NULL     = "NULL"
       COUNT    = "COUNT"
+      TOLABEL  = "TOLABEL"
 
     end
 

@@ -5,6 +5,7 @@ class ApplicationController < ActionController::Base
 
     before_action :validate_current_user
     before_action :require_sign_in!
+    before_action -> { update_sforce_locale_option(params[:language]) }
 
     Redirect_message = "<b>Redirected due to session/connection error</b>.\n\n"
 
@@ -32,10 +33,10 @@ class ApplicationController < ActionController::Base
         force_redirect unless signed_in?
     end
 
-
-    def update_language(language)
-        if @current_user.language != language
+    def update_sforce_locale_option(language)
+        if !language.nil? && @current_user.language != language
             Service::UpdateUserService.call(current_user, {:type => :language, :language => language})
+            @sforce_session.merge!({:language => language})
         end
     end
 

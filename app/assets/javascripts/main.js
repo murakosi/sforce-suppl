@@ -117,6 +117,18 @@ const mains = function() {
   //------------------------------------------------
   // Locale
   //------------------------------------------------
+  const setDefaultLocalOption = () => {
+    const userLocalOption = $("#userLocalOption").text();
+    $('.locale-options li a').each(function() {
+        if (userLocalOption === $(this).attr("locale-option")){
+          $(this).addClass("checkmark");
+          $("#mainArea").attr("current-locale-option", userLocalOption);
+          return;
+        }
+     
+      });
+  }
+
   $(".locale-options a").on("click", function(e){
     if ($(this).hasClass("checkmark")){
       return false;
@@ -125,12 +137,13 @@ const mains = function() {
     $(".locale-options a").not(this).removeClass("checkmark");
     $(this).addClass("checkmark");
 
-    $("#mainArea").attr("local-opt", $(this).attr("local-opt"));
+    $("#mainArea").attr("current-locale-option", $(this).attr("locale-option"));
 
     return false;
 
   });
 
+  setDefaultLocalOption();
   prepareSObjectLists();
   prepareMetadataTypes();
 
