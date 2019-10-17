@@ -4,18 +4,6 @@ module Metadata
 
 		All_or_none_error = "ALL_OR_NONE_OPERATION_ROLLED_BACK"
 
-		def get_metadata_types(sforce_session)
-			metadata_types = Service::MetadataClientService.call(sforce_session).describe_metadata_objects()
-		end
-
-		def list_metadata(sforce_session, metadata_type)
-			Service::MetadataClientService.call(sforce_session).list(metadata_type)
-		end
-
-		def get_field_value_types(sforce_session, metadata_type)
-			Service::MetadataClientService.call(sforce_session).describe_value_type(metadata_type)
-		end
-
 		def read_metadata(sforce_session, metadata_type, full_name)
 			raw_result = Service::MetadataClientService.call(sforce_session).read(metadata_type, full_name)
 			raw_result[:records]
@@ -74,53 +62,6 @@ module Metadata
 			parse_save_result(Metadata::CrudType::Delete, save_result)
 		end
 
-		def create_metadata(sforce_session, metadata_type, headers, types, values)
-			metadata = prepare_metadata_to_create(metadata_type, headers, types, values)
-
-			if metadata[:metadata].first.empty?
-				raise StandardError.new("No metadata to create")
-			end
-			if metadata.has_key?(:subsequent)
-				create_with_permissions(sforce_session, metadata_type, metadata)
-			else
-				create_without_permissions(sforce_session, metadata_type, metadata)
-			end
-
-		end
-
-		def prepare_metadata_to_create(metadata_type, headers, types, values)
-			source = []
-			values.each do | value |
-				merged = [headers, value].transpose
-				source << Hash[*merged.flatten]
-			end
-			
-			value_types = Hash[*[headers, types].transpose.flatten]
-			Metadata::ValueFieldSupplier.rebuild(metadata_type, value_types, source)
-		end
-
-		def create_without_permissions(sforce_session, metadata_type, metadata)
-			save_result = Service::MetadataClientService.call(sforce_session).create(metadata_type, metadata[:metadata])
-			parse_save_result(Metadata::CrudType::Create, save_result)
-		end
-
-		def create_with_permissions(sforce_session, metadata_type, metadata)
-			create_result = create_without_permissions(sforce_session, metadata_type, metadata)
-			
-			metadata[:subsequent].each do |permission|
-    			update_result = Service::MetadataClientService.call(sforce_session).update("Profile", permission)
-    			parse_save_result(Metadata::CrudType::Update, update_result)
-			end
-			create_result
-		end
-
-		def fake_response
-			{
-				:message => "metadata succeeded",
-				:refresh_required => false
-			}
-		end
-
 		def parse_save_result(crud_type, crud_result)
 			result = Array[crud_result].flatten
 			if result.any?{|hash| !hash[:success]}
@@ -151,7 +92,7 @@ module Metadata
 
 		def refresh_required?(crud_type)
 	        case crud_type
-	        when Metadata::CrudType::Create
+	        when Metadata::CrudType::Read
 	            return false
 	        when Metadata::CrudType::Update
 	            return false

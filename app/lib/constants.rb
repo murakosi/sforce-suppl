@@ -28,6 +28,8 @@ module Constants
 		"20.0"
 	]
 
+    Default_language = "ja"
+    
     ProductionUrl = "login.salesforce.com"
     SandboxUrl = "test.salesforce.com"
     SSLVersion = :TLSv1_2

@@ -1,7 +1,6 @@
 require 'json' 
 
 class SoqlexecuterController < ApplicationController
-  #include Soql::QueryExecuter
 
   before_action :require_sign_in!
   
@@ -11,7 +10,6 @@ class SoqlexecuterController < ApplicationController
   Temp_id_prefix = "@"
 
   def show
-
   end
   
   def query
@@ -59,7 +57,7 @@ class SoqlexecuterController < ApplicationController
     end
 
     {
-      :soql_info => soql_info(query_result[:soql], query_result[:record_count], tooling, query_all, tab_id),
+      :soql_info => soql_info(query_result[:soql], query_result[:record_count], tooling, query_all, tab_id, query_result[:sobject]),
       :sobject => query_result[:sobject],
       :records => {
                   :columns => query_result[:columns],
@@ -75,7 +73,7 @@ class SoqlexecuterController < ApplicationController
 
   def not_found_response(soql, tooling, query_all, tab_id, query_result)
     {
-      :soql_info => soql_info(query_result[:soql], query_result[:record_count], tooling, query_all, tab_id),
+      :soql_info => soql_info(query_result[:soql], query_result[:record_count], tooling, query_all, tab_id, query_result[:sobject]),
       :sobject => query_result[:sobject],
       :records => {
                   :columns => query_result[:columns],
@@ -89,10 +87,10 @@ class SoqlexecuterController < ApplicationController
     }
   end
 
-  def soql_info(soql, record_count, tooling, query_all, tab_id, sobject = nil)
-    if sobject.nil?
+  def soql_info(soql, record_count, tooling, query_all, tab_id, sobject)
+    if soql.nil?
       {
-        :timestamp => record_count + " rows @" + Time.now.strftime(Time_format),
+        :timestamp => "sObject : " + sobject,
         :soql => soql,
         :tooling => tooling,
         :query_all => query_all,
@@ -100,7 +98,7 @@ class SoqlexecuterController < ApplicationController
       }
     else
       {
-        :timestamp => "sObject : " + sobject,
+        :timestamp => sobject + " : " + record_count + " rows @" + Time.now.in_time_zone('Tokyo').strftime(Time_format),
         :soql => soql,
         :tooling => tooling,
         :query_all => query_all,

@@ -22,13 +22,11 @@ module Sforcesuppl
     config.assets.precompile += %w(chosen.jquery.js)
     config.assets.precompile += %w(ajaxDownload.js)
     config.assets.precompile += %w(ajaxUtils.js)
-    config.assets.precompile += %w(main.coffee)
-    config.assets.precompile += %w(describe.coffee)
-    config.assets.precompile += %w(soqlexecuter.coffee)
+    config.assets.precompile += %w(main.js)
+    config.assets.precompile += %w(describe.js)
+    config.assets.precompile += %w(soqlexecuter.js)
     config.assets.precompile += %w(metadata.coffee)
-    config.assets.precompile += %w(tooling.coffee)
-    config.assets.precompile += %w(apex.coffee)
-    config.assets.precompile += %w(soqlgrids.coffee)
+    config.assets.precompile += %w(apex.js)
 
     config.before_configuration do
       env_file = File.join(Rails.root, 'config', 'local_env.yml')

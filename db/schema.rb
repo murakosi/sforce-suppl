@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180609071948) do
+ActiveRecord::Schema.define(version: 20191015090339) do
 
   create_table "sessions", force: :cascade do |t|
     t.string "session_id", null: false
@@ -36,6 +36,8 @@ ActiveRecord::Schema.define(version: 20180609071948) do
     t.string "encrypted_sforce_metadata_server_url_iv"
     t.boolean "sandbox", null: false
     t.string "api_version"
+    t.text "metadata_types", default: "--- []\n"
+    t.string "language"
   end
 
 end

@@ -1,10 +1,10 @@
 require "cgi"
 
-module Generator
-	module TreeNodeGenerator
+module Metadata
+	module TreeNodeBuilder
         include Utils::FormatUtils
 
-        def generate_parent_nodes(api_crud_info, metadata_list)
+        def build_parent_nodes(api_crud_info, metadata_list)
             if api_crud_info[:api_readable]
                 has_children = true
             else
@@ -17,9 +17,27 @@ module Generator
             parent_nodes
         end
 
+        def build_tree_nodes(full_name, read_result, type_info)
+            @full_name = full_name
+            if @full_name.include?("/")
+                @path_full_name = true
+            else
+                @path_full_name = false
+            end
+            @type_info = tree_type_info(type_info)
+            parse_read_result(method(:create_value_node), read_result, full_name)
+        end
+
+        def build_tree_nodes_from_hash(hashes, parent)
+            @full_name = "full_name"
+            @path_full_name = false
+            @type_info = {}
+            parse_read_result(method(:create_key_value_node), hashes, parent)
+        end
+
+        private
+
         def parent_node(hash, has_children)
-            #@func = method(:execute_retrieve)
-           #@func.call("a")
         	{
         		:id => hash[:full_name],
         		:parent => "#",
@@ -27,33 +45,6 @@ module Generator
         		:children => has_children,
         		:li_attr => {:editable => false} 
         	}
-        end
-
-        def test_func(f)
-            f.call("a")
-        end
-
-        def execute_retrieve(val)
-            p "here"
-            p val
-        end
-
-        def generate_nodes(full_name, read_result, type_info)
-        	@full_name = full_name
-            if @full_name.include?("/")
-                @path_full_name = true
-            else
-                @path_full_name = false
-            end
-        	@type_info = tree_type_info(type_info)
-        	parse_read_result(method(:create_value_node), read_result, full_name)
-        end
-
-        def generate_nodes_from_hash(hashes, parent)
-            @full_name = "full_name"
-            @path_full_name = false
-            @type_info = {}
-            parse_read_result(method(:create_key_value_node), hashes, parent)
         end
 
         def tree_type_info(type_fields)
@@ -68,7 +59,7 @@ module Generator
                 if hash[:soap_type] == "boolean"
                     types[name] = {:is_picklist => true, :picklist_source => ["true", "false"]}
                 elsif hash.has_key?(:picklist_values)
-                    types[name] = {:is_picklist => true, :picklist_source => hash[:picklist_values].map{|hash| hash[:value]}}
+                    types[name] = {:is_picklist => true, :picklist_source => hash[:picklist_values].map{|values| values[:value]}}
                 elsif enums.has_key?(soap_type)
                     types[name] = {:is_picklist => true, :picklist_source => enums[soap_type]}
                 else
@@ -84,24 +75,20 @@ module Generator
             hashes.each do |k, v|
                 if v.is_a?(Hash)
                     push_result(get_id(parent, k), parent, key_text(k), false)
-                    #parse_child(get_id(parent, k), v)
                     parse_child(create_node, get_id(parent, k), v)
                 elsif v.is_a?(Array)
                     push_result(get_id(parent, k), parent, key_text(k), false)
                     v.each_with_index do |val, idx|
                         id = get_id(parent, k, idx)
                         push_result(id, get_id(parent, k), key_text(k, idx), false)
-                        #parse_child(id, val, idx)
                         parse_child(create_node, id, val, idx)
                     end
                 else
                     key_id = get_id(parent, k)
                     value_id = get_id(key_id, "value")
-                    if k == :"@xsi:type"
-                        #create_value_node(parent, key_id, k, value_id, v, true)
+                    if k == :"@xsi:type" || k == :full_name
                         create_node.call(parent, key_id, k, value_id, v, true)
                     else
-                        #create_value_node(parent, key_id, k, value_id, v)
                         create_node.call(parent, key_id, k, value_id, v)
                     end
                 end
@@ -114,26 +101,22 @@ module Generator
                 if v.is_a?(Hash)
                     id = get_id(parent, k)
                     push_result(id, parent, key_text(k), false)
-                    #parse_child(id, v, index)
                     parse_child(create_node, id, v, index)
                 elsif v.is_a?(Array)
                     if is_hash_array?(v)
                         v.each_with_index do |item, idx|
                             id = get_id(parent, k, idx)
                             push_result(id, parent, key_text(k, idx), false)
-                            #parse_child(id, item, idx)
                             parse_child(create_node, id, item, idx)
                         end
                     else
                         key_id = get_id(parent, k)
                         value_id = get_id(key_id, "value")
-                        #create_value_node(parent, key_id, k, value_id, v.join(","))
                         create_node.call(parent, key_id, k, value_id, v.join(","))
                     end
                 else
                     key_id = get_id(parent, k)
                     value_id = get_id(key_id, "value")
-                    #create_value_node(parent, key_id, k, value_id, v)
                     create_node.call(parent, key_id, k, value_id, v)
                 end
             end
@@ -160,7 +143,6 @@ module Generator
             if index.nil?
                 id = parent.to_s + "/" + current.to_s
             else
-                #id = parent.to_s + "/" + current.to_s + "[" + index.to_s + "]"
                 id = parent.to_s + "/" + current.to_s + "/" + index.to_s
             end
         end
@@ -189,8 +171,6 @@ module Generator
         end
 
         def key_value_text(id, value)
-            #split_path = id.split("/")
-            #last_element = split_path.reverse.shift
             decoded_value = try_decode(id, value, true)
             "<b>" + id.to_s + "</b>:" + decoded_value.to_s         
         end

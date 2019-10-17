@@ -99299,6 +99299,9 @@ function (_BaseUI) {
 
     _this.itemsBox = null;
 
+    //murakoshi
+    _this.searchText = "";
+
     _this.registerHooks();
 
     return _this;
@@ -99471,6 +99474,9 @@ function (_BaseUI) {
       }
 
       this.itemsBox.loadData(valueToItems(this.items, this.options.value));
+      //murakoshi add to select all
+      this.searchInput.element.firstChild.value = this.searchText;
+      this.murakoshi(this.searchText);
       (0, _get2.default)((0, _getPrototypeOf2.default)(MultipleSelectUI.prototype), "update", this).call(this);
     }
     /**
@@ -99507,16 +99513,58 @@ function (_BaseUI) {
       var value = event.target.value.toLowerCase();
       var filteredItems;
 
+      //murakoshi
+      this.searchText = value;
+
       if (value === '') {
         filteredItems = (0, _toConsumableArray2.default)(this.items);
       } else {
+        //murakoshi add to clear checkbox before filter
+        (0, _array.arrayEach)(this.itemsBox.getSourceData(), function (row) {
+          row.checked = false;
+        });
         filteredItems = (0, _array.arrayFilter)(this.items, function (item) {
           return "".concat(item.value).toLowerCase().indexOf(value) >= 0;
         });
       }
 
       this.itemsBox.loadData(filteredItems);
+      //murakoshi add to select all
+      (0, _array.arrayEach)(this.itemsBox.getSourceData(), function (row) {
+        row.checked = true;
+      });
+      this.itemsBox.render();
     }
+    //mura
+  }, {
+    key: "murakoshi",
+    value: function murakoshi(text) {
+      var value = text.toLowerCase();
+      var filteredItems;
+
+      //murakoshi
+      this.searchText = value;
+
+      if (value === '') {
+        filteredItems = (0, _toConsumableArray2.default)(this.items);
+      } else {
+        //murakoshi add to clear checkbox before filter
+        (0, _array.arrayEach)(this.itemsBox.getSourceData(), function (row) {
+          row.checked = false;
+        });
+        filteredItems = (0, _array.arrayFilter)(this.items, function (item) {
+          return "".concat(item.value).toLowerCase().indexOf(value) >= 0;
+        });
+      }
+
+      this.itemsBox.loadData(filteredItems);
+      //murakoshi add to select all
+      (0, _array.arrayEach)(this.itemsBox.getSourceData(), function (row) {
+        row.checked = true;
+      });
+      this.itemsBox.render();
+    }    
+    //mura
     /**
      * 'keydown' event listener for input element.
      *
@@ -99583,13 +99631,32 @@ function (_BaseUI) {
      * @param {DOMEvent} event
      */
 
-  }, {
+  }, /*{
     key: "onClearAllClick",
-    value: function onClearAllClick(event) {
+    value: function onClearAllClick(event) {      
       event.preventDefault();
+      var filteredItems = (0, _toConsumableArray2.default)(this.items);
+      this.itemsBox.loadData(filteredItems);    
       (0, _array.arrayEach)(this.itemsBox.getSourceData(), function (row) {
         row.checked = false;
+      });      
+      this.itemsBox.render();
+    }
+    */
+    // murakoshi
+    {
+    key: "onClearAllClick",
+    value: function onClearAllClick(event) {      
+      event.preventDefault();
+      this.searchText = '';
+      var filteredItems = (0, _toConsumableArray2.default)(this.items);
+      this.itemsBox.loadData(filteredItems);
+      this.reset();
+      
+      (0, _array.arrayEach)(this.itemsBox.getSourceData(), function (row) {
+        row.checked = true;
       });
+      
       this.itemsBox.render();
     }
   }]);

@@ -1,19 +1,25 @@
+
 <div id="soqlHistory" class="sidenav">
-	<div class="soql-history-title noselect">SOQL History</div>
-	<button class="closebtn noselect">&times;</button>		
-	<ul></ul>
+	<div class="tbl soql-history-title noselect">
+		<div class="row"><button class="closebtn noselect">&times;</button></div>
+		<div class="row">SOQL History</div>
+	</div>
+	<div class="soql-list">
+		<ul></ul>
+	</div>
 </div>
+
 <div id="soqlArea">
 
 	<div class="formArea">
-		<%= form_tag query_path(), :method => :post, :class => "execute-form" do %>
+		<%= form_tag query_path(), :method => :post, :class => "soql-form" do %>
 			<div>
-				<%= text_area_tag :input_soql,"", :size => "120x5", :spellcheck => false %>
+				<%= text_area_tag :input_soql,"", :size => "120x5", :class => "code-input", :spellcheck => false %>
 			</div>
 			<div>
 				<%= submit_tag "Execute", :class => "btn btn-sm btn-primary execute-soql" %>
-				<label class="soqlOptions"><input type="checkbox" id="useTooling"/> Use Tooling API</label>
-				<label class="soqlOptions"><input type="checkbox" id="queryAll"/> Query all</label>
+				<label class="soql-options"><input type="checkbox" id="useTooling"/> Use Tooling API</label>
+				<label class="soql-options"><input type="checkbox" id="queryAll"/> Query all</label>
 			</div>
 		<% end %>
 		
@@ -22,11 +28,11 @@
 	
 	<div class="tabArea">
 		<div class="left-align-btn">
-		<%= button_tag "Export", :type => "button", :id => "exportBtn", :class => "btn btn-xs btn-default ex-small-btn" %>
+		<%= button_tag "Export", :type => "button", :class => "btn btn-xs btn-default ex-small-btn export-btn" %>
 		<% if @describe_error.nil? %>
 			<%= button_tag "Create", :type => "button", :id => "openCreatGridBtn", :class => "btn btn-xs btn-default ex-small-btn" %>
 		<% end %>
-		<%= button_tag "History", :type => "button", :id => "historyBtn", :class => "btn btn-xs btn-default ex-small-btn" %>
+		<%= button_tag "History", :type => "button", :id => "soqlHistoryBtn", :class => "btn btn-xs btn-default ex-small-btn" %>
 		</div>
 		<div class="right-align-btn">
 			<%= button_tag "Upsert", :type => "button", :id => "upsertBtn", :class => "btn btn-xs btn-warning ex-small-btn" %>
@@ -35,29 +41,29 @@
 		</div>
 		<ul id="soqlTabs">
 			<li class="add-tab-li">
-				<div id="addTabBtn" class="icon-plus"></div>
+				<div class="add-tab-btn icon-plus"></div>
 			</li>
 		</ul>
 	</div>	
 	
 	<div id="soqlOverRay">
 		<div id="creatGridArea" class="create-dialog">
-			<div class="tbl">
+			<div class="tbl soql-grid-table">
 				<div class="row">
-					<div class="label_col">
+					<div class="sobject-label">
 						<%= label_tag 'sObjects: ' %>
 					</div>
-					<div class="sobject-list input-sm2 select2-single">
-						<%= @describe_result %>
+					<div class="sobject-list soql-sobject-list select2-single">
+						<%= @sobject_list %>
 					</div>
 				</div>
 				
 				<div class="row">
-					<div class="label_col2">
+					<div class="fields-label">
 						<%= label_tag 'Fields: ' %>
 					</div>
 					<div>
-						<%= text_area_tag :sobject_fields,"", :class => "sobjectFieldsTextarea", :spellcheck => false %>				
+						<%= text_area_tag :sobject_fields,"", :class => "sobject-fields-textarea", :spellcheck => false %>
 					</div>
 				</div>
 				<div class="row">
@@ -65,14 +71,14 @@
 						<%= label_tag 'Separator: ' %>
 					</div>
 					<div>
-						<select id="separator">
+						<select id="sobjectFieldsSeparator">
 							<option value="newline">New line</option>
 							<option value="comma">Comma</option>							
 						</select>
 					</div>
 				</div>
 
-				<div class="row" style="height:20px;"></div>
+				<div class="row soql-empty-row"></div>
 
 				<div class="row">
 					<div></div>

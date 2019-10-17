@@ -101,7 +101,13 @@ module Service
         raise ArgumentError.new("Must provide username/password or session_id/server_url.")
       end
 
-      @headers = @headers.merge({"tns:SessionHeader" => {"tns:sessionId" => @session_id}, "tns:AllOrNoneHeader" => {"tns:allOrNone" => true}})
+      @headers = @headers.merge(
+                    {
+                      "tns:SessionHeader" => {"tns:sessionId" => @session_id},
+                      "tns:AllOrNoneHeader" => {"tns:allOrNone" => true},
+                      "tns:LocaleOptions" => {"tns:language" => options[:language]}
+                    }
+                )
 
       @client = Savon.client(
         wsdl: @wsdl,

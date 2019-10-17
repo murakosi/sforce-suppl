@@ -21,7 +21,8 @@ module Service
                                  :server_url => nil,
                                  :metadata_server_url => nil,
                                  :sandbox => nil,
-                                 :api_version => nil
+                                 :api_version => nil,
+                                 :language => nil
                                  }
             }  
         end
@@ -33,7 +34,8 @@ module Service
                                  :server_url => user.sforce_server_url,
                                  :metadata_server_url => user.sforce_metadata_server_url,
                                  :sandbox => user.sandbox,
-                                 :api_version => user.api_version
+                                 :api_version => user.api_version,
+                                 :language => user.language
                                  }
             }           
         end

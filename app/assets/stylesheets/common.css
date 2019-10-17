@@ -3,10 +3,26 @@
 ------------------------------ */
 label {
     font-weight: normal !important;
+    margin-bottom: 0 !important;
 }
 
 button:disabled {
   cursor: default !important;
+}
+
+/* ------------------------------
+    Table
+------------------------------ */
+.tbl{
+    display:table;
+}
+
+.row {
+    display:table-row;
+}
+
+.row>div {
+    display:table-cell;
 }
 
 /* ------------------------------
@@ -89,7 +105,7 @@ button:disabled {
 /* ------------------------------
    #Areas
 ------------------------------ */
-#tree, .treeView{
+#tree, .tree-view{
     font-size:12px;
     font-family: Verdana;
     height:500px;
@@ -111,6 +127,8 @@ button:disabled {
     display: none;
     color: red;
     white-space: pre-wrap;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
 }
 
 .tabArea{
@@ -129,23 +147,31 @@ button:disabled {
 /* ------------------------------
    #select2
 ------------------------------ */
+
 .input-sm{
     display:inline;
     vertical-align: center;
 }
 
 .select2-results__options{
-        font-size:12px !important;
-        -webkit-box-shadow: none !important;
-        box-shadow:none !important;
+    font-size:12px !important;
+    -webkit-box-shadow: none !important;
+    box-shadow:none !important;
  }
 
 span.select2-selection.select2-selection--single {
-        outline: none;
+    outline: none;
  }
 
 .select2-results {
-    max-height: 290px;
+    max-height: 290px;   
+}
+
+.select2-selection__rendered{
+    max-width: 500px;
+    overflow-y: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .select2-container--default .select2-results > .select2-results__options {
@@ -158,6 +184,10 @@ span.select2-selection.select2-selection--single {
     margin-left: 10px !important;
 }
 
+.select2-container {
+    min-width:140px;
+}
+
 .ex-small-btn{
     font-size: 12px !important;
 }
@@ -166,7 +196,6 @@ span.select2-selection.select2-selection--single {
     font-size: 12px !important;
     margin-right: 5px;
 }
-
 
 /* ------------------------------
    #tab area
@@ -199,58 +228,51 @@ span.select2-selection.select2-selection--single {
 }
 
 /* ------------------------------
-   #block
+    Add tab button
 ------------------------------ */
-.left_block{
-    display: table;
-    border: 0px solid black;
-    width: auto;
-    vertical-align: left;
+.icon-plus {
+    border:1px solid #aaa;
+    background-color: #fff;
+    border-top-right-radius: 4px;
+    border-top-left-radius: 4px;
+    width: 27px;
+    height: 20px;
+    position: relative;
+    top: 8px;
+    left: 0px;
+    margin-bottom:0px;
+    border-bottom: 0px;
+    cursor: pointer;
 }
 
-.combined_block{
-    display:table-cell;
-    padding-top: 2px;
-    padding-bottom: 2px;
-    padding-right: 10px;
-    border: 0px solid black;
-    width: 100%;
-    text-align: left;
-    vertical-align: middle;
+.icon-plus:after {
+    background-color: #aaa;
+    width: 16px;
+    height: 2px;
+    border-radius: 1px;
+    position: absolute;
+    top:9px;
+    left: 5px;
+    content:"";
 }
 
-.label_block{
-    display:table-cell;
-    padding-top: 2px;
-    padding-bottom: 2px;
-    padding-right: 10px;
-    border: 0px solid black;
-    width: 40%;
-    text-align: left;
-    vertical-align: middle;
+.icon-plus:before {
+    background-color: #aaa;
+    width: 2px;
+    height: 16px;
+    border-radius: 1px;
+    position: absolute;
+    top:2px;
+    left: 12px;
+    content:"";
 }
 
-.element_block{
-    display:table-cell;
-    padding-top: 2px;
-    padding-bottom: 2px;
-    border: 0px solid black;
-    width: 60%;
-    text-align: left;
-    vertical-align: middle;
+/* ------------------------------
+   Textarea
+------------------------------ */
+.code-input{
+	font-family: Consolas;
 }
-
-.center_button_block{
-    display:table-cell;
-    padding-top: 2px;
-    padding-bottom: 2px;
-    padding-right: 10px;
-    border: 0px solid black;
-    width: 40%;
-    text-align: left;
-    vertical-align: middle;
-}
-
 
 
 

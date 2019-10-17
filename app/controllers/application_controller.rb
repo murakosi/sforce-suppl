@@ -3,8 +3,9 @@ require 'json'
 class ApplicationController < ActionController::Base
     include Common
 
-    before_action :current_user
+    before_action :validate_current_user
     before_action :require_sign_in!
+    before_action -> { update_sforce_locale_option(params[:language]) }
 
     Redirect_message = "<b>Redirected due to session/connection error</b>.\n\n"
 
@@ -12,7 +13,7 @@ class ApplicationController < ActionController::Base
 
     def sign_in(login_params)
         sforce_result = Service::SoapLoginService.call(login_params)
-        login_token = Service::UpdateUserService.call(login_params, sforce_result)
+        login_token = Service::RefreshUserService.call(login_params, sforce_result)
         initialize_session(login_token)
     end
 
@@ -32,6 +33,13 @@ class ApplicationController < ActionController::Base
         force_redirect unless signed_in?
     end
 
+    def update_sforce_locale_option(language)
+        if !language.nil? && @current_user.language != language
+            Service::UpdateUserService.call(current_user, {:type => :language, :language => language})
+            @sforce_session.merge!({:language => language})
+        end
+    end
+
     private
 
         def initialize_session(login_token)
@@ -40,7 +48,7 @@ class ApplicationController < ActionController::Base
             session[:user_token] = login_token
         end
 
-        def current_user
+        def validate_current_user
             user_info = Service::SelectUserService.call(session[:user_token])
             @sforce_session = user_info[:sforce_session]
             @current_user = user_info[:user]
@@ -48,6 +56,10 @@ class ApplicationController < ActionController::Base
         
         def sforce_session
             @sforce_session
+        end
+
+        def current_user
+            @current_user
         end
 
         def sforce_session_alive?

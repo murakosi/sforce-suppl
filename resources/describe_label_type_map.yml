@@ -2,7 +2,7 @@ id:
  label: "ID"
  type: "string"
 address:
- label: "住所"
+ label: "Address"
  type: "string"
 anytype:
  label: "AnyType"
@@ -11,65 +11,65 @@ base64:
  label: "Base64"
  type: "string"
 email:
- label: "電子メール"
+ label: "Email"
  type: "string"
 phone:
- label: "電話"
+ label: "Phone"
  type: "string"
 combobox:
- label: "テキスト（＋選択リスト）"
+ label: "Combobox"
  type: "string"
 encryptedstring:
- label: "パスワード"
+ label: "Encrypted String"
  type: "string"
 string:
- label: "テキスト"
+ label: "Text"
  type: "string"
 textarea:
- label: "テキストエリア"
+ label: "Textarea"
  type: "string"
 url:
  label: "URL"
  type: "string"
 time:
- label: "時間"
+ label: "Time"
  type: "string"
 boolean:
- label: "チェックボックス"
+ label: "Checkbox"
  type: ""
 date:
- label: "日付"
+ label: "Date"
  type: ""
 datetime:
- label: "日付/時間"
+ label: "Datetime"
  type: ""
 picklist:
- label: "選択リスト"
+ label: "Picklist"
  type: ""
 multipicklist:
- label: "選択リスト(複数選択)"
+ label: "Multipicklist"
  type: ""
 reference:
- label: "ルックアップ"
+ label: "Reference"
  type: ""
 int:
- label: "数値"
+ label: "Number"
  type: "integer"
 currency:
- label: "通貨"
+ label: "Currency"
  type: "double"
 double:
- label: "数値"
+ label: "Number"
  type: "double"
 percent:
- label: "パーセント"
+ label: "Percent"
  type: "double"
 auto_number:
- label: "自動採番"
+ label: "Auto Number"
  type: "string"
 formula:
- label: "数式"
+ label: "Formula"
  type: ""
 external_id:
- label: "（外部ID）"
+ label: "External Id"
  type: "string"

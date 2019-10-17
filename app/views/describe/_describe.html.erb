@@ -1,38 +1,40 @@
 <div id="describeArea">
-		<div class="formArea">
-			<%= form_tag describe_changelist_path(), :id => "filterSObjectList", :method => :post do %>
-				<label class="sobjectTypeCheckBoxLabel"><input type="radio" name="sobjectTypeCheckBox" id="sobjectTypeCheckBox_all" value="all" class="sobjectTypeCheckBox" checked="checked">All</label>
-				<label class="sobjectTypeCheckBoxLabel"><input type="radio" name="sobjectTypeCheckBox" id="sobjectTypeCheckBox_standard" value="standard" class="sobjectTypeCheckBox">Standard</label>
-				<label class="sobjectTypeCheckBoxLabel"><input type="radio" name="sobjectTypeCheckBox" id="sobjectTypeCheckBox_custom" value="custom" class="sobjectTypeCheckBox">Custom</label>
 
-			<% end %>
+	<div class="formArea">
+		<%= form_tag describe_changelist_path(), :id => "filterSObjectList", :method => :post do %>
+			<label class="sobjectTypeCheckBoxLabel"><input type="radio" name="sobjectTypeCheckBox" id="sobjectTypeCheckBox_all" value="all" class="sobjectTypeCheckBox" checked="checked">All</label>
+			<label class="sobjectTypeCheckBoxLabel"><input type="radio" name="sobjectTypeCheckBox" id="sobjectTypeCheckBox_standard" value="standard" class="sobjectTypeCheckBox">Standard</label>
+			<label class="sobjectTypeCheckBoxLabel"><input type="radio" name="sobjectTypeCheckBox" id="sobjectTypeCheckBox_custom" value="custom" class="sobjectTypeCheckBox">Custom</label>
+		<% end %>
 
-			<div class="left_block">
-				<div class="combined_block">
-					<%= label_tag :sobjects, 'sObjects: ' %>
-					<div id="sobjectList" class="sobject-list input-sm select2-single"><%= @describe_result %></div>
+		<div class="tbl">
+			<div class="row">
+				<div class="describe-sobject-label">
+					<%= label_tag :sobjects, 'sObjects: ' %>							
+				</div>
+				<div class="sobject-list describe-sobject-list input-sm select2-single">
+					<%= @sobject_list %>							
 				</div>
 			</div>
-			<div class="left_block">
-				<div class="label_block">
-					<%= button_tag "Describe", :action => describe_path(), :method => :post, :id => "executeDescribe", :class => "btn btn-sm btn-primary" %>
+			<div class="row">
+				<div>
+					<%= button_tag "Describe", :action => describe_path(), :method => :post, :id => "executeDescribeBtn", :class => "btn btn-sm btn-primary" %>
 				</div>
-			</div>
-
-			<div class="messageArea"></div>
+			</div>			
 		</div>
-		
-		<div class="tabArea">
-			<div class="exportButtonArea">
-				<%= form_tag describe_download_path(), :id => "exportForm", :method => :post, :remote => false do %>
-					<%= button_tag "Export", :id => "csv-expprt", :class => "btn btn-xs btn-default ex-small-btn" %>
-				<% end %>
-			</div>	
+		<p><div class="messageArea"></div></p>
+	</div>
+	
+	<div class="tabArea">
+		<div class="exportButtonArea">
+			<%= button_tag "Export", :class => "btn btn-xs btn-default ex-small-btn export-btn" %>
+		</div>	
 
-			<ul id="describeTabs">
-				<li class="add-tab-li">
-					<div id="addTabBtn" class="icon-plus"></div>
-				</li>
-			</ul>
-		</div>
+		<ul id="describeTabs">
+			<li class="add-tab-li">
+				<div class="add-tab-btn icon-plus"></div>
+			</li>
+		</ul>
+	</div>
+
 </div>

@@ -14,14 +14,10 @@ module Service
                 file_name = "tooling.wsdl.xml"
             when :apex_wsdl
                 file_name = "apex.wsdl.xml"
-        	when :excel_export_settings
-        		file_name = "excel_export_settings.yml"
-        	when :translations
-        		file_name = "translations.yml"
-            when :valuetypes
-                file_name = "value_type_mappings.yml"
             when :enums
                 file_name = "enums.yml"
+            when :describe_types
+                file_name = "describe_label_type_map.yml"
         	else
         		file_name = param
         	end

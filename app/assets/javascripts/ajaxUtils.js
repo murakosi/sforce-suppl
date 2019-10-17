@@ -1,7 +1,7 @@
 
 (function ($) {
 
-    var jqXHR = null;
+    var _jqXHR = null;
 
     $.extend({
 
@@ -25,6 +25,7 @@
 
             if (contentType == null || contentType == undefined) {
                 ajaxContentType = "application/json";
+                data.language = $("#mainArea").attr("current-locale-option")
                 ajaxData = JSON.stringify(data);
             }
 
@@ -60,7 +61,7 @@
         },
 
         isAjaxBusy: function () {
-            if (jqXHR) {
+            if (_jqXHR) {
                 return true;
             } else {
                 return false;
@@ -68,33 +69,32 @@
         },
 
         abortAjax: function () {
-            if (jqXHR) {
-                jqXHR.abort();
+            if (_jqXHR) {
+                _jqXHR.abort();
             }
         },
 
+        showProgress: function() {
+            $("#progress-line").addClass("progress-line");
+            $("#progress").css("visibility","visible");
+        },
 
+        hideProgress: function() {
+            $("#progress-line").removeClass("progress-line");
+            $("#progress").css("visibility","hidden");            
+        },
 
         executeAjax: function (options, callbacks, raw = false) {
-            function showProgress() {
-                $("#progress-line").addClass("progress-line");
-                $("#progress").css("visibility","visible");
-            };
 
-            function hideProgress() {
-                $("#progress-line").removeClass("progress-line");
-                $("#progress").css("visibility","hidden");            
-            };
-
-            if (jqXHR) {
+            if (_jqXHR) {
                 return;
             }
 
             if(options.showProgress){
-                showProgress();
+                $.showProgress();
             }
 
-            jqXHR = $.ajax({
+            _jqXHR = $.ajax({
                 url: options.action,
                 type: options.method,
                 dataType: options.datatype,
@@ -104,8 +104,8 @@
                 cache: false
             });
 
-            jqXHR.done(function (data, stat, xhr) {
-                jqXHR = null;
+            _jqXHR.done(function (data, stat, xhr) {
+                _jqXHR = null;
                 console.log({ done: stat, data: data, xhr: xhr });
                 if (raw){
                     return callbacks.doneCallback(xhr.responseText, callbacks.doneCallbackParams);
@@ -114,9 +114,13 @@
                 }
             });
 
-            jqXHR.fail(function (xhr, stat, err) {
-                jqXHR = null;
+            _jqXHR.fail(function (xhr, stat, err) {
+                _jqXHR = null;
                 console.log({ fail: stat, error: err, xhr: xhr });
+                if (stat === "abort"){
+                    return;
+                }
+
                 if (raw){
                     return callbacks.failCallback(xhr.responseText, callbacks.failCallbackParams);
                 }else{
@@ -124,11 +128,11 @@
                 }
             });
 
-            jqXHR.always(function (res1, stat, res2) {
-                jqXHR = null;
+            _jqXHR.always(function (res1, stat, res2) {
+                _jqXHR = null;
                 console.log({ always: stat, res1: res1, res2: res2 });
                 if(options.showProgress){
-                    hideProgress();
+                    $.hideProgress();
                 }
                 return callbacks.alwaysCallback(callbacks.alwaysCallbackParams);
             });

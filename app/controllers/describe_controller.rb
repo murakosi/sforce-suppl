@@ -2,25 +2,9 @@
 class DescribeController < ApplicationController
     include Describe::DescribeExecuter
   
-    before_action :require_sign_in!
+    before_action :require_sign_in!    
 
-    protect_from_forgery :except => [:change, :describe, :download]
-
-    def show
-        #begin
-        #    sobjects = get_sobject_names(sforce_session, Describe::SobjectType::Custom)
-        #    html_content = render_to_string :partial => 'sobjectlist', :locals => {:data_source => sobjects}
-        #    render :json => {:target => "#sobjectList", :content => html_content, :error => nil, :status => 200}
-        #rescue StandardError => ex
-        #    html_content = render_to_string :partial => 'sobjectlist', :locals => {:data_source => []}
-        #    render :json => {:target => "#sobjectList", :content => html_content, :error => ex.message, :status => 400}
-        #end
-        #if session[:describe_message].nil?
-        #    render :json => {:status => 200}
-        #else
-        #    render :json => {:error => session[:describe_message], :status => 400}
-        #end
-    end
+    protect_from_forgery :except => [:change, :describe]
 
     def change
         sobject_type = params[:object_type]
@@ -35,7 +19,7 @@ class DescribeController < ApplicationController
             raise StandardError.new("Invalid object type parameter")
         end  
 
-        render :partial => 'main/sobjectlist', :locals => {:data_source => sobjects}
+        render :partial => "main/sobjectlist", :locals => {:data_source => sobjects} 
     end
 
     def describe
@@ -53,18 +37,15 @@ class DescribeController < ApplicationController
 
     def response_json(describe_result, formatted_result)
         {
-            :method => get_sobject_info(describe_result),
+            :sobject_name => describe_result[:name],
+            :sobject_label => describe_result[:label].to_s,
+            :sobject_prefix => describe_result[:key_prefix].to_s,
             :columns => formatted_result.first.keys,
             :rows => formatted_result.each{ |hash| hash.values}
         }
     end
 
-    def get_sobject_info(describe_result)
-        info = "Label：" + describe_result[:label].to_s + "\n" +
-              "API Name：" + describe_result[:name].to_s + "\n" +
-              "Prefix：" + describe_result[:key_prefix].to_s
-    end
-  
+=begin  
     def download
         sobject = params[:selected_sobject]
 
@@ -118,4 +99,6 @@ class DescribeController < ApplicationController
             :status => 200
         )
     end
+=end
+
 end

@@ -9,12 +9,9 @@ module Soql
         Records = "records"
         Type = "type"
         Id = "ID"
-        #From_with_space = " from "
-        #Select_with_space = "select "
-        #Select = "select"
-        #Where_with_space = " where "
-
-        attr_reader :query_result
+        Count_all = "COUNT()"
+        EXPR = "EXPR"
+        Aggregate_result = "AggregateResult"
 
         def execute_query(sforce_session, soql, tooling, query_all)
             if soql.strip.include?(";")
@@ -39,10 +36,16 @@ module Soql
         def get_parsed_query_result(soql, query_result)
             @sobject_type = nil
             @query_fields = {}
-            parse_soql(soql)
-            @query_keys = @query_fields.keys
-            @executed_soql = soql
-            @record_count = query_result["size"]
+            if parse_soql(soql)
+                @query_keys = @query_fields.keys
+                @executed_soql = soql
+                @record_count = query_result["size"]
+            else
+                @query_keys = @query_fields.keys
+                @executed_soql = soql
+                @record_count = "1"
+                query_result.store(Records, [{Count_all => query_result["size"]}])
+            end
             records = []
 
             if query_result.nil? || query_result.blank? || !query_result.has_key?(Records)
@@ -77,8 +80,8 @@ module Soql
             end
 
             results.each do |result|
-                
-                if result.has_key?(Type) && @sobject_type.nil?
+
+                if result.has_key?(Type) && result[Type] != Aggregate_result
                     @sobject_type = result[Type]
                 end
 
@@ -193,14 +196,12 @@ module Soql
         
         def skip?(key, value)
             if Exclude_key_names.include?(key.to_s.downcase)
-                return true
+                true
+            elsif key.to_s.upcase == Id && value.nil?
+                true
+            else
+                false
             end
-
-            if key.to_s.upcase == Id && value.nil?
-                return true
-            end
-
-            return false
         end
 
         def remove_duplicate_id(key, value)            
@@ -213,6 +214,7 @@ module Soql
 
 
         def parse_soql(soql)
+            expr_count = 0
             parse_result = Soql::SoqlParser.parse(soql)
 
             @sobject_type = parse_result[:objects].first[:object_name]
@@ -220,59 +222,33 @@ module Soql
             parse_result[:fields].each do |field|
                 if field.has_key?(:sub_query)
                     sub_query = field[:sub_query]
-                    @query_fields[sub_query[:object_name]] = :children
+                    @query_fields[sub_query[:object_name]] = :read_only
+                elsif field.has_key?(:function)
+                    function = field[:function]
+                    if function == :count_all
+                        @query_fields[Count_all] = :read_only
+                        return false
+                    elsif function.nil?
+                        @query_fields[EXPR + expr_count.to_s] = :read_only
+                        expr_count += 1
+                    else
+                        @query_fields[function] = :read_only
+                    end
                 else
                     field_name = field[:name]
                     if field_name == Id
-                        @query_fields[field_name] = :id
+                        @query_fields[field_name] = :read_only
                     elsif field_name.include?(".")
-                        @query_fields[field_name] = :reference
+                        @query_fields[field_name] = :read_only
                     else
                         @query_fields[field_name] = :text
                     end
                 end
             end
-        end
-=begin
-        def parse_query_fields(soql)
-
-            fields = []
-            soql = soql.gsub(/(\r|\n|\r\n)/mi, ' ')
-
-            start_position = soql.index(Select_with_space) + Select.size
-            end_position = soql.rindex(From_with_space) - 1
-            soql = soql[start_position..end_position]
-
-            sub_queries = soql.scan(/\((.*?)\)/mi).flatten
-
-            main_soql = soql.gsub(/\((.*?)\)/mi, "").gsub(/\s+/, '').strip
-
-            main_soql.split(",").reject(&:empty?).each{|str| generate_query_fields(str)}
-
-            if !sub_queries.nil?
-                sub_queries.each{|str| generate_query_fields(str[/#{From_with_space}(.*?)(#{Where_with_space}|$)/mi, 1], :children)}
-            end
-
-            upcase_soql = soql.upcase
-
-            field_type_array = @query_fields.sort{|(k1, v1), (k2, v2)| upcase_soql.index(k1) <=> upcase_soql.index(k2) }
-            @query_fields = Hash[*field_type_array.flatten(1)]
-        end
-
-        def generate_query_fields(field_name, type = nil)
-            field_name.upcase!
-            if !type.nil?
-                @query_fields[field_name] = type
-            elsif field_name == Id
-                @query_fields[field_name] = :id
-            elsif field_name.include?(".")
-                @query_fields[field_name] = :reference
-            else
-                @query_fields[field_name] = :text
-            end
             
+            return true
         end
-=end        
+
         def generate_column_options
             column_options = []
             updatable = @query_fields.has_key?(Id)
@@ -280,7 +256,7 @@ module Soql
             @query_fields.each do |k,v|
                 if !updatable
                     column_options << {:readOnly => true, :type => "text"}
-                elsif v == :id || v == :children || v == :reference
+                elsif v == :read_only
                     column_options << {:readOnly => true, :type => "text"}
                 else
                     column_options << {:readOnly => false, :type => "text"}

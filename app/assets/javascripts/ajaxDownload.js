@@ -1,7 +1,6 @@
 (function ($) {
 
-    var task = null;
-    var settings = null;
+    var _task = null;
 
     $.extend({
 
@@ -30,7 +29,7 @@
 
         ajaxDownload: function (options) {
 
-            if (task) {
+            if (_task) {
                 return false;
             }
 
@@ -42,7 +41,7 @@
 
             function checkDownloadServiceAvailable() {
 
-                task = $.ajax({
+                _task = $.ajax({
                     url: "check",
                     type: "POST",
                     data: null,
@@ -50,43 +49,43 @@
                     cache: false
                 });
 
-                task.done(function (data, stat, xhr) {
+                _task.done(function (data, stat, xhr) {
                     console.log("Ajax download available");
                     return executeDownload();
                 });
 
-                task.fail(function (xhr, stat, err) {
-                    task = null;
+                _task.fail(function (xhr, stat, err) {
+                    _task = null;
                     if(options.showProgress){
                         hideProgress();
                     }
                     console.log("Ajax download not available");
                 });
 
-                task.always(function (res1, stat, res2) {
+                _task.always(function (res1, stat, res2) {
                     console.log("download ajax always");
                 });
             }
 
             function executeDownload() {
  
-                task = $.fileDownload(options.url, {
+                _task = $.fileDownload(options.url, {
                     httpMethod: options.method,
                     data: options.data
                 });
 
-                task.done(function (url) {
-                    task = null;
+                _task.done(function (url) {
+                    _task = null;
                     return options.successCallback(url);
                 });
 
-                task.fail(function (response, url, error) {
-                    task = null;
+                _task.fail(function (response, url, error) {
+                    _task = null;
                     return options.failCallback(response, url, error);
                 });
 
-                task.always(function () {
-                    task = null;
+                _task.always(function () {
+                    _task = null;
                     if(options.showProgress){
                         hideProgress();
                     }

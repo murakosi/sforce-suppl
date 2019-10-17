@@ -11,6 +11,10 @@
     font-size:12px !important;
 }
 
+#localeArea{
+    display: none;
+}
+
 #contentsArea{
     /*margin-top:50px;*/
     width:100%;
@@ -20,12 +24,24 @@
     bottom: 10px;
     /*padding-bottom: 10px;*/
     overflow-y: auto;
+    padding-top: 30px;
+}
+
+#userLocalOption{
+    display: none;
+}
+
+.errorPage{
+  text-align:center;
+  white-space: pre;
+  color: red;
+  font-weight: bold;  
 }
 
 /* ------------------------------
    Menu display
 ------------------------------ */
-#soqlexecuterContent,
+#soqlContent,
 #describeContent, 
 #metadataContent, 
 #toolingContent,
@@ -33,7 +49,7 @@
     display:none;   
 }
 
-.soqlexecuter #soqlexecuterContent, 
+.soql #soqlContent, 
 .describe #describeContent, 
 .metadata #metadataContent, 
 .tooling #toolingContent,
@@ -45,30 +61,18 @@
    MenuList
 ------------------------------ */
 #menuList {
-    /*margin-top: 15px;*/
     width: 100%;
     height: 45px;
-    /*border-top: #aaa 1px solid;*/
     border-bottom: #aaa 1px solid;
-    /*position: relative;*/
     z-index: 3000;
-    /*background: #d3cbdb;*/
     background-color: #0c549c;
     display: flex;
     font-size:10pt;
-    /*box-shadow: 0 3px 6px rgba(0,0,0,.175)*/
     box-shadow: 0 3px 6px rgba(0,0,0,.225)
-}
-
-#userInfoButton{
-    margin-left:10px;
-    margin-top:7px;
-    line-height: 1.35 !important;
 }
 
 #menus {
     height: 45px;
-    /*margin-left:70%;*/
     margin-left: auto;
     list-style: none;
     padding-right: 10px;
@@ -97,53 +101,37 @@
 }
 
 #menus li:hover > a {
-    /*background: #fff;*/
     background-color: #1579c0;
 }
 
 .displayed{
-    /*background:white !important;*/
     background-color: #1579c0;
 }
 
 /* ------------------------------
-    Add tab button
+    Overlay
 ------------------------------ */
-.icon-plus {
-    border:1px solid #aaa;
-    background-color: #fff;
-    border-top-right-radius: 4px;
-    border-top-left-radius: 4px;
-    width: 27px;
-    height: 20px;
+.requesting-overlay {  
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    background-color: #408080;
+    opacity: 0.8;
+    overflow-x: hidden;
+    display:none;
+}
+
+.overlay-content {
     position: relative;
-    top: 8px;
-    left: 0px;
-    margin-bottom:0px;
-    border-bottom: 0px;
-    cursor: pointer;
-}
-
-.icon-plus:after {
-    background-color: #aaa;
-    width: 16px;
-    height: 2px;
-    border-radius: 1px;
-    position: absolute;
-    top:9px;
-    left: 5px;
-    content:"";
-}
-
-.icon-plus:before {
-    background-color: #aaa;
-    width: 2px;
-    height: 16px;
-    border-radius: 1px;
-    position: absolute;
-    top:2px;
-    left: 12px;
-    content:"";
+    top: 42%;
+    width: 100%;
+    text-align: center;
+    margin-top: 30px;
+    color:#80ffff;
+    font-weight: bold;
 }
 
 /* ------------------------------
@@ -152,8 +140,6 @@
 #progress{
       visibility: hidden;
       height: 2px;
-      /*position: fixed;
-      top: 50px;*/
       width: 100%;
       position: fixed;
       top: 0px;
@@ -168,14 +154,11 @@
 }
 
 .progress-line {
-    /*background-color: #b3d4fc;*/
     display: -webkit-flex;
     display: flex;
 }
 
 .progress-line:before {
-    /*background-color: #3f51b5;*/
-    /*background-color: #337ab7;*/
     background-color: #f0ad4e;
     content: '';
     -webkit-animation: running-progress 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
@@ -194,36 +177,186 @@
     100% { margin-left: 100%; margin-right: 0; }
 }
 
+/*
+/* ------------------------------
+   AllOrNone option
+------------------------------ */
+/*
+#allOrNone{
+    padding-left: 2px !important;
+    padding-bottom: 0px !important;
+    padding-top: 0px !important;
+    margin-top: -2px;
+}
+
+.checkmark input[type="checkbox"] {
+    opacity: 0;
+    width: 0px;
+}
+
+.checkmark label {
+    position: relative;
+    display: inline-block;
+    padding-left: 15px;
+}
+
+.checkmark label::before,
+.checkmark label::after {
+    position: absolute;
+    content: "";
+    display: inline-block;
+}
+*/
+/*Outer box of the fake checkbox*/
+/*.checkmark label::before{
+    height: 5px;
+    width: 9px;
+    border-left: 2px solid #aaa;
+    border-bottom: 2px solid #aaa;   
+    transform: rotate(-45deg);    
+    left: 2px;
+    top: 4px;
+}*/
+
+/*Checkmark of the fake checkbox*/
+/*.checkmark label::after {
+    height: 5px;
+    width: 9px;
+    border-left: 2px solid;
+    border-bottom: 2px solid;    
+    transform: rotate(-45deg);    
+    left: 2px;
+    top: 4px;
+}*/
+
+/*Hide the checkmark by default*/
+/*.checkmark input[type="checkbox"] + label::after {
+    content: none;
+}*/
+
+/*Unhide on the checked state*/
+/*.checkmark input[type="checkbox"]:checked + label::after {
+    content: "";
+}*/
+
 /* ------------------------------
    UserInfo Dropdown
 ------------------------------ */
+#userInfoButton{
+    margin-left:10px;
+    margin-top:7px;
+    line-height: 1.35 !important;
+}
+
 .dropdown-item-font{
-  font-size: 0.875rem;
-  }
+    font-size: 0.875rem;
+}
 
 .dropdown-btn:hover{
-  color: black;
+    color: black;
 }
 
 .header{
-  position: fixed;
-  top:0px;
-  height: 45px;
-  z-index: 3000;
-  width: 100%;
+    position: fixed;
+    top:0px;
+    height: 45px;
+    z-index: 3000;
+    width: 100%;
 }
 
 .dropdown-btn{
-  /*display: inline-block;*/
-  text-decoration: none;
-  /*background: #f7f7f7;*/
-  /*border-left: solid 10px #ff7c5c;*/
-  color: black;
-  /*background-color: #d3cbdb;*/
-  background-color: white;
-  border-radius: 12px;
-  border: #aaa 1px solid;
-  /*box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.29);  */
-  /*box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);*/
-  box-shadow: inset 0 3px 5px rgba(0, 0, 0, .175);
+    text-decoration: none;
+    color: black;
+    background-color: white;
+    border-radius: 12px;
+    border: #aaa 1px solid;
+    box-shadow: inset 0 3px 5px rgba(0, 0, 0, .175);
+}
+
+.dropdown-submenu {
+  position: relative;
+}
+
+.dropdown-submenu>.dropdown-menu {
+    top: 5px;
+    left: 100%;
+    margin-top: -6px;
+    margin-left: -1px;
+    -webkit-border-radius: 0 6px 6px 6px;
+    -moz-border-radius: 0 6px 6px;
+    border-radius: 0 6px 6px 6px;
+}
+
+.dropdown-submenu:hover>.dropdown-menu {
+    display: block;
+}
+
+.dropdown-submenu>a:after {
+    display: block;
+    content: " ";
+    float: right;
+    width: 0;
+    height: 0;
+    border-color: transparent;
+    border-style: solid;
+    border-width: 5px 0 5px 5px;
+    border-left-color: #000;
+    /*margin-top: 5px;*/
+    margin-top: 2px;
+    margin-right: -10px;
+}
+
+.dropdown-submenu:hover>a:after {
+    border-left-color: #aaa;
+}
+
+.dropdown-submenu.pull-left {
+    float: none;
+}
+
+.dropdown-submenu.pull-left>.dropdown-menu {
+    left: -100%;
+    margin-left: 10px;
+    -webkit-border-radius: 6px 0 6px 6px;
+    -moz-border-radius: 6px 0 6px 6px;
+    border-radius: 6px 0 6px 6px;
+}
+
+.dropdown-submenu>.dropdown-menu a{
+    padding-left: 25px;
+}
+
+.checkmark{
+    position: relative;
+    display: inline-block;
+    padding-left: 15px;
+}
+
+.checkmark:before,
+.checkmark:after {
+    position: absolute;
+    content: "";
+    display: inline-block;
+}
+
+/*Outer box of the fake checkbox*/
+.checkmark:before{
+    height: 5px;
+    width: 9px;
+    border-left: 2px solid #aaa;
+    border-bottom: 2px solid #aaa;
+    transform: rotate(-45deg);    
+    left: 10px;
+    top: 7px;
+}
+
+/*Checkmark of the fake checkbox*/
+.checkmark:after {
+    height: 5px;
+    width: 9px;
+    border-left: 1px solid;
+    border-bottom: 1px solid;
+    transform: rotate(-45deg);    
+    left: 10px;
+    top: 7px;
 }
