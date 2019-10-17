@@ -247,6 +247,7 @@ DEPENDENCIES
   rack (>= 2.0.6)
   rails (~> 5.1.5)
   rails_12factor
+  rubyzip
   sass-rails (~> 5.0)
   sassc
   selenium-webdriver
