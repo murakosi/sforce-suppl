@@ -61,7 +61,7 @@ gem 'coffee-script-source', '1.8.0'
 
 gem 'jquery-rails'
 
-gem 'rubyXL'
+#gem 'rubyXL'
 
 gem "attr_encrypted", "~> 3.0.0"
 
