@@ -63,6 +63,8 @@ gem 'jquery-rails'
 
 #gem 'rubyXL'
 
+gem 'rubyzip'
+
 gem "attr_encrypted", "~> 3.0.0"
 
 gem 'activerecord-session_store'
