@@ -13,7 +13,7 @@ const apex = function() {
   // Shortcut keys
   //------------------------------------------------
   $(window).on("keydown", (e) => {
-    if (e.target.id === "apex_code") {
+    if (e.target.id === "apexCode") {
 
       if (e.ctrlKey && (e.key === "r" || e.keyCode === 13)) {  
         executeAnonymous();
@@ -34,8 +34,8 @@ const apex = function() {
   //------------------------------------------------
   // Execute Anonymous
   //------------------------------------------------
-  $("#apexArea #executeAnonymousBtm").on("click", (e) => {
-    if ($.isAjaxBusy() || !$("#apexArea #apex_code").val()) {
+  $("#apexArea #executeAnonymousBtn").on("click", (e) => {
+    if ($.isAjaxBusy() || !$("#apexArea #apexCode").val()) {
       return false;
     }
   
@@ -54,15 +54,15 @@ const apex = function() {
       debugOptions[category] = level;
     });
       
-    const val = {code: $("#apexArea #apex_code").val(), debug_options: debugOptions};
+    const val = {code: $("#apexArea #apexCode").val(), debug_options: debugOptions};
     const action = $("#apexArea .execute-anonymous-form").attr("action");
     const method = $("#apexArea .execute-anonymous-form").attr("method");
     const options = $.getAjaxOptions(action, method, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
-    const callbacks = $.getAjaxCallbacks(processSuccessResult, displayError, null);
+    const callbacks = $.getAjaxCallbacks(afterExecuteAnonymous, displayError, null);
     $.executeAjax(options, callbacks);
   };
   
-  const processSuccessResult = (json) => {
+  const afterExecuteAnonymous = (json) => {
     const elementId = "#apexArea #apexGrid" + _selectedTabId;
     _logNames[elementId] = json.log_name;    
     $("#apexArea #logInfo" + _selectedTabId).html(getLogResult(json));
@@ -70,7 +70,7 @@ const apex = function() {
   };
 
   const getLogResult = (json) => {
-    return json.log_name + '&nbsp;&nbsp;<label><input type="checkbox" class="debugOnly"/>&nbsp;Debug only</label>';
+    return json.log_name + '&nbsp;&nbsp;<label><input type="checkbox" class="debug-only"/>&nbsp;Debug only</label>';
   }
 
   //------------------------------------------------
@@ -110,7 +110,7 @@ const apex = function() {
   //------------------------------------------------
   // Filter debug only
   //------------------------------------------------
-  $("#apexArea").on("click", "input.debugOnly", function(e) {
+  $("#apexArea").on("click", "input.debug-only", function(e) {
     if ($(this).prop("checked")) {
       filterLog();
     } else {
@@ -144,14 +144,12 @@ const apex = function() {
   $(document).on("click", "#apexArea .ui-closable-tab", function(e) {
 
     if ($("#apexArea .tabArea ul li").length <= 2) {
-      return false;
+      return;
     }
 
     const panelId = $(this).closest("#apexArea li").remove().attr("aria-controls");
     $("#apexArea #" + panelId ).remove();
     $("#apexArea .tabArea").tabs("refresh");
-
-    return false;
   });
 
   //------------------------------------------------
@@ -234,7 +232,7 @@ const apex = function() {
 
     const hotSettings = {
         data: records,
-        //height: height,
+        height: height,
         stretchH: "last",
         autoWrapRow: true,
         manualRowResize: false,
@@ -258,33 +256,33 @@ const apex = function() {
   const getColumns = (json) => {
     if (json && json.columns) {
       return json.columns;
-    } else {
-      return null;
     }
+
+    return null;    
   };
   
   const getRows = (json) => {
     if (json && json.rows) {
       return json.rows;
-    } else {
-      return null;
     }
+    
+    return null;
   };
 
   const getExecuteResult = (json) => {
     if (json && json.result) {
       return json.result;
-    } else {
-      return null;
     }
+
+    return null;    
   };
 
   const getColumnsOption = (json) => {
     if (json && json.columnOptions) {
       return json.columnOptions;
-    } else {
-      return null;
     }
+    
+    return null;
   };
       
   //------------------------------------------------

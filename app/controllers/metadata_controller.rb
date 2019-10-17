@@ -140,14 +140,14 @@ class MetadataController < ApplicationController
     end
 
     def try_delete(metadata_type)
-        selected_records = JSON.parse(params[:selected_records])
+        selected_records = params[:selected_records]
         full_names = extract_full_names(selected_records)
         delete_metadata(sforce_session, metadata_type, full_names)      
     end
 
     def retrieve
         metadata_type = params[:selected_type]
-        selected_records = JSON.parse(params[:selected_records])
+        selected_records = params[:selected_records]
         
         begin
             full_names = extract_full_names(selected_records)

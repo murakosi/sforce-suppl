@@ -1,4 +1,3 @@
-#require "soapforce"
 require 'logger'
 
 module Service
@@ -6,13 +5,11 @@ module Service
         include Service::ServiceCore
     
         def call(params)
-            #client = Soapforce::Client.new(client_options(params))
-            client = Client.new(client_options(params))
+            client = Soap::Client.new(client_options(params))
         end
 
         private
             def client_options(params)
-
                 {
                     :wsdl => Service::ResourceLocator.call(:partner_wsdl),
                     :version => params[:api_version] || Constants::DefaultApiVersion,
@@ -42,7 +39,6 @@ module Service
                     File.open(file_name, 'w') do |file|
                         file.close
                     end
-
                 end
                 Logger.new(file_name)
             end

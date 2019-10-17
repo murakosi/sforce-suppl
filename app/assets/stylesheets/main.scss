@@ -1,12 +1,6 @@
 /* ------------------------------
    #Areas
 ------------------------------ */
-#mainArea{
-    /*padding-top: 20px;*/
-    /*width:100%;
-    margin: 0 auto;   */
-}
-
 #mainArea .ui-tabs-anchor{
     font-size:12px !important;
 }
@@ -16,13 +10,11 @@
 }
 
 #contentsArea{
-    /*margin-top:50px;*/
     width:100%;
     position:absolute;
     top: 45px;
     left: 0px;
     bottom: 10px;
-    /*padding-bottom: 10px;*/
     overflow-y: auto;
     padding-top: 30px;
 }
@@ -31,7 +23,7 @@
     display: none;
 }
 
-.errorPage{
+.error-page{
   text-align:center;
   white-space: pre;
   color: red;
@@ -177,68 +169,6 @@
     100% { margin-left: 100%; margin-right: 0; }
 }
 
-/*
-/* ------------------------------
-   AllOrNone option
------------------------------- */
-/*
-#allOrNone{
-    padding-left: 2px !important;
-    padding-bottom: 0px !important;
-    padding-top: 0px !important;
-    margin-top: -2px;
-}
-
-.checkmark input[type="checkbox"] {
-    opacity: 0;
-    width: 0px;
-}
-
-.checkmark label {
-    position: relative;
-    display: inline-block;
-    padding-left: 15px;
-}
-
-.checkmark label::before,
-.checkmark label::after {
-    position: absolute;
-    content: "";
-    display: inline-block;
-}
-*/
-/*Outer box of the fake checkbox*/
-/*.checkmark label::before{
-    height: 5px;
-    width: 9px;
-    border-left: 2px solid #aaa;
-    border-bottom: 2px solid #aaa;   
-    transform: rotate(-45deg);    
-    left: 2px;
-    top: 4px;
-}*/
-
-/*Checkmark of the fake checkbox*/
-/*.checkmark label::after {
-    height: 5px;
-    width: 9px;
-    border-left: 2px solid;
-    border-bottom: 2px solid;    
-    transform: rotate(-45deg);    
-    left: 2px;
-    top: 4px;
-}*/
-
-/*Hide the checkmark by default*/
-/*.checkmark input[type="checkbox"] + label::after {
-    content: none;
-}*/
-
-/*Unhide on the checked state*/
-/*.checkmark input[type="checkbox"]:checked + label::after {
-    content: "";
-}*/
-
 /* ------------------------------
    UserInfo Dropdown
 ------------------------------ */
@@ -301,7 +231,6 @@
     border-style: solid;
     border-width: 5px 0 5px 5px;
     border-left-color: #000;
-    /*margin-top: 5px;*/
     margin-top: 2px;
     margin-right: -10px;
 }
