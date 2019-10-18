@@ -1,12 +1,12 @@
-/* ------------------------------
-   Overray
------------------------------- */  
 #soqlArea{
   	position:relative;
   	top:0;
   	right:0;
 }
 
+/* ------------------------------
+   Overray
+------------------------------ */  
 #soqlOverRay {
     height: 100%;
     width: 100%;
@@ -36,7 +36,7 @@
     margin: 0 auto;
 }
 
-#sobject_fields{
+#sobjectFields{
     color: black;
 }
 
@@ -58,7 +58,7 @@
 }
 
 .soql-grid-table{
-    display:table;
+    display: table;
     position: relative;
     top: 25%;
     color: white;
@@ -96,7 +96,6 @@
     background-color: #fafafb;
     overflow-x: hidden;
     overflow-y: auto;
-    /*padding-top: 10px;*/
     transition: 0.2s;  
     border-right: 1px solid #aaa;
     z-index: 3000;
@@ -156,26 +155,13 @@
     padding-left: 15px;
     margin: 0;
     font-family: Meiryo;
-    /*padding-top: 25px;*/
     width: 100%;
     vertical-align: middle;
 	height:40px;
-    /*
-    position: relative;
-    top: 5px;
-    font-size: 14px;
-    color: #000;
-    border-bottom:1px solid #ccc;
-    padding-left: 15px;
-    padding-bottom: 5px;*
-    margin:0;
-    font-family: Meiryo;
-    */
 }
 
 .soql-list{
     overflow-y: auto;
-    /*height: 85%;	*/
     overflow-y: auto;
     position: absolute;
     top: 40px;
@@ -184,7 +170,6 @@
 }
 
 @media screen and (max-height: 450px) {
-    /*.sidenav {padding-top: 15px;}*/
     .sidenav li { font-size: 12px;}    
 }
 

@@ -171,11 +171,6 @@ const metadata = () => {
     }
   };
 
-  const sleep = function(waitMsec) {
-    const startMsec = new Date();
-    while ((new Date - startMsec) < waitMsec) {}
-  };
-
   const afterRetrieveSuccess = (json) => {
     _retrieveId = null;
     const url = "metadata/retrieve_result";
@@ -485,6 +480,11 @@ const metadata = () => {
     $("#expandMetadataTree").prop("disabled", true);
     $("#collapseMetadataTree").prop("disabled", true);
     $("#retrieveMetadataBtn").prop("disabled", true);
+  };
+  
+  const sleep = function(waitMsec) {
+    const startMsec = new Date();
+    while ((new Date - startMsec) < waitMsec) {}
   };
 
   //------------------------------------------------

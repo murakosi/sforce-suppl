@@ -9,21 +9,18 @@ const mains = function() {
   // Menu list
   //------------------------------------------------
   $("#menus").on("click", "a", function(e) {
-    if ($("#dropdownMenu").is(":visible")) {
-      $("#userInfoButton").trigger("click");
-    }
-      
+
     const clickedAnchor = $(this).prop("id");
 
     if (_selectedAnchor === clickedAnchor) {
-      return false;
+      return;
     }
 
     _selectedAnchor = clickedAnchor;
     _anchorObject = this;
 
     changeDisplayDiv(_selectedAnchor);      
-    return false;    
+    return;    
 
   });
   
