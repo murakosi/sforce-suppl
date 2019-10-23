@@ -6,6 +6,11 @@ const soql = function() {
   const THIS_AREA = "soqlArea";
   const DEFAULT_DATA_TYPE = "";
   const DEFAULT_CONTENT_TYPE = null;
+  const SOBJECT_LIST_DEF_ZINDEX = "1051"
+  const SOBJECT_LIST_DISP_ZINDEX = "4010"
+  const HISTORY_DISP_WIDTH = "250px"
+  const HISTORY_DISP_MARGIN = "150px"
+  const PLACEHOLDER = "Select an sObject"
   
   //------------------------------------------------
   // Event on menu change
@@ -30,7 +35,7 @@ const soql = function() {
         dropdownAutoWidth : true,
         width: "element",
         containerCssClass: ":all:",
-        placeholder: "Select an sObject",
+        placeholder: PLACEHOLDER,
         allowClear: true
       });
   };    
@@ -111,11 +116,11 @@ const soql = function() {
   };
   
   $("#soqlArea .sobject-select-list").on("select2:open", (e) => {
-    $(".select2-container--open").css("z-index","4010");
+    $(".select2-container--open").css("z-index",SOBJECT_LIST_DISP_ZINDEX);
   });
     
   $("#soqlArea .sobject-select-list").on("select2:close", (e) => {
-    $(".select2-container--open").css("z-index","1051");
+    $(".select2-container--open").css("z-index",SOBJECT_LIST_DEF_ZINDEX);
   });
   
   //------------------------------------------------
@@ -147,8 +152,8 @@ const soql = function() {
 
   const openSoqlHistory = () => {
     $(".closebtn").show();
-    $("#soqlHistory").width("250px");
-    $("#soqlArea").css("margin-left","150px");
+    $("#soqlHistory").width(HISTORY_DISP_WIDTH);
+    $("#soqlArea").css("margin-left",HISTORY_DISP_MARGIN);
   };
 
   const closeSoqlHistory = () => {
