@@ -99,7 +99,7 @@ button:disabled {
 }
 
 .changed-cell-border {
-  box-shadow: inset 0 -2px 0 red;
+    box-shadow: inset 0 -2px 0 red;
 }
 
 /* ------------------------------
@@ -147,7 +147,6 @@ button:disabled {
 /* ------------------------------
    #select2
 ------------------------------ */
-
 .input-sm{
     display:inline;
     vertical-align: center;

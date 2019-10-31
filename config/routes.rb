@@ -1,6 +1,5 @@
 Rails.application.routes.draw do
  
-  #root :to => 'login#new'
   root :to => 'main#index'
 
   post    'check',                  to: 'main#check'
@@ -34,9 +33,6 @@ Rails.application.routes.draw do
   post    'update',                 to: 'soqlexecuter#update'
   post    'delete',                 to: 'soqlexecuter#delete'
   post    'undelete',               to: 'soqlexecuter#undelete'
-  post    'parse',                  to: 'soqlexecuter#parse'
-
-  post    'tooling',                to: 'tooling#execute'
 
   post    'apex',                   to: 'apex#execute'
 

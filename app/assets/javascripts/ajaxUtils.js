@@ -14,7 +14,6 @@
                 processData: true,
                 contentType: null,
                 showProgress: true
-                //parseJSON: false
             }, options);
         },
 

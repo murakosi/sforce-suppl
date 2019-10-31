@@ -9,28 +9,22 @@ const mains = function() {
   // Menu list
   //------------------------------------------------
   $("#menus").on("click", "a", function(e) {
-    if ($("#dropdown-menu").is(":visible")) {
-      $("#userInfoButton").trigger("click");
-    }
-      
+
     const clickedAnchor = $(this).prop("id");
 
     if (_selectedAnchor === clickedAnchor) {
-      return false;
+      return;
     }
 
     _selectedAnchor = clickedAnchor;
     _anchorObject = this;
 
     changeDisplayDiv(_selectedAnchor);      
-    return false;    
+    return;    
 
   });
   
   const changeDisplayDiv = (target) => {
-    if ($(_anchorObject).hasClass("nochange")) {
-      return;
-    }
     
     changeAnchorClass(_anchorObject);
 
@@ -40,7 +34,7 @@ const mains = function() {
   };
 
   const changeAnchorClass = (target) => {
-    $(".menus").not(target).removeClass("displayed");
+    $(".menu-item").not(target).removeClass("displayed");
 
     if ($(target).hasClass("displayed")) {
       $(target).removeClass("displayed");
@@ -67,11 +61,11 @@ const mains = function() {
     const action = "refresh_sobjects";
     const method = "get";
     const options = $.getAjaxOptions(action, method, {}, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE, false);
-    const callbacks = $.getAjaxCallbacks(onRefreshSObjectsDone, onRefreshError, null);
+    const callbacks = $.getAjaxCallbacks(afterRefreshSObjects, onRefreshError, null);
     $.executeAjax(options, callbacks);
   });
 
-  const onRefreshSObjectsDone = (json) => {
+  const afterRefreshSObjects = (json) => {
     $(document).trigger("afterRefreshSObjects", [{result: json.result}]);
     endRefresh();
   }
@@ -95,11 +89,11 @@ const mains = function() {
     const action = "refresh_metadata";
     const method = "get";
     const options = $.getAjaxOptions(action, method, {}, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE, false);
-    const callbacks = $.getAjaxCallbacks(onRefreshMetadataDone, onRefreshError, null);
+    const callbacks = $.getAjaxCallbacks(afterRefreshMetadata, onRefreshError, null);
     $.executeAjax(options, callbacks);    
   });
 
-  const onRefreshMetadataDone = (json) => {
+  const afterRefreshMetadata = (json) => {
     $(document).trigger("afterRefreshMetadataTypes", [{result: json.result}]);
     endRefresh();
   }
@@ -117,7 +111,7 @@ const mains = function() {
   //------------------------------------------------
   // Locale
   //------------------------------------------------
-  const setDefaultLocalOption = () => {
+  const reflectUserLocalOption = () => {
     const userLocalOption = $("#userLocalOption").text();
     $('.locale-options li a').each(function() {
         if (userLocalOption === $(this).attr("locale-option")){
@@ -143,7 +137,10 @@ const mains = function() {
 
   });
 
-  setDefaultLocalOption();
+  //------------------------------------------------
+  // page load actions
+  //------------------------------------------------
+  reflectUserLocalOption();
   prepareSObjectLists();
   prepareMetadataTypes();
 

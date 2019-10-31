@@ -31,11 +31,11 @@ module Metadata
 
 		def default_deploy_options
 			{
-				:checkOnly => true,
-				:ignoreWarnings => false,
-				:purgeOnDelete => false,
-				:rollbackOnError => false,
-				:singlePackage => false
+				:CheckOnly => true,
+				:IgnoreWarnings => false,
+				:PurgeOnDelete => false,
+				:RollbackOnError => false,
+				:SinglePackage => false
 			}
 		end
 	end

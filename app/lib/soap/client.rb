@@ -1,6 +1,6 @@
 require "savon"
 
-module Service
+module Soap
   class Client
     attr_reader :client
     attr_reader :headers

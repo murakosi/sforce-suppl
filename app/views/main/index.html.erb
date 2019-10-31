@@ -33,7 +33,7 @@
                   <%= @current_user.name %>
                 </button>
                 <span id="userLocalOption"><%= @current_user.language %></span>
-                <ul id="dropdown-menu" class="dropdown-menu">
+                <ul id="dropdownMenu" class="dropdown-menu">
                     <li class="dropdown-submenu">
                         <a id="changeLocale" href="javascript:void(0)">Locale Option</a>
                         <ul class="dropdown-menu locale-options">
@@ -56,10 +56,10 @@
                 </ul>
             </div>
             <ul id="menus">
-                <li><a id="soql" href="#" class="menus displayed">SOQL</a></li>
-                <li><a id="describe" href="#" class="menus">Describe</a></li>
-                <li><a id="metadata" href="#" class="menus">Metadata</a></li>
-                <li><a id="apex" href="" class="menus">Apex</a></li>
+                <li><a id="soql" href="javascript:void(0)" class="menu-item displayed">SOQL</a></li>
+                <li><a id="describe" href="javascript:void(0)" class="menu-item">Describe</a></li>
+                <li><a id="metadata" href="javascript:void(0)" class="menu-item">Metadata</a></li>
+                <li><a id="apex" href="javascript:void(0)" class="menu-item">Apex</a></li>
             </ul>
         </div>
     </div>
@@ -70,14 +70,14 @@
             <% if @describe_global_error.nil? %>
                 <%= render "describe/describe" %>
             <% else %>
-                <div class="errorPage"><%= @describe_global_error %></div>
+                <div class="error-page"><%= @describe_global_error %></div>
             <% end %>
         </div>
         <div id="metadataContent">
             <% if @describe_metadata_objects_error.nil? %>
                 <%= render "metadata/metadata" %>
             <% else %>
-                <div class="errorPage"><%= @describe_metadata_objects_error %></div>
+                <div class="error-page"><%= @describe_metadata_objects_error %></div>
             <% end %>
         </div>
         <div id="apexContent"><%= render "apex/apex" %></div>

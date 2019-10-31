@@ -21,7 +21,7 @@ const metadata = () => {
     if ($("#metadataArea").is(":visible")) {
 
       if (e.ctrlKey && (e.key === "r" || e.keyCode === 13)) {
-        listMetadate();
+        listMetadata();
         return false;
       }
 
@@ -36,29 +36,14 @@ const metadata = () => {
   });
 
   //------------------------------------------------
-  // Misc
-  //------------------------------------------------
-  const get_selectedRecords = () => JSON.stringify(Object.values(_selectedRecords));
-
-  const get_selectedFullNames = () => JSON.stringify(Object.keys(_selectedFullNames));
-
-  const disableButtons = () => {
-    $("#updateMetadataBtn").prop("disabled", true);
-    $("#deleteMetadataBtn").prop("disabled", true);
-    $("#expandMetadataTree").prop("disabled", true);
-    $("#collapseMetadataTree").prop("disabled", true);
-    $("#retrieveMetadataBtn").prop("disabled", true);
-  };
-
-  //------------------------------------------------
   // List metadata
   //------------------------------------------------
   $("#metadataArea #executListMetadataBtn").on("click", (e) => {
     e.preventDefault();
-    listMetadate();
+    listMetadata();
   });
 
-  const listMetadate = () => {
+  const listMetadata = () => {
     if ($.isAjaxBusy()) {
       return false;
     }
@@ -75,16 +60,16 @@ const metadata = () => {
     const action = $("#metadataArea .metadata-form").attr("action");
     const method = $("#metadataArea .metadata-form").attr("method");
     const options = $.getAjaxOptions(action, method, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
-    const callbacks = $.getAjaxCallbacks(processListSuccessResult, processListError, null);
+    const callbacks = $.getAjaxCallbacks(afterListMetadata, onListMetadataError, null);
     $.executeAjax(options, callbacks);
   };
 
-  const processListError = (json) => {
+  const onListMetadataError = (json) => {
     unlockForm();
     displayError(json);
   };
 
-  const processListSuccessResult = (json) => {
+  const afterListMetadata = (json) => {
     _currentMetadataType = $("#metadataArea #selected_directory").val();
     unlockForm();
     refreshTree(json.tree);
@@ -103,63 +88,66 @@ const metadata = () => {
     _selectedNode = null;
   };
 
-  const lockForm = () => {
-    $("#metadataArea #selected_directory").prop("disabled", true);
-    $("#metadataArea #executListMetadataBtn").prop("disabled", true);    
-  };
-
-  const unlockForm = () => {
-    $("#metadataArea #selected_directory").prop("disabled", false);
-    $("#metadataArea #executListMetadataBtn").prop("disabled", false);    
-  };
-
-  const changeButtonStyles = (json) => {
-    $("#updateMetadataBtn").prop("disabled", !json.api_updatable);
-    $("#deleteMetadataBtn").prop("disabled", !json.api_deletable);
-    $("#expandMetadataTree").prop("disabled", !json.api_readable);
-    $("#collapseMetadataTree").prop("disabled", !json.api_readable);
-    $("#retrieveMetadataBtn").prop("disabled", false);
-  };
-
-  const refreshTree = (json) => {
-    $("#metadataArea #editMetadataTree").jstree(true).settings.core.data = json;
-    $("#metadataArea #editMetadataTree").jstree(true).refresh();
-    $("#metadataArea #editMetadataTree").jstree(true).settings.core.data = (node, callback) => readMetadata(node, callback);
-  };
-
   //------------------------------------------------
   // Read metadata
   //------------------------------------------------
   const readMetadata = (node, callback) => {
+    hideMessageArea();
     const val = {crud_type: "read", metadata_type: _currentMetadataType, name: node.id};
     const action = $("#expandMetadataTree").attr("action");
     const method = "POST";
     const options = $.getAjaxOptions(action, method, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE, false);
-    const callbacks = $.getAjaxCallbacks(processReadSuccess, processReadError, callback);
+    const callbacks = $.getAjaxCallbacks(afterReadSuccess, onReadError, callback);
     $.executeAjax(options, callbacks);
   };
 
-  const processReadSuccess = (json, callback) => {
-    hideMessageArea();
+  const afterReadSuccess = (json, callback) => {    
     callback(json.tree);
   };
 
-  const processReadError = (json, callback) => {
+  const onReadError = (json, callback) => {
     callback([]);
     displayError(json);
   };
+
+  //------------------------------------------------
+  // Delete metadata
+  //------------------------------------------------
+  $("#deleteMetadataBtn").on("click", (e) => {
+    const selectedRecords = getSelectedRecords();
+
+    if (!selectedRecords.length){
+      return;
+    }
+
+    if (window.confirm("Delete Metadata?")) {
+      hideMessageArea();
+      const val = {crud_type: "delete", metadata_type: _currentMetadataType, selected_records: selectedRecords};
+      const action = $("#metadataArea #deleteMetadataBtn").attr("action");
+      const method = "POST";
+      const options = $.getAjaxOptions(action, method, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
+      const callbacks = $.getAjaxCallbacks(afterCrudSuccess, displayError, null);
+      $.executeAjax(options, callbacks);
+    }
+  });
 
   //------------------------------------------------
   // Retrieve
   //------------------------------------------------
   $("#metadataArea #retrieveMetadataBtn").on("click", (e) => {
     if (_retrieveId) {
-      return false;
+      return;
     }
     
+    const selectedRecords = getSelectedRecords();
+
+    if (!selectedRecords.length){
+      return;
+    }
+
     hideMessageArea();
     _checkCount = 0;
-    const val = {selected_type: _currentMetadataType, selected_records: get_selectedRecords()};
+    const val = {selected_type: _currentMetadataType, selected_records: selectedRecords};
     const action = $("#metadataArea #retrieveMetadataBtn").attr("action");
     const method ="POST";
     const options = $.getAjaxOptions(action, method, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
@@ -169,7 +157,7 @@ const metadata = () => {
     
   const checkRetrieveStatus = (json) => {
     if (json.done) {
-      onRetrieveDone(json);
+      afterRetrieveSuccess(json);
     } else {
       _retrieveId = json.id;
       _checkCount++;
@@ -183,16 +171,11 @@ const metadata = () => {
     }
   };
 
-  const sleep = function(waitMsec) {
-    const startMsec = new Date();
-    while ((new Date - startMsec) < waitMsec) {}
-  };
-
-  const onRetrieveDone = (json) => {
+  const afterRetrieveSuccess = (json) => {
     _retrieveId = null;
     const url = "metadata/retrieve_result";
     const method = "post";
-    const options = $.getAjaxDownloadOptions(url, method, null, downloadDone, downloadFail, () => {});
+    const options = $.getAjaxDownloadOptions(url, method, null, (url) => {}, onDownloadError, () => {});
     $.ajaxDownload(options);
   };
 
@@ -200,10 +183,8 @@ const metadata = () => {
     _retrieveId = null;
     displayError(json);
   }
-    
-  const downloadDone = url => hideMessageArea();
   
-  const downloadFail = (response, url, error) => onRetrieveError($.parseJSON(response));
+  const onDownloadError = (response, url, error) => onRetrieveError($.parseJSON(response));
 
   //------------------------------------------------
   // Deploy
@@ -213,11 +194,10 @@ const metadata = () => {
       return false;
     }
 
-    hideMessageArea();
-
     const file = $("#metadataZipFile")[0].files[0];
 
     if (file instanceof Blob) {
+      hideMessageArea();
       $("#metadataArea #deployMetadataResultTree").jstree(true).settings.core.data = null;
       $("#metadataArea #deployMetadataResultTree").jstree(true).refresh();
       executeDeploy(file);
@@ -225,7 +205,6 @@ const metadata = () => {
       displayError( {error: "Select a zip file to deploy"} );
     }
   });
-
 
   const executeDeploy = (file) => {
     const reader = new FileReader();
@@ -254,7 +233,7 @@ const metadata = () => {
 
   const checkDeployStatus = (json) => {
     if (json.done) {
-      onDeployDone(json);
+      afterDeploySuccess(json);
     } else {
       _deployId = json.id;
       _checkCount++;
@@ -268,7 +247,7 @@ const metadata = () => {
     }
   };
 
-  const onDeployDone = (json) => {
+  const afterDeploySuccess = (json) => {
     _deployId = null;
     $("#metadataArea #deployMetadataResultTree").jstree(true).settings.core.data = json.result;
     $("#metadataArea #deployMetadataResultTree").jstree(true).refresh();    
@@ -285,11 +264,11 @@ const metadata = () => {
   $("#updateMetadataBtn").on("click", (e) => {
     if (window.confirm("Update Metadata?")) {
       hideMessageArea();
-      const val = {crud_type: "update", metadata_type: _currentMetadataType, full_names: get_selectedFullNames()};
+      const val = {crud_type: "update", metadata_type: _currentMetadataType, full_names: getSelectedFullNames()};
       const action = $("#metadataArea #updateMetadataBtn").attr("action");
       const method = "POST";
       const options = $.getAjaxOptions(action, method, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
-      const callbacks = $.getAjaxCallbacks(processCrudSuccess, displayError, null);
+      const callbacks = $.getAjaxCallbacks(afterCrudSuccess, displayError, null);
       $.executeAjax(options, callbacks);
     }
   });
@@ -316,7 +295,7 @@ const metadata = () => {
     const action = $("#metadataArea #editMetadataTree").attr("action");
     const method = "POST";
     const options = $.getAjaxOptions(action, method, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE, false);
-    const callbacks = $.getAjaxCallbacks(onEditDone, undoEdit, null);
+    const callbacks = $.getAjaxCallbacks(afterEditSuccess, undoEdit, null);
     $.executeAjax(options, callbacks);
   });
 
@@ -332,7 +311,7 @@ const metadata = () => {
     }
   });
 
-  const onEditDone = (json) => {
+  const afterEditSuccess = (json) => {
     _selectedFullNames[json.full_name] = true;    
   };
     
@@ -344,32 +323,17 @@ const metadata = () => {
 
   const validateEditTree = (operation, node, node_parent, node_position, more) => {
     if ((operation === "edit") && !node.li_attr.editable) {
-        return false;
-      }
-  };
-
-  //------------------------------------------------
-  // Delete metadata
-  //------------------------------------------------
-  $("#deleteMetadataBtn").on("click", (e) => {
-    if (window.confirm("Delete Metadata?")) {
-      hideMessageArea();
-      const val = {crud_type: "delete", metadata_type: _currentMetadataType, selected_records: get_selectedRecords()};
-      const action = $("#metadataArea #deleteMetadataBtn").attr("action");
-      const method = "POST";
-      const options = $.getAjaxOptions(action, method, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
-      const callbacks = $.getAjaxCallbacks(processCrudSuccess, displayError, null);
-      $.executeAjax(options, callbacks);
+      return false;
     }
-  });
+  };
 
   //------------------------------------------------
   // Crud success/error
   //------------------------------------------------
-  const processCrudSuccess = (json) => {    
+  const afterCrudSuccess = (json) => {    
     alert(json.message);
     if (json.refresh_required) {
-      listMetadate();
+      listMetadata();
     }
   };
 
@@ -477,6 +441,50 @@ const metadata = () => {
     }
 
     return false;
+  };
+
+  //------------------------------------------------
+  // Misc
+  //------------------------------------------------
+  const lockForm = () => {
+    $("#metadataArea #selected_directory").prop("disabled", true);
+    $("#metadataArea #executListMetadataBtn").prop("disabled", true);    
+  };
+
+  const unlockForm = () => {
+    $("#metadataArea #selected_directory").prop("disabled", false);
+    $("#metadataArea #executListMetadataBtn").prop("disabled", false);    
+  };
+
+  const changeButtonStyles = (json) => {
+    $("#updateMetadataBtn").prop("disabled", !json.api_updatable);
+    $("#deleteMetadataBtn").prop("disabled", !json.api_deletable);
+    $("#expandMetadataTree").prop("disabled", !json.api_readable);
+    $("#collapseMetadataTree").prop("disabled", !json.api_readable);
+    $("#retrieveMetadataBtn").prop("disabled", false);
+  };
+
+  const refreshTree = (json) => {
+    $("#metadataArea #editMetadataTree").jstree(true).settings.core.data = json;
+    $("#metadataArea #editMetadataTree").jstree(true).refresh();
+    $("#metadataArea #editMetadataTree").jstree(true).settings.core.data = (node, callback) => readMetadata(node, callback);
+  };
+
+  const getSelectedRecords = () => Object.values(_selectedRecords);
+
+  const getSelectedFullNames = () => JSON.stringify(Object.keys(_selectedFullNames));
+
+  const disableButtons = () => {
+    $("#updateMetadataBtn").prop("disabled", true);
+    $("#deleteMetadataBtn").prop("disabled", true);
+    $("#expandMetadataTree").prop("disabled", true);
+    $("#collapseMetadataTree").prop("disabled", true);
+    $("#retrieveMetadataBtn").prop("disabled", true);
+  };
+  
+  const sleep = function(waitMsec) {
+    const startMsec = new Date();
+    while ((new Date - startMsec) < waitMsec) {}
   };
 
   //------------------------------------------------

@@ -7,6 +7,7 @@ const describe = () => {
   const _grids = {};
   const DEFAULT_DATA_TYPE = "";  
   const DEFAULT_CONTENT_TYPE = null;
+  const PLACEHOLDER = "Select an sObject";
     
   //------------------------------------------------
   // Shortcut keys
@@ -36,7 +37,7 @@ const describe = () => {
   });
 
   //------------------------------------------------
-  // change custom/standard
+  // Change custom/standard
   //------------------------------------------------
   $(".sobjectTypeCheckBox").on("click", (e) => {
     if ($.isAjaxBusy()) {
@@ -45,9 +46,6 @@ const describe = () => {
   });
   
   $(".sobjectTypeCheckBox").on("change", (e) => {
-    e.stopPropagation();
-    e.preventDefault();
-
     disableOptions();
     const val = {object_type: e.target.value};
     const action = $("#filterSObjectList").attr("action");
@@ -77,13 +75,12 @@ const describe = () => {
   // describe
   //------------------------------------------------
   $("#executeDescribeBtn").on("click", (e) => {
-    e.preventDefault();
     executeDescribe();
   });
 
   const executeDescribe = () => {
     if ($.isAjaxBusy()) {
-      return false;
+      return;
     }
 
     hideMessageArea();
@@ -95,7 +92,7 @@ const describe = () => {
       const action = $("#executeDescribeBtn").attr("action");
       const method = $("#executeDescribeBtn").attr("method");
       const options = $.getAjaxOptions(action, method, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
-      const callbacks = $.getAjaxCallbacks(processSuccessResult, displayError, null);
+      const callbacks = $.getAjaxCallbacks(afterExecuteDescribe, displayError, null);
       $.executeAjax(options, callbacks);
     }
   };
@@ -137,7 +134,7 @@ const describe = () => {
     $("#describeArea .messageArea").hide();
   };
 
-  const processSuccessResult = (json) => {
+  const afterExecuteDescribe = (json) => {
     $("#describeArea #overview" + _selectedTabId).html(getDescribeInfo(json));
     const elementId = "#describeArea #describeGrid" + _selectedTabId;
     _sObjects[elementId] = json.sobject_name;
@@ -157,7 +154,7 @@ const describe = () => {
         dropdownAutoWidth : true,
         width: "auto",
         containerCssClass: ":all:",
-        placeholder: "Select an sObject",
+        placeholder: PLACEHOLDER,
         allowClear: true
       });
     enableOptions();
@@ -166,7 +163,9 @@ const describe = () => {
   //------------------------------------------------
   // Active grid
   //------------------------------------------------
-  const getActiveTabElementId = () => $("#describeArea .tabArea .ui-tabs-panel:visible").attr("tabId");
+  const getActiveTabElementId = () => {
+    return $("#describeArea .tabArea .ui-tabs-panel:visible").attr("tabId");
+  }
 
   const getActiveGridElementId = () => {
     return "#describeArea #describeGrid" + getActiveTabElementId();
@@ -182,13 +181,11 @@ const describe = () => {
   //------------------------------------------------
   $(document).on("click", "#describeArea .ui-closable-tab", function(e) {
     if ($.isAjaxBusy()) {
-      return false;
+      return;
     }
 
-    e.preventDefault();
-
     if ($("#describeArea .tabArea ul li").length <= 2) {
-      return false;
+      return;
     }
 
     const panelId = $(this).closest("#describeArea li").remove().attr("aria-controls");
@@ -200,7 +197,6 @@ const describe = () => {
   // Create tab
   //------------------------------------------------
   $("#describeArea .add-tab-btn").on("click", (e) => {
-    e.preventDefault();
     createTab();
   });
   
@@ -261,6 +257,7 @@ const describe = () => {
     const hotSettings = {
         data: records,
         colWidths: "200px",
+        height: height,
         autoWrapRow: true,
         manualRowResize: false,
         manualColumnResize: true,
@@ -330,11 +327,13 @@ const describe = () => {
     return metrics.width;
   };  
 
-  if ($("#describeArea").length) {
-    $("#describeArea .tabArea").tabs();
-    $("#describeTabs").sortable({items: "li:not(.add-tab-li)", delay: 150});
-    createTab();
-  }
+  //------------------------------------------------
+  // page load actions
+  //------------------------------------------------
+  $("#describeArea .tabArea").tabs();
+  $("#describeTabs").sortable({items: "li:not(.add-tab-li)", delay: 150});
+  createTab();
+  
 };
 
 $(document).ready(describe);

@@ -42,7 +42,7 @@ const soql = function() {
     if (e.ctrlKey && (e.key === "r" || e.keyCode === 13)) {
       e.preventDefault();
 
-      if (e.target.id === "input_soql") {        
+      if (e.target.id === "inputSoql") {        
         executeSoql();
         return false;
       }
@@ -62,12 +62,23 @@ const soql = function() {
   
     // tab
     if (e.keyCode === 9) {
-      if (e.target.id === "input_soql") {
+      if (e.target.id === "inputSoql") {
         insertTab(e);
         return false;
       }
     }
   });
+
+  //------------------------------------------------
+  // Insert Tab
+  //------------------------------------------------
+  const insertTab = (e) => {
+    const elem = e.target;
+    const start = elem.selectionStart;
+    const end = elem.selectionEnd;
+    elem.value = "" + (elem.value.substring(0, start)) + "\t" + (elem.value.substring(end));
+    elem.selectionStart = elem.selectionEnd = start + 1;    
+  };
 
   //------------------------------------------------
   // CreatGrid Dialog
@@ -80,28 +91,18 @@ const soql = function() {
     $("#soqlOverRay").hide();
   });
 
-  /*
-  $("#soqlOverRay").on("click", (e) => {
-    $("#soqlOverRay").hide();
-  });
-
-  $("#creatGridArea").on("click", (e) => {
-    e.stopPropagation();
-  });
-  */
-
   $("#creatGridArea #createGridBtn").on("click", (e) => {
     createSObjectGrid();
   });
 
   const createSObjectGrid = () => {
-    const rawFields = $("#creatGridArea #sobject_fields").val();
+    const rawFields = $("#creatGridArea #sobjectFields").val();
     const sobject = $("#creatGridArea #sobject_selection").val();
     const separator = $("#creatGridArea #sobjectFieldsSeparator").val();
 
     if (sobject && rawFields) {
       const action = "create";
-      const val = {sobject, fields: rawFields, separator, tab_id: getActiveTabElementId()};
+      const val = {sobject: sobject, fields: rawFields, separator: separator, tab_id: getActiveTabElementId()};
       $.get(action, val, function(json) {
         displayQueryResult(json);
         $("#soqlOverRay").hide();
@@ -141,7 +142,7 @@ const soql = function() {
   });
   
   $("#soqlHistory").on("dblclick", "li", function(e) {
-    $("#soqlArea #input_soql").val($(this).text());
+    $("#soqlArea #inputSoql").val($(this).text());
   });
 
   const openSoqlHistory = () => {
@@ -155,18 +156,7 @@ const soql = function() {
     $("#soqlHistory").width("0");
     $("#soqlArea").css("margin-left","0");    
   };
-  
-  //------------------------------------------------
-  // Insert Tab
-  //------------------------------------------------
-  const insertTab = (e) => {
-    const elem = e.target;
-    const start = elem.selectionStart;
-    const end = elem.selectionEnd;
-    elem.value = "" + (elem.value.substring(0, start)) + "\t" + (elem.value.substring(end));
-    elem.selectionStart = elem.selectionEnd = start + 1;    
-  };
-  
+    
   //------------------------------------------------
   // Execute SOQL
   //------------------------------------------------
@@ -190,7 +180,7 @@ const soql = function() {
         updateGrid(tabId, params.soql_info);
       }
     } else {
-      soql = $("#soqlArea #input_soql").val();
+      soql = $("#soqlArea #inputSoql").val();
       tooling = $("#soqlArea #useTooling").is(":checked");
       queryAll = $("#soqlArea #queryAll").is(":checked");      
       tabId = getActiveTabElementId();
@@ -209,9 +199,9 @@ const soql = function() {
     const options = $.getAjaxOptions(action, method, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
 
     if (params && params.afterCrud) {
-      callbacks = $.getAjaxCallbacks(processQuerySuccessAfterCrud, displayError, null);
+      callbacks = $.getAjaxCallbacks(afterQuerySuccessAfterCrud, displayError, null);
     } else {
-      callbacks = $.getAjaxCallbacks(processQuerySuccess, displayError, null);
+      callbacks = $.getAjaxCallbacks(afterQuerySuccess, displayError, null);
     }
 
     $.executeAjax(options, callbacks);
@@ -223,13 +213,13 @@ const soql = function() {
     const sobject = _sObjects[elementId];
 
     const columnOptions = [];
-    const colcnt = sobject.columns.length;
-    for (let col = 0; col < colcnt; col++){
+    const columnCount = sobject.columns.length;
+    for (let col = 0; col < columnCount; col++){
       columnOptions.push({readOnly:true, type:"text"});
     }
 
-    const cnt = grid.countRows();
-    for (let row = 0; row < cnt; row++) {
+    const rowCount = grid.countRows();
+    for (let row = 0; row < rowCount; row++) {
       const id = grid.getCellMeta(row, sobject.idColumnIndex).tempId;
       const value = soql_info.key_map[id];
       grid.setDataAtCell(row, sobject.idColumnIndex, value, "loadData");
@@ -244,9 +234,9 @@ const soql = function() {
   //------------------------------------------------
   // Query callbacks
   //------------------------------------------------  
-  const processQuerySuccess = json => displayQueryResult(json);
+  const afterQuerySuccess = json => displayQueryResult(json);
 
-  const processQuerySuccessAfterCrud = (json) => {
+  const afterQuerySuccessAfterCrud = (json) => {
     displayQueryResult(json);
     endCrud();
   };
@@ -280,57 +270,25 @@ const soql = function() {
   };
 
   //------------------------------------------------
-  // CRUD
-  //------------------------------------------------
-  const executeCrud = (options) => {
-    hideMessageArea();
-    options["showProgress"] = false;
-    const callbacks = $.getAjaxCallbacks(processCrudSuccess, processCrudError, null);
-    beginCrud();
-    $.executeAjax(options, callbacks);  
-  };
-    
-  //------------------------------------------------
-  // CRUD callbacks
-  //------------------------------------------------
-  const beginCrud = () => $("#overlay").show();
-    
-  const endCrud = () => $("#overlay").hide();
-    
-  const processCrudSuccess = (json) => {
-    if (json.done) {
-      executeSoql({soql_info:json.soql_info, afterCrud: true});
-    } else {
-      endCrud();
-    }
-  };
-   
-  const processCrudError = (json) => {
-    displayError(json);
-    endCrud();
-  };
-
-  //------------------------------------------------
   // Upsert
   //------------------------------------------------
   $("#soqlArea #upsertBtn").on("click", (e) => {
-    e.preventDefault();
     executeUpsert();
   });
     
   const executeUpsert = () => {
     if ($.isAjaxBusy()) {
-      return false;
+      return;
     }
     
     const elementId = getActiveGridElementId();
     const sobject = _sObjects[elementId];
 
     if (!sobject || !sobject.editable || $.isEmptyObject(sobject.editions)) {
-      return false;
+      return;
     }
 
-    const val = {soql_info:sobject.soql_info, sobject: sobject.sobject_type, records: JSON.stringify(sobject.editions)};
+    const val = {soql_info: sobject.soql_info, sobject: sobject.sobject_type, records: JSON.stringify(sobject.editions)};
     const action = "/update";
     const method = "post";
     const options = $.getAjaxOptions(action, method, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
@@ -341,31 +299,30 @@ const soql = function() {
   // Delete
   //------------------------------------------------
   $("#soqlArea #deleteBtn").on("click", (e) => {
-    e.preventDefault();
     executeDelete();
   });
     
   const executeDelete = () => {
     if ($.isAjaxBusy()) {
-      return false;
+      return;
     }
     
     const elementId = getActiveGridElementId();
     const sobject = _sObjects[elementId];
 
     if (!sobject || !sobject.editable) {
-      return false;
+      return;
     }
 
-    const hot = _grids[elementId];
-    const ids = getSelectedIds(hot, sobject);
+    const grid = _grids[elementId];
+    const ids = getSelectedIds(grid, sobject);
     
     if (!ids || ids.length <= 0) {
-      return false;
+      return;
     }
   
     if (window.confirm("Are you sure?")) {
-      const val = {soql_info:sobject.soql_info, ids};
+      const val = {soql_info: sobject.soql_info, ids: ids};
       const action = "/delete";
       const method = "post";
       const options = $.getAjaxOptions(action, method, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
@@ -377,36 +334,66 @@ const soql = function() {
   // Undelete
   //------------------------------------------------
   $("#soqlArea #undeleteBtn").on("click", (e) => { 
-    e.preventDefault();
     executeUndelete();
   });
     
   const executeUndelete = () => {
     if ($.isAjaxBusy()) {
-      return false;   
+      return;
     }
     
     const elementId = getActiveGridElementId();
     const sobject = _sObjects[elementId];
 
     if (!sobject || !sobject.editable) {
-      return false;
+      return;
     }
 
-    const hot = _grids[elementId];
-    const ids = getSelectedIds(hot, sobject);
+    const grid = _grids[elementId];
+    const ids = getSelectedIds(grid, sobject);
     
     if (!ids || ids.length <= 0) {
-      return false;
+      return;
     }
     
     if (window.confirm("Are you sure?")) {
-      const val = {soql_info:sobject.soql_info, ids};
+      const val = {soql_info:sobject.soql_info, ids: ids};
       const action = "/undelete";
       const method = "post";
       const options = $.getAjaxOptions(action, method, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
       executeCrud(options);
     }
+  };
+
+  //------------------------------------------------
+  // CRUD
+  //------------------------------------------------
+  const executeCrud = (options) => {
+    hideMessageArea();
+    options["showProgress"] = false;
+    const callbacks = $.getAjaxCallbacks(afterCrudSuccess, onCrudError, null);
+    beginCrud();
+    $.executeAjax(options, callbacks);  
+  };
+    
+  //------------------------------------------------
+  // CRUD callbacks
+  //------------------------------------------------
+  const beginCrud = () => $("#overlay").show();
+    
+  const endCrud = () => $("#overlay").hide();
+    
+  const afterCrudSuccess = (json) => {
+    if (json.done) {
+      executeSoql({soql_info: json.soql_info, afterCrud: true});
+    } else {
+      endCrud();
+    }
+  };
+   
+  const onCrudError = (json) => {
+    displayError(json);
+    endCrud();
   };
 
   //------------------------------------------------
@@ -480,7 +467,7 @@ const soql = function() {
     const idColumnIndex = sobject.idColumnIndex
     const id = grid.getDataAtCell(rowIndex, idColumnIndex);
 
-    if (id === "" || id === "undefined" || id === null) {
+    if (!id) {
       return grid.getCellMeta(rowIndex, idColumnIndex).tempId;
     } else {
       return id;
@@ -488,7 +475,7 @@ const soql = function() {
   };
       
   const getSelectedIds = (grid, sobject) => {
-    let rowIndex;
+
     const selectedCells = grid.getSelected();
 
     if (!selectedCells) {
@@ -515,7 +502,7 @@ const soql = function() {
     }
 
     const ids = [];
-    for (rowIndex of Object.keys(rows)) {
+    for (let rowIndex of Object.keys(rows)) {
       const id = grid.getDataAtCell(rowIndex, sobject.idColumnIndex);
       if (id) {
         ids.push(id);
@@ -580,13 +567,13 @@ const soql = function() {
     const selectedCell = getSelectedCell(grid);
 
     if (!selectedCell || selectedCell.row < 0) {
-      return false;
+      return;
     }
 
     const tempId = grid.getCellMeta(selectedCell.row, sobject.idColumnIndex).tempId;
 
     if (!tempId) {
-      return false;
+      return;
     }
 
     grid.alter("remove_row", selectedCell.row, 1);
@@ -618,9 +605,9 @@ const soql = function() {
       return null;    
     } else {
       return {
-        row: selectedCells[0][0],
-        col: selectedCells[0][1]
-      };
+              row: selectedCells[0][0],
+              col: selectedCells[0][1]
+            };
     }
   };
 
@@ -677,10 +664,8 @@ const soql = function() {
   //------------------------------------------------
   $("#soqlArea").on("click", ".rerun", (e) => {
     if ($.isAjaxBusy()) {
-      return false;
+      return;
     }
-
-    e.preventDefault();
     
     const elementId = getActiveGridElementId();
     
@@ -690,32 +675,6 @@ const soql = function() {
   });
       
   //------------------------------------------------
-  // Show Query
-  //------------------------------------------------
-  /*
-  $("#soqlArea").on("click", ".show-query", (e) => {
-    if ($.isAjaxBusy()) {
-      return false;
-    }
-
-    e.preventDefault();
-    
-    const elementId = getActiveGridElementId();
-    
-    if (_sObjects[elementId] && _sObjects[elementId].soql_info.soql) {
-      const width = 750;
-      const height = 400;
-      const left =(screen.width - width) / 2;
-      const top = (screen.height - height) / 2;
-      let options = "location=0, resizable=1, menubar=0, scrollbars=1";
-      options += ", left=" + left + ", top=" + top + ", width=" + width + ", height=" + height;
-      const popup = window.open("", "soql", options);
-      popup.document.write("<pre>" + _sObjects[elementId].soql_info.soql  + "</pre>");
-    }
-  });
-  */
-      
-  //------------------------------------------------
   // Close tab
   //------------------------------------------------
   $(document).on("click", "#soqlArea .ui-closable-tab", function(e) {
@@ -723,8 +682,6 @@ const soql = function() {
       return;
     }
     
-    e.preventDefault();
-
     if ($("#soqlArea .tabArea ul li").length <= 2) {
       return;
     }
@@ -753,12 +710,11 @@ const soql = function() {
     );
 
     let inputArea = '<div class="inputSoql" style="margin-bottom:-2px;" tabId="' + newTabId + '">';
-    inputArea += '<textarea name="input_soql" id="input_soql' + newTabId + '" style="width:100%" rows="5"></textarea>';
+    inputArea += '<textarea name="inputSoql" id="inputSoql' + newTabId + '" style="width:100%" rows="5"></textarea>';
     inputArea += '</div>';
 
     let soqlArea = '<div class="resultSoql" tabId="' + newTabId + '">';    
     soqlArea += '<div id="soql' + newTabId + '">';
-    //soqlArea += '<button name="showQueryBtn" type="button" class="show-query btn btn-xs btn-default in-btn">Query</button>';
     soqlArea += '<button name="insRowBtn" type="button" class="add-row btn btn-xs btn-default in-btn">Insert row</button>';
     soqlArea += '<button name="remRowBtn" type="button" class="remove-row btn btn-xs btn-default in-btn">Remove row</button>';
     soqlArea += '<button name="rerunBtn" type="button" class="rerun btn btn-xs btn-default in-btn">Rerun</button>';
@@ -791,6 +747,17 @@ const soql = function() {
     }
   };
 
+  const onBeforeCopy = (data, coords) => {
+    const elementId = getActiveGridElementId();
+    const sobject = _sObjects[elementId];
+    const target = coords[0];
+    const count = (target.endCol - target.startCol) + 1;
+    
+    if (count === sobject.columns.length) {
+      data.unshift(sobject.columns);
+    }
+  };  
+
   const setSortableAttribute = () => {
     if ($("#soqlTabs li" ).length > 2) {
       $("#soqlTabs").sortable("enable");
@@ -818,7 +785,6 @@ const soql = function() {
     const hotSettings = {
         data: records,
         height,
-        //stretchH: stretch,
         autoWrapCol: false,
         autoWrapRow: false,
         allowRemoveColumn: false,
@@ -833,8 +799,6 @@ const soql = function() {
         fillHandle: {autoInsertRow: false},
         //fragmentSelection: true,
         columnSorting: true,
-        //contextMenu: true,
-        //colWidths: (i) -> setColWidth(i),
         outsideClickDeselects: false,
         licenseKey: "non-commercial-and-evaluation",
         afterChange(changes, source) { return onAfterChange(changes, source); },
@@ -850,18 +814,6 @@ const soql = function() {
     });
 
     _grids[elementId] = hot;
-  };
-
-  const onBeforeCopy = (data, coords) => {
-    const elementId = getActiveGridElementId();
-    const sobject = _sObjects[elementId];
-    let count = 0;
-    const target = coords[0];
-    count = (target.endCol - target.startCol) + 1;
-    
-    if (count === sobject.columns.length) {
-      data.unshift(sobject.columns);
-    }
   };
   
   const getColumns = (json) => {
