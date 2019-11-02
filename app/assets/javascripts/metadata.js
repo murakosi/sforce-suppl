@@ -12,6 +12,15 @@ const metadata = () => {
   const CHECK_INTERVAL = 2000;
   const DEFAULT_DATA_TYPE = "";
   const DEFAULT_CONTENT_TYPE = null;
+  const PLACEHOLDER = "Select a metadata type"
+
+
+  //------------------------------------------------
+  // Handler
+  //------------------------------------------------
+  $(document).on("AfterRefreshMetadataTypes", (e, param) => {
+    refreshSelectOptions(param.result);
+  });
 
   //------------------------------------------------
   // Shortcut keys
@@ -341,13 +350,13 @@ const metadata = () => {
   // message
   //------------------------------------------------
   const displayError = (json) => {
-    $("#metadataArea .messageArea").html(json.error);
-    $("#metadataArea .messageArea").show();
+    $("#metadataArea .message-area").html(json.error);
+    $("#metadataArea .message-area").show();
   };
   
   const hideMessageArea = () => {
-    $("#metadataArea .messageArea").empty();
-    $("#metadataArea .messageArea").hide();
+    $("#metadataArea .message-area").empty();
+    $("#metadataArea .message-area").hide();
   };
 
   //------------------------------------------------
@@ -487,12 +496,22 @@ const metadata = () => {
     while ((new Date - startMsec) < waitMsec) {}
   };
 
+  const refreshSelectOptions = (result) => {    
+    $("#metadataArea .metadata-select-list").html(result);
+    $("#metadataArea .metadata-select-list").select2({
+        dropdownAutoWidth : true,
+        width: "auto",
+        containerCssClass: ":all:",
+        placeholder: PLACEHOLDER,
+        allowClear: true
+      });         
+  };
   //------------------------------------------------
   // page load actions
   //------------------------------------------------
   disableButtons();
 
-  $("#metadataArea .tabArea").tabs();
+  $("#metadataArea .tab-area").tabs();
 
   $("#metadataArea #editMetadataTree").jstree({    
     "core" : {

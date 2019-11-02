@@ -45,7 +45,7 @@ const apex = function() {
     
   const executeAnonymous = () => {
     hideMessageArea();
-    _selectedTabId = $("#apexArea .tabArea .ui-tabs-panel:visible").attr("tabId");
+    _selectedTabId = $("#apexArea .tab-area .ui-tabs-panel:visible").attr("tabId");
 
     const debugOptions = {};    
     $("#debugOptions option:selected").each(function() {
@@ -143,13 +143,13 @@ const apex = function() {
   //------------------------------------------------
   $(document).on("click", "#apexArea .ui-closable-tab", function(e) {
 
-    if ($("#apexArea .tabArea ul li").length <= 2) {
+    if ($("#apexArea .tab-area ul li").length <= 2) {
       return;
     }
 
     const panelId = $(this).closest("#apexArea li").remove().attr("aria-controls");
     $("#apexArea #" + panelId ).remove();
-    $("#apexArea .tabArea").tabs("refresh");
+    $("#apexArea .tab-area").tabs("refresh");
   });
 
   //------------------------------------------------
@@ -163,30 +163,30 @@ const apex = function() {
     _currentTabIndex = _currentTabIndex + 1;
     const newTabId = _currentTabIndex;
 
-    $("#apexArea .tabArea ul li:last").before(
+    $("#apexArea .tab-area ul li:last").before(
       '<li class="noselect"><a href="#apexTab' + newTabId + '">Grid' + newTabId + '</a>' +
       '<span class="ui-icon ui-icon-close ui-closable-tab"></span>' +
       '</li>'
     );
 
-    const logInfoArea = '<div id="logInfo' + newTabId + '" class="resultSoql" tabId="' + newTabId + '"></div>';
+    const logInfoArea = '<div id="logInfo' + newTabId + '" class="result-info" tabId="' + newTabId + '"></div>';
     
-    $("#apexArea .tabArea").append(
-      '<div id="apexTab' + newTabId + '" class="resultTab" tabId="' + newTabId + '">' +
+    $("#apexArea .tab-area").append(
+      '<div id="apexTab' + newTabId + '" class="result-tab" tabId="' + newTabId + '">' +
       logInfoArea +
-      '<div id="apexGrid' + newTabId + '" class="resultGrid" tabId="' + newTabId + '"></div>' +
+      '<div id="apexGrid' + newTabId + '" class="result-grid" tabId="' + newTabId + '"></div>' +
       '</div>'
     );
     
     createGrid("#apexArea #apexGrid" + newTabId);
     
-    $("#apexArea .tabArea").tabs("refresh");
+    $("#apexArea .tab-area").tabs("refresh");
 
     setSortableAttribute();
     
-    const newTabIndex = $("#apexArea .tabArea ul li").length - 2;
+    const newTabIndex = $("#apexArea .tab-area ul li").length - 2;
     _selectedTabId = newTabIndex;
-    $("#apexArea .tabArea").tabs({ active: newTabIndex});
+    $("#apexArea .tab-area").tabs({ active: newTabIndex});
   };
 
   const setSortableAttribute = () => {
@@ -201,7 +201,7 @@ const apex = function() {
   // Active grid
   //------------------------------------------------
   const getActiveTabElementId = () => {
-    return $("#apexArea .tabArea .ui-tabs-panel:visible").attr("tabId");
+    return $("#apexArea .tab-area .ui-tabs-panel:visible").attr("tabId");
   };
 
   const getActiveGridElementId = () => {
@@ -289,19 +289,19 @@ const apex = function() {
   // message
   //------------------------------------------------
   const displayError = (json) => {
-    $("#apexArea .messageArea").html(json.error);
-    $("#apexArea .messageArea").show();
+    $("#apexArea .message-area").html(json.error);
+    $("#apexArea .message-area").show();
   };
   
   const hideMessageArea = () => {
-    $("#apexArea .messageArea").empty();
-    $("#apexArea .messageArea").hide();
+    $("#apexArea .message-area").empty();
+    $("#apexArea .message-area").hide();
   };
     
   //------------------------------------------------
   // page load actions
   //------------------------------------------------
-  $("#apexArea .tabArea").tabs();
+  $("#apexArea .tab-area").tabs();
   $("#apexTabs").sortable({items: "li:not(.add-tab-li)", delay: 150});
   createTab();
 };

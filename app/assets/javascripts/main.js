@@ -30,7 +30,7 @@ const mains = function() {
 
     $("div#mainArea").prop("class", target);
     
-    $(document).trigger("displayChange", [{targetArea: target + "Area"}]);
+    $(document).trigger("AfterDisplayChange", [{targetArea: target + "Area"}]);
   };
 
   const changeAnchorClass = (target) => {
@@ -66,7 +66,7 @@ const mains = function() {
   });
 
   const afterRefreshSObjects = (json) => {
-    $(document).trigger("afterRefreshSObjects", [{result: json.result}]);
+    $(document).trigger("AfterRefreshSObjects", [{result: json.result}]);
     endRefresh();
   }
 
@@ -74,7 +74,7 @@ const mains = function() {
   // Metadata
   //------------------------------------------------
   const prepareMetadataTypes = () => {
-    const targetSelect2 = "div#metadataArea .selectlist";
+    const targetSelect2 = "div#metadataArea .metadata-select-list";
     $(targetSelect2).select2({
       dropdownAutoWidth : true,
       width: "auto",
@@ -94,7 +94,7 @@ const mains = function() {
   });
 
   const afterRefreshMetadata = (json) => {
-    $(document).trigger("afterRefreshMetadataTypes", [{result: json.result}]);
+    $(document).trigger("AfterRefreshMetadataTypes", [{result: json.result}]);
     endRefresh();
   }
 

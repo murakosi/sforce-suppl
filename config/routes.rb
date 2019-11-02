@@ -7,7 +7,7 @@ Rails.application.routes.draw do
   get     'refresh_sobjects',       to: 'main#refresh_sobjects'
   get     'refresh_metadata',       to: 'main#refresh_metadata'
 
-  get     'login',                  to: 'login#new'
+  get     'login',                  to: 'login#login'
   post    'login',                  to: 'login#create'
   delete  'logout',                 to: 'login#destroy'
 

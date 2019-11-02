@@ -1,56 +1,52 @@
 <div id="metadataArea">
 
-	<div class="formArea">
-	    <%= form_tag metadata_path(), :method => :post, :class => "metadata-form" do %>
+	<div class="form-area metadata-form" action="<%= metadata_path() %>" method="post">
 			<div class="tbl">
 				<div class="row">
 					<div id="metadataListLabel">
-						<%= label_tag 'Metadata: ' %>
+						<label>Metadata: </label>
 					</div>
 					<div id="metadataList" class="input-sm select2-single">
 						<%= @metadata_list %>
 					</div>
 				</div>
 			</div>
-
 			<div>
-				<%= submit_tag 'List metadata', :id => "executListMetadataBtn", :class => 'btn btn-sm btn-primary' %>                
+				<button type="button" id="executListMetadataBtn" class="btn btn-sm btn-primary">List metadata</button>
 			</div>
-		<% end %>
-
-		<p><div class="messageArea"></div></p>
+		<p><div class="message-area"></div></p>
 
 	</div>
 	
-	<div class="tabArea">
+	<div class="tab-area">
 		<ul>
 			<li class="noselect"><a href="#metadataListTab">List</a></li>
 			<li class="noselect"><a href="#editMetadataTab">Read/Edit</a></li>
 			<li class="noselect"><a href="#deployMetadataTab">Deploy</a></li>
 		</ul>
 
-		<div id="metadataListTab" class="resultTab">
+		<div id="metadataListTab" class="result-tab">
 			<div id="list-overview" class="crud-button-area">
-				<%= button_tag "Delete", :id => "deleteMetadataBtn", :action => metadata_crud_path(), :class => "btn btn-warning btn-xs ex-small-btn" %>
-				<%= button_tag "Retrieve metadata", :id => "retrieveMetadataBtn", :action => metadata_retrieve_path(), :class => "btn btn-info btn-xs ex-small-btn" %>
+				<button type="button" id="deleteMetadataBtn" class="btn btn-warning btn-xs ex-small-btn" action="<%= metadata_crud_path() %>">Delete</button>
+				<button type="button" id="retrieveMetadataBtn" class="btn btn-info btn-xs ex-small-btn" action="<%= metadata_retrieve_path() %>">Retrieve</button>
 			</div>
-			<div id="metadataGrid" class="resultGrid"></div>
+			<div id="metadataGrid" class="result-grid"></div>
 		</div>
 
-		<div id="editMetadataTab" class="resultTab">
+		<div id="editMetadataTab" class="result-tab">
 			<div id="edit-overview" class="crud-button-area">
-				<%= button_tag "Update", :type => "button", :id => "updateMetadataBtn", :action => metadata_crud_path(), :class => "btn btn-warning btn-xs ex-small-btn" %>
-				<%= button_tag "Expand", :type => "button", :id => "expandMetadataTree", :action => metadata_crud_path(), :class => "btn btn-xs btn-info ex-small-btn" %>
-				<%= button_tag "Collapse", :type => "button", :id => "collapseMetadataTree", :class => "btn btn-xs btn-info ex-small-btn" %>
+				<button type="button" id="updateMetadataBtn" class="btn btn-warning btn-xs ex-small-btn" action="<%= metadata_crud_path() %>">Update</button>
+				<button type="button" id="expandMetadataTree" class="btn btn-xs btn-info ex-small-btn" action="<%= metadata_crud_path() %>">Expand</button>
+				<button type="button" id="collapseMetadataTree" class="btn btn-xs btn-info ex-small-btn">Collapse</button>
 			</div>
 			<div id="editMetadataTree" action="<%= metadata_edit_path() %>" class="tree-view"></div>
 		</div>
 
-		<div id="deployMetadataTab" class="resultTab">
+		<div id="deployMetadataTab" class="result-tab">
 			<div id="deployMetadataForm" class="crud-button-area">
 				<div>
-					<%= button_tag "Deploy", :id => "deployMetadataBtn", :action => metadata_deploy_path(), :class => "btn btn-warning btn-xs ex-small-btn" %>
-					<%= file_field_tag :metadataZipFile, :class => "btn ex-small-btn metadata-file-field"  %>
+					<button type="button" id="deployMetadataBtn" class="btn btn-warning btn-xs ex-small-btn" action="<%= metadata_deploy_path() %>">Deploy</button>
+					<input type="file" name="metadataZipFile" id="metadataZipFile" class="btn ex-small-btn metadata-file-field">
 				</div>
 				<div id="deployMetadataOptions">
 					   	<% @deploy_metadata_options.each do |k, v| %>

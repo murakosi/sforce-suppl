@@ -1,12 +1,9 @@
 class LoginController < ApplicationController
     before_action :require_sign_in!, except: [:destroy]
-    skip_before_action :require_sign_in!, only: [:new, :create]
+    skip_before_action :require_sign_in!, only: [:login, :create]
     protect_from_forgery :except => [:create]
 
     helper_method :api_version_list
-
-    def new
-    end
 
     def create
         begin
@@ -16,7 +13,7 @@ class LoginController < ApplicationController
         rescue StandardError => ex
           print_error(ex)
           flash[:danger] = safe_encode(ex.message)
-          render 'new'
+          render 'login'
         end
     end
 
