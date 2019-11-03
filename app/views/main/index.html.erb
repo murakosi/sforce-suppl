@@ -42,14 +42,14 @@
                         </ul>
                     </li>
                     <% if @describe_global_error.nil? %>
-                        <li><a id="refreshSObjects" href="javascript:void(0)">Refresh sObjects</a></li>
+                        <li><a id="refreshSObjects" href="javascript:void(0)" action="<%= refresh_sobjects_path() %>">Refresh sObjects</a></li>
                     <% else %>
-                        <li><a id="invalidRefreshSObjects" href="javascript:void(0)">Refresh sObjects</a></li>
+                        <li><a href="javascript:void(0)" class="disabled-dropdown">Refresh sObjects</a></li>
                     <% end %>
                     <% if @describe_metadata_objects_error.nil? %>
-                        <li><a id="refreshMetadata" href="javascript:void(0)" >Refresh Metadata</a></li>
+                        <li><a id="refreshMetadata" href="javascript:void(0)" action="<%= refresh_metadata_path() %>">Refresh Metadata</a></li>
                     <% else %>
-                        <li><a id="invalidRefreshMetadata" href="javascript:void(0)">Refresh Metadata</a></li>
+                        <li><a href="javascript:void(0)" class="disabled-dropdown">Refresh Metadata</a></li>
                     <% end %>                                        
                     <li role="separator" class="divider"></li>
                     <li><%= link_to "Logout", logout_path, method: :delete, id: "logoutLink" %></li>

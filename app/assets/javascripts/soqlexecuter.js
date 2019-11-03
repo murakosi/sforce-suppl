@@ -11,7 +11,8 @@ const soql = function() {
   const HISTORY_DISP_WIDTH = "250px"
   const HISTORY_DISP_MARGIN = "150px"
   const PLACEHOLDER = "Select an sObject"
-  
+  const POST = "post";
+
   //------------------------------------------------
   // Handler
   //------------------------------------------------
@@ -106,7 +107,7 @@ const soql = function() {
     const separator = $("#creatGridArea #sobjectFieldsSeparator").val();
 
     if (sobject && rawFields) {
-      const action = "create";
+      const action = $("#createGridBtn").attr("action");
       const val = {sobject: sobject, fields: rawFields, separator: separator, tab_id: getActiveTabElementId()};
       $.get(action, val, function(json) {
         displayQueryResult(json);
@@ -200,8 +201,7 @@ const soql = function() {
     
     const val = {soql, tooling, query_all: queryAll, tab_id: tabId};
     const action = $("#soqlArea .soql-form").attr("action");
-    const method = $("#soqlArea .soql-form").attr("method");
-    const options = $.getAjaxOptions(action, method, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
+    const options = $.getAjaxOptions(action, POST, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
 
     if (params && params.afterCrud) {
       callbacks = $.getAjaxCallbacks(afterQuerySuccessAfterCrud, displayError, null);
@@ -294,9 +294,8 @@ const soql = function() {
     }
 
     const val = {soql_info: sobject.soql_info, sobject: sobject.sobject_type, records: JSON.stringify(sobject.editions)};
-    const action = "/update";
-    const method = "post";
-    const options = $.getAjaxOptions(action, method, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
+    const action = $("#upsertBtn").attr("action");
+    const options = $.getAjaxOptions(action, POST, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
     executeCrud(options);
   };
     
@@ -328,9 +327,8 @@ const soql = function() {
   
     if (window.confirm("Are you sure?")) {
       const val = {soql_info: sobject.soql_info, ids: ids};
-      const action = "/delete";
-      const method = "post";
-      const options = $.getAjaxOptions(action, method, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
+      const action = $("#deleteBtn").attr("action");
+      const options = $.getAjaxOptions(action, POST, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
       executeCrud(options);
     }
   };
@@ -363,9 +361,8 @@ const soql = function() {
     
     if (window.confirm("Are you sure?")) {
       const val = {soql_info:sobject.soql_info, ids: ids};
-      const action = "/undelete";
-      const method = "post";
-      const options = $.getAjaxOptions(action, method, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
+      const action = $("#undeleteBtn").attr("action");
+      const options = $.getAjaxOptions(action, POST, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
       executeCrud(options);
     }
   };

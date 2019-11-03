@@ -8,6 +8,7 @@ const apex = function() {
   const DEFAULT_CONTENT_TYPE = null;
   const EVENT_COLUMN_INDEX = 1;
   const USER_DEBUG = "USER_DEBUG";
+  const POST = "post";
 
   //------------------------------------------------
   // Shortcut keys
@@ -56,8 +57,7 @@ const apex = function() {
       
     const val = {code: $("#apexArea #apexCode").val(), debug_options: debugOptions};
     const action = $("#apexArea .execute-anonymous-form").attr("action");
-    const method = $("#apexArea .execute-anonymous-form").attr("method");
-    const options = $.getAjaxOptions(action, method, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
+    const options = $.getAjaxOptions(action, POST, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
     const callbacks = $.getAjaxCallbacks(afterExecuteAnonymous, displayError, null);
     $.executeAjax(options, callbacks);
   };

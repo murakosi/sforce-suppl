@@ -11,30 +11,30 @@
 
 <div id="soqlArea">
 
-	<div class="form-area soql-form" action="<%= query_path() %>" method="post">
-			<div>
-				<textarea id="inputSoql" class="code-input" spellcheck="false" cols="120" rows="5"></textarea>
-			</div>
-			<div>
-				<button type="button" id="executeSoqlBtn" class="btn btn-sm btn-primary">Execute</button>
-				<label class="soql-options"><input type="checkbox" id="useTooling"/> Use Tooling API</label>
-				<label class="soql-options"><input type="checkbox" id="queryAll"/> Query all</label>
-			</div>		
+	<div class="form-area soql-form" action="<%= query_path() %>">
+		<div>
+			<textarea id="inputSoql" class="code-input" spellcheck="false" cols="120" rows="5"></textarea>
+		</div>
+		<div>
+			<button type="button" id="executeSoqlBtn" class="btn btn-sm btn-primary">Execute</button>
+			<label class="soql-options"><input type="checkbox" id="useTooling"/> Use Tooling API</label>
+			<label class="soql-options"><input type="checkbox" id="queryAll"/> Query all</label>
+		</div>		
 		<p><div class="message-area"></div></p>
 	</div>
 	
 	<div class="tab-area">
 		<div class="left-align-btn">
-		<button type="button" class="btn btn-xs btn-default ex-small-btn export-btn">Export</button>
-		<% if @describe_error.nil? %>
-			<button type="button" id="openCreatGridBtn" class="btn btn-xs btn-default ex-small-btn">Create</button>
-		<% end %>
-		<button type="button" id="soqlHistoryBtn" class="btn btn-xs btn-default ex-small-btn">History</button>
+			<button type="button" class="btn btn-xs btn-default ex-small-btn export-btn">Export</button>
+			<% if @describe_error.nil? %>
+				<button type="button" id="openCreatGridBtn" class="btn btn-xs btn-default ex-small-btn">Create</button>
+			<% end %>
+			<button type="button" id="soqlHistoryBtn" class="btn btn-xs btn-default ex-small-btn">History</button>
 		</div>
 		<div class="right-align-btn">
-			<button type="button" id="upsertBtn" class="btn btn-xs btn-warning ex-small-btn">Upsert</button>
-			<button type="button" id="deleteBtn" class="btn btn-xs btn-warning ex-small-btn">Delete</button>
-			<button type="button" id="undeleteBtn" class="btn btn-xs btn-warning ex-small-btn">Undelete</button>
+			<button type="button" id="upsertBtn" class="btn btn-xs btn-warning ex-small-btn" action="<%= upsert_path() %>">Upsert</button>
+			<button type="button" id="deleteBtn" class="btn btn-xs btn-warning ex-small-btn" action="<%= delete_path() %>">Delete</button>
+			<button type="button" id="undeleteBtn" class="btn btn-xs btn-warning ex-small-btn" action="<%= undelete_path() %>">Undelete</button>
 		</div>
 		<ul id="soqlTabs">
 			<li class="add-tab-li">
@@ -80,7 +80,7 @@
 				<div class="row">
 					<div></div>
 					<div>
-						<button type="button" id="createGridBtn" class="btn btn-xs btn-info ex-small-btn">Create</button>
+						<button type="button" id="createGridBtn" class="btn btn-xs btn-info ex-small-btn" action="<%= create_path() %>">Create</button>
 						<button type="button" id="cancelCreateBtn" class="btn btn-xs btn-info ex-small-btn">Cancel</button>
 					</div>
 				</div>

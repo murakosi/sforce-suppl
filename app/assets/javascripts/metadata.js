@@ -13,8 +13,11 @@ const metadata = () => {
   const DEFAULT_DATA_TYPE = "";
   const DEFAULT_CONTENT_TYPE = null;
   const PLACEHOLDER = "Select a metadata type"
-
-
+  const POST = "post";
+  const DEPLOY_CHECK_PATH = "metadata/deploy_check";
+  const RETRIEVE_CHECK_PATH = "metadata/retrieve_check";
+  const RETRIEVE_RESULT_PATH = "metadata/retrieve_result";
+  
   //------------------------------------------------
   // Handler
   //------------------------------------------------
@@ -67,8 +70,7 @@ const metadata = () => {
     
     const val = {selected_directory: currentMetadataType};
     const action = $("#metadataArea .metadata-form").attr("action");
-    const method = $("#metadataArea .metadata-form").attr("method");
-    const options = $.getAjaxOptions(action, method, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
+    const options = $.getAjaxOptions(action, POST, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
     const callbacks = $.getAjaxCallbacks(afterListMetadata, onListMetadataError, null);
     $.executeAjax(options, callbacks);
   };
@@ -104,8 +106,7 @@ const metadata = () => {
     hideMessageArea();
     const val = {crud_type: "read", metadata_type: _currentMetadataType, name: node.id};
     const action = $("#expandMetadataTree").attr("action");
-    const method = "POST";
-    const options = $.getAjaxOptions(action, method, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE, false);
+    const options = $.getAjaxOptions(action, POST, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE, false);
     const callbacks = $.getAjaxCallbacks(afterReadSuccess, onReadError, callback);
     $.executeAjax(options, callbacks);
   };
@@ -133,8 +134,7 @@ const metadata = () => {
       hideMessageArea();
       const val = {crud_type: "delete", metadata_type: _currentMetadataType, selected_records: selectedRecords};
       const action = $("#metadataArea #deleteMetadataBtn").attr("action");
-      const method = "POST";
-      const options = $.getAjaxOptions(action, method, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
+      const options = $.getAjaxOptions(action, POST, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
       const callbacks = $.getAjaxCallbacks(afterCrudSuccess, displayError, null);
       $.executeAjax(options, callbacks);
     }
@@ -158,8 +158,7 @@ const metadata = () => {
     _checkCount = 0;
     const val = {selected_type: _currentMetadataType, selected_records: selectedRecords};
     const action = $("#metadataArea #retrieveMetadataBtn").attr("action");
-    const method ="POST";
-    const options = $.getAjaxOptions(action, method, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
+    const options = $.getAjaxOptions(action, POST, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
     const callbacks = $.getAjaxCallbacks(checkRetrieveStatus, onRetrieveError, null);
     $.executeAjax(options, callbacks);
   });
@@ -172,9 +171,7 @@ const metadata = () => {
       _checkCount++;
       sleep(CHECK_INTERVAL * _checkCount);      
       const val = {id: _retrieveId};
-      const action = "metadata/retrieve_check";
-      const method = "POST";
-      const options = $.getAjaxOptions(action, method, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
+      const options = $.getAjaxOptions(RETRIEVE_CHECK_PATH, POST, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
       const callbacks = $.getAjaxCallbacks(checkRetrieveStatus, onRetrieveError, null);
       $.executeAjax(options, callbacks);
     }
@@ -182,9 +179,7 @@ const metadata = () => {
 
   const afterRetrieveSuccess = (json) => {
     _retrieveId = null;
-    const url = "metadata/retrieve_result";
-    const method = "post";
-    const options = $.getAjaxDownloadOptions(url, method, null, (url) => {}, onDownloadError, () => {});
+    const options = $.getAjaxDownloadOptions(RETRIEVE_RESULT_PATH, POST, null, (url) => {}, onDownloadError, () => {});
     $.ajaxDownload(options);
   };
 
@@ -234,8 +229,7 @@ const metadata = () => {
 
     const val = {options: JSON.stringify(deploy_options), zip_file: file};
     const action = $("#metadataArea #deployMetadataBtn").attr("action");
-    const method = "POST";
-    const options = $.getAjaxOptions(action, method, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
+    const options = $.getAjaxOptions(action, POST, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
     const callbacks = $.getAjaxCallbacks(checkDeployStatus, onDeployError, null);
     $.executeAjax(options, callbacks);
   };
@@ -248,9 +242,7 @@ const metadata = () => {
       _checkCount++;
       sleep(CHECK_INTERVAL * _checkCount);      
       const val = {id: _deployId};
-      const action = "metadata/deploy_check";
-      const method = "POST";
-      const options = $.getAjaxOptions(action, method, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
+      const options = $.getAjaxOptions(DEPLOY_CHECK_PATH, POST, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
       const callbacks = $.getAjaxCallbacks(checkDeployStatus, onDeployError, null);
       $.executeAjax(options, callbacks);
     }
@@ -275,8 +267,7 @@ const metadata = () => {
       hideMessageArea();
       const val = {crud_type: "update", metadata_type: _currentMetadataType, full_names: getSelectedFullNames()};
       const action = $("#metadataArea #updateMetadataBtn").attr("action");
-      const method = "POST";
-      const options = $.getAjaxOptions(action, method, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
+      const options = $.getAjaxOptions(action, POST, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
       const callbacks = $.getAjaxCallbacks(afterCrudSuccess, displayError, null);
       $.executeAjax(options, callbacks);
     }
@@ -302,8 +293,7 @@ const metadata = () => {
            data_type: data.node.li_attr.data_type
           };
     const action = $("#metadataArea #editMetadataTree").attr("action");
-    const method = "POST";
-    const options = $.getAjaxOptions(action, method, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE, false);
+    const options = $.getAjaxOptions(action, POST, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE, false);
     const callbacks = $.getAjaxCallbacks(afterEditSuccess, undoEdit, null);
     $.executeAjax(options, callbacks);
   });

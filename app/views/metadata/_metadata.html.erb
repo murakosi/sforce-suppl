@@ -1,19 +1,19 @@
 <div id="metadataArea">
 
-	<div class="form-area metadata-form" action="<%= metadata_path() %>" method="post">
-			<div class="tbl">
-				<div class="row">
-					<div id="metadataListLabel">
-						<label>Metadata: </label>
-					</div>
-					<div id="metadataList" class="input-sm select2-single">
-						<%= @metadata_list %>
-					</div>
+	<div class="form-area metadata-form" action="<%= metadata_path() %>">
+		<div class="tbl">
+			<div class="row">
+				<div id="metadataListLabel">
+					<label>Metadata: </label>
+				</div>
+				<div id="metadataList" class="input-sm select2-single">
+					<%= @metadata_list %>
 				</div>
 			</div>
-			<div>
-				<button type="button" id="executListMetadataBtn" class="btn btn-sm btn-primary">List metadata</button>
-			</div>
+		</div>
+		<div>
+			<button type="button" id="executListMetadataBtn" class="btn btn-sm btn-primary">List metadata</button>
+		</div>
 		<p><div class="message-area"></div></p>
 
 	</div>
@@ -49,16 +49,17 @@
 					<input type="file" name="metadataZipFile" id="metadataZipFile" class="btn ex-small-btn metadata-file-field">
 				</div>
 				<div id="deployMetadataOptions">
-					   	<% @deploy_metadata_options.each do |k, v| %>
-					    	<label class="deploy-option-lable">
-					      		<%= check_box_tag k, k,v, :id => k, :class => "deploy-option" %>
-					      		<%= k %>
-					    	</label>
-					    <% end %>
+				   	<% @deploy_metadata_options.each do |k, v| %>
+				    	<label class="deploy-option-lable">
+				      		<%= check_box_tag k, k,v, :id => k, :class => "deploy-option" %>
+				      		<%= k %>
+				    	</label>
+				    <% end %>
 				</div>
 			</div>		
 			<div id="deployMetadataResultTree" class="tree-view"></div>	
 		</div>
 
 	</div>
+
 </div>

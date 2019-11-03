@@ -4,6 +4,9 @@ const mains = function() {
   let _anchorObject = null;  
   const DEFAULT_DATA_TYPE = "";
   const DEFAULT_CONTENT_TYPE = null;
+  const SOBJECTS_PLACEHOLDER = "Select an sObject";
+  const METADATA_PLACEHOLDER = "Select a metadata type";
+  const GET = "get";
 
   //------------------------------------------------
   // Menu list
@@ -51,16 +54,15 @@ const mains = function() {
         dropdownAutoWidth : true,
         width: "auto",
         containerCssClass: ":all:",
-        placeholder: "Select an sObject",
+        placeholder: SOBJECTS_PLACEHOLDER,
         allowClear: true
         });
   };
 
   $("#refreshSObjects").on("click", function(e) {
     beginRefresh();
-    const action = "refresh_sobjects";
-    const method = "get";
-    const options = $.getAjaxOptions(action, method, {}, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE, false);
+    const action = $(this).attr("action");
+    const options = $.getAjaxOptions(action, GET, {}, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE, false);
     const callbacks = $.getAjaxCallbacks(afterRefreshSObjects, onRefreshError, null);
     $.executeAjax(options, callbacks);
   });
@@ -79,16 +81,15 @@ const mains = function() {
       dropdownAutoWidth : true,
       width: "auto",
       containerCssClass: ":all:",
-      placeholder: "Select a metadata type",
+      placeholder: METADATA_PLACEHOLDER,
       allowClear: true
       });    
   }
 
   $("#refreshMetadata").on("click", function(e) {
     beginRefresh();
-    const action = "refresh_metadata";
-    const method = "get";
-    const options = $.getAjaxOptions(action, method, {}, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE, false);
+    const action = $(this).attr("action");
+    const options = $.getAjaxOptions(action, GET, {}, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE, false);
     const callbacks = $.getAjaxCallbacks(afterRefreshMetadata, onRefreshError, null);
     $.executeAjax(options, callbacks);    
   });

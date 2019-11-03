@@ -8,6 +8,7 @@ const describe = () => {
   const DEFAULT_DATA_TYPE = "";  
   const DEFAULT_CONTENT_TYPE = null;
   const PLACEHOLDER = "Select an sObject";
+  const POST = "post";
 
   //------------------------------------------------
   // Handler
@@ -52,8 +53,7 @@ const describe = () => {
     disableOptions();
     const val = {object_type: e.target.value};
     const action = $("#filterSObjectList").attr("action");
-    const method = $("#filterSObjectList").attr("method");
-    const options = $.getAjaxOptions(action, method, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE, false);
+    const options = $.getAjaxOptions(action, POST, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE, false);
     const callbacks = $.getAjaxCallbacks(refreshSelectOptions, displayError, null);
     $.executeAjax(options, callbacks, true);
   });
@@ -93,8 +93,7 @@ const describe = () => {
       disableOptions();
       const val = {selected_sobject: sobject};
       const action = $("#executeDescribeBtn").attr("action");
-      const method = $("#executeDescribeBtn").attr("method");
-      const options = $.getAjaxOptions(action, method, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
+      const options = $.getAjaxOptions(action, POST, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
       const callbacks = $.getAjaxCallbacks(afterExecuteDescribe, displayError, null);
       $.executeAjax(options, callbacks);
     }

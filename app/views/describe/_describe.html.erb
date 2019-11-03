@@ -1,7 +1,7 @@
 <div id="describeArea">
 
 	<div class="form-area">
-		<div id="filterSObjectList" action="<%= describe_changelist_path() %>" method="post">
+		<div id="filterSObjectList" action="<%= describe_changelist_path() %>">
 			<label class="sobjectTypeCheckBoxLabel"><input type="radio" name="sobjectTypeCheckBox" id="sobjectTypeCheckBox_all" value="all" class="sobjectTypeCheckBox" checked="checked">All</label>
 			<label class="sobjectTypeCheckBoxLabel"><input type="radio" name="sobjectTypeCheckBox" id="sobjectTypeCheckBox_standard" value="standard" class="sobjectTypeCheckBox">Standard</label>
 			<label class="sobjectTypeCheckBoxLabel"><input type="radio" name="sobjectTypeCheckBox" id="sobjectTypeCheckBox_custom" value="custom" class="sobjectTypeCheckBox">Custom</label>
@@ -18,7 +18,7 @@
 			</div>
 			<div class="row">
 				<div>
-					<button type="button" id="executeDescribeBtn" class="btn btn-sm btn-primary" action="<%= describe_path() %>" method="post">Describe</button>
+					<button type="button" id="executeDescribeBtn" class="btn btn-sm btn-primary" action="<%= describe_path() %>">Describe</button>
 				</div>
 			</div>			
 		</div>
