@@ -21,7 +21,7 @@ const metadata = () => {
   //------------------------------------------------
   // Handler
   //------------------------------------------------
-  $(document).on("AfterRefreshMetadataTypes", (e, param) => {
+  $(document).on("afterRefreshMetadataTypes", (e, param) => {
     refreshSelectOptions(param.result);
   });
 

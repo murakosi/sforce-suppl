@@ -13,7 +13,7 @@ const describe = () => {
   //------------------------------------------------
   // Handler
   //------------------------------------------------
-  $(document).on("AfterRefreshSObjects", (e, param) => {
+  $(document).on("afterRefreshSObjects", (e, param) => {
     refreshSelectOptions(param.result);
     $("#sobjectTypeCheckBox_all").prop("checked", true);
   });

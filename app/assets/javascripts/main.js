@@ -33,7 +33,7 @@ const mains = function() {
 
     $("div#mainArea").prop("class", target);
     
-    $(document).trigger("AfterDisplayChange", [{targetArea: target + "Area"}]);
+    $(document).trigger("afterDisplayChange", [{targetArea: target + "Area"}]);
   };
 
   const changeAnchorClass = (target) => {
@@ -68,7 +68,7 @@ const mains = function() {
   });
 
   const afterRefreshSObjects = (json) => {
-    $(document).trigger("AfterRefreshSObjects", [{result: json.result}]);
+    $(document).trigger("afterRefreshSObjects", [{result: json.result}]);
     endRefresh();
   }
 
@@ -95,7 +95,7 @@ const mains = function() {
   });
 
   const afterRefreshMetadata = (json) => {
-    $(document).trigger("AfterRefreshMetadataTypes", [{result: json.result}]);
+    $(document).trigger("afterRefreshMetadataTypes", [{result: json.result}]);
     endRefresh();
   }
 
