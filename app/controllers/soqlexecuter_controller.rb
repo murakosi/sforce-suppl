@@ -4,7 +4,7 @@ class SoqlexecuterController < ApplicationController
 
   before_action :require_sign_in!
   
-  protect_from_forgery :except => [:query, :update, :delete, :undelete]
+  protect_from_forgery :except => [:query, :upsert, :delete, :undelete]
   
   Time_format = "%Y/%m/%d %H:%M:%S"
   Temp_id_prefix = "@"
@@ -16,7 +16,7 @@ class SoqlexecuterController < ApplicationController
     execute_soql(params[:soql], params[:tooling], params[:query_all], params[:tab_id])
   end
 
-  def update
+  def upsert
     new_param = params.permit!.to_h
     
     execute_save(new_param[:sobject], new_param[:records], new_param[:soql_info])

@@ -1,16 +1,16 @@
 <div id="describeArea">
 
-	<div class="formArea">
-		<%= form_tag describe_changelist_path(), :id => "filterSObjectList", :method => :post do %>
+	<div class="form-area">
+		<div id="filterSObjectList" action="<%= describe_changelist_path() %>">
 			<label class="sobjectTypeCheckBoxLabel"><input type="radio" name="sobjectTypeCheckBox" id="sobjectTypeCheckBox_all" value="all" class="sobjectTypeCheckBox" checked="checked">All</label>
 			<label class="sobjectTypeCheckBoxLabel"><input type="radio" name="sobjectTypeCheckBox" id="sobjectTypeCheckBox_standard" value="standard" class="sobjectTypeCheckBox">Standard</label>
 			<label class="sobjectTypeCheckBoxLabel"><input type="radio" name="sobjectTypeCheckBox" id="sobjectTypeCheckBox_custom" value="custom" class="sobjectTypeCheckBox">Custom</label>
-		<% end %>
+		</div>
 
 		<div class="tbl">
 			<div class="row">
 				<div class="describe-sobject-label">
-					<%= label_tag :sobjects, 'sObjects: ' %>							
+					<label>sObjects: </label>
 				</div>
 				<div class="sobject-list describe-sobject-list input-sm select2-single">
 					<%= @sobject_list %>							
@@ -18,16 +18,16 @@
 			</div>
 			<div class="row">
 				<div>
-					<%= button_tag "Describe", :action => describe_path(), :method => :post, :id => "executeDescribeBtn", :class => "btn btn-sm btn-primary" %>
+					<button type="button" id="executeDescribeBtn" class="btn btn-sm btn-primary" action="<%= describe_path() %>">Describe</button>
 				</div>
 			</div>			
 		</div>
-		<p><div class="messageArea"></div></p>
+		<p><div class="message-area"></div></p>
 	</div>
 	
-	<div class="tabArea">
-		<div class="exportButtonArea">
-			<%= button_tag "Export", :class => "btn btn-xs btn-default ex-small-btn export-btn" %>
+	<div class="tab-area">
+		<div class="export-btn-area">
+			<button type="button" class="btn btn-xs btn-default ex-small-btn export-btn">Export</button>
 		</div>	
 
 		<ul id="describeTabs">

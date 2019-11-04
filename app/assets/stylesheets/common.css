@@ -52,26 +52,28 @@ button:disabled {
 
 #soqlArea .ui-tabs .ui-tabs-nav .ui-tabs-anchor,
 #describeArea .ui-tabs .ui-tabs-nav .ui-tabs-anchor,
-#apexArea .ui-tabs .ui-tabs-nav .ui-tabs-anchor
-{
+#apexArea .ui-tabs .ui-tabs-nav .ui-tabs-anchor{
     float: left;
     padding: .5em .5em .5em 1em;
     text-decoration: none;
 }
 
-.ui-tabs .ui-tabs-nav:focus {
-    
+.ui-tabs .ui-tabs-nav:focus {    
     padding-left: 0px; 
     background: transparent; 
     border-width: 0px 0px 1px 0px; 
     -moz-border-radius: 0px; 
     -webkit-border-radius: 0px; 
-    border-radius: 0px;
-    
+    border-radius: 0px;    
 }
 
-.tabArea ul li a { outline:none; }
-.tabArea ul li { outline:none; }
+.tab-area ul li a {
+    outline: none;
+}
+
+.tab-area ul li {
+    outline: none; 
+}
 
 .ui-tabs .ui-tabs-nav li.ui-tabs-active .ui-tabs-anchor,
 .ui-tabs .ui-tabs-nav li.ui-state-disabled .ui-tabs-anchor,
@@ -105,24 +107,17 @@ button:disabled {
 /* ------------------------------
    #Areas
 ------------------------------ */
-#tree, .tree-view{
-    font-size:12px;
-    font-family: Verdana;
-    height:500px;
-    overflow:auto;
-}
-
-.formArea{
+.form-area{
     width: 80%;
     margin: 0 auto;
 }
 
-.formArea .exportButtonArea .btn{
+.form-area .export-btn-area .btn{
     font-size:9.5pt;
     display: inline;
 }
 
-.messageArea{
+.message-area{
     width: 100%;
     display: none;
     color: red;
@@ -131,13 +126,13 @@ button:disabled {
     word-wrap: break-word;
 }
 
-.tabArea{
+.tab-area{
     width: 80%;
     border: 0px solid lightgray;
     margin: 0 auto;
 }
 
-.tabArea li .ui-icon-close {
+.tab-area li .ui-icon-close {
     float: left;
     margin: 0.4em 0.2em 0 0;
     cursor: pointer; 
@@ -147,11 +142,6 @@ button:disabled {
 /* ------------------------------
    #select2
 ------------------------------ */
-.input-sm{
-    display:inline;
-    vertical-align: center;
-}
-
 .select2-results__options{
     font-size:12px !important;
     -webkit-box-shadow: none !important;
@@ -191,19 +181,14 @@ span.select2-selection.select2-selection--single {
     font-size: 12px !important;
 }
 
-.in-btn{
-    font-size: 12px !important;
-    margin-right: 5px;
-}
-
 /* ------------------------------
    #tab area
 ------------------------------ */
-.resultTab{
+.result-tab{
     padding-right: 7px;
 }
 
-.resultSoql{
+.result-info{
     border: 1px solid lightgray;
     font-size: 9pt;
     font-family:Arial;
@@ -213,7 +198,7 @@ span.select2-selection.select2-selection--single {
     white-space: pre-wrap;
 }
 
-.resultGrid {
+.result-grid {
     background: white;
     outline: 0;
     border: 0px solid gray;
@@ -221,10 +206,6 @@ span.select2-selection.select2-selection--single {
     overflow: hidden;
 }
 
-.button_to,
-.button_to div {
-    display: inline;
-}
 
 /* ------------------------------
     Add tab button

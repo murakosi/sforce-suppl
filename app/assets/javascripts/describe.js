@@ -8,7 +8,16 @@ const describe = () => {
   const DEFAULT_DATA_TYPE = "";  
   const DEFAULT_CONTENT_TYPE = null;
   const PLACEHOLDER = "Select an sObject";
-    
+  const POST = "post";
+
+  //------------------------------------------------
+  // Handler
+  //------------------------------------------------
+  $(document).on("afterRefreshSObjects", (e, param) => {
+    refreshSelectOptions(param.result);
+    $("#sobjectTypeCheckBox_all").prop("checked", true);
+  });
+
   //------------------------------------------------
   // Shortcut keys
   //------------------------------------------------
@@ -31,11 +40,6 @@ const describe = () => {
     }
   });
 
-  $(document).on("afterRefreshSObjects", (e, param) => {
-    refreshSelectOptions(param.result);
-    $("#sobjectTypeCheckBox_all").prop("checked", true);
-  });
-
   //------------------------------------------------
   // Change custom/standard
   //------------------------------------------------
@@ -49,8 +53,7 @@ const describe = () => {
     disableOptions();
     const val = {object_type: e.target.value};
     const action = $("#filterSObjectList").attr("action");
-    const method = $("#filterSObjectList").attr("method");
-    const options = $.getAjaxOptions(action, method, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE, false);
+    const options = $.getAjaxOptions(action, POST, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE, false);
     const callbacks = $.getAjaxCallbacks(refreshSelectOptions, displayError, null);
     $.executeAjax(options, callbacks, true);
   });
@@ -90,8 +93,7 @@ const describe = () => {
       disableOptions();
       const val = {selected_sobject: sobject};
       const action = $("#executeDescribeBtn").attr("action");
-      const method = $("#executeDescribeBtn").attr("method");
-      const options = $.getAjaxOptions(action, method, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
+      const options = $.getAjaxOptions(action, POST, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
       const callbacks = $.getAjaxCallbacks(afterExecuteDescribe, displayError, null);
       $.executeAjax(options, callbacks);
     }
@@ -124,14 +126,14 @@ const describe = () => {
   // callbacks
   //------------------------------------------------  
   const displayError = (json) => {
-    $("#describeArea .messageArea").html(json.error);
-    $("#describeArea .messageArea").show();
+    $("#describeArea .message-area").html(json.error);
+    $("#describeArea .message-area").show();
     enableOptions();
   };
   
   const hideMessageArea = () => {
-    $("#describeArea .messageArea").empty();
-    $("#describeArea .messageArea").hide();
+    $("#describeArea .message-area").empty();
+    $("#describeArea .message-area").hide();
   };
 
   const afterExecuteDescribe = (json) => {
@@ -164,7 +166,7 @@ const describe = () => {
   // Active grid
   //------------------------------------------------
   const getActiveTabElementId = () => {
-    return $("#describeArea .tabArea .ui-tabs-panel:visible").attr("tabId");
+    return $("#describeArea .tab-area .ui-tabs-panel:visible").attr("tabId");
   }
 
   const getActiveGridElementId = () => {
@@ -184,13 +186,13 @@ const describe = () => {
       return;
     }
 
-    if ($("#describeArea .tabArea ul li").length <= 2) {
+    if ($("#describeArea .tab-area ul li").length <= 2) {
       return;
     }
 
     const panelId = $(this).closest("#describeArea li").remove().attr("aria-controls");
     $("#describeArea #" + panelId ).remove();
-    $("#describeArea .tabArea").tabs("refresh");
+    $("#describeArea .tab-area").tabs("refresh");
   });
 
   //------------------------------------------------
@@ -204,30 +206,30 @@ const describe = () => {
     _currentTabIndex = _currentTabIndex + 1;
     const newTabId = _currentTabIndex;
 
-    $("#describeArea .tabArea ul li:last").before(
+    $("#describeArea .tab-area ul li:last").before(
       '<li class="noselect"><a href="#describeTab' + newTabId + '">Grid' + newTabId + '</a>' +
       '<span class="ui-icon ui-icon-close ui-closable-tab"></span>' +
       '</li>'
     );
 
-    const overviewArea = '<div id="overview' + newTabId + '" class="resultSoql" tabId="' + newTabId + '"></div>';    
+    const overviewArea = '<div id="overview' + newTabId + '" class="result-info" tabId="' + newTabId + '"></div>';    
     
-    $("#describeArea .tabArea").append(
-      '<div id="describeTab' + newTabId + '" class="resultTab" tabId="' + newTabId + '">' +
+    $("#describeArea .tab-area").append(
+      '<div id="describeTab' + newTabId + '" class="result-tab" tabId="' + newTabId + '">' +
       overviewArea +
-      '<div id="describeGrid' + newTabId + '" class="resultGrid" tabId="' + newTabId + '"></div>' +
+      '<div id="describeGrid' + newTabId + '" class="result-grid" tabId="' + newTabId + '"></div>' +
       '</div>'
     );
     
     createGrid("#describeArea #describeGrid" + newTabId);
     
-    $("#describeArea .tabArea").tabs("refresh");
+    $("#describeArea .tab-area").tabs("refresh");
 
     setSortableAttribute();
     
-    const newTabIndex = $("#describeArea .tabArea ul li").length - 2;
+    const newTabIndex = $("#describeArea .tab-area ul li").length - 2;
     _selectedTabId = newTabIndex;
-    $("#describeArea .tabArea").tabs({ active: newTabIndex});
+    $("#describeArea .tab-area").tabs({ active: newTabIndex});
   };
 
   const setSortableAttribute = () => {
@@ -330,7 +332,7 @@ const describe = () => {
   //------------------------------------------------
   // page load actions
   //------------------------------------------------
-  $("#describeArea .tabArea").tabs();
+  $("#describeArea .tab-area").tabs();
   $("#describeTabs").sortable({items: "li:not(.add-tab-li)", delay: 150});
   createTab();
   

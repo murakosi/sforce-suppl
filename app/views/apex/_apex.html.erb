@@ -1,28 +1,25 @@
 <div id="apexArea">
-	<div class="formArea">
-		<%= form_tag apex_path(), :method => :post, :class => "execute-anonymous-form" do %>
-			<div>
-				<%= text_area_tag :apexCode,"", :size => "120x5", :class => "code-input", :spellcheck => false %>
-			</div>
-			<div>
-				<%= submit_tag "Execute Anonymous", :id => "executeAnonymousBtn", :class => "btn btn-sm btn-primary" %>
-				<%= button_tag "Debug options", :type => "button", :id => "debugOptionBtn", :class => "btn btn-xs btn-default" %>
-			</div>
-			<div id="debugOptions">
-				<% @debug_options.each_with_index do |options, idx| %>
-				    <% options.each do |k, v| %>
-				        <label><%= k %></label>
-					    <%= select_tag k, options_for_select(v, :selected => @default_debug_levels[idx]), :id => k, :multiple => false %>
-					<% end %>
+	<div class="form-area execute-anonymous-form" action="<%= apex_path() %>">
+		<div>
+			<textarea id="apexCode" class="code-input" spellcheck="false" cols="120" rows="5"></textarea>
+		</div>
+		<div>
+			<button type="button" id="executeAnonymousBtn" class="btn btn-sm btn-primary">Execute Anonymous</button>
+			<button type="button" id="debugOptionBtn" class="btn btn-xs btn-default">Debug options</button>
+		</div>
+		<div id="debugOptions">
+			<% @debug_options.each_with_index do |options, idx| %>
+			    <% options.each do |k, v| %>
+			        <label><%= k %></label>
+				    <%= select_tag k, options_for_select(v, :selected => @default_debug_levels[idx]), :id => k, :multiple => false %>
 				<% end %>
-			</div>
-		<% end %>
-		
-		<p><div class="messageArea"></div></p>
+			<% end %>
+		</div>		
+		<p><div class="message-area"></div></p>
 	</div>
 	
-	<div class="tabArea">
-		<%= button_tag "Export", :type => "button", :id => "downloadLogBtn", :class => "btn btn-xs btn-default" %>
+	<div class="tab-area">
+		<button type="button" id="downloadLogBtn" class="btn btn-xs btn-default">Export</button>
 		<ul id="apexTabs">
 			<li class="add-tab-li">
 				<div class="add-tab-btn icon-plus"></div>

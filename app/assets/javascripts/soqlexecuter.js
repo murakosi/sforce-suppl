@@ -6,11 +6,17 @@ const soql = function() {
   const THIS_AREA = "soqlArea";
   const DEFAULT_DATA_TYPE = "";
   const DEFAULT_CONTENT_TYPE = null;
-  
+  const SOBJECT_LIST_DEF_ZINDEX = "1051"
+  const SOBJECT_LIST_DISP_ZINDEX = "4010"
+  const HISTORY_DISP_WIDTH = "250px"
+  const HISTORY_DISP_MARGIN = "150px"
+  const PLACEHOLDER = "Select an sObject"
+  const POST = "post";
+
   //------------------------------------------------
-  // Event on menu change
+  // Handler
   //------------------------------------------------
-  $(document).on("displayChange", (e, param) => {
+  $(document).on("afterDisplayChange", (e, param) => {
     if (param.targetArea = THIS_AREA) {
       const elementId = getActiveGridElementId();
       const grid = _grids[elementId];
@@ -30,7 +36,7 @@ const soql = function() {
         dropdownAutoWidth : true,
         width: "element",
         containerCssClass: ":all:",
-        placeholder: "Select an sObject",
+        placeholder: PLACEHOLDER,
         allowClear: true
       });
   };    
@@ -101,7 +107,7 @@ const soql = function() {
     const separator = $("#creatGridArea #sobjectFieldsSeparator").val();
 
     if (sobject && rawFields) {
-      const action = "create";
+      const action = $("#createGridBtn").attr("action");
       const val = {sobject: sobject, fields: rawFields, separator: separator, tab_id: getActiveTabElementId()};
       $.get(action, val, function(json) {
         displayQueryResult(json);
@@ -111,13 +117,58 @@ const soql = function() {
   };
   
   $("#soqlArea .sobject-select-list").on("select2:open", (e) => {
-    $(".select2-container--open").css("z-index","4010");
+    $(".select2-container--open").css("z-index",SOBJECT_LIST_DISP_ZINDEX);
   });
     
   $("#soqlArea .sobject-select-list").on("select2:close", (e) => {
-    $(".select2-container--open").css("z-index","1051");
+    $(".select2-container--open").css("z-index",SOBJECT_LIST_DEF_ZINDEX);
   });
   
+  //------------------------------------------------
+  // Draggable
+  //------------------------------------------------
+  const dragElement = (elmnt) => {
+    let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+
+    const dragMouseDown = (e) => {
+      e = e || window.event;
+      e.preventDefault();
+      // get the mouse cursor position at startup:
+      pos3 = e.clientX;
+      pos4 = e.clientY;
+      elmnt.css("cursor", "move");
+      document.onmouseup = closeDragElement;
+      // call a function whenever the cursor moves:
+      document.onmousemove = elementDrag;
+      
+    }
+
+    const elementDrag = (e) => {
+      e = e || window.event;
+      e.preventDefault();
+      // calculate the new cursor position:
+      pos1 = pos3 - e.clientX;
+      pos2 = pos4 - e.clientY;
+      pos3 = e.clientX;
+      pos4 = e.clientY;
+      // set the element's new position:
+      //elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+      //elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+      elmnt.css("top", (elmnt.offset().top - pos2) + "px");
+      elmnt.css("left", (elmnt.offset().left - pos1) + "px");
+    }
+
+    const closeDragElement = () => {
+      // stop moving when mouse button is released:
+      elmnt.css("cursor", "default");
+      document.onmouseup = null;
+      document.onmousemove = null;
+    }
+
+    //elmnt.onmousedown = dragMouseDown;
+    elmnt.on( "mousedown", dragMouseDown );
+  };
+
   //------------------------------------------------
   // SOQL History
   //------------------------------------------------
@@ -147,8 +198,8 @@ const soql = function() {
 
   const openSoqlHistory = () => {
     $(".closebtn").show();
-    $("#soqlHistory").width("250px");
-    $("#soqlArea").css("margin-left","150px");
+    $("#soqlHistory").width(HISTORY_DISP_WIDTH);
+    $("#soqlArea").css("margin-left",HISTORY_DISP_MARGIN);
   };
 
   const closeSoqlHistory = () => {
@@ -160,7 +211,7 @@ const soql = function() {
   //------------------------------------------------
   // Execute SOQL
   //------------------------------------------------
-  $("#soqlArea .execute-soql").on("click", (e) => {
+  $("#soqlArea #executeSoqlBtn").on("click", (e) => {
     e.preventDefault();
     executeSoql();
   });
@@ -195,8 +246,7 @@ const soql = function() {
     
     const val = {soql, tooling, query_all: queryAll, tab_id: tabId};
     const action = $("#soqlArea .soql-form").attr("action");
-    const method = $("#soqlArea .soql-form").attr("method");
-    const options = $.getAjaxOptions(action, method, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
+    const options = $.getAjaxOptions(action, POST, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
 
     if (params && params.afterCrud) {
       callbacks = $.getAjaxCallbacks(afterQuerySuccessAfterCrud, displayError, null);
@@ -289,9 +339,8 @@ const soql = function() {
     }
 
     const val = {soql_info: sobject.soql_info, sobject: sobject.sobject_type, records: JSON.stringify(sobject.editions)};
-    const action = "/update";
-    const method = "post";
-    const options = $.getAjaxOptions(action, method, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
+    const action = $("#upsertBtn").attr("action");
+    const options = $.getAjaxOptions(action, POST, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
     executeCrud(options);
   };
     
@@ -323,9 +372,8 @@ const soql = function() {
   
     if (window.confirm("Are you sure?")) {
       const val = {soql_info: sobject.soql_info, ids: ids};
-      const action = "/delete";
-      const method = "post";
-      const options = $.getAjaxOptions(action, method, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
+      const action = $("#deleteBtn").attr("action");
+      const options = $.getAjaxOptions(action, POST, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
       executeCrud(options);
     }
   };
@@ -358,9 +406,8 @@ const soql = function() {
     
     if (window.confirm("Are you sure?")) {
       const val = {soql_info:sobject.soql_info, ids: ids};
-      const action = "/undelete";
-      const method = "post";
-      const options = $.getAjaxOptions(action, method, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
+      const action = $("#undeleteBtn").attr("action");
+      const options = $.getAjaxOptions(action, POST, val, DEFAULT_DATA_TYPE, DEFAULT_CONTENT_TYPE);
       executeCrud(options);
     }
   };
@@ -624,7 +671,7 @@ const soql = function() {
   // Active grid
   //------------------------------------------------
   const getActiveTabElementId = () => {
-    return $("#soqlArea .tabArea .ui-tabs-panel:visible").attr("tabId");
+    return $("#soqlArea .tab-area .ui-tabs-panel:visible").attr("tabId");
   };
 
   const getActiveGridElementId = () => {
@@ -682,13 +729,13 @@ const soql = function() {
       return;
     }
     
-    if ($("#soqlArea .tabArea ul li").length <= 2) {
+    if ($("#soqlArea .tab-area ul li").length <= 2) {
       return;
     }
 
     const panelId = $(this).closest("#soqlArea li").remove().attr("aria-controls");
     $("#soqlArea #" + panelId ).remove();
-    $("#soqlArea .tabArea").tabs("refresh");
+    $("#soqlArea .tab-area").tabs("refresh");
     setSortableAttribute();
   });
 
@@ -703,7 +750,7 @@ const soql = function() {
     _currentTabIndex = _currentTabIndex + 1;
     const newTabId = _currentTabIndex;
 
-    $("#soqlArea .tabArea ul li:last").before(
+    $("#soqlArea .tab-area ul li:last").before(
       '<li class="noselect"><a href="#tab' + newTabId + '">Grid' + newTabId + '</a>' +
       '<span class="ui-icon ui-icon-close ui-closable-tab"></span>' +
       '</li>'
@@ -713,30 +760,30 @@ const soql = function() {
     inputArea += '<textarea name="inputSoql" id="inputSoql' + newTabId + '" style="width:100%" rows="5"></textarea>';
     inputArea += '</div>';
 
-    let soqlArea = '<div class="resultSoql" tabId="' + newTabId + '">';    
+    let soqlArea = '<div class="result-info" tabId="' + newTabId + '">';    
     soqlArea += '<div id="soql' + newTabId + '">';
-    soqlArea += '<button name="insRowBtn" type="button" class="add-row btn btn-xs btn-default in-btn">Insert row</button>';
-    soqlArea += '<button name="remRowBtn" type="button" class="remove-row btn btn-xs btn-default in-btn">Remove row</button>';
-    soqlArea += '<button name="rerunBtn" type="button" class="rerun btn btn-xs btn-default in-btn">Rerun</button>';
+    soqlArea += '<button name="insRowBtn" type="button" class="add-row btn btn-xs btn-default grid-btn">Insert row</button>';
+    soqlArea += '<button name="remRowBtn" type="button" class="remove-row btn btn-xs btn-default grid-btn">Remove row</button>';
+    soqlArea += '<button name="rerunBtn" type="button" class="rerun btn btn-xs btn-default grid-btn">Rerun</button>';
     soqlArea += '</div>';
     soqlArea += '<div id="soql-info" + newTabId + "">0 rows</div>';
     soqlArea += '</div>';
     
-    $("#soqlArea .tabArea").append(
-      '<div id="tab' + newTabId + '" class="resultTab" tabId="' + newTabId + '">' +
+    $("#soqlArea .tab-area").append(
+      '<div id="tab' + newTabId + '" class="result-tab" tabId="' + newTabId + '">' +
       //inputArea + 
       soqlArea +
-      '<div id="grid' + newTabId + '" class="resultGrid" tabId="' + newTabId + '"></div>' +
+      '<div id="grid' + newTabId + '" class="result-grid" tabId="' + newTabId + '"></div>' +
       '</div>'
     );
     
-    $("#soqlArea .tabArea").tabs("refresh");
+    $("#soqlArea .tab-area").tabs("refresh");
         
     setSortableAttribute();
     
-    const newTabIndex = $("#soqlArea .tabArea ul li").length - 2;
+    const newTabIndex = $("#soqlArea .tab-area ul li").length - 2;
     const selectedTabId = newTabIndex;
-    $("#soqlArea .tabArea").tabs({ active: newTabIndex, activate: onTabSelect});
+    $("#soqlArea .tab-area").tabs({ active: newTabIndex, activate: onTabSelect});
   };
 
   const onTabSelect = (event, ui) => {
@@ -844,22 +891,21 @@ const soql = function() {
   // message
   //------------------------------------------------
   const displayError = (json) => {
-    $("#soqlArea .messageArea").html(json.error);
-    $("#soqlArea .messageArea").show();
+    $("#soqlArea .message-area").html(json.error);
+    $("#soqlArea .message-area").show();
   };
   
   const hideMessageArea = () => {
-    $("#soqlArea .messageArea").empty();
-    $("#soqlArea .messageArea").hide();
+    $("#soqlArea .message-area").empty();
+    $("#soqlArea .message-area").hide();
   };
 
   //------------------------------------------------
   // page load actions
   //------------------------------------------------
-  $("#soqlArea .tabArea").tabs(); 
+  $("#soqlArea .tab-area").tabs(); 
   $("#soqlTabs").sortable({items: "li:not(.add-tab-li)", delay: 150});
   createTab();
-
 };
 
 $(document).ready(soql);

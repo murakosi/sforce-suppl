@@ -4,17 +4,16 @@ Rails.application.routes.draw do
 
   post    'check',                  to: 'main#check'
   get     'main',                   to: 'main#index'
-  get     'refresh_sobjects',       to: 'main#refresh_sobjects'
-  get     'refresh_metadata',       to: 'main#refresh_metadata'
+  get     'refresh/sobjects',       to: 'main#refresh_sobjects'
+  get     'refresh/metadata',       to: 'main#refresh_metadata'
 
-  get     'login',                  to: 'login#new'
+  get     'login',                  to: 'login#login'
   post    'login',                  to: 'login#create'
   delete  'logout',                 to: 'login#destroy'
 
   post    'describe',               to: 'describe#describe'
   post    'describe/changelist',    to: 'describe#change'
 
-  get     'metadata',               to: 'metadata#show'
   get     'metadata/change',        to: 'metadata#change'
   post    'metadata',               to: 'metadata#list'
   post    'metadata/read',          to: 'metadata#read'
@@ -30,7 +29,7 @@ Rails.application.routes.draw do
 
   get     'create',                 to: 'soqlexecuter#create'
   post    'query',                  to: 'soqlexecuter#query'
-  post    'update',                 to: 'soqlexecuter#update'
+  post    'upsert',                 to: 'soqlexecuter#upsert'
   post    'delete',                 to: 'soqlexecuter#delete'
   post    'undelete',               to: 'soqlexecuter#undelete'
 

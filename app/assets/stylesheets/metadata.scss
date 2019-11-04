@@ -47,6 +47,13 @@
 /* ------------------------------
    #jstree
 ------------------------------ */
+.tree-view{
+    font-size:12px;
+    font-family: Verdana;
+    height:500px;
+    overflow:auto;
+}
+
 .jstree-default a { 
     white-space:normal !important; height: auto; 
 }
