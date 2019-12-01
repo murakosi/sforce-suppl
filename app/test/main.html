@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link rel="stylesheet" media="all" href="./css/common.css"/>
+		<link rel="stylesheet" media="all" href="./css/main.css"/>
+		<link rel="stylesheet" media="all" href="./css/bootstrap.css"/>
+		<script src="./js/jquery-1.11.2.min.js"></script>
+		<script src="./js/bootstrap.js"></script>
+		<script src="./js/jquery-ui-1.11.3.min.js"></script>
+		<script src="./js/main.js"></script>
+	</head>
+	<body>
+		<div id="mainArea" class="soql" current-locale-option="">
+
+		    <div id="overlay" class="requesting-overlay">
+		        <div id="overlayContent" class="overlay-content noselect">Requesting...</div>
+		        <div class="loader"></div>
+		    </div>
+
+		    <div class="header">
+		        <div id="progress">
+		          <div id="progress-line" class="progress-line"></div>
+		        </div>
+
+		        <div id="menuList">    
+		            <div class="btn-group">
+		                <button id="userInfoButton" class="btn btn-secondary btn-sm dropdown-toggle dropdown-btn paper-raise" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+		                  <%= @current_user.name %>
+		                </button>
+		                <span id="userLocalOption"></span>
+		                <ul id="dropdownMenu" class="dropdown-menu">
+		                    <li class="dropdown-submenu">
+		                        <a id="changeLocale" href="javascript:void(0)">Locale Option</a>
+		                        <ul class="dropdown-menu locale-options">
+		                            <li><a href="javascript:void(0)" locale-option="ja">Japanese</a></li>
+		                            <li><a href="javascript:void(0)" locale-option="en_US">English</a></li>
+		                        </ul>
+		                    </li>
+		                        <li><a id="refreshSObjects" href="javascript:void(0)">Refresh sObjects</a></li>
+		                        <li><a id="refreshMetadata" href="javascript:void(0)">Refresh Metadata</a></li>
+		                    <li role="separator" class="divider"></li>
+		                    <li><a id="refreshSObjects" href="javascript:void(0)">Logout</a></li>
+		                </ul>
+		            </div>
+		            <ul id="menus">
+		                <li><a id="soql" href="javascript:void(0)" class="menu-item displayed">SOQL</a></li>
+		                <li><a id="describe" href="javascript:void(0)" class="menu-item">Describe</a></li>
+		                <li><a id="metadata" href="javascript:void(0)" class="menu-item">Metadata</a></li>
+		                <li><a id="apex" href="javascript:void(0)" class="menu-item">Apex</a></li>
+		            </ul>
+		        </div>
+		    </div>
+
+		    <div id="contentsArea">
+		        <div id="soqlContent">abc</div>
+		        <div id="describeContent">efg</div>
+		        <div id="apexContent">hij</div>
+		    </div>
+
+		</div>
+	</body>
+</html>
