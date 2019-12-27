@@ -766,7 +766,7 @@ const soql = function() {
     soqlArea += '<button name="remRowBtn" type="button" class="remove-row btn btn-xs btn-default grid-btn">Remove row</button>';
     soqlArea += '<button name="rerunBtn" type="button" class="rerun btn btn-xs btn-default grid-btn">Rerun</button>';
     soqlArea += '</div>';
-    soqlArea += '<div id="soql-info' + newTabId + '">0 rows</div>';
+    soqlArea += '<div id="soql-info" + newTabId + "">0 rows</div>';
     soqlArea += '</div>';
     
     $("#soqlArea .tab-area").append(
