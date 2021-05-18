@@ -14,7 +14,7 @@ gem 'rails', '~> 5.1.5'
 gem 'sqlite3', git: "https://github.com/larskanis/sqlite3-ruby", branch: "add-gemspec", group: :development
 gem 'pg', group: :production
 # Use Puma as the app server
-gem 'puma', '~> 3.12'
+gem 'puma', '~> 4.3'
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
 gem 'sassc'
